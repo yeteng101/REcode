@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "run_id": "generic-analysis",
+  "result_type": "sync_relation",
+  "status": "succeeded",
+  "items": [
+    {
+      "id": "sync-mutex",
+      "relation_type": "mutex_lock",
+      "source": {"function": "read_data", "file": "project/io/read_data.c", "line": 28, "snippet": "lock(&ctx->mutex);"},
+      "target": {"function": "read_data", "file": "project/io/read_data.c", "line": 37, "snippet": "unlock(&ctx->mutex);"},
+      "order": "happens_before",
+      "condition": "same function",
+      "confidence": 0.9,
+      "evidence_ids": ["ev-read-open"]
+    }
+  ],
+  "evidence": [],
+  "warnings": []
+}

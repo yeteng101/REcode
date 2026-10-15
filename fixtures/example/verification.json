@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "run_id": "generic-analysis",
+  "stage": "06-verify",
+  "status": "partial",
+  "coverage": {
+    "requested_edges": 5,
+    "confirmed_edges": 4,
+    "coverage_rate": 0.8
+  },
+  "report_ready": false,
+  "checks": [],
+  "warnings": []
+}
