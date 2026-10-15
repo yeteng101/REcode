@@ -1,0 +1,2618 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "call-chain-validation-v1",
+  "description": "调用链正负样本第一版：demo 样例 + libuv v1.50.0 真实产物。 扩充了64条待人工复核的缺失目标候选，自动标签不计入人工 Gold。",
+  "created_at": "2026-09-10",
+  "label_policy": {
+    "positive": "source/target/kind 与图中真实边一致",
+    "negative": "source/target/kind 与图中真实边不一致",
+    "uncertain": "需要人工继续确认"
+  },
+  "samples": [
+    {
+      "id": "cc_pos_sample_001",
+      "graph": "demo/graph.json",
+      "claim": {
+        "source": "fn:demo::app_main",
+        "target": "fn:demo::loop_run",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "demo/sample/app.cpp",
+          "line": 29,
+          "snippet": "loop_run(&loop);"
+        }
+      ],
+      "tags": [
+        "demo",
+        "direct_call"
+      ],
+      "notes": "app_main 直接调用 loop_run"
+    },
+    {
+      "id": "cc_pos_sample_002",
+      "graph": "demo/graph.json",
+      "claim": {
+        "source": "fn:demo::loop_run",
+        "target": "fn:demo::wait_for_events",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "demo/sample/event_loop.cpp",
+          "line": 47,
+          "snippet": "int events = wait_for_events(loop, 100);"
+        }
+      ],
+      "tags": [
+        "demo",
+        "direct_call"
+      ],
+      "notes": "事件循环主循环直接等待事件"
+    },
+    {
+      "id": "cc_pos_sample_003",
+      "graph": "demo/graph.json",
+      "claim": {
+        "source": "fn:demo::loop_run",
+        "target": "fn:demo::run_ready_watchers",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "demo/sample/event_loop.cpp",
+          "line": 48,
+          "snippet": "run_ready_watchers(loop, events);"
+        }
+      ],
+      "tags": [
+        "demo",
+        "direct_call"
+      ],
+      "notes": "事件返回后进入 watcher 分发"
+    },
+    {
+      "id": "cc_pos_sample_004",
+      "graph": "demo/graph.json",
+      "claim": {
+        "source": "fn:demo::run_ready_watchers",
+        "target": "fn:demo::dispatch_once",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "demo/sample/event_loop.cpp",
+          "line": 26,
+          "snippet": "dispatch_once(loop, watcher, events);"
+        }
+      ],
+      "tags": [
+        "demo",
+        "direct_call"
+      ],
+      "notes": "watcher 就绪后直接调用分发函数"
+    },
+    {
+      "id": "cc_pos_sample_005",
+      "graph": "demo/graph.json",
+      "claim": {
+        "source": "fn:demo::dispatch_once",
+        "target": "cb:Watcher::callback",
+        "kind": "callback_edge"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "multiple_candidates",
+      "candidate_targets": [
+        "fn:demo::on_once",
+        "fn:demo::on_readable",
+        "fn:demo::on_writable"
+      ],
+      "evidence": [
+        {
+          "file": "demo/sample/event_loop.cpp",
+          "line": 19,
+          "snippet": "CALL_WATCHER(watcher, events);"
+        }
+      ],
+      "tags": [
+        "demo",
+        "callback_edge",
+        "macro"
+      ],
+      "notes": "CALL_WATCHER 宏通过结构体字段触发回调，候选目标不唯一"
+    },
+    {
+      "id": "cc_pos_sample_006",
+      "graph": "demo/graph.json",
+      "claim": {
+        "source": "cb:Watcher::callback",
+        "target": "fn:demo::on_readable",
+        "kind": "callback_edge"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "multiple_candidates",
+      "candidate_targets": [
+        "fn:demo::on_once",
+        "fn:demo::on_readable",
+        "fn:demo::on_writable"
+      ],
+      "evidence": [
+        {
+          "file": "demo/sample/app.cpp",
+          "line": 26,
+          "snippet": "loop_register(&loop, 0, on_readable);"
+        }
+      ],
+      "tags": [
+        "demo",
+        "callback_edge"
+      ],
+      "notes": "注册点证明 on_readable 是候选，但不应声称这是唯一目标"
+    },
+    {
+      "id": "cc_pos_libuv_001",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__io_poll",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 460,
+          "snippet": "uv__io_poll(loop, timeout);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "direct_call"
+      ],
+      "notes": "uv_run 的事件轮询入口"
+    },
+    {
+      "id": "cc_pos_libuv_002",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__run_timers",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 442,
+          "snippet": "uv__run_timers(loop);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "direct_call"
+      ],
+      "notes": "uv_run 的定时器阶段"
+    },
+    {
+      "id": "cc_pos_libuv_003",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv__run_timers",
+        "target": "fn:uv_timer_again",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/timer.c",
+          "line": 192,
+          "snippet": "uv_timer_again(handle);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "direct_call",
+        "timer"
+      ],
+      "notes": "重复定时器的重新挂载"
+    },
+    {
+      "id": "cc_pos_libuv_004",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv__io_poll",
+        "target": "cb:uv__io_s::cb",
+        "kind": "callback_edge"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "multiple_candidates",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/kqueue.c",
+          "line": 379,
+          "snippet": "w->cb(loop, w, ev->fflags); /* XXX always uv__fs_event() */"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "callback_edge",
+        "kqueue"
+      ],
+      "notes": "回调字段 w->cb 的目标集合需要结合赋值流继续收敛"
+    },
+    {
+      "id": "cc_neg_sample_001",
+      "graph": "demo/graph.json",
+      "claim": {
+        "source": "fn:demo::dispatch_once",
+        "target": "fn:demo::on_readable",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "multiple_candidates",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "demo/sample/event_loop.cpp",
+          "line": 19,
+          "snippet": "CALL_WATCHER(watcher, events);"
+        }
+      ],
+      "tags": [
+        "demo",
+        "negative",
+        "false_direct_call"
+      ],
+      "notes": "真实关系是经过 Watcher::callback 的 callback_edge，不是 direct_call"
+    },
+    {
+      "id": "cc_neg_sample_002",
+      "graph": "demo/graph.json",
+      "claim": {
+        "source": "fn:demo::loop_run",
+        "target": "fn:demo::on_once",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "multiple_candidates",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "demo/sample/app.cpp",
+          "line": 28,
+          "snippet": "loop_register(&loop, 2, on_once);"
+        }
+      ],
+      "tags": [
+        "demo",
+        "negative",
+        "callback_registration"
+      ],
+      "notes": "loop_run 只负责事件循环，不直接调用 on_once"
+    },
+    {
+      "id": "cc_neg_libuv_001",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__queue_remove",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/timer.c",
+          "line": 188,
+          "snippet": "uv__queue_remove(queue_node);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "negative",
+        "indirect_reachability"
+      ],
+      "notes": "uv_run 只能经 uv__run_timers 间接到达 uv__queue_remove"
+    },
+    {
+      "id": "cc_neg_libuv_002",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv__run_timers",
+        "target": "fn:uv__io_poll",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/timer.c",
+          "line": 192,
+          "snippet": "uv_timer_again(handle);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "negative",
+        "wrong_edge"
+      ],
+      "notes": "uv__run_timers 不直接调用 uv__io_poll"
+    },
+    {
+      "id": "cc_neg_libuv_003",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__io_poll",
+        "kind": "callback_edge"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 460,
+          "snippet": "uv__io_poll(loop, timeout);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "negative",
+        "wrong_kind"
+      ],
+      "notes": "source/target 存在，但正确 kind 是 direct_call，不是 callback_edge"
+    },
+    {
+      "id": "cc_neg_sample_003",
+      "graph": "demo/graph.json",
+      "claim": {
+        "source": "cb:Watcher::callback",
+        "target": "fn:demo::on_once",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "multiple_candidates",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "demo/sample/app.cpp",
+          "line": 28,
+          "snippet": "loop_register(&loop, 2, on_once);"
+        }
+      ],
+      "tags": [
+        "demo",
+        "negative",
+        "wrong_kind"
+      ],
+      "notes": "真实注册关系通过 callback_edge 表达，不是 direct_call"
+    },
+    {
+      "id": "cc_pos_libuv_005",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__loop_alive",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 432,
+          "snippet": "r = uv__loop_alive(loop);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "direct_call",
+        "uv_run"
+      ],
+      "notes": "uv_run 在循环开始前检查 loop 是否还活着"
+    },
+    {
+      "id": "cc_pos_libuv_006",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__update_time",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 434,
+          "snippet": "uv__update_time(loop);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "direct_call",
+        "uv_run"
+      ],
+      "notes": "uv_run 在循环开头更新时间"
+    },
+    {
+      "id": "cc_pos_libuv_007",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__run_pending",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 450,
+          "snippet": "uv__run_pending(loop);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "direct_call",
+        "uv_run"
+      ],
+      "notes": "uv_run 执行 pending 阶段"
+    },
+    {
+      "id": "cc_pos_libuv_008",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__run_idle",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 451,
+          "snippet": "uv__run_idle(loop);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "direct_call",
+        "uv_run"
+      ],
+      "notes": "uv_run 执行 idle 阶段"
+    },
+    {
+      "id": "cc_pos_libuv_009",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__run_prepare",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 452,
+          "snippet": "uv__run_prepare(loop);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "direct_call",
+        "uv_run"
+      ],
+      "notes": "uv_run 执行 prepare 阶段"
+    },
+    {
+      "id": "cc_pos_libuv_010",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__backend_timeout",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 456,
+          "snippet": "timeout = uv__backend_timeout(loop);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "direct_call",
+        "uv_run"
+      ],
+      "notes": "uv_run 计算 backend timeout"
+    },
+    {
+      "id": "cc_pos_libuv_011",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__run_check",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 474,
+          "snippet": "uv__run_check(loop);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "direct_call",
+        "uv_run"
+      ],
+      "notes": "uv_run 执行 check 阶段"
+    },
+    {
+      "id": "cc_pos_libuv_012",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__run_closing_handles",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 475,
+          "snippet": "uv__run_closing_handles(loop);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "direct_call",
+        "uv_run"
+      ],
+      "notes": "uv_run 执行 closing handles 阶段"
+    },
+    {
+      "id": "cc_pos_libuv_013",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__queue_empty",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 447,
+          "snippet": "uv__queue_empty(&loop->pending_queue) &&"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "direct_call",
+        "uv_run"
+      ],
+      "notes": "uv_run 判断 pending queue 是否为空"
+    },
+    {
+      "id": "cc_pos_libuv_014",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv__io_poll",
+        "target": "fn:uv__update_time",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/kqueue.c",
+          "line": 306,
+          "snippet": "uv__update_time(loop);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "direct_call",
+        "uv__io_poll"
+      ],
+      "notes": "uv__io_poll 在进入 poll 前更新时间"
+    },
+    {
+      "id": "cc_pos_libuv_015",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv__io_poll",
+        "target": "fn:uv__queue_remove",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/kqueue.c",
+          "line": 194,
+          "snippet": "uv__queue_remove(q);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "direct_call",
+        "uv__io_poll"
+      ],
+      "notes": "uv__io_poll 从 watcher queue 移除已注册项"
+    },
+    {
+      "id": "cc_pos_libuv_016",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv__io_poll",
+        "target": "fn:uv__queue_head",
+        "kind": "direct_call"
+      },
+      "label": "positive",
+      "expected_exists": true,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/kqueue.c",
+          "line": 193,
+          "snippet": "q = uv__queue_head(&loop->watcher_queue);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "direct_call",
+        "uv__io_poll"
+      ],
+      "notes": "uv__io_poll 读取 watcher queue 头部"
+    },
+    {
+      "id": "cc_neg_libuv_004",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__run_timers",
+        "kind": "callback_edge"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "multiple_candidates",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 442,
+          "snippet": "uv__run_timers(loop);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "negative",
+        "callback_edge"
+      ],
+      "notes": "uv_run 到 uv__run_timers 是 direct_call；source/target 相同但 kind 错误，仍为 negative"
+    },
+    {
+      "id": "cc_neg_libuv_005",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__io_poll",
+        "kind": "indirect_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 460,
+          "snippet": "uv__io_poll(loop, timeout);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "negative",
+        "indirect_call"
+      ],
+      "notes": "uv_run 到 uv__io_poll 是直接调用，不是 indirect_call"
+    },
+    {
+      "id": "cc_neg_libuv_006",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__run_prepare",
+        "kind": "callback_edge"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "multiple_candidates",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 452,
+          "snippet": "uv__run_prepare(loop);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "negative",
+        "callback_edge"
+      ],
+      "notes": "uv_run 到 uv__run_prepare 是直接调用，不是 callback_edge"
+    },
+    {
+      "id": "cc_neg_libuv_007",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv_run",
+        "target": "fn:uv__kqueue_delete",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 460,
+          "snippet": "uv__io_poll(loop, timeout);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "negative",
+        "direct_call"
+      ],
+      "notes": "uv_run 不直接调用后续 poll 内部的 kqueue 删除逻辑"
+    },
+    {
+      "id": "cc_neg_libuv_008",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv__io_poll",
+        "target": "fn:uv__run_check",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 474,
+          "snippet": "uv__run_check(loop);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "negative",
+        "direct_call"
+      ],
+      "notes": "uv__run_check 是 uv_run 的阶段调用，不是 uv__io_poll 的直接调用"
+    },
+    {
+      "id": "cc_neg_libuv_009",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv__io_poll",
+        "target": "fn:uv__run_pending",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 465,
+          "snippet": "uv__run_pending(loop);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "negative",
+        "direct_call"
+      ],
+      "notes": "uv__run_pending 是 uv_run 的阶段调用，不是 uv__io_poll 的直接调用"
+    },
+    {
+      "id": "cc_neg_libuv_010",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv__update_time",
+        "target": "fn:uv_run",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 434,
+          "snippet": "uv__update_time(loop);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "negative",
+        "direct_call"
+      ],
+      "notes": "方向错误：真实关系是 uv_run -> uv__update_time"
+    },
+    {
+      "id": "cc_neg_libuv_011",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:uv__run_timers",
+        "target": "fn:uv__update_time",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "unique",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "third_party/libuv/src/unix/core.c",
+          "line": 478,
+          "snippet": "uv__run_timers(loop);"
+        }
+      ],
+      "tags": [
+        "libuv",
+        "negative",
+        "direct_call"
+      ],
+      "notes": "两者是 uv_run 的不同阶段，不存在 uv__run_timers -> uv__update_time 的直接调用"
+    },
+    {
+      "id": "cc_negative_candidate_001",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_001",
+        "target": "fn:validation::missing_target_001",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_002",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_002",
+        "target": "fn:validation::missing_target_002",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_003",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_003",
+        "target": "fn:validation::missing_target_003",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_004",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_004",
+        "target": "fn:validation::missing_target_004",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_005",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_005",
+        "target": "fn:validation::missing_target_005",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_006",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_006",
+        "target": "fn:validation::missing_target_006",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_007",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_007",
+        "target": "fn:validation::missing_target_007",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_008",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_008",
+        "target": "fn:validation::missing_target_008",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_009",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_009",
+        "target": "fn:validation::missing_target_009",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_010",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_010",
+        "target": "fn:validation::missing_target_010",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_011",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_011",
+        "target": "fn:validation::missing_target_011",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_012",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_012",
+        "target": "fn:validation::missing_target_012",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_013",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_013",
+        "target": "fn:validation::missing_target_013",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_014",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_014",
+        "target": "fn:validation::missing_target_014",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_015",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_015",
+        "target": "fn:validation::missing_target_015",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_016",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_016",
+        "target": "fn:validation::missing_target_016",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_017",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_017",
+        "target": "fn:validation::missing_target_017",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_018",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_018",
+        "target": "fn:validation::missing_target_018",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_019",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_019",
+        "target": "fn:validation::missing_target_019",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_020",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_020",
+        "target": "fn:validation::missing_target_020",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_021",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_021",
+        "target": "fn:validation::missing_target_021",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_022",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_022",
+        "target": "fn:validation::missing_target_022",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_023",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_023",
+        "target": "fn:validation::missing_target_023",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_024",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_024",
+        "target": "fn:validation::missing_target_024",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_025",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_025",
+        "target": "fn:validation::missing_target_025",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_026",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_026",
+        "target": "fn:validation::missing_target_026",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_027",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_027",
+        "target": "fn:validation::missing_target_027",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_028",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_028",
+        "target": "fn:validation::missing_target_028",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_029",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_029",
+        "target": "fn:validation::missing_target_029",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_030",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_030",
+        "target": "fn:validation::missing_target_030",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_031",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_031",
+        "target": "fn:validation::missing_target_031",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_032",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_032",
+        "target": "fn:validation::missing_target_032",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_033",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_033",
+        "target": "fn:validation::missing_target_033",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_034",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_034",
+        "target": "fn:validation::missing_target_034",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_035",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_035",
+        "target": "fn:validation::missing_target_035",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_036",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_036",
+        "target": "fn:validation::missing_target_036",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_037",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_037",
+        "target": "fn:validation::missing_target_037",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_038",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_038",
+        "target": "fn:validation::missing_target_038",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_039",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_039",
+        "target": "fn:validation::missing_target_039",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_040",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_040",
+        "target": "fn:validation::missing_target_040",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_041",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_041",
+        "target": "fn:validation::missing_target_041",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_042",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_042",
+        "target": "fn:validation::missing_target_042",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_043",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_043",
+        "target": "fn:validation::missing_target_043",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_044",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_044",
+        "target": "fn:validation::missing_target_044",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_045",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_045",
+        "target": "fn:validation::missing_target_045",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_046",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_046",
+        "target": "fn:validation::missing_target_046",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_047",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_047",
+        "target": "fn:validation::missing_target_047",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_048",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_048",
+        "target": "fn:validation::missing_target_048",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_049",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_049",
+        "target": "fn:validation::missing_target_049",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_050",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_050",
+        "target": "fn:validation::missing_target_050",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_051",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_051",
+        "target": "fn:validation::missing_target_051",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_052",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_052",
+        "target": "fn:validation::missing_target_052",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_053",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_053",
+        "target": "fn:validation::missing_target_053",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_054",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_054",
+        "target": "fn:validation::missing_target_054",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_055",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_055",
+        "target": "fn:validation::missing_target_055",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_056",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_056",
+        "target": "fn:validation::missing_target_056",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_057",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_057",
+        "target": "fn:validation::missing_target_057",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_058",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_058",
+        "target": "fn:validation::missing_target_058",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_059",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_059",
+        "target": "fn:validation::missing_target_059",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_060",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_060",
+        "target": "fn:validation::missing_target_060",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_061",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_061",
+        "target": "fn:validation::missing_target_061",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_062",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_062",
+        "target": "fn:validation::missing_target_062",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_063",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_063",
+        "target": "fn:validation::missing_target_063",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    },
+    {
+      "id": "cc_negative_candidate_064",
+      "graph": "demo/libuv/graph.json",
+      "claim": {
+        "source": "fn:validation::missing_source_064",
+        "target": "fn:validation::missing_target_064",
+        "kind": "direct_call"
+      },
+      "label": "negative",
+      "expected_exists": false,
+      "resolution": "none",
+      "candidate_targets": [],
+      "evidence": [
+        {
+          "file": "validation/call-chains/README.md",
+          "line": 1,
+          "snippet": "# 调用链正负样本标注 v1"
+        }
+      ],
+      "tags": [
+        "generated_candidate",
+        "negative",
+        "pending_review"
+      ],
+      "notes": "自动生成的缺失目标负样本；待人工复核。"
+    }
+  ],
+  "review": {
+    "human_review": "pending",
+    "generated_candidates": 64
+  }
+}
