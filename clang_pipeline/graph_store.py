@@ -260,13 +260,19 @@ class Neo4jGraphStore:
             statements.append(
                 (
                     "MERGE (e:KnowledgeEntity {run_id:$run_id, id:$id}) "
-                    "SET e.kind=$kind, e.name=$name, e.file=$file, e.line=$line, "
+                    "SET e.kind=$kind, e.kind_label=$kind_label, "
+                    "e.name=$name, e.display_name=$display_name, "
+                    "e.file=$file, e.line=$line, "
                     "e.properties_json=$properties_json",
                     {
                         "run_id": run_id,
                         "id": entity.get("id", ""),
                         "kind": entity.get("kind", ""),
+                        "kind_label": entity.get("kind_label", entity.get("kind", "")),
                         "name": entity.get("name", ""),
+                        "display_name": entity.get(
+                            "display_name", entity.get("name", "")
+                        ),
                         "file": entity.get("file", ""),
                         "line": int(entity.get("line") or 0),
                         "properties_json": json.dumps(
@@ -283,13 +289,17 @@ class Neo4jGraphStore:
                     "MATCH (a:KnowledgeEntity {run_id:$run_id, id:$source}) "
                     "MATCH (b:KnowledgeEntity {run_id:$run_id, id:$target}) "
                     "MERGE (a)-[r:RELATED {run_id:$run_id, id:$id}]->(b) "
-                    "SET r.type=$type, r.properties_json=$properties_json",
+                    "SET r.type=$type, r.type_label=$type_label, "
+                    "r.properties_json=$properties_json",
                     {
                         "run_id": run_id,
                         "id": relation.get("id", ""),
                         "source": relation.get("source", ""),
                         "target": relation.get("target", ""),
                         "type": relation.get("type", ""),
+                        "type_label": relation.get(
+                            "type_label", relation.get("type", "")
+                        ),
                         "properties_json": json.dumps(
                             relation.get("properties", {}),
                             ensure_ascii=False,

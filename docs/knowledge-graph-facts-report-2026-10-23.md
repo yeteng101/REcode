@@ -7,26 +7,32 @@
 主要实体：
 
 ```text
-code_symbol
-build_profile
-compile_unit
-compiler_optimization
-resource
-sync_relation
-log_event
+code_symbol            代码符号
+build_profile          构建配置
+compile_unit           编译单元
+compiler_optimization  编译器优化事实
+resource               资源
+sync_relation          同步关系
+log_event              日志事件
 ```
 
 主要关系：
 
 ```text
-calls
-uses_resource
-sync_source / sync_target
-has_compile_unit
-analyzes_symbol
-affects_function
-references_symbol
+calls                  调用
+uses_resource          使用资源
+sync_source            同步源端
+sync_target            同步目标端
+has_compile_unit       包含编译单元
+analyzes_symbol        分析代码符号
+affects_function       影响函数
+produces_compiler_fact 产生优化事实
+references_symbol      关联函数
 ```
+
+输出采用双语字段：`kind` / `type` 保留英文稳定标识，`kind_label` /
+`type_label` 提供中文展示名；JSON 中的实体同时带有 `display_name`，
+因此既能被程序继续解析，也能直接用于中文汇报和人工复核。
 
 与函数调用图的区别是：调用图只回答“谁调用谁”，知识图谱还可以回答“哪个函数使用资源、参与同步、在什么优化配置下编译、是否命中运行日志”。
 
@@ -96,7 +102,7 @@ external/knowledge-graph.json
 
 使用 `--once` 可执行一次增量提取，适合 CI 或外部调度；使用 `--no-refresh` 可只提取日志、不刷新图。
 
-## 5. 准确率提升
+## 5. Precision、Recall 与 F1 实验数据
 
 ### 5.1 指标口径
 
@@ -116,16 +122,20 @@ F1        = 2 × Precision × Recall / (Precision + Recall)
           = 2 × TP / (2 × TP + FP + FN)
 ```
 
-这里的“准确率”统一指 **Precision**，不是全仓库所有预测的普通 Accuracy。当前 precision 只在已标注 identity 范围内计算，未标注预测不计入 FP。
+普通 Accuracy 需要知道整个仓库所有预测的真假，但当前仍有大量预测没有人工
+真值，因此不能计算或宣称“全仓准确率 100%”。下面表格中的 100% 只表示：
+在已标注 identity 范围内，系统命中的正例中没有混入已标注的 FP。
 
 ### 5.2 当前结果
 
-| 项目 / 类型 | TP | FP | FN | Precision | Recall | F1 |
-|---|---:|---:|---:|---:|---:|---:|
-| libuv 资源流 | 11 | 0 | 6 | 100% | 64.71% | 78.57% |
-| Redis 调用链 | 103 | 0 | 7 | 100% | 93.64% | 96.71% |
-| libuv 同步关系 | 4 | 0 | 28 | 100% | 12.50% | 22.22% |
-| Redis 同步关系 | 9 | 0 | 13 | 100% | 40.91% | 58.06% |
+| 项目 / 类型 | TP | FP | FN | 未标注预测 | Precision | Recall | F1 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| libuv 调用链 | 16 | 0 | 0 | 2178 | 100% | 100% | 100% |
+| libuv 资源流 | 11 | 0 | 6 | 229 | 100% | 64.71% | 78.57% |
+| libuv 同步关系 | 4 | 0 | 28 | 201 | 100% | 12.50% | 22.22% |
+| Redis 调用链 | 103 | 0 | 7 | 1342 | 100% | 93.64% | 96.71% |
+| Redis 资源流 | 0 | 0 | 0 | 99 | N/A | N/A | N/A |
+| Redis 同步关系 | 9 | 0 | 13 | 141 | 100% | 40.91% | 58.06% |
 
 计算示例：
 
@@ -140,7 +150,10 @@ Redis 同步 Recall    = 9 / (9 + 13) = 40.91%
 Redis 同步 F1        = 18 / (18 + 0 + 13) = 58.06%
 ```
 
-当前 Precision 均为 100% 的原因是已标注 identity 内没有命中 FP；这不等价于整个仓库所有未标注预测都是正确的。
+表中 Precision 为 100% 的原因是已标注 identity 内没有命中 FP；这些 100%
+不等于整个仓库所有未标注预测都是正确的。尤其是 libuv 调用链 Gold 与预测图部分
+同源，只适合作为回归测试，不能作为独立准确率结论。Redis 同步关系的证据命中率
+为 77.78%，也说明已匹配关系并非全部达到“源码证据完全命中”。
 
 提升来源：
 
@@ -152,7 +165,9 @@ Redis 同步 F1        = 18 / (18 + 0 + 13) = 58.06%
 - 使用固定 commit、source hash、evidence 和统一评测 identity。
 - 使用 `report.json/report.md/gate.json` 质量门禁防止指标回退。
 
-注意：这些是标注范围内结果，FP=0 不等于全仓库 precision 已完成；大量未标注预测未计入 precision，人工 Gold 仍需确认。
+注意：这些是标注范围内结果，FP=0 不等于全仓库 precision 已完成；大量未标注
+预测未计入 precision。两个项目的 `human_review` 仍为 `pending`，
+`strict_review` 为 `false`，质量门禁只是回归阈值，不代表达到 100% 的人工确认质量。
 
 ## 6. 当前状态
 

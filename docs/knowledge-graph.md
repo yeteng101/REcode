@@ -29,25 +29,39 @@ logs/
 `knowledge-graph.json` 的主要实体：
 
 ```text
-code_symbol
-build_profile
-compile_unit
-compiler_optimization
-resource
-sync_relation
-log_event
+code_symbol            代码符号
+build_profile          构建配置
+compile_unit           编译单元
+compiler_optimization  编译器优化事实
+resource               资源
+sync_relation          同步关系
+log_event              日志事件
 ```
 
 主要关系：
 
 ```text
-calls
-uses_resource
-sync_source / sync_target
-has_compile_unit
-analyzes_symbol
-affects_function
-references_symbol
+calls                 调用
+uses_resource         使用资源
+sync_source           同步源端
+sync_target           同步目标端
+has_compile_unit      包含编译单元
+analyzes_symbol       分析代码符号
+affects_function      影响函数
+produces_compiler_fact 产生优化事实
+references_symbol     关联函数
+```
+
+JSON 保留英文 `kind` / `type` 作为稳定的机器标识，同时输出中文
+`kind_label` / `type_label`。每个实体还包含 `display_name`，例如：
+
+```json
+{
+  "kind": "code_symbol",
+  "kind_label": "代码符号",
+  "name": "uv_run",
+  "display_name": "代码符号 · uv_run"
+}
 ```
 
 ## 构建事实

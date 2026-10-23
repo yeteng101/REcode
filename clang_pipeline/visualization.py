@@ -902,28 +902,29 @@ TEMPLATE = r"""<!doctype html>
       <div class="finding-grid" id="finding-grid"></div>
     </section>
     <section class="panel" id="panel-knowledge">
-      <h2 class="section-title">Knowledge Graph</h2>
+      <h2 class="section-title">知识图谱 / Knowledge Graph</h2>
       <div class="toolbar">
-        <label>Entity / File
+        <label>实体 / 文件 Entity / File
           <input id="knowledge-filter" type="search" autocomplete="off">
         </label>
-        <label>Entity kind
+        <label>实体类型 Entity kind
           <select id="knowledge-kind">
-            <option value="">All kinds</option>
+            <option value="">全部类型 All kinds</option>
           </select>
         </label>
       </div>
       <div class="call-count" id="knowledge-count"></div>
+      <div class="tag-row" id="knowledge-kind-summary"></div>
       <table>
         <thead>
-          <tr><th>Entity</th><th>Kind</th><th>Name</th><th>Location</th><th>Properties</th></tr>
+          <tr><th>实体 Entity</th><th>类型 Kind</th><th>名称 Name</th><th>位置 Location</th><th>属性 Properties</th></tr>
         </thead>
         <tbody id="knowledge-rows"></tbody>
       </table>
-      <h3 class="section-title" style="margin-top:20px">Relations</h3>
+      <h3 class="section-title" style="margin-top:20px">关系 Relations</h3>
       <table>
         <thead>
-          <tr><th>Type</th><th>Source</th><th>Target</th></tr>
+          <tr><th>关系类型 Type</th><th>源端 Source</th><th>目标端 Target</th></tr>
         </thead>
         <tbody id="knowledge-relation-rows"></tbody>
       </table>
@@ -1402,22 +1403,42 @@ TEMPLATE = r"""<!doctype html>
           [...new Set(entities.map((item) => item.kind))].sort().forEach((kind) => {
             const option = document.createElement("option");
             option.value = kind;
-            option.textContent = kind;
+            const entity = entities.find((item) => item.kind === kind);
+            option.textContent = entity?.kind_label
+              ? `${entity.kind_label} · ${kind}`
+              : kind;
             kindSelect.appendChild(option);
           });
         }
+        const kindCounts = new Map();
+        entities.forEach((item) => {
+          const current = kindCounts.get(item.kind) || {
+            kind: item.kind,
+            label: item.kind_label || item.kind,
+            count: 0,
+          };
+          current.count += 1;
+          kindCounts.set(item.kind, current);
+        });
+        byId("knowledge-kind-summary").innerHTML = [...kindCounts.values()]
+          .sort((left, right) => right.count - left.count || left.kind.localeCompare(right.kind))
+          .map((item) =>
+            `<span class="tag">${item.label} · ${item.kind} ${item.count}</span>`
+          ).join("");
         const term = byId("knowledge-filter").value.trim().toLowerCase();
         const kind = kindSelect.value;
         const filtered = entities.filter((item) => {
-          const haystack = `${item.id} ${item.name} ${item.file} ${item.kind}`.toLowerCase();
+          const haystack =
+            `${item.id} ${item.name} ${item.display_name || ""} ${item.file} ` +
+            `${item.kind} ${item.kind_label || ""}`.toLowerCase();
           return (!term || haystack.includes(term)) && (!kind || item.kind === kind);
         });
         byId("knowledge-count").textContent =
-          `${filtered.length} / ${entities.length} entities · ${relations.length} relations`;
+          `${filtered.length} / ${entities.length} 个实体 · ${relations.length} 条关系`;
         byId("knowledge-rows").innerHTML = filtered.slice(0, 300).map((item) =>
           `<tr>
              <td class="code">${item.id}</td>
-             <td>${item.kind}</td>
+             <td>${item.kind_label ? `${item.kind_label} · ${item.kind}` : item.kind}</td>
              <td>${item.name}</td>
              <td class="code">${item.file || ""}${item.line ? `:${item.line}` : ""}</td>
              <td class="code">${JSON.stringify(item.properties || {}).slice(0, 220)}</td>
@@ -1427,9 +1448,9 @@ TEMPLATE = r"""<!doctype html>
           const source = entityById[item.source];
           const target = entityById[item.target];
           return `<tr>
-            <td>${item.type}</td>
-            <td>${source?.name || item.source}</td>
-            <td>${target?.name || item.target}</td>
+            <td>${item.type_label ? `${item.type_label} · ${item.type}` : item.type}</td>
+            <td>${source?.display_name || source?.name || item.source}</td>
+            <td>${target?.display_name || target?.name || item.target}</td>
           </tr>`;
         }).join("");
       }

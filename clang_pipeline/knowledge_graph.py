@@ -5,6 +5,29 @@ from typing import Any
 from .clang_ast import stable_digest, utc_now
 
 
+ENTITY_KIND_LABELS = {
+    "code_symbol": "代码符号",
+    "build_profile": "构建配置",
+    "compile_unit": "编译单元",
+    "compiler_optimization": "编译器优化事实",
+    "resource": "资源",
+    "sync_relation": "同步关系",
+    "log_event": "日志事件",
+}
+
+RELATION_TYPE_LABELS = {
+    "calls": "调用",
+    "uses_resource": "使用资源",
+    "sync_source": "同步源端",
+    "sync_target": "同步目标端",
+    "has_compile_unit": "包含编译单元",
+    "analyzes_symbol": "分析代码符号",
+    "affects_function": "影响函数",
+    "produces_compiler_fact": "产生优化事实",
+    "references_symbol": "关联函数",
+}
+
+
 def _entity(
     entity_id: str,
     kind: str,
@@ -14,10 +37,13 @@ def _entity(
     line: int = 0,
     properties: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    kind_label = ENTITY_KIND_LABELS.get(kind, kind)
     return {
         "id": entity_id,
         "kind": kind,
+        "kind_label": kind_label,
         "name": name,
+        "display_name": f"{kind_label} · {name}" if name else kind_label,
         "file": file,
         "line": line,
         "properties": properties or {},
@@ -34,6 +60,7 @@ def _relation(
     return {
         "id": "kg_rel_" + stable_digest([source, target, relation_type, properties or {}])[:12],
         "type": relation_type,
+        "type_label": RELATION_TYPE_LABELS.get(relation_type, relation_type),
         "source": source,
         "target": target,
         "properties": properties or {},

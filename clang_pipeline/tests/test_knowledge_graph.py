@@ -194,9 +194,19 @@ class KnowledgeGraphTests(unittest.TestCase):
                 log_facts=logs,
             )
             self.assertGreaterEqual(kg["summary"]["entities"], 5)
+            code_entity = next(
+                item for item in kg["entities"] if item["kind"] == "code_symbol"
+            )
+            self.assertEqual("代码符号", code_entity["kind_label"])
+            self.assertEqual("代码符号 · main", code_entity["display_name"])
+            resource_entity = next(
+                item for item in kg["entities"] if item["kind"] == "resource"
+            )
+            self.assertEqual("资源", resource_entity["kind_label"])
             self.assertTrue(
                 any(
                     relation["type"] == "uses_resource"
+                    and relation["type_label"] == "使用资源"
                     for relation in kg["relations"]
                 )
             )

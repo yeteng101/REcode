@@ -67,20 +67,25 @@ class VisualizationTests(unittest.TestCase):
                         {
                             "id": "code:fn:alpha",
                             "kind": "code_symbol",
+                            "kind_label": "代码符号",
                             "name": "alpha",
+                            "display_name": "代码符号 · alpha",
                             "file": "project/alpha.c",
                             "line": 1,
                         },
                         {
                             "id": "resource:rf_test",
                             "kind": "resource",
+                            "kind_label": "资源",
                             "name": "buffer",
+                            "display_name": "资源 · buffer",
                         },
                     ],
                     "relations": [
                         {
                             "id": "rel-test",
                             "type": "uses_resource",
+                            "type_label": "使用资源",
                             "source": "code:fn:alpha",
                             "target": "resource:rf_test",
                         }
@@ -94,6 +99,10 @@ class VisualizationTests(unittest.TestCase):
             self.assertIn("Full Call Graph", text)
             self.assertIn("Calls", text)
             self.assertIn("Knowledge Graph", text)
+            self.assertIn("知识图谱", text)
+            self.assertIn("实体类型", text)
+            self.assertIn("代码符号", text)
+            self.assertIn("使用资源", text)
             self.assertNotIn("uv_run", text)
             payload_start = text.index('<script id="viz-data"')
             payload_end = text.index("</script>", payload_start)
