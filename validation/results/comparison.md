@@ -2,7 +2,7 @@
 
 > **数据泄漏警告：** 本页是历史 regression 对比，不是独立准确率报告。
 > libuv 调用链 Gold 与预测图部分同源，旧 Precision 又排除了未标注预测。
-> 2026-10-28 起以 `docs/evaluation-rebuild-2026-10-28.md` 为正式评测口径。
+> 2026-10-28 起以 `docs/external-benchmarks-2026-10-28.md` 为正式评测口径。
 
 | 项目 | libuv v1.50.0 | Redis 7.2.4 |
 |---|---:|---:|

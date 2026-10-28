@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "tool": "code-reverse-agent",
+  "edges": [
+    {
+      "caller": "cpp:cpp_basic:greet",
+      "callee": "cpp:cpp_basic:formatName",
+      "kind": "direct"
+    }
+  ]
+}

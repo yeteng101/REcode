@@ -1,0 +1,136 @@
+{
+  "schema_version": "1.0",
+  "dataset": "SV-COMP 2026 C.Concurrency",
+  "commit": "7efe28dd29576b46927b7a34e8f742bd90966a75",
+  "property": "no-data-race",
+  "metric": "synchronization-presence baseline",
+  "tp": 10,
+  "fp": 10,
+  "fn": 0,
+  "tn": 0,
+  "precision": 0.5,
+  "recall": 1.0,
+  "accuracy": 0.5,
+  "cases": [
+    {
+      "id": "bigshot_s",
+      "expected_no_race": true,
+      "predicted_no_race": true,
+      "sync_relations": 3
+    },
+    {
+      "id": "bigshot_s2",
+      "expected_no_race": true,
+      "predicted_no_race": true,
+      "sync_relations": 3
+    },
+    {
+      "id": "butterfly",
+      "expected_no_race": true,
+      "predicted_no_race": true,
+      "sync_relations": 11
+    },
+    {
+      "id": "fib_safe-10",
+      "expected_no_race": true,
+      "predicted_no_race": true,
+      "sync_relations": 1
+    },
+    {
+      "id": "fib_safe-11",
+      "expected_no_race": true,
+      "predicted_no_race": true,
+      "sync_relations": 1
+    },
+    {
+      "id": "fib_safe-12",
+      "expected_no_race": true,
+      "predicted_no_race": true,
+      "sync_relations": 1
+    },
+    {
+      "id": "fib_safe-5",
+      "expected_no_race": true,
+      "predicted_no_race": true,
+      "sync_relations": 1
+    },
+    {
+      "id": "fib_safe-6",
+      "expected_no_race": true,
+      "predicted_no_race": true,
+      "sync_relations": 1
+    },
+    {
+      "id": "fib_safe-7",
+      "expected_no_race": true,
+      "predicted_no_race": true,
+      "sync_relations": 1
+    },
+    {
+      "id": "fib_unsafe-10",
+      "expected_no_race": true,
+      "predicted_no_race": true,
+      "sync_relations": 1
+    },
+    {
+      "id": "bigshot_p",
+      "expected_no_race": false,
+      "predicted_no_race": true,
+      "sync_relations": 4
+    },
+    {
+      "id": "fib_safe-10-racy",
+      "expected_no_race": false,
+      "predicted_no_race": true,
+      "sync_relations": 1
+    },
+    {
+      "id": "fib_safe-11-racy",
+      "expected_no_race": false,
+      "predicted_no_race": true,
+      "sync_relations": 1
+    },
+    {
+      "id": "fib_safe-12-racy",
+      "expected_no_race": false,
+      "predicted_no_race": true,
+      "sync_relations": 1
+    },
+    {
+      "id": "fib_safe-5-racy",
+      "expected_no_race": false,
+      "predicted_no_race": true,
+      "sync_relations": 1
+    },
+    {
+      "id": "fib_safe-6-racy",
+      "expected_no_race": false,
+      "predicted_no_race": true,
+      "sync_relations": 1
+    },
+    {
+      "id": "fib_safe-7-racy",
+      "expected_no_race": false,
+      "predicted_no_race": true,
+      "sync_relations": 1
+    },
+    {
+      "id": "fib_unsafe-10-racy",
+      "expected_no_race": false,
+      "predicted_no_race": true,
+      "sync_relations": 1
+    },
+    {
+      "id": "fib_unsafe-11-racy",
+      "expected_no_race": false,
+      "predicted_no_race": true,
+      "sync_relations": 1
+    },
+    {
+      "id": "fib_unsafe-12-racy",
+      "expected_no_race": false,
+      "predicted_no_race": true,
+      "sync_relations": 1
+    }
+  ]
+}

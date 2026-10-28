@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "tool": "code-reverse-agent",
+  "edges": [
+    {
+      "caller": "c:c_multifile:main",
+      "callee": "c:c_multifile:audit_result",
+      "kind": "direct"
+    },
+    {
+      "caller": "c:c_multifile:main",
+      "callee": "c:c_multifile:run_pipeline",
+      "kind": "direct"
+    },
+    {
+      "caller": "c:c_multifile:run_pipeline",
+      "callee": "c:c_multifile:audit_result",
+      "kind": "direct"
+    },
+    {
+      "caller": "c:c_multifile:run_pipeline",
+      "callee": "c:c_multifile:select_handler",
+      "kind": "direct"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "tool": "code-reverse-agent",
+  "edges": [
+    {
+      "caller": "c:c_dynamic:main",
+      "callee": "c:c_dynamic:process_device",
+      "kind": "direct"
+    },
+    {
+      "caller": "c:c_dynamic:process_device",
+      "callee": "c:c_dynamic:pick_driver",
+      "kind": "direct"
+    },
+    {
+      "caller": "c:c_dynamic:process_device",
+      "callee": "c:c_dynamic:record_metric",
+      "kind": "direct"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "dataset": "CG-Bench",
+  "commit": "b277b7329f62fdddc6d4a341057d045bdf69def2",
+  "projects": [
+    "curl",
+    "ffmpeg",
+    "gcc",
+    "openssh",
+    "redis",
+    "unknown",
+    "wrk",
+    "zfs"
+  ],
+  "callsites": 105,
+  "targets": 614,
+  "evaluation_mode": "agent_or_external_predictions",
+  "note": "CG-Bench examples are extracted from real C/C++ projects and require function-pointer target predictions; no labels are inferred from analyzer output."
+}

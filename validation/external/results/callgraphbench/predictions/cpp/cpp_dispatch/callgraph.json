@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "tool": "code-reverse-agent",
+  "edges": [
+    {
+      "caller": "cpp:cpp_dispatch:main",
+      "callee": "cpp:cpp_dispatch:orchestrate",
+      "kind": "direct"
+    },
+    {
+      "caller": "cpp:cpp_dispatch:orchestrate",
+      "callee": "cpp:cpp_dispatch:choose_rule",
+      "kind": "direct"
+    },
+    {
+      "caller": "cpp:cpp_dispatch:orchestrate",
+      "callee": "cpp:cpp_dispatch:execute_rule",
+      "kind": "direct"
+    }
+  ]
+}

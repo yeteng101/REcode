@@ -1,0 +1,1100 @@
+{
+  "schema_version": "1.0",
+  "dataset": "SV-COMP 2026",
+  "commit": "7efe28dd29576b46927b7a34e8f742bd90966a75",
+  "license": "Varies by task; retain task provenance",
+  "selection": {
+    "limit_per_group": 20
+  },
+  "groups": {
+    "memsafety": [
+      {
+        "task_file": "c/memsafety/960521-1-2.yml",
+        "input_files": [
+          "960521-1-2.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/no-overflow.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "960521-1-2",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/memsafety/lockfree-3.0.yml",
+        "input_files": [
+          "lockfree-3.0.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-branches.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-conditions.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-statements.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "lockfree-3_0",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/memsafety/test-0019-1.yml",
+        "input_files": [
+          "test-0019-1.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/termination.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "test-0019-1",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/memsafety/test-0102-1.yml",
+        "input_files": [
+          "test-0102-1.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-branches.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-conditions.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-statements.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "test-0102-1",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/memsafety/test-0134.yml",
+        "input_files": [
+          "test-0134.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-branches.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-conditions.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-statements.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "test-0134",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/memsafety/test-0158-1.yml",
+        "input_files": [
+          "test-0158-1.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/termination.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "test-0158-1",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/memsafety/test-0214.yml",
+        "input_files": [
+          "test-0214.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/termination.prp",
+            "expected_verdict": false,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "test-0214",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/memsafety/test-0217.yml",
+        "input_files": [
+          "test-0217.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/termination.prp",
+            "expected_verdict": false,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "test-0217",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/memsafety/test-0218.yml",
+        "input_files": [
+          "test-0218.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/termination.prp",
+            "expected_verdict": false,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "test-0218",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/memsafety/test-0219.yml",
+        "input_files": [
+          "test-0219.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-branches.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-conditions.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-statements.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "test-0219",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/memsafety/20020406-1.yml",
+        "input_files": [
+          "20020406-1.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": false,
+            "subproperty": "valid-memtrack"
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "20020406-1",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/memsafety/20051113-1.yml",
+        "input_files": [
+          "20051113-1.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/no-overflow.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": false,
+            "subproperty": "valid-memtrack"
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "20051113-1",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/memsafety/global-atexit-2.yml",
+        "input_files": [
+          "global-atexit-2.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/valid-memcleanup.prp",
+            "expected_verdict": false,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": false,
+            "subproperty": "valid-memtrack"
+          },
+          {
+            "property_file": "../properties/coverage-branches.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "global-atexit-2",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/memsafety/lockfree-3.1.yml",
+        "input_files": [
+          "lockfree-3.1.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": false,
+            "subproperty": "valid-memtrack"
+          },
+          {
+            "property_file": "../properties/coverage-branches.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-conditions.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-statements.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "lockfree-3_1",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/memsafety/lockfree-3.2.yml",
+        "input_files": [
+          "lockfree-3.2.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": false,
+            "subproperty": "valid-memtrack"
+          },
+          {
+            "property_file": "../properties/coverage-branches.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-conditions.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-statements.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "lockfree-3_2",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/memsafety/lockfree-3.3.yml",
+        "input_files": [
+          "lockfree-3.3.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": false,
+            "subproperty": "valid-memtrack"
+          },
+          {
+            "property_file": "../properties/coverage-branches.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-conditions.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-statements.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "lockfree-3_3",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/memsafety/test-0019-2.yml",
+        "input_files": [
+          "test-0019-2.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/termination.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": false,
+            "subproperty": "valid-memtrack"
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "test-0019-2",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/memsafety/test-0102-2.yml",
+        "input_files": [
+          "test-0102-2.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": false,
+            "subproperty": "valid-memtrack"
+          },
+          {
+            "property_file": "../properties/coverage-branches.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-conditions.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-statements.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "test-0102-2",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/memsafety/test-0158-2.yml",
+        "input_files": [
+          "test-0158-2.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/termination.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": false,
+            "subproperty": "valid-memtrack"
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "test-0158-2",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/memsafety/test-0220.yml",
+        "input_files": [
+          "test-0220.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": false,
+            "subproperty": "valid-memtrack"
+          },
+          {
+            "property_file": "../properties/coverage-branches.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-conditions.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/coverage-statements.prp",
+            "expected_verdict": null,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "test-0220",
+        "property": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack",
+        "expected_verdict": false
+      }
+    ],
+    "concurrency": [
+      {
+        "task_file": "c/pthread/bigshot_s.yml",
+        "input_files": [
+          "bigshot_s.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/unreach-call.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "bigshot_s",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/pthread/bigshot_s2.yml",
+        "input_files": [
+          "bigshot_s2.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/unreach-call.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "bigshot_s2",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/pthread/butterfly.yml",
+        "input_files": [
+          "butterfly.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/unreach-call.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-overflow.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "butterfly",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/pthread/fib_safe-10.yml",
+        "input_files": [
+          "fib_safe-10.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/unreach-call.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-overflow.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "fib_safe-10",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/pthread/fib_safe-11.yml",
+        "input_files": [
+          "fib_safe-11.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/unreach-call.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-overflow.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "fib_safe-11",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/pthread/fib_safe-12.yml",
+        "input_files": [
+          "fib_safe-12.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/unreach-call.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-overflow.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "fib_safe-12",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/pthread/fib_safe-5.yml",
+        "input_files": [
+          "fib_safe-5.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/unreach-call.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-overflow.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "fib_safe-5",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/pthread/fib_safe-6.yml",
+        "input_files": [
+          "fib_safe-6.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/unreach-call.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-overflow.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "fib_safe-6",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/pthread/fib_safe-7.yml",
+        "input_files": [
+          "fib_safe-7.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/unreach-call.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-overflow.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "fib_safe-7",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/pthread/fib_unsafe-10.yml",
+        "input_files": [
+          "fib_unsafe-10.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/unreach-call.prp",
+            "expected_verdict": false,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/valid-memsafety.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-overflow.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          },
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": true,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "fib_unsafe-10",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": true
+      },
+      {
+        "task_file": "c/pthread/bigshot_p.yml",
+        "input_files": [
+          "bigshot_p.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": false,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "bigshot_p",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/pthread/fib_safe-10-racy.yml",
+        "input_files": [
+          "fib_safe-10-racy.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": false,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "fib_safe-10-racy",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/pthread/fib_safe-11-racy.yml",
+        "input_files": [
+          "fib_safe-11-racy.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": false,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "fib_safe-11-racy",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/pthread/fib_safe-12-racy.yml",
+        "input_files": [
+          "fib_safe-12-racy.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": false,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "fib_safe-12-racy",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/pthread/fib_safe-5-racy.yml",
+        "input_files": [
+          "fib_safe-5-racy.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": false,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "fib_safe-5-racy",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/pthread/fib_safe-6-racy.yml",
+        "input_files": [
+          "fib_safe-6-racy.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": false,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "fib_safe-6-racy",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/pthread/fib_safe-7-racy.yml",
+        "input_files": [
+          "fib_safe-7-racy.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": false,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "fib_safe-7-racy",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/pthread/fib_unsafe-10-racy.yml",
+        "input_files": [
+          "fib_unsafe-10-racy.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": false,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "fib_unsafe-10-racy",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/pthread/fib_unsafe-11-racy.yml",
+        "input_files": [
+          "fib_unsafe-11-racy.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": false,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "fib_unsafe-11-racy",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": false
+      },
+      {
+        "task_file": "c/pthread/fib_unsafe-12-racy.yml",
+        "input_files": [
+          "fib_unsafe-12-racy.i"
+        ],
+        "properties": [
+          {
+            "property_file": "../properties/no-data-race.prp",
+            "expected_verdict": false,
+            "subproperty": ""
+          }
+        ],
+        "language": "C",
+        "data_model": "ILP32",
+        "id": "fib_unsafe-12-racy",
+        "property": "../properties/no-data-race.prp",
+        "subproperty": "",
+        "expected_verdict": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "tool": "code-reverse-agent",
+  "edges": [
+    {
+      "caller": "c:c_basic:greet",
+      "callee": "c:c_basic:format_name",
+      "kind": "direct"
+    },
+    {
+      "caller": "c:c_basic:main",
+      "callee": "c:c_basic:make_user",
+      "kind": "direct"
+    },
+    {
+      "caller": "c:c_basic:main",
+      "callee": "c:c_basic:welcome",
+      "kind": "direct"
+    },
+    {
+      "caller": "c:c_basic:welcome",
+      "callee": "c:c_basic:greet",
+      "kind": "direct"
+    }
+  ]
+}

@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.0",
+  "dataset": "DataRaceBench",
+  "commit": "7d07c5d637fa80f1fd7c239bdc34ae53094badc2",
+  "metric": "source synchronization-presence baseline",
+  "tp": 12,
+  "fp": 12,
+  "fn": 0,
+  "tn": 0,
+  "precision": 0.5,
+  "recall": 1.0,
+  "accuracy": 0.5,
+  "cases": [
+    {
+      "id": "DRB001-antidep1-orig-yes",
+      "expected_race": true,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB002-antidep1-var-yes",
+      "expected_race": true,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB003-antidep2-orig-yes",
+      "expected_race": true,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB004-antidep2-var-yes",
+      "expected_race": true,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB005-indirectaccess1-orig-yes",
+      "expected_race": true,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB006-indirectaccess2-orig-yes",
+      "expected_race": true,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB007-indirectaccess3-orig-yes",
+      "expected_race": true,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB008-indirectaccess4-orig-yes",
+      "expected_race": true,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB009-lastprivatemissing-orig-yes",
+      "expected_race": true,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB010-lastprivatemissing-var-yes",
+      "expected_race": true,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB011-minusminus-orig-yes",
+      "expected_race": true,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB012-minusminus-var-yes",
+      "expected_race": true,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB041-3mm-parallel-no",
+      "expected_race": false,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB042-3mm-tile-no",
+      "expected_race": false,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB043-adi-parallel-no",
+      "expected_race": false,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB044-adi-tile-no",
+      "expected_race": false,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB045-doall1-orig-no",
+      "expected_race": false,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB046-doall2-orig-no",
+      "expected_race": false,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB047-doallchar-orig-no",
+      "expected_race": false,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB048-firstprivate-orig-no",
+      "expected_race": false,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB049-fprintf-orig-no",
+      "expected_race": false,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB050-functionparameter-orig-no",
+      "expected_race": false,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB051-getthreadnum-orig-no",
+      "expected_race": false,
+      "predicted_race": true,
+      "synchronization_marker": false
+    },
+    {
+      "id": "DRB052-indirectaccesssharebase-orig-no",
+      "expected_race": false,
+      "predicted_race": true,
+      "synchronization_marker": false
+    }
+  ]
+}

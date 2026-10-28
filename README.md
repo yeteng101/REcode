@@ -18,7 +18,7 @@
 >
 > 知识图谱与事实提取报告：[docs/knowledge-graph-facts-report-2026-10-23.md](docs/knowledge-graph-facts-report-2026-10-23.md)
 >
-> 独立评测重建与实验结果：[docs/evaluation-rebuild-2026-10-28.md](docs/evaluation-rebuild-2026-10-28.md)
+> 外部评测集接入：[docs/external-benchmarks-2026-10-28.md](docs/external-benchmarks-2026-10-28.md)
 >
 > 汇报与答辩：[docs/reporting-guide-2026-10-16.md](docs/reporting-guide-2026-10-16.md)
 >
@@ -26,16 +26,17 @@
 > 交互式可视化报告。流水线阶段 07 生成 `visualization.html`，原生分析完成后补充
 > resource-flow 和 sync-relations，Agent 工具 `get_visualization` 可返回该文件路径。
 >
-> 当前指标：独立合成集（非 libuv/Redis）Precision 87.50%、Recall 82.35%、F1 84.85%；
-> 后续 libuv 冻结 holdout（19 条命题）Precision 100%、Recall 89.47%。
-> 旧 libuv/Redis 数字降级为回归结果，不再作为独立准确率证据。
+> 外部评测已切换到 CallGraphBench + CG-Bench、NIST Juliet + SV-COMP
+> C.MemSafety、DataRaceBench + SV-COMP C.Concurrency。
+> CallGraphBench 官方 C/C++ 6 个 case 首轮结果：Precision 100%、Recall 58.06%、
+> F1 73.47%。旧 libuv/Redis 数字仅保留为 regression，不作为独立准确率证据。
 > libuv / Redis 图已重新生成，分别包含 216 / 55 个 external function 节点。
 > 同一个 URL Subagent 已对独立 C 和 C++ 示例仓库完成迁移验证，可分析任意 C/C++ 仓库。
 >
 > 当前风险：资源流已加入赋值/别名和跨函数 transfer，但复杂指针与路径敏感性仍不足；
 > 同步关系已加入跨函数队列、atomic release/acquire 和 thread join，但完整 CFG、
 > alias 和 reads-from 仍未完成；builtin/宏/平台条件已修复主链路，仍需扩充规则；
-> 旧 libuv/Redis 表的人工复核已确认；新独立 holdout 的人工复核仍为 pending。
+> 外部基准保留其官方标签与许可证；不再维护自建合成 Gold。
 
 > 通用验证框架已补齐项目注册、candidate 复核、仓库专用 Gold、source hash 固定和
 > 注册校验。框架可迁移，但每个新仓库必须重建自己的 Gold，不能复用 libuv/Redis
@@ -47,11 +48,12 @@
 
 | 指标 | 口径 | 当前结果 |
 |---|---|---|
-| 独立合成集 | 源码规范先写 Gold，冻结后运行分析器，封闭世界计分 | Precision 87.50%，Recall 82.35%，F1 84.85% |
-| 独立合成集调用链 | 3 正例 + 3 反例 | Precision / Recall / F1 100% |
-| 独立合成集资源流 | 6 条源码操作 | Recall 83.33%，F1 90.91% |
-| 独立合成集同步关系 | 8 条源码关系 | Precision 75%，Recall 75%，F1 75% |
-| libuv 冻结 holdout | 合成集之后建立，19 条命题 | Precision 100%，Recall 89.47% |
+| CallGraphBench | 官方 C/C++ 调用图边级 Gold | Precision 100%，Recall 58.06%，F1 73.47% |
+| CG-Bench | 真实项目函数指针 callsite | 105 个 callsite，614 个目标已提取 |
+| NIST Juliet | CWE-401 逐函数泄漏判定 | Precision 25%，Recall 100%，Accuracy 46.43% |
+| SV-COMP C.MemSafety | valid-memtrack 泄漏判定 | Precision 50%，Recall 100%，Accuracy 50% |
+| DataRaceBench | race/no-race source baseline | Precision 50%，Recall 100%，Accuracy 50% |
+| SV-COMP C.Concurrency | 同步关系存在性基线 | Precision 50%，Recall 100%，Accuracy 50% |
 
 旧 libuv/Redis 对比已标记为 regression-only。其调用链 Gold 与预测图部分同源，
 不能继续用于证明独立准确率。
@@ -60,18 +62,19 @@
 
 本周把固定示例分析推进成可以复用的仓库分析闭环。
 
-第一，推翻存在同源泄漏的旧评测口径，先构造与 libuv 无关的合成集并冻结 Gold。
-独立合成集 Precision 87.50%、Recall 82.35%，不再使用自证式的“全仓 100%”。
+第一，删除自建合成集，并把正式评测切换到固定版本的外部公开基准：
+CallGraphBench、CG-Bench、NIST Juliet、SV-COMP、DataRaceBench。
+CallGraphBench 当前 Precision 100%、Recall 58.06%，主要缺口是函数指针、C++ 构造/方法和虚调用。
 
-第二，在新的 libuv 冻结 holdout 上，19 条命题得到 Precision 100%、
-Recall 89.47%；但同步关系只达到 Recall 33.33%，仍漏掉 condition timed wait
-两侧关系，因此不能宣称整体已经准确。
+第二，CG-Bench 已用官方解析器提取 105 个真实函数指针 callsite、614 个目标，
+后续直接评估 Agent 的 target-set 预测。
 
-第三，强制流程改成“写规范 -> 写 Gold -> 冻结哈希 -> 才运行分析器”，
-并增加封闭世界评分：落在评测范围内的未标注 prediction 直接计 FP。
+第三，Juliet、SV-COMP MemSafety、DataRaceBench 和 SV-COMP Concurrency
+已完成首轮外部基线。当前 Precision 大多只有 25% 到 50%，说明资源生命周期和
+race 判定存在明显误报，不再使用自建小样本掩盖问题。
 
-下一阶段重点是修复已发现的资源漏检、atomic 外层函数归属和 condition timed wait，
-再扩大 holdout，不继续围绕小样本调标签。
+下一阶段重点是补齐资源安全和并发安全适配器，并修复 CallGraphBench 暴露的
+函数指针和 C++ 成员调用漏检。
 
 ### 一句话总结
 

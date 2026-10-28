@@ -6,3 +6,4 @@ agent-context.json
 demo/run_clang_demo/
 demo/run_*/
 third_party/
+.benchmark-cache/

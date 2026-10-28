@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "tool": "code-reverse-agent",
+  "edges": [
+    {
+      "caller": "cpp:cpp_multifile:main",
+      "callee": "cpp:cpp_multifile:run",
+      "kind": "direct"
+    },
+    {
+      "caller": "cpp:cpp_multifile:run",
+      "callee": "cpp:cpp_multifile:dispatch",
+      "kind": "direct"
+    },
+    {
+      "caller": "cpp:cpp_multifile:run",
+      "callee": "cpp:cpp_multifile:make_handler",
+      "kind": "direct"
+    }
+  ]
+}

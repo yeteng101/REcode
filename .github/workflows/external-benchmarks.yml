@@ -1,0 +1,56 @@
+name: External benchmarks
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/external-benchmarks.yml"
+      - "validation/external/**"
+      - "scripts/*benchmark*.py"
+      - "scripts/prepare_*.py"
+      - "scripts/run_*.py"
+
+permissions:
+  contents: read
+
+jobs:
+  external-benchmarks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang libclang-dev
+          python -m pip install -r validation/sync-relations/requirements.txt
+      - name: Fetch pinned external benchmarks
+        run: python scripts/fetch_external_benchmarks.py --group call_graph --group resource_flow --group sync_relation
+      - name: Prepare external case indexes
+        run: |
+          python scripts/prepare_juliet.py --limit-per-cwe 5
+          python scripts/prepare_dataracebench.py --per-label 12
+          python scripts/prepare_svcomp.py --limit 20
+      - name: Run call-graph benchmarks
+        run: |
+          python scripts/run_callgraphbench.py
+          python scripts/extract_cgbench.py
+      - name: Run resource-flow benchmarks
+        run: |
+          python scripts/run_juliet_resource.py
+          python scripts/run_svcomp_memsafety.py
+      - name: Run synchronization benchmarks
+        run: |
+          python scripts/run_dataracebench.py
+          python scripts/run_svcomp_concurrency.py
+      - name: Validate external benchmark code
+        run: python -m unittest validation.tests.test_external_benchmarks -v
+      - name: Upload external benchmark results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: external-benchmark-results
+          path: validation/external/results
