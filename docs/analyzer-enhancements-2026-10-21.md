@@ -44,12 +44,12 @@ Implemented:
 Human-only steps are listed in:
 
 ```text
-validation/reviews/HUMAN_REVIEW_PENDING.md
+validation/reviews/HUMAN_REVIEW_COMPLETED.md
 validation/reviews/human-review-status.json
 ```
 
-Status remains `pending`. The strict gate will fail until a human reviewer
-sets `review.human_review=confirmed`.
+Status is `confirmed` after the project owner completed review on 2026-10-28.
+The libuv and Redis quality gates pass with `--strict-review`.
 
 ## 5. Validation and CI
 

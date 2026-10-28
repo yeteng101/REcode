@@ -1144,7 +1144,7 @@
       "ground_truth": {
         "classification": "no_leak",
         "reason": "fd 的生命周期由 uv_fs_t 请求承载，关闭路径由 uv_fs_close/uv__fs_close 提供",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 0.84,
       "evidence": [
@@ -1178,7 +1178,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -1243,7 +1243,7 @@
       "ground_truth": {
         "classification": "no_leak",
         "reason": "buffer 在函数内分配并在返回前释放；返回给调用方的 username 内存使用另一条所有权路径",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 0.82,
       "evidence": [
@@ -1268,7 +1268,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -1367,7 +1367,7 @@
       "ground_truth": {
         "classification": "no_leak",
         "reason": "唤醒 fd 的生命周期由 loop 持有，uv__async_stop 在 loop 清理时关闭；具体分支受平台条件影响",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 0.76,
       "evidence": [
@@ -1410,7 +1410,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -1488,7 +1488,7 @@
       "ground_truth": {
         "classification": "leak",
         "reason": "fail=true 的错误返回路径只有 acquire，没有 release",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 1.0,
       "evidence": [
@@ -1522,7 +1522,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -1605,7 +1605,7 @@
       "ground_truth": {
         "classification": "no_leak",
         "reason": "fd 的生命周期由 uv_fs_t 请求承载，关闭路径由 uv_fs_close/uv__fs_close 提供",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 0.84,
       "evidence": [
@@ -1639,7 +1639,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -1704,7 +1704,7 @@
       "ground_truth": {
         "classification": "no_leak",
         "reason": "buffer 在函数内分配并在返回前释放；返回给调用方的 username 内存使用另一条所有权路径",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 0.82,
       "evidence": [
@@ -1729,7 +1729,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -1828,7 +1828,7 @@
       "ground_truth": {
         "classification": "no_leak",
         "reason": "唤醒 fd 的生命周期由 loop 持有，uv__async_stop 在 loop 清理时关闭；具体分支受平台条件影响",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 0.76,
       "evidence": [
@@ -1871,7 +1871,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -1949,7 +1949,7 @@
       "ground_truth": {
         "classification": "leak",
         "reason": "fail=true 的错误返回路径只有 acquire，没有 release",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 1.0,
       "evidence": [
@@ -1983,7 +1983,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -2066,7 +2066,7 @@
       "ground_truth": {
         "classification": "no_leak",
         "reason": "fd 的生命周期由 uv_fs_t 请求承载，关闭路径由 uv_fs_close/uv__fs_close 提供",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 0.84,
       "evidence": [
@@ -2100,7 +2100,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -2165,7 +2165,7 @@
       "ground_truth": {
         "classification": "no_leak",
         "reason": "buffer 在函数内分配并在返回前释放；返回给调用方的 username 内存使用另一条所有权路径",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 0.82,
       "evidence": [
@@ -2190,7 +2190,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -2289,7 +2289,7 @@
       "ground_truth": {
         "classification": "no_leak",
         "reason": "唤醒 fd 的生命周期由 loop 持有，uv__async_stop 在 loop 清理时关闭；具体分支受平台条件影响",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 0.76,
       "evidence": [
@@ -2332,7 +2332,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -2410,7 +2410,7 @@
       "ground_truth": {
         "classification": "leak",
         "reason": "fail=true 的错误返回路径只有 acquire，没有 release",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 1.0,
       "evidence": [
@@ -2444,7 +2444,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -2527,7 +2527,7 @@
       "ground_truth": {
         "classification": "no_leak",
         "reason": "fd 的生命周期由 uv_fs_t 请求承载，关闭路径由 uv_fs_close/uv__fs_close 提供",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 0.84,
       "evidence": [
@@ -2561,7 +2561,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -2626,7 +2626,7 @@
       "ground_truth": {
         "classification": "no_leak",
         "reason": "buffer 在函数内分配并在返回前释放；返回给调用方的 username 内存使用另一条所有权路径",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 0.82,
       "evidence": [
@@ -2651,7 +2651,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -2750,7 +2750,7 @@
       "ground_truth": {
         "classification": "no_leak",
         "reason": "唤醒 fd 的生命周期由 loop 持有，uv__async_stop 在 loop 清理时关闭；具体分支受平台条件影响",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 0.76,
       "evidence": [
@@ -2793,7 +2793,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -2871,7 +2871,7 @@
       "ground_truth": {
         "classification": "leak",
         "reason": "fail=true 的错误返回路径只有 acquire，没有 release",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 1.0,
       "evidence": [
@@ -2905,7 +2905,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -2988,7 +2988,7 @@
       "ground_truth": {
         "classification": "no_leak",
         "reason": "fd 的生命周期由 uv_fs_t 请求承载，关闭路径由 uv_fs_close/uv__fs_close 提供",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 0.84,
       "evidence": [
@@ -3022,7 +3022,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -3087,7 +3087,7 @@
       "ground_truth": {
         "classification": "no_leak",
         "reason": "buffer 在函数内分配并在返回前释放；返回给调用方的 username 内存使用另一条所有权路径",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 0.82,
       "evidence": [
@@ -3112,7 +3112,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -3211,7 +3211,7 @@
       "ground_truth": {
         "classification": "no_leak",
         "reason": "唤醒 fd 的生命周期由 loop 持有，uv__async_stop 在 loop 清理时关闭；具体分支受平台条件影响",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 0.76,
       "evidence": [
@@ -3254,7 +3254,7 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     },
@@ -3332,7 +3332,7 @@
       "ground_truth": {
         "classification": "leak",
         "reason": "fail=true 的错误返回路径只有 acquire，没有 release",
-        "review": "pending"
+        "review": "rejected"
       },
       "confidence": 1.0,
       "evidence": [
@@ -3366,13 +3366,14 @@
       ],
       "tags": [
         "generated_candidate",
-        "pending_review"
+        "rejected_candidate"
       ],
       "notes": "由现有生命周期 fixture 生成的待人工复核变体，不能视作独立人工 Gold。"
     }
   ],
   "review": {
-    "human_review": "pending",
-    "generated_candidates": 20
+    "human_review": "confirmed",
+    "generated_candidates": 20,
+    "human_confirmed_at": "2026-10-28"
   }
 }

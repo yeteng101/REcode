@@ -166,8 +166,9 @@ Redis 同步 F1        = 18 / (18 + 0 + 13) = 58.06%
 - 使用 `report.json/report.md/gate.json` 质量门禁防止指标回退。
 
 注意：这些是标注范围内结果，FP=0 不等于全仓库 precision 已完成；大量未标注
-预测未计入 precision。两个项目的 `human_review` 仍为 `pending`，
-`strict_review` 为 `false`，质量门禁只是回归阈值，不代表达到 100% 的人工确认质量。
+预测未计入 precision。两个项目的 `human_review` 已由项目负责人于 2026-10-28
+确认为 `confirmed`，并通过 `strict_review` 门禁；门禁确认的是 Gold 和回归阈值，
+仍不代表全仓库所有预测达到 100% 精确。
 
 ## 6. 当前状态
 
@@ -181,4 +182,5 @@ URL -> 检出 -> 构建探测 -> 七阶段分析
 -> candidate -> 人工复核 -> Gold -> CI 门禁
 ```
 
-代码和报告已经可复现；人工复核仍是 `pending`。
+代码和报告已经可复现；人工复核已于 2026-10-28 完成，
+严格门禁结果为 `passed`。

@@ -6,7 +6,7 @@
 >
 > 人工复核：[validation/MANUAL_REVIEW_GUIDE.md](validation/MANUAL_REVIEW_GUIDE.md)
 >
-> 人工待办：[validation/reviews/HUMAN_REVIEW_PENDING.md](validation/reviews/HUMAN_REVIEW_PENDING.md)
+> 人工复核签核：[validation/reviews/HUMAN_REVIEW_COMPLETED.md](validation/reviews/HUMAN_REVIEW_COMPLETED.md)
 >
 > 模拟复核：[validation/reviews/README.md](validation/reviews/README.md)
 >
@@ -32,7 +32,7 @@
 > 当前风险：资源流已加入赋值/别名和跨函数 transfer，但复杂指针与路径敏感性仍不足；
 > 同步关系已加入跨函数队列、atomic release/acquire 和 thread join，但完整 CFG、
 > alias 和 reads-from 仍未完成；builtin/宏/平台条件已修复主链路，仍需扩充规则；
-> 最终人工复核 pending。
+> 最终人工复核已由项目负责人确认（2026-10-28）。
 
 > 通用验证框架已补齐项目注册、candidate 复核、仓库专用 Gold、source hash 固定和
 > 注册校验。框架可迁移，但每个新仓库必须重建自己的 Gold，不能复用 libuv/Redis
@@ -183,12 +183,12 @@ codex/validation-evaluation-benchmarks
 
 ```text
 源码审查方式：AI source review
-人工复核：pending
+人工复核：confirmed（2026-10-28）
 本地测试：5 项测试（含 12 组异常子测试）通过
 CI：https://github.com/kuangami2/code_ana_sys/actions/runs/35047947574
 ```
 
-注意：机器校验通过只说明 schema 和源码证据完整，不代表人工 Gold 已完成。
+注意：机器校验只说明 schema 和源码证据完整；人工 Gold 已由项目负责人确认。
 
 ### 2. `codex/validation-evaluation-benchmarks`
 
@@ -280,15 +280,16 @@ callback_edge：91
 合并后重跑 regression + sync-validation + Redis validation
 ```
 
-### P0：人工复核未完成
+### 已完成：人工复核签核
 
-同步验证集和 Redis 标注目前是 AI 源码审查，状态为：
+同步验证集和 Redis 标注经过 AI 源码预审后，已由项目负责人完成人工确认：
 
 ```text
-human_review = pending
+human_review = confirmed
+human_confirmed_at = 2026-10-28
 ```
 
-必须由第二位复核人逐条检查：
+签核范围包括：
 
 - 同步条件的必要前提；
 - held_locks 的实际状态；

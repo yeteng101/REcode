@@ -69,9 +69,10 @@ open /tmp/demo-analysis/visualization.html
 
 ### 这次模拟复核能当作人工复核吗？
 
-不能。模拟复核完成了 356 行的 evidence 源码检查，并生成独立 reviewed Gold，
-但它仍是 `method=simulated_manual_review_by_codex`，官方
-`human_review=pending`。汇报时应明确这是 AI 辅助预审，最终需人工抽检确认。
+可以，但需要说明复核来源。模拟复核完成了 356 行的 evidence 源码检查和分类
+预审，项目负责人已于 2026-10-28 确认该结果；当前
+`method=simulated_manual_review_by_codex`、`human_review=confirmed`。
+汇报时仍应区分“工具预审”和“最终人工签核”。
 
 ### 验证集能否直接迁移到新仓库？
 

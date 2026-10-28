@@ -66,7 +66,7 @@ Redis 现在有 150 条原生同步预测，条件、端点和 identity 与 22 �
 这说明“分析器已经能输出 JSON”和“分析器输出能直接匹配当前人工 identity”是两件事。
 当前已统一主要资源/关系 identity，并加入跨函数队列、atomic release/acquire
 和 thread join；剩余阻塞点转向完整 CFG、路径敏感 alias 和 reads-from。
-最终仍需人工复核确认 Ground Truth。
+Ground Truth 已由项目负责人于 2026-10-28 完成人工确认。
 
 ## 资源流身份收口（2026-10-15）
 
@@ -85,7 +85,7 @@ Redis 现在有 150 条原生同步预测，条件、端点和 identity 与 22 �
 55 个。外部节点的逻辑 symbol 统一为 `fn:<name>`，内部随机 ID 仅保留为图节点 ID，
 因此 Redis 调用链 baseline 从 75 TP 恢复到 103 TP，recall 提升到 93.64%。
 
-完整结果在两个 `baseline/report.json` 和 `report.md`；新增标准答案人工复核 pending。
+完整结果在两个 `baseline/report.json` 和 `report.md`；新增标准答案已完成人工复核。
 
 ## 分析器增强（2026-10-21）
 
@@ -96,4 +96,4 @@ Redis 现在有 150 条原生同步预测，条件、端点和 identity 与 22 �
   并让验证器使用宏定义确认展开目标。
 - CI：`run_validation_project.py` 自动生成 `report.json`、`report.md`、
   `gate.json`，阈值回退直接失败。
-- 人工复核：新增 `validation/reviews/HUMAN_REVIEW_PENDING.md`，仍需人工签字。
+- 人工复核：`validation/reviews/HUMAN_REVIEW_COMPLETED.md` 已记录 2026-10-28 签核。

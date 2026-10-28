@@ -4,9 +4,10 @@
   "scope": "annotated facts only; unlabelled predictions excluded from precision",
   "scoring": "candidate facts including unconfirmed; confirmed-only metrics reported separately",
   "review": {
-    "human_review": "pending",
+    "human_review": "confirmed",
+    "human_confirmed_at": "2026-10-28",
     "method": "source_review_by_ai; lexical candidate collection followed by explicit source review; not derived from analyzer graph + source_review_by_ai",
-    "limitation": "Redis annotations cover explicitly selected source units; pending human review remains part of the benchmark metadata."
+    "limitation": "Redis annotations cover explicitly selected source units; the project owner confirmed the review on 2026-10-28."
   },
   "categories": {
     "call_chain": {

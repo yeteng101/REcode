@@ -4,17 +4,19 @@
 the 356 entries in `validation/人工复核表-2026-10-16.xlsx`.
 
 The review checks every evidence anchor against the pinned libuv/Redis source
-checkouts, then applies category rules. It is not a human confirmation:
+checkouts, then applies category rules. The project owner reviewed the generated
+workbook and confirmed it on 2026-10-28:
 
 ```text
-human_review = pending
+human_review = confirmed
 method = simulated_manual_review_by_codex
+human_confirmed_at = 2026-10-28
 ```
 
-Human-only handoff steps:
+Human sign-off record:
 
 ```text
-validation/reviews/HUMAN_REVIEW_PENDING.md
+validation/reviews/HUMAN_REVIEW_COMPLETED.md
 validation/reviews/human-review-status.json
 ```
 
@@ -43,7 +45,7 @@ Redis 7.2.4  -> github.com/redis/redis
 project fixtures -> github.com/yeteng101/code_ana_sys
 ```
 
-Reviewed Gold snapshots are separate from the official pending-review
+Reviewed Gold snapshots are retained for audit alongside the confirmed
 benchmarks:
 
 ```text

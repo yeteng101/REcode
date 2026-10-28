@@ -13,7 +13,8 @@
 - 26 正例、6 反例；mutex、rwlock、atomic、condition_variable、
   event_wait、event_notify、thread_join 及程序顺序均有覆盖。
 - `check-report.json` 是完整性检查结果，不是分析器 precision/recall，
-  也不是运行时并发证明。`review.human_review=pending`：AI 已审查源码，待人工复核。
+  也不是运行时并发证明。`review.human_review=confirmed`：AI 已审查源码，
+  项目负责人已于 2026-10-28 完成人工确认。
 
 引用的完整源码文件按 LF 归一化 SHA-256
 固定，兼容 Windows Git CRLF 检出；证据正文、行号与引用均需匹配。

@@ -18,8 +18,17 @@ def combined_review(*datasets, limitation=""):
         for review in reviews
         if review.get("method")
     ]
+    confirmed_at = next(
+        (
+            review.get("human_confirmed_at")
+            for review in reviews
+            if review.get("human_confirmed_at")
+        ),
+        "",
+    )
     return {
         "human_review": "confirmed" if confirmed else "pending",
+        "human_confirmed_at": confirmed_at if confirmed else "",
         "method": " + ".join(dict.fromkeys(methods)) or "source_review_by_ai",
         "limitation": limitation,
     }
@@ -59,7 +68,9 @@ def prepare():
     for s in calls["samples"]:
         if s["graph"] != "demo/libuv/graph.json":
             continue
-        if {"generated_candidate", "pending_review"} & set(s.get("tags", [])):
+        if {"generated_candidate", "pending_review", "rejected_candidate"} & set(
+            s.get("tags", [])
+        ):
             continue
         c = s["claim"]
         libuv["cases"].append({"id": s["id"], "category": "call_chain", "identity": [c["source"], c["target"]],
@@ -68,7 +79,7 @@ def prepare():
     for resource in resources["resources"]:
         if resource.get("repository") != "libuv/libuv":
             continue
-        if resource.get("ground_truth", {}).get("review") == "pending":
+        if resource.get("ground_truth", {}).get("review") in {"pending", "rejected"}:
             continue
         for op in resource["operations"]:
             loc = op["location"]
@@ -86,8 +97,8 @@ def prepare():
                  redis_calls,
                  redis_sync,
                  limitation=(
-                     "Redis annotations cover explicitly selected source units; "
-                     "pending human review remains part of the benchmark metadata."
+                    "Redis annotations cover explicitly selected source units; "
+                    "the project owner confirmed the review on 2026-10-28."
                  ),
              ),
              "cases": redis_calls["cases"] + sync_cases(redis_sync)}

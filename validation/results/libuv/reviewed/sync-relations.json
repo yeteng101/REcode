@@ -1845,10 +1845,11 @@
     }
   ],
   "warnings": [
-    "Source-reviewed conditions must accompany each relation; human review is pending."
+    "Source-reviewed conditions must accompany each relation; human review is confirmed."
   ],
   "review": {
     "method": "source_review_by_ai",
-    "human_review": "pending"
+    "human_review": "confirmed",
+    "human_confirmed_at": "2026-10-28"
   }
 }

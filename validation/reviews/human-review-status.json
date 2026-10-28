@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
-  "status": "pending",
+  "status": "confirmed",
   "simulated_review_completed": true,
-  "human_review_completed": false,
+  "human_review_completed": true,
   "scope": {
     "libuv_sync_relations": 32,
     "redis_sync_relations": 22,
@@ -18,5 +18,9 @@
     "Synchronize decisions into source JSON datasets",
     "Set review.human_review=confirmed after sign-off",
     "Run the strict validation quality gate"
-  ]
+  ],
+  "confirmed_at": "2026-10-28",
+  "confirmed_by": "project_owner",
+  "review_artifact": "validation/人工复核表-2026-10-16-simulated.xlsx",
+  "strict_gate_required": true
 }

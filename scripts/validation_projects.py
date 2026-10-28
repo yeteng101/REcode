@@ -932,6 +932,7 @@ def check_project(
 def check_legacy_project(entry: dict[str, Any], root: Path) -> dict[str, Any]:
     errors: list[str] = []
     warnings: list[str] = []
+    human_review = entry.get("human_review", "pending")
     paths = [
         value
         for value in entry.get("datasets", {}).values()
@@ -957,13 +958,19 @@ def check_legacy_project(entry: dict[str, Any], root: Path) -> dict[str, Any]:
     results = entry.get("results")
     if results and not (Path(results) if Path(results).is_absolute() else root / results).exists():
         warnings.append(f"results directory is not available: {results}")
-    warnings.append("legacy project is pending human review unless all pending labels are resolved")
+    if human_review != "confirmed":
+        warnings.append(
+            "legacy project is pending human review unless all pending labels are resolved"
+        )
     return {
         "project_id": entry.get("id", "<missing>"),
         "name": entry.get("name", entry.get("id", "<missing>")),
         "status": "failed" if errors else "passed",
-        "project_status": entry.get("status", "legacy_pending_review"),
-        "human_review": entry.get("human_review", "pending"),
+        "project_status": entry.get(
+            "status",
+            "ready" if human_review == "confirmed" else "legacy_pending_review",
+        ),
+        "human_review": human_review,
         "cases": sum(counts.values()),
         "errors": errors,
         "warnings": warnings,

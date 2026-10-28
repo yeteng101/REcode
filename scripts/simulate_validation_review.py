@@ -202,7 +202,7 @@ def review_resources(data: dict[str, Any]) -> list[dict[str, Any]]:
                     "reason": reason,
                     "gold": (
                         resource.get("repository") == "libuv/libuv"
-                        and review != "pending"
+                        and review in {"confirmed", "confirmed_with_condition"}
                     ),
                 }
             )
@@ -278,11 +278,17 @@ def review_redis_sync(data: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def review_metadata() -> dict[str, Any]:
+    status_path = ROOT / "validation/reviews/human-review-status.json"
+    signoff = read_json(status_path) if status_path.exists() else {}
+    human_review = (
+        "confirmed" if signoff.get("human_review_completed") is True else "pending"
+    )
     return {
-        "human_review": "pending",
+        "human_review": human_review,
         "method": "simulated_manual_review_by_codex",
         "reviewer": REVIEWER,
         "generated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
+        "human_confirmed_at": signoff.get("confirmed_at", ""),
         "scope": (
             "Every evidence anchor was checked against the pinned checkout. "
             "Decisions are automated source checks plus category heuristics; "
@@ -290,8 +296,13 @@ def review_metadata() -> dict[str, Any]:
         ),
         "notes": (
             "Generated placeholder call candidates and duplicate pending "
-            "resource candidates were rejected as Gold. Official human_review "
-            "remains pending."
+            "resource candidates were rejected as Gold. "
+            + (
+                "The project owner confirmed the review on "
+                f"{signoff.get('confirmed_at', 'the recorded sign-off date')}."
+                if human_review == "confirmed"
+                else "Official human_review remains pending."
+            )
         ),
     }
 
@@ -309,7 +320,9 @@ def build_gold() -> dict[str, Any]:
     for sample in read_json(ROOT / "validation/call-chains/dataset.json")["samples"]:
         if sample["graph"] != "demo/libuv/graph.json":
             continue
-        if {"generated_candidate", "pending_review"} & set(sample.get("tags", [])):
+        if {"generated_candidate", "pending_review", "rejected_candidate"} & set(
+            sample.get("tags", [])
+        ):
             continue
         claim = sample["claim"]
         libuv_calls.append(
@@ -326,7 +339,7 @@ def build_gold() -> dict[str, Any]:
     for resource in read_json(ROOT / "validation/resource-flow/dataset.json")["resources"]:
         if resource.get("repository") != "libuv/libuv":
             continue
-        if resource.get("ground_truth", {}).get("review") == "pending":
+        if resource.get("ground_truth", {}).get("review") in {"pending", "rejected"}:
             continue
         for operation in resource["operations"]:
             location = operation["location"]

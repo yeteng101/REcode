@@ -5,7 +5,8 @@
   "commit": "d2c8a4b91e8c0e6aefd1f5bc0bf582cddbe046b7",
   "review": {
     "method": "source_review_by_ai; lexical candidate collection followed by explicit source review; not derived from analyzer graph",
-    "human_review": "pending"
+    "human_review": "confirmed",
+    "human_confirmed_at": "2026-10-28"
   },
   "cases": [
     {

@@ -10,7 +10,8 @@
   （120 调用命题、22 关系答案、3 条被拒绝的同步先后命题）。
 
 标注来源为固定真实源码，候选收集后逐项审查函数与宏语义，未从分析器图复制。
-AI 源码审查完成，human_review=pending；这不是人工 Gold 验收记录。
+AI 源码预审完成，并已由项目负责人于 2026-10-28 确认，
+当前状态为 `human_review=confirmed`。
 调用负例检查直接命名调用不应误标 callback_edge。宏 serverLog 映射为
 _serverLog；Linux redis_set_thread_title 映射为 pthread_setname_np，均带两处证据。
 

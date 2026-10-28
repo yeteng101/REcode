@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
   "status": "passed",
-  "human_review": "pending",
-  "strict_review": false,
+  "human_review": "confirmed",
+  "strict_review": true,
   "checks": [
     {
       "name": "call_chain.recall",
@@ -30,20 +30,19 @@
     },
     {
       "name": "human_review",
-      "status": "informational",
-      "actual": "pending"
+      "status": "passed",
+      "actual": "confirmed",
+      "required": "confirmed"
     }
   ],
   "project_check": {
     "project_id": "libuv",
     "name": "libuv",
     "status": "passed",
-    "project_status": "legacy_pending_review",
-    "human_review": "pending",
+    "project_status": "ready",
+    "human_review": "confirmed",
     "cases": 32,
     "errors": [],
-    "warnings": [
-      "legacy project is pending human review unless all pending labels are resolved"
-    ]
+    "warnings": []
   }
 }

@@ -4,12 +4,13 @@
   "scope": "annotated facts only; unlabelled predictions excluded from precision",
   "scoring": "candidate facts including unconfirmed; confirmed-only metrics reported separately",
   "review": {
-    "human_review": "pending",
+    "human_review": "confirmed",
     "method": "simulated_manual_review_by_codex",
     "reviewer": "codex-simulated-review-2026-10-16",
-    "generated_at": "2026-10-16T06:04:57+00:00",
+    "generated_at": "2026-10-28T07:12:03+00:00",
+    "human_confirmed_at": "2026-10-28",
     "scope": "Every evidence anchor was checked against the pinned checkout. Decisions are automated source checks plus category heuristics; they do not replace a human reviewer.",
-    "notes": "Generated placeholder call candidates and duplicate pending resource candidates were rejected as Gold. Official human_review remains pending."
+    "notes": "Generated placeholder call candidates and duplicate pending resource candidates were rejected as Gold. The project owner confirmed the review on 2026-10-28."
   },
   "categories": {
     "call_chain": {

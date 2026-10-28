@@ -3,7 +3,8 @@
   "commit": "8fb9cb919489a48880680a56efecff6a7dfb4504",
   "review": {
     "method": "source_review_by_ai",
-    "human_review": "pending"
+    "human_review": "confirmed",
+    "human_confirmed_at": "2026-10-28"
   },
   "check_scope": "schema_and_source_integrity",
   "samples": 32,

@@ -93,7 +93,11 @@ def reviewed_sync(dataset, doc):
     doc["origin"] = "reviewed_annotations_not_analyzer_predictions"
     doc["status"] = "partial"
     doc["review"] = dataset["review"]
-    doc["warnings"] = ["Source-reviewed conditions must accompany each relation; human review is pending."]
+    human_review = dataset.get("review", {}).get("human_review", "pending")
+    doc["warnings"] = [
+        "Source-reviewed conditions must accompany each relation; "
+        f"human review is {human_review}."
+    ]
     for s in dataset["samples"]:
         endpoints = []
         ev = {e["id"]: e for e in s["evidence"]}
