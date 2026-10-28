@@ -9,7 +9,11 @@ from pathlib import Path
 from unittest.mock import patch
 
 from clang_pipeline.cli import command_repo
-from clang_pipeline.repo_agent import repository_identity, run_repo_analysis
+from clang_pipeline.repo_agent import (
+    _relativize_json_paths,
+    repository_identity,
+    run_repo_analysis,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -79,6 +83,16 @@ class RepoAgentTests(unittest.TestCase):
             repository_identity("/Users/andye/Documents/ChatGPT/8.18huawei/demo/sample"),
             "sample",
         )
+
+    def test_relativizes_workspace_relative_source_paths(self) -> None:
+        relative_file = (
+            FIXTURE / "external_flow.c"
+        ).relative_to(ROOT).as_posix()
+        result = _relativize_json_paths(
+            {"file": relative_file},
+            FIXTURE,
+        )
+        self.assertEqual(result["file"], "external_flow.c")
 
     def test_file_url_produces_complete_bundle(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

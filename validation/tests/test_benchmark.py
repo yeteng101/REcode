@@ -66,6 +66,111 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(m["unlabelled_predictions"], 1)
         self.assertEqual(m["fp"], 0)
 
+    def test_closed_world_counts_unlabelled_in_scope_prediction_as_fp(self):
+        item = copy.deepcopy(self.docs["call_chain"]["items"][0])
+        item["id"] = "unlabelled"
+        item["edges"][0]["source"] = "fn:other"
+        item["nodes"][0]["id"] = "fn:other"
+        self.docs["call_chain"]["items"].append(item)
+        self.truth["annotation_scope"] = {
+            "mode": "closed_world",
+            "categories": ["call_chain"],
+            "paths": ["src/example.c"],
+        }
+        m = self.score()
+        self.assertEqual((m["tp"], m["fp"], m["fn"]), (1, 1, 0))
+        self.assertEqual(m["unlabelled_predictions"], 0)
+        self.assertEqual(m["out_of_scope_predictions"], 0)
+
+    def test_closed_world_ignores_prediction_outside_scope(self):
+        item = copy.deepcopy(self.docs["call_chain"]["items"][0])
+        item["id"] = "outside"
+        item["edges"][0]["source"] = "fn:other"
+        item["nodes"][0]["id"] = "fn:other"
+        item["edges"][0]["evidence_ids"] = ["outside-evidence"]
+        self.docs["call_chain"]["evidence"].append(
+            {
+                "id": "outside-evidence",
+                "file": "tests/outside.c",
+                "line": 1,
+                "snippet": "b();",
+            }
+        )
+        self.docs["call_chain"]["items"].append(item)
+        self.truth["annotation_scope"] = {
+            "mode": "closed_world",
+            "categories": ["call_chain"],
+            "paths": ["src/example.c"],
+        }
+        m = self.score()
+        self.assertEqual(m["fp"], 0)
+        self.assertEqual(m["out_of_scope_predictions"], 1)
+
+    def test_closed_world_can_scope_to_source_function(self):
+        outside = copy.deepcopy(self.docs["call_chain"]["items"][0])
+        outside["id"] = "outside-function"
+        outside["edges"][0]["source"] = "fn:unscoped"
+        outside["nodes"][0]["id"] = "fn:unscoped"
+        self.docs["call_chain"]["items"].append(outside)
+        self.truth["annotation_scope"] = {
+            "mode": "closed_world",
+            "categories": ["call_chain"],
+            "paths": ["src/example.c"],
+            "functions": ["a"],
+        }
+        m = self.score()
+        self.assertEqual((m["tp"], m["fp"]), (1, 0))
+        self.assertEqual(m["out_of_scope_predictions"], 1)
+
+    def test_source_anchor_resource_identity(self):
+        document = {
+            "schema_version": "1.0",
+            "run_id": "resource-anchor",
+            "result_type": "resource_flow",
+            "status": "succeeded",
+            "source": self.source,
+            "origin": "analyzer",
+            "items": [
+                {
+                    "id": "resource-item",
+                    "resource": "internal-id-must-not-be-scored",
+                    "resource_type": "memory",
+                    "operations": [
+                        {
+                            "kind": "acquire",
+                            "function": "allocate",
+                            "file": "src/resource.c",
+                            "line": 4,
+                            "confidence": 0.8,
+                            "status": "unconfirmed",
+                            "evidence_ids": ["resource-evidence"],
+                        }
+                    ],
+                    "confidence": 0.8,
+                    "status": "unconfirmed",
+                    "evidence_ids": ["resource-evidence"],
+                }
+            ],
+            "evidence": [
+                {
+                    "id": "resource-evidence",
+                    "file": "src/resource.c",
+                    "line": 4,
+                    "snippet": "buffer = malloc(8);",
+                }
+            ],
+            "warnings": [],
+        }
+        facts = flatten(
+            document,
+            "resource_flow",
+            identity_profile="source_anchor_v1",
+        )
+        self.assertEqual(
+            (facts[0]["identity"], facts[0]["kind"]),
+            (["allocate", "src/resource.c", 4], "acquire"),
+        )
+
     def test_evidence_must_match_all_required_anchors(self):
         self.truth["cases"][0]["evidence"] = [{**self.evidence, "line": 3}]
         self.assertEqual(self.score()["evidence_hit_rate"], 0)

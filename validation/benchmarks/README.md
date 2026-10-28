@@ -1,5 +1,12 @@
 # 三类结果统一评测
 
+> **历史回归集，自 2026-10-28 起不再作为独立准确率证据。**
+>
+> libuv 旧调用链 Gold 与预测图部分同源；同时旧评测采用 open-world，
+> 未标注预测不进入 Precision。独立评测请使用
+> `docs/evaluation-rebuild-2026-10-28.md`、
+> `validation/independent/` 和 `validation/holdouts/libuv-v1/`。
+
 新仓库的通用验证项目流程见
 [`docs/validation-project-workflow.md`](../../docs/validation-project-workflow.md)。
 libuv/Redis 下面的 baseline 只属于各自固定 commit，不能作为其他仓库 Gold。

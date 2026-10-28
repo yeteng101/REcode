@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "run_id": "independent_resources_v1",
+  "result_type": "sync_relation",
+  "status": "not_available",
+  "generated_at": "2026-10-28T07:30:43Z",
+  "source": {
+    "repository": "independent/resources-v1",
+    "commit": "2222222222222222222222222222222222222222",
+    "build_profile": "independent-micro-v1",
+    "analyzer": "libclang compact AST + clang++",
+    "generated_at": "2026-10-28T07:30:43Z",
+    "origin": "analyzer",
+    "provider": "native_sync_flow_v1"
+  },
+  "items": [],
+  "evidence": [],
+  "warnings": [
+    "no synchronization relation matched the native rules"
+  ]
+}

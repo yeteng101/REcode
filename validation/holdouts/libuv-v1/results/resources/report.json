@@ -1,0 +1,171 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "libuv-post-freeze-resources-v1",
+  "scope": "closed-world annotated subset; every in-scope prediction is scored",
+  "scoring": "candidate facts including unconfirmed; confirmed-only metrics reported separately",
+  "review": {
+    "method": "post_freeze_source_review_by_codex",
+    "human_review": "pending",
+    "limitation": "Single-file holdout authored after the synthetic suite was frozen."
+  },
+  "annotation_scope": {
+    "mode": "closed_world",
+    "categories": [
+      "resource_flow"
+    ],
+    "paths": [
+      "src/unix/dl.c"
+    ]
+  },
+  "identity_profile": "source_anchor_v1",
+  "categories": {
+    "call_chain": {
+      "input_status": "partial",
+      "gold_positive": 0,
+      "gold_negative": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "tn": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "type_accuracy": null,
+      "evidence_hit_rate": null,
+      "coverage": null,
+      "unconfirmed_ratio": 1.0,
+      "unlabelled_predictions": 2194,
+      "out_of_scope_predictions": 2194,
+      "prediction_count": 2194,
+      "duplicate_predictions": 651,
+      "confirmed_only": {
+        "precision": null,
+        "recall": null,
+        "tp": 0,
+        "fp": 0,
+        "f1": null
+      },
+      "errors_by_type": {},
+      "cases": []
+    },
+    "resource_flow": {
+      "input_status": "partial",
+      "gold_positive": 5,
+      "gold_negative": 0,
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "tn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "type_accuracy": 1.0,
+      "evidence_hit_rate": 1.0,
+      "coverage": 1.0,
+      "unconfirmed_ratio": 1.0,
+      "unlabelled_predictions": 0,
+      "out_of_scope_predictions": 235,
+      "prediction_count": 240,
+      "duplicate_predictions": 0,
+      "confirmed_only": {
+        "precision": null,
+        "recall": 0.0,
+        "tp": 0,
+        "fp": 0,
+        "f1": 0.0
+      },
+      "errors_by_type": {},
+      "cases": [
+        {
+          "case_id": "libuv_resource_dlerror_free",
+          "verdict": "tp",
+          "evidence_hit": true,
+          "kind": "release",
+          "identity": [
+            "uv__dlerror",
+            "src/unix/dl.c",
+            68
+          ],
+          "notes": ""
+        },
+        {
+          "case_id": "libuv_resource_dlerror_strdup",
+          "verdict": "tp",
+          "evidence_hit": true,
+          "kind": "acquire",
+          "identity": [
+            "uv__dlerror",
+            "src/unix/dl.c",
+            73
+          ],
+          "notes": ""
+        },
+        {
+          "case_id": "libuv_resource_dlclose_free",
+          "verdict": "tp",
+          "evidence_hit": true,
+          "kind": "release",
+          "identity": [
+            "uv_dlclose",
+            "src/unix/dl.c",
+            42
+          ],
+          "notes": ""
+        },
+        {
+          "case_id": "libuv_resource_dlclose",
+          "verdict": "tp",
+          "evidence_hit": true,
+          "kind": "release",
+          "identity": [
+            "uv_dlclose",
+            "src/unix/dl.c",
+            47
+          ],
+          "notes": ""
+        },
+        {
+          "case_id": "libuv_resource_dlopen",
+          "verdict": "tp",
+          "evidence_hit": true,
+          "kind": "acquire",
+          "identity": [
+            "uv_dlopen",
+            "src/unix/dl.c",
+            36
+          ],
+          "notes": ""
+        }
+      ]
+    },
+    "sync_relation": {
+      "input_status": "succeeded",
+      "gold_positive": 0,
+      "gold_negative": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "tn": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "type_accuracy": null,
+      "evidence_hit_rate": null,
+      "coverage": null,
+      "unconfirmed_ratio": 1.0,
+      "unlabelled_predictions": 205,
+      "out_of_scope_predictions": 205,
+      "prediction_count": 205,
+      "duplicate_predictions": 1,
+      "confirmed_only": {
+        "precision": null,
+        "recall": null,
+        "tp": 0,
+        "fp": 0,
+        "f1": null
+      },
+      "errors_by_type": {},
+      "cases": []
+    }
+  }
+}

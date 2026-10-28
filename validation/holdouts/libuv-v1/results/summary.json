@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "protocol": "post_synthetic_freeze_closed_world",
+  "scope": "pinned libuv v1.50.0 holdout; labels frozen before native extraction",
+  "projects": {
+    "callgraph": {
+      "category": "call_chain",
+      "tp": 11,
+      "fp": 0,
+      "fn": 0,
+      "tn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "labelled_accuracy": 1.0
+    },
+    "resources": {
+      "category": "resource_flow",
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "tn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "labelled_accuracy": 1.0
+    },
+    "sync": {
+      "category": "sync_relation",
+      "tp": 1,
+      "fp": 0,
+      "fn": 2,
+      "tn": 0,
+      "precision": 1.0,
+      "recall": 0.3333333333333333,
+      "f1": 0.5,
+      "labelled_accuracy": 0.3333333333333333
+    }
+  },
+  "micro_totals": {
+    "tp": 17,
+    "fp": 0,
+    "fn": 2,
+    "tn": 0,
+    "precision": 1.0,
+    "recall": 0.8947368421052632,
+    "f1": 0.9444444444444444,
+    "labelled_accuracy": 0.8947368421052632
+  }
+}

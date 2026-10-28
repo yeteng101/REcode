@@ -1,0 +1,214 @@
+{
+  "schema_version": "1.0",
+  "run_id": "independent_callgraph_v1",
+  "result_type": "call_chain",
+  "status": "partial",
+  "source": {
+    "repository": "independent/callgraph-v1",
+    "commit": "1111111111111111111111111111111111111111",
+    "build_profile": "independent-micro-v1",
+    "analyzer": "libclang compact AST + clang++",
+    "generated_at": "2026-10-28T07:30:42Z",
+    "origin": "01-index/ast/*.ast.json"
+  },
+  "origin": "analyzer",
+  "items": [
+    {
+      "id": "e_1604ff23aded",
+      "entry": "fn:bridge",
+      "direction": "caller_to_callee",
+      "nodes": [
+        {
+          "id": "fn:bridge",
+          "kind": "function",
+          "name": "bridge",
+          "file": "src/callgraph.c",
+          "line": 9,
+          "signature": "int (int)",
+          "module": ""
+        },
+        {
+          "id": "fn:leaf",
+          "kind": "function",
+          "name": "leaf",
+          "file": "src/callgraph.c",
+          "line": 5,
+          "signature": "int (int)",
+          "module": ""
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_1604ff23aded",
+          "source": "fn:bridge",
+          "target": "fn:leaf",
+          "kind": "direct_call",
+          "call_site": {
+            "file": "src/callgraph.c",
+            "line": 10,
+            "column": 12,
+            "snippet": "return leaf(value);"
+          },
+          "condition": null,
+          "execution_context": null,
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_08a1c12b376d"
+          ],
+          "status": "unconfirmed"
+        }
+      ],
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_08a1c12b376d"
+      ],
+      "status": "unconfirmed"
+    },
+    {
+      "id": "e_86929e6a7bbf",
+      "entry": "fn:entry",
+      "direction": "caller_to_callee",
+      "nodes": [
+        {
+          "id": "fn:entry",
+          "kind": "function",
+          "name": "entry",
+          "file": "src/callgraph.c",
+          "line": 21,
+          "signature": "int (int)",
+          "module": ""
+        },
+        {
+          "id": "fn:bridge",
+          "kind": "function",
+          "name": "bridge",
+          "file": "src/callgraph.c",
+          "line": 9,
+          "signature": "int (int)",
+          "module": ""
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_86929e6a7bbf",
+          "source": "fn:entry",
+          "target": "fn:bridge",
+          "kind": "direct_call",
+          "call_site": {
+            "file": "src/callgraph.c",
+            "line": 22,
+            "column": 17,
+            "snippet": "int first = bridge(value);"
+          },
+          "condition": null,
+          "execution_context": null,
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_cbaba3d0e7bd"
+          ],
+          "status": "unconfirmed"
+        }
+      ],
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_cbaba3d0e7bd"
+      ],
+      "status": "unconfirmed"
+    },
+    {
+      "id": "e_d70a91c5475c",
+      "entry": "fn:entry",
+      "direction": "caller_to_callee",
+      "nodes": [
+        {
+          "id": "fn:entry",
+          "kind": "function",
+          "name": "entry",
+          "file": "src/callgraph.c",
+          "line": 21,
+          "signature": "int (int)",
+          "module": ""
+        },
+        {
+          "id": "fn:doubled",
+          "kind": "function",
+          "name": "doubled",
+          "file": "src/callgraph.c",
+          "line": 13,
+          "signature": "int (int)",
+          "module": ""
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_d70a91c5475c",
+          "source": "fn:entry",
+          "target": "fn:doubled",
+          "kind": "direct_call",
+          "call_site": {
+            "file": "src/callgraph.c",
+            "line": 23,
+            "column": 18,
+            "snippet": "int second = APPLY_ONCE(doubled, first);"
+          },
+          "condition": "APPLY_ONCE",
+          "execution_context": null,
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_16fbb197ed86"
+          ],
+          "status": "unconfirmed"
+        }
+      ],
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_16fbb197ed86"
+      ],
+      "status": "unconfirmed"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev_08a1c12b376d",
+      "kind": "call_site",
+      "location": {
+        "file": "src/callgraph.c",
+        "line": 10,
+        "column": 12,
+        "snippet": "return leaf(value);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_16fbb197ed86",
+      "kind": "call_site",
+      "location": {
+        "file": "src/callgraph.c",
+        "line": 23,
+        "column": 18,
+        "snippet": "int second = APPLY_ONCE(doubled, first);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1",
+      "macro_stack": [
+        "APPLY_ONCE"
+      ]
+    },
+    {
+      "id": "ev_cbaba3d0e7bd",
+      "kind": "call_site",
+      "location": {
+        "file": "src/callgraph.c",
+        "line": 22,
+        "column": 17,
+        "snippet": "int first = bridge(value);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    }
+  ],
+  "warnings": [
+    "Absent per-edge verification remains unconfirmed; confidence is not a verification verdict."
+  ]
+}

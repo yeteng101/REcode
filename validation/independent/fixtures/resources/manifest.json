@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "project_id": "resources",
+  "status": "frozen",
+  "frozen_at": "2026-10-28T07:29:13+00:00",
+  "protocol": "specification_first_closed_world",
+  "repository": "independent/resources-v1",
+  "commit": "2222222222222222222222222222222222222222",
+  "gold_sha256": "6121404214f5c9ed35d2e58de0110036fdb2e2950e1ec3c827c386188afd6c11",
+  "spec_sha256": "1030a018cd392d7eeebfcc6107e6cc7ae67c9bf3afa8c2e131db1635caaf9fd2",
+  "source_sha256": {
+    "source/src/resources.c": "a6a3e6a956eff85d5e2d4aa85a56c347b4b1b9a78e3e5320a6094d21d896ea26"
+  },
+  "label_counts": {
+    "positive": 6,
+    "negative": 0
+  }
+}

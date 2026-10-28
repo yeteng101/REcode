@@ -1,0 +1,126 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "independent-callgraph-v1",
+  "identity_profile": "default",
+  "annotation_scope": {
+    "mode": "closed_world",
+    "categories": [
+      "call_chain"
+    ],
+    "paths": [
+      "src/callgraph.c"
+    ]
+  },
+  "review": {
+    "method": "specification_first_ai_authored_microbenchmark",
+    "label_authority": "codex_source_specification_review",
+    "human_review": "pending",
+    "limitation": "Small synthetic repository; measures these facts only."
+  },
+  "repository": "independent/callgraph-v1",
+  "commit": "1111111111111111111111111111111111111111",
+  "cases": [
+    {
+      "id": "callgraph_entry_bridge",
+      "category": "call_chain",
+      "identity": [
+        "fn:entry",
+        "fn:bridge"
+      ],
+      "kind": "direct_call",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/callgraph.c",
+          "line": 22,
+          "snippet": "int first = bridge(value);"
+        }
+      ]
+    },
+    {
+      "id": "callgraph_bridge_leaf",
+      "category": "call_chain",
+      "identity": [
+        "fn:bridge",
+        "fn:leaf"
+      ],
+      "kind": "direct_call",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/callgraph.c",
+          "line": 10,
+          "snippet": "return leaf(value);"
+        }
+      ]
+    },
+    {
+      "id": "callgraph_entry_doubled_macro",
+      "category": "call_chain",
+      "identity": [
+        "fn:entry",
+        "fn:doubled"
+      ],
+      "kind": "direct_call",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/callgraph.c",
+          "line": 23,
+          "snippet": "int second = APPLY_ONCE(doubled, first);"
+        }
+      ]
+    },
+    {
+      "id": "callgraph_entry_leaf_is_indirect",
+      "category": "call_chain",
+      "identity": [
+        "fn:entry",
+        "fn:leaf"
+      ],
+      "kind": "direct_call",
+      "expected_exists": false,
+      "evidence": [
+        {
+          "file": "src/callgraph.c",
+          "line": 22,
+          "snippet": "int first = bridge(value);"
+        }
+      ]
+    },
+    {
+      "id": "callgraph_bridge_doubled_absent",
+      "category": "call_chain",
+      "identity": [
+        "fn:bridge",
+        "fn:doubled"
+      ],
+      "kind": "direct_call",
+      "expected_exists": false,
+      "evidence": [
+        {
+          "file": "src/callgraph.c",
+          "line": 10,
+          "snippet": "return leaf(value);"
+        }
+      ]
+    },
+    {
+      "id": "callgraph_leaf_bridge_absent",
+      "category": "call_chain",
+      "identity": [
+        "fn:leaf",
+        "fn:bridge"
+      ],
+      "kind": "direct_call",
+      "expected_exists": false,
+      "evidence": [
+        {
+          "file": "src/callgraph.c",
+          "line": 6,
+          "snippet": "return value + 1;"
+        }
+      ]
+    }
+  ]
+}

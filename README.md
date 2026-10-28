@@ -18,21 +18,24 @@
 >
 > 知识图谱与事实提取报告：[docs/knowledge-graph-facts-report-2026-10-23.md](docs/knowledge-graph-facts-report-2026-10-23.md)
 >
+> 独立评测重建与实验结果：[docs/evaluation-rebuild-2026-10-28.md](docs/evaluation-rebuild-2026-10-28.md)
+>
 > 汇报与答辩：[docs/reporting-guide-2026-10-16.md](docs/reporting-guide-2026-10-16.md)
 >
 > 本周把代码逆向分析结果从固定示例图升级为仓库无关、自动生成、嵌入 Agent 流程的
 > 交互式可视化报告。流水线阶段 07 生成 `visualization.html`，原生分析完成后补充
 > resource-flow 和 sync-relations，Agent 工具 `get_visualization` 可返回该文件路径。
 >
-> 当前指标：libuv 资源流 11 TP / 6 FN（recall 64.71%）；Redis 调用链 103 TP / 7 FN
-> （recall 93.64%）；同步关系已从 0% 提升到 libuv 12.50%、Redis 40.91%。
+> 当前指标：独立合成集（非 libuv/Redis）Precision 87.50%、Recall 82.35%、F1 84.85%；
+> 后续 libuv 冻结 holdout（19 条命题）Precision 100%、Recall 89.47%。
+> 旧 libuv/Redis 数字降级为回归结果，不再作为独立准确率证据。
 > libuv / Redis 图已重新生成，分别包含 216 / 55 个 external function 节点。
 > 同一个 URL Subagent 已对独立 C 和 C++ 示例仓库完成迁移验证，可分析任意 C/C++ 仓库。
 >
 > 当前风险：资源流已加入赋值/别名和跨函数 transfer，但复杂指针与路径敏感性仍不足；
 > 同步关系已加入跨函数队列、atomic release/acquire 和 thread join，但完整 CFG、
 > alias 和 reads-from 仍未完成；builtin/宏/平台条件已修复主链路，仍需扩充规则；
-> 最终人工复核已由项目负责人确认（2026-10-28）。
+> 旧 libuv/Redis 表的人工复核已确认；新独立 holdout 的人工复核仍为 pending。
 
 > 通用验证框架已补齐项目注册、candidate 复核、仓库专用 Gold、source hash 固定和
 > 注册校验。框架可迁移，但每个新仓库必须重建自己的 Gold，不能复用 libuv/Redis
@@ -42,37 +45,33 @@
 
 ### 指标怎么看
 
-| 指标 | 含义 | 当前结果 |
+| 指标 | 口径 | 当前结果 |
 |---|---|---|
-| libuv 资源流 | 在已确认资源操作 Gold 中，分析器找到 `11 TP`、漏掉 `6 FN` | recall 64.71%，F1 78.57% |
-| Redis 调用链 | 在 110 条正样本中，分析器找到 `103 TP`、漏掉 `7 FN` | recall 93.64%，F1 96.71% |
-| libuv 同步关系 | 从没有真实预测到能够输出部分同步事实 | recall 12.50% |
-| Redis 同步关系 | 加入跨函数队列、atomic 和动态规划顺序后 | recall 40.91%，F1 58.06% |
-| external function | libuv / Redis 图中恢复的系统库和外部符号节点 | 216 / 55 |
+| 独立合成集 | 源码规范先写 Gold，冻结后运行分析器，封闭世界计分 | Precision 87.50%，Recall 82.35%，F1 84.85% |
+| 独立合成集调用链 | 3 正例 + 3 反例 | Precision / Recall / F1 100% |
+| 独立合成集资源流 | 6 条源码操作 | Recall 83.33%，F1 90.91% |
+| 独立合成集同步关系 | 8 条源码关系 | Precision 75%，Recall 75%，F1 75% |
+| libuv 冻结 holdout | 合成集之后建立，19 条命题 | Precision 100%，Recall 89.47% |
 
-recall 的提升来自恢复 external 节点、精确资源 API 匹配、稳定资源 ID，
-以及为同步关系补充程序顺序事实。当前标注范围内 FP 为 0，但这不代表全系统
-已经准确，未标注预测尚未全部计入 precision。
+旧 libuv/Redis 对比已标记为 regression-only。其调用链 Gold 与预测图部分同源，
+不能继续用于证明独立准确率。
 
 ### 30 秒口头汇报稿
 
 本周把固定示例分析推进成可以复用的仓库分析闭环。
 
-第一，修复验证机后，libuv 资源流 recall 从 29.41% 提升到 64.71%，
-Redis 调用链 recall 从 68.18% 提升到 93.64%。同步关系从没有真实预测，
-提升到 libuv 12.50%、Redis 40.91%。
+第一，推翻存在同源泄漏的旧评测口径，先构造与 libuv 无关的合成集并冻结 Gold。
+独立合成集 Precision 87.50%、Recall 82.35%，不再使用自证式的“全仓 100%”。
 
-第二，调用图、资源流和同步关系已经统一生成离线交互式可视化。
-重新生成后的 libuv 和 Redis 图分别包含 216 个和 55 个外部函数节点，
-系统库调用不再被提前截断。
+第二，在新的 libuv 冻结 holdout 上，19 条命题得到 Precision 100%、
+Recall 89.47%；但同步关系只达到 Recall 33.33%，仍漏掉 condition timed wait
+两侧关系，因此不能宣称整体已经准确。
 
-第三，输入一个 C/C++ 仓库 URL，现在可以自动完成检出、构建探测、
-七阶段分析、三类 JSON 导出和可视化打包。同一个入口已经在独立 C 和 C++
-示例仓库上完成迁移验证。
+第三，强制流程改成“写规范 -> 写 Gold -> 冻结哈希 -> 才运行分析器”，
+并增加封闭世界评分：落在评测范围内的未标注 prediction 直接计 FP。
 
-本轮还补齐了跨函数队列、atomic release/acquire、thread join、资源赋值/别名、
-跨函数所有权 transfer、builtin/宏/平台条件调用目标，并加入评测质量门禁。
-下一步重点是完整 CFG、路径敏感 alias 和最终人工复核。
+下一阶段重点是修复已发现的资源漏检、atomic 外层函数归属和 condition timed wait，
+再扩大 holdout，不继续围绕小样本调标签。
 
 ### 一句话总结
 

@@ -225,13 +225,16 @@ def _relativize_json_paths(value: Any, source_root: Path) -> Any:
         }
     if isinstance(value, list):
         return [_relativize_json_paths(item, source_root) for item in value]
-    if isinstance(value, str) and Path(value).is_absolute():
-        try:
-            resolved = Path(value).resolve()
-        except OSError:
-            return value
-        if resolved.is_relative_to(root):
-            return resolved.relative_to(root).as_posix()
+    if isinstance(value, str) and value:
+        path = Path(value)
+        candidates = [path] if path.is_absolute() else [path, Path.cwd() / path]
+        for candidate in candidates:
+            try:
+                resolved = candidate.resolve()
+            except OSError:
+                continue
+            if resolved.is_relative_to(root):
+                return resolved.relative_to(root).as_posix()
     return value
 
 

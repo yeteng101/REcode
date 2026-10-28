@@ -1,0 +1,232 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "independent-sync-v1",
+  "identity_profile": "default",
+  "annotation_scope": {
+    "mode": "closed_world",
+    "categories": [
+      "sync_relation"
+    ],
+    "paths": [
+      "src/sync.c"
+    ]
+  },
+  "review": {
+    "method": "specification_first_ai_authored_microbenchmark",
+    "label_authority": "codex_source_specification_review",
+    "human_review": "pending",
+    "limitation": "Small synthetic repository; measures these synchronization facts only."
+  },
+  "repository": "independent/sync-v1",
+  "commit": "3333333333333333333333333333333333333333",
+  "cases": [
+    {
+      "id": "sync_worker_lock_unlock",
+      "category": "sync_relation",
+      "identity": [
+        "worker",
+        "worker",
+        "src/sync.c",
+        12,
+        "src/sync.c",
+        16
+      ],
+      "kind": "happens_before",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/sync.c",
+          "line": 12,
+          "snippet": "pthread_mutex_lock(&guard);"
+        },
+        {
+          "file": "src/sync.c",
+          "line": 16,
+          "snippet": "pthread_mutex_unlock(&guard);"
+        }
+      ]
+    },
+    {
+      "id": "sync_condition_signal_wait",
+      "category": "sync_relation",
+      "identity": [
+        "worker",
+        "wait_worker",
+        "src/sync.c",
+        14,
+        "src/sync.c",
+        28
+      ],
+      "kind": "happens_before",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/sync.c",
+          "line": 14,
+          "snippet": "pthread_cond_signal(&ready);"
+        },
+        {
+          "file": "src/sync.c",
+          "line": 28,
+          "snippet": "pthread_cond_wait(&ready, &guard);"
+        }
+      ]
+    },
+    {
+      "id": "sync_thread_create_join",
+      "category": "sync_relation",
+      "identity": [
+        "start_worker",
+        "start_worker",
+        "src/sync.c",
+        21,
+        "src/sync.c",
+        22
+      ],
+      "kind": "happens_before",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/sync.c",
+          "line": 21,
+          "snippet": "pthread_create(&worker_thread, NULL, worker, NULL);"
+        },
+        {
+          "file": "src/sync.c",
+          "line": 22,
+          "snippet": "pthread_join(worker_thread, NULL);"
+        }
+      ]
+    },
+    {
+      "id": "sync_wait_lock_condwait",
+      "category": "sync_relation",
+      "identity": [
+        "wait_worker",
+        "wait_worker",
+        "src/sync.c",
+        26,
+        "src/sync.c",
+        28
+      ],
+      "kind": "happens_before",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/sync.c",
+          "line": 26,
+          "snippet": "pthread_mutex_lock(&guard);"
+        },
+        {
+          "file": "src/sync.c",
+          "line": 28,
+          "snippet": "pthread_cond_wait(&ready, &guard);"
+        }
+      ]
+    },
+    {
+      "id": "sync_wait_condwait_unlock",
+      "category": "sync_relation",
+      "identity": [
+        "wait_worker",
+        "wait_worker",
+        "src/sync.c",
+        28,
+        "src/sync.c",
+        30
+      ],
+      "kind": "happens_before",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/sync.c",
+          "line": 28,
+          "snippet": "pthread_cond_wait(&ready, &guard);"
+        },
+        {
+          "file": "src/sync.c",
+          "line": 30,
+          "snippet": "pthread_mutex_unlock(&guard);"
+        }
+      ]
+    },
+    {
+      "id": "sync_wait_lock_unlock",
+      "category": "sync_relation",
+      "identity": [
+        "wait_worker",
+        "wait_worker",
+        "src/sync.c",
+        26,
+        "src/sync.c",
+        30
+      ],
+      "kind": "happens_before",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/sync.c",
+          "line": 26,
+          "snippet": "pthread_mutex_lock(&guard);"
+        },
+        {
+          "file": "src/sync.c",
+          "line": 30,
+          "snippet": "pthread_mutex_unlock(&guard);"
+        }
+      ]
+    },
+    {
+      "id": "sync_atomic_release_acquire",
+      "category": "sync_relation",
+      "identity": [
+        "worker",
+        "observe_mailbox",
+        "src/sync.c",
+        15,
+        "src/sync.c",
+        34
+      ],
+      "kind": "happens_before",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/sync.c",
+          "line": 15,
+          "snippet": "atomic_store_explicit(&mailbox, 1, memory_order_release);"
+        },
+        {
+          "file": "src/sync.c",
+          "line": 34,
+          "snippet": "return atomic_load_explicit(&mailbox, memory_order_acquire);"
+        }
+      ]
+    },
+    {
+      "id": "sync_atomic_relaxed_unknown",
+      "category": "sync_relation",
+      "identity": [
+        "relaxed_publish",
+        "relaxed_observe",
+        "src/sync.c",
+        38,
+        "src/sync.c",
+        42
+      ],
+      "kind": "unknown",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/sync.c",
+          "line": 38,
+          "snippet": "atomic_store_explicit(&counter, 1, memory_order_relaxed);"
+        },
+        {
+          "file": "src/sync.c",
+          "line": 42,
+          "snippet": "return atomic_load_explicit(&counter, memory_order_relaxed);"
+        }
+      ]
+    }
+  ]
+}

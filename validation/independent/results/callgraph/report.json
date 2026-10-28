@@ -1,0 +1,178 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "independent-callgraph-v1",
+  "scope": "closed-world annotated subset; every in-scope prediction is scored",
+  "scoring": "candidate facts including unconfirmed; confirmed-only metrics reported separately",
+  "review": {
+    "method": "specification_first_ai_authored_microbenchmark",
+    "label_authority": "codex_source_specification_review",
+    "human_review": "pending",
+    "limitation": "Small synthetic repository; measures these facts only."
+  },
+  "annotation_scope": {
+    "mode": "closed_world",
+    "categories": [
+      "call_chain"
+    ],
+    "paths": [
+      "src/callgraph.c"
+    ]
+  },
+  "identity_profile": "default",
+  "categories": {
+    "call_chain": {
+      "input_status": "partial",
+      "gold_positive": 3,
+      "gold_negative": 3,
+      "tp": 3,
+      "fp": 0,
+      "fn": 0,
+      "tn": 3,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "type_accuracy": 1.0,
+      "evidence_hit_rate": 1.0,
+      "coverage": 1.0,
+      "unconfirmed_ratio": 1.0,
+      "unlabelled_predictions": 0,
+      "out_of_scope_predictions": 0,
+      "prediction_count": 3,
+      "duplicate_predictions": 0,
+      "confirmed_only": {
+        "precision": null,
+        "recall": 0.0,
+        "tp": 0,
+        "fp": 0,
+        "f1": 0.0
+      },
+      "errors_by_type": {},
+      "cases": [
+        {
+          "case_id": "callgraph_bridge_doubled_absent",
+          "verdict": "tn",
+          "evidence_hit": false,
+          "kind": "direct_call",
+          "identity": [
+            "fn:bridge",
+            "fn:doubled"
+          ],
+          "notes": ""
+        },
+        {
+          "case_id": "callgraph_bridge_leaf",
+          "verdict": "tp",
+          "evidence_hit": true,
+          "kind": "direct_call",
+          "identity": [
+            "fn:bridge",
+            "fn:leaf"
+          ],
+          "notes": ""
+        },
+        {
+          "case_id": "callgraph_entry_bridge",
+          "verdict": "tp",
+          "evidence_hit": true,
+          "kind": "direct_call",
+          "identity": [
+            "fn:entry",
+            "fn:bridge"
+          ],
+          "notes": ""
+        },
+        {
+          "case_id": "callgraph_entry_doubled_macro",
+          "verdict": "tp",
+          "evidence_hit": true,
+          "kind": "direct_call",
+          "identity": [
+            "fn:entry",
+            "fn:doubled"
+          ],
+          "notes": ""
+        },
+        {
+          "case_id": "callgraph_entry_leaf_is_indirect",
+          "verdict": "tn",
+          "evidence_hit": false,
+          "kind": "direct_call",
+          "identity": [
+            "fn:entry",
+            "fn:leaf"
+          ],
+          "notes": ""
+        },
+        {
+          "case_id": "callgraph_leaf_bridge_absent",
+          "verdict": "tn",
+          "evidence_hit": false,
+          "kind": "direct_call",
+          "identity": [
+            "fn:leaf",
+            "fn:bridge"
+          ],
+          "notes": ""
+        }
+      ]
+    },
+    "resource_flow": {
+      "input_status": "not_available",
+      "gold_positive": 0,
+      "gold_negative": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "tn": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "type_accuracy": null,
+      "evidence_hit_rate": null,
+      "coverage": null,
+      "unconfirmed_ratio": null,
+      "unlabelled_predictions": 0,
+      "out_of_scope_predictions": 0,
+      "prediction_count": 0,
+      "duplicate_predictions": 0,
+      "confirmed_only": {
+        "precision": null,
+        "recall": null,
+        "tp": 0,
+        "fp": 0,
+        "f1": null
+      },
+      "errors_by_type": {},
+      "cases": []
+    },
+    "sync_relation": {
+      "input_status": "not_available",
+      "gold_positive": 0,
+      "gold_negative": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "tn": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null,
+      "type_accuracy": null,
+      "evidence_hit_rate": null,
+      "coverage": null,
+      "unconfirmed_ratio": null,
+      "unlabelled_predictions": 0,
+      "out_of_scope_predictions": 0,
+      "prediction_count": 0,
+      "duplicate_predictions": 0,
+      "confirmed_only": {
+        "precision": null,
+        "recall": null,
+        "tp": 0,
+        "fp": 0,
+        "f1": null
+      },
+      "errors_by_type": {},
+      "cases": []
+    }
+  }
+}

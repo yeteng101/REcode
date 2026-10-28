@@ -1,0 +1,432 @@
+{
+  "schema_version": "1.0",
+  "run_id": "independent_resources_v1",
+  "meta": {
+    "repository": "independent/resources-v1",
+    "commit": "2222222222222222222222222222222222222222",
+    "build_profile": "independent-micro-v1",
+    "analyzer": "libclang compact AST + clang++",
+    "generated_at": "2026-10-28T07:30:43Z",
+    "origin": "01-index/ast/*.ast.json"
+  },
+  "nodes": [
+    {
+      "id": "ext:89695a47db7c911a",
+      "kind": "external_function",
+      "name": "free",
+      "file": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/malloc/_malloc.h",
+      "line": 56,
+      "signature": "void (void *)",
+      "external": true,
+      "first_seen": {
+        "file": "src/resources.c",
+        "line": 11,
+        "column": 5,
+        "snippet": "free(buffer);"
+      }
+    },
+    {
+      "id": "ext:a583e89363376a91",
+      "kind": "external_function",
+      "name": "malloc",
+      "file": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/malloc/_malloc.h",
+      "line": 54,
+      "signature": "void *(unsigned long)",
+      "external": true,
+      "first_seen": {
+        "file": "src/resources.c",
+        "line": 6,
+        "column": 20,
+        "snippet": "char *buffer = malloc(32);"
+      }
+    },
+    {
+      "id": "ext:e5d192fb7bc6258a",
+      "kind": "external_function",
+      "name": "close",
+      "file": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/unistd.h",
+      "line": 449,
+      "signature": "int (int)",
+      "external": true,
+      "first_seen": {
+        "file": "src/resources.c",
+        "line": 17,
+        "column": 9,
+        "snippet": "close(fd);"
+      }
+    },
+    {
+      "id": "ext:fbc83493ea2e116e",
+      "kind": "external_function",
+      "name": "open",
+      "file": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/fcntl.h",
+      "line": 598,
+      "signature": "int (const char *, int, ...)",
+      "external": true,
+      "first_seen": {
+        "file": "src/resources.c",
+        "line": 15,
+        "column": 14,
+        "snippet": "int fd = open(path, O_RDONLY);"
+      }
+    },
+    {
+      "id": "fn:create_record",
+      "kind": "function",
+      "name": "create_record",
+      "file": "src/resources.c",
+      "line": 5,
+      "signature": "char *(void)",
+      "module": ""
+    },
+    {
+      "id": "fn:destroy_record",
+      "kind": "function",
+      "name": "destroy_record",
+      "file": "src/resources.c",
+      "line": 10,
+      "signature": "void (char *)",
+      "module": ""
+    },
+    {
+      "id": "fn:leak_on_visible_path",
+      "kind": "function",
+      "name": "leak_on_visible_path",
+      "file": "src/resources.c",
+      "line": 27,
+      "signature": "void (void)",
+      "module": ""
+    },
+    {
+      "id": "fn:main",
+      "kind": "function",
+      "name": "main",
+      "file": "src/resources.c",
+      "line": 32,
+      "signature": "int (void)",
+      "module": ""
+    },
+    {
+      "id": "fn:open_and_close",
+      "kind": "function",
+      "name": "open_and_close",
+      "file": "src/resources.c",
+      "line": 14,
+      "signature": "void (const char *)",
+      "module": ""
+    },
+    {
+      "id": "fn:transfer_and_release",
+      "kind": "function",
+      "name": "transfer_and_release",
+      "file": "src/resources.c",
+      "line": 21,
+      "signature": "void (void)",
+      "module": ""
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_0a6035164712",
+      "source": "fn:open_and_close",
+      "target": "ext:fbc83493ea2e116e",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/resources.c",
+        "line": 15,
+        "column": 14,
+        "snippet": "int fd = open(path, O_RDONLY);"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_c05567e9d6a1"
+      ]
+    },
+    {
+      "id": "e_0e77c4878ca5",
+      "source": "fn:main",
+      "target": "fn:leak_on_visible_path",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/resources.c",
+        "line": 34,
+        "column": 5,
+        "snippet": "leak_on_visible_path();"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_2ca182e4b72f"
+      ]
+    },
+    {
+      "id": "e_1822a6d3b134",
+      "source": "fn:main",
+      "target": "fn:transfer_and_release",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/resources.c",
+        "line": 33,
+        "column": 5,
+        "snippet": "transfer_and_release();"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_daf0a2422e07"
+      ]
+    },
+    {
+      "id": "e_1fcda855b76e",
+      "source": "fn:open_and_close",
+      "target": "ext:e5d192fb7bc6258a",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/resources.c",
+        "line": 17,
+        "column": 9,
+        "snippet": "close(fd);"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_552aa1586dd7"
+      ]
+    },
+    {
+      "id": "e_63c6f3b1979a",
+      "source": "fn:main",
+      "target": "fn:open_and_close",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/resources.c",
+        "line": 35,
+        "column": 5,
+        "snippet": "open_and_close(\"fixture.txt\");"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_a4f0fe3af890"
+      ]
+    },
+    {
+      "id": "e_664e08cba5bc",
+      "source": "fn:destroy_record",
+      "target": "ext:89695a47db7c911a",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/resources.c",
+        "line": 11,
+        "column": 5,
+        "snippet": "free(buffer);"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_3d893a0a3f58"
+      ]
+    },
+    {
+      "id": "e_74c328238f0d",
+      "source": "fn:create_record",
+      "target": "ext:a583e89363376a91",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/resources.c",
+        "line": 6,
+        "column": 20,
+        "snippet": "char *buffer = malloc(32);"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_52e007d83e91"
+      ]
+    },
+    {
+      "id": "e_c547a52970c5",
+      "source": "fn:transfer_and_release",
+      "target": "fn:destroy_record",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/resources.c",
+        "line": 24,
+        "column": 5,
+        "snippet": "destroy_record(alias);"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_35e930438b61"
+      ]
+    },
+    {
+      "id": "e_d4586487cdc7",
+      "source": "fn:transfer_and_release",
+      "target": "fn:create_record",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/resources.c",
+        "line": 22,
+        "column": 19,
+        "snippet": "char *owner = create_record();"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_2d98cd2acea7"
+      ]
+    },
+    {
+      "id": "e_f384d55c982b",
+      "source": "fn:leak_on_visible_path",
+      "target": "ext:a583e89363376a91",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/resources.c",
+        "line": 28,
+        "column": 20,
+        "snippet": "char *buffer = malloc(8);"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_22a851b70ca3"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev_22a851b70ca3",
+      "kind": "call_site",
+      "location": {
+        "file": "src/resources.c",
+        "line": 28,
+        "column": 20,
+        "snippet": "char *buffer = malloc(8);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_2ca182e4b72f",
+      "kind": "call_site",
+      "location": {
+        "file": "src/resources.c",
+        "line": 34,
+        "column": 5,
+        "snippet": "leak_on_visible_path();"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_2d98cd2acea7",
+      "kind": "call_site",
+      "location": {
+        "file": "src/resources.c",
+        "line": 22,
+        "column": 19,
+        "snippet": "char *owner = create_record();"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_35e930438b61",
+      "kind": "call_site",
+      "location": {
+        "file": "src/resources.c",
+        "line": 24,
+        "column": 5,
+        "snippet": "destroy_record(alias);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_3d893a0a3f58",
+      "kind": "call_site",
+      "location": {
+        "file": "src/resources.c",
+        "line": 11,
+        "column": 5,
+        "snippet": "free(buffer);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_52e007d83e91",
+      "kind": "call_site",
+      "location": {
+        "file": "src/resources.c",
+        "line": 6,
+        "column": 20,
+        "snippet": "char *buffer = malloc(32);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_552aa1586dd7",
+      "kind": "call_site",
+      "location": {
+        "file": "src/resources.c",
+        "line": 17,
+        "column": 9,
+        "snippet": "close(fd);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_a4f0fe3af890",
+      "kind": "call_site",
+      "location": {
+        "file": "src/resources.c",
+        "line": 35,
+        "column": 5,
+        "snippet": "open_and_close(\"fixture.txt\");"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_c05567e9d6a1",
+      "kind": "call_site",
+      "location": {
+        "file": "src/resources.c",
+        "line": 15,
+        "column": 14,
+        "snippet": "int fd = open(path, O_RDONLY);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_daf0a2422e07",
+      "kind": "call_site",
+      "location": {
+        "file": "src/resources.c",
+        "line": 33,
+        "column": 5,
+        "snippet": "transfer_and_release();"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    }
+  ]
+}

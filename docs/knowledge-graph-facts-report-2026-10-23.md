@@ -19,15 +19,15 @@ log_event              日志事件
 主要关系：
 
 ```text
-calls                  调用
-uses_resource          使用资源
-sync_source            同步源端
-sync_target            同步目标端
-has_compile_unit       包含编译单元
-analyzes_symbol        分析代码符号
-affects_function       影响函数
+calls                 调用
+uses_resource         使用资源
+sync_source           同步源端
+sync_target           同步目标端
+has_compile_unit      包含编译单元
+analyzes_symbol       分析代码符号
+affects_function      影响函数
 produces_compiler_fact 产生优化事实
-references_symbol      关联函数
+references_symbol     关联函数
 ```
 
 输出采用双语字段：`kind` / `type` 保留英文稳定标识，`kind_label` /
@@ -103,6 +103,11 @@ external/knowledge-graph.json
 使用 `--once` 可执行一次增量提取，适合 CI 或外部调度；使用 `--no-refresh` 可只提取日志、不刷新图。
 
 ## 5. Precision、Recall 与 F1 实验数据
+
+> **旧结果失效说明：** 本节 libuv 调用链包含同源标签泄漏，且旧口径排除未标注
+> 预测，因此不能作为独立准确率。自 2026-10-28 起正式独立结果见
+> [评测集重建与独立结果](evaluation-rebuild-2026-10-28.md)。以下表格仅保留为
+> 历史回归记录。
 
 ### 5.1 指标口径
 

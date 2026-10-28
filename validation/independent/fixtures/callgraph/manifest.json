@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "project_id": "callgraph",
+  "status": "frozen",
+  "frozen_at": "2026-10-28T07:29:13+00:00",
+  "protocol": "specification_first_closed_world",
+  "repository": "independent/callgraph-v1",
+  "commit": "1111111111111111111111111111111111111111",
+  "gold_sha256": "a3fc50203053b62445f10fc10d8944f09996f0e5077fb9f17d4ebfe485576e57",
+  "spec_sha256": "69ef9af6744c77d6a732319bf470875d2b6cf7971ec463a337e35bedd6417ca4",
+  "source_sha256": {
+    "source/src/callgraph.c": "4f567d78f1031d7034d731585dd34c4562a758ad76f4f094f7ecfae359b99dbc"
+  },
+  "label_counts": {
+    "positive": 3,
+    "negative": 3
+  }
+}

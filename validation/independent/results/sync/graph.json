@@ -1,0 +1,561 @@
+{
+  "schema_version": "1.0",
+  "run_id": "independent_sync_v1",
+  "meta": {
+    "repository": "independent/sync-v1",
+    "commit": "3333333333333333333333333333333333333333",
+    "build_profile": "independent-micro-v1",
+    "analyzer": "libclang compact AST + clang++",
+    "generated_at": "2026-10-28T07:30:44Z",
+    "origin": "01-index/ast/*.ast.json"
+  },
+  "nodes": [
+    {
+      "id": "ext:230f34c13102d0a8",
+      "kind": "external_function",
+      "name": "pthread_mutex_unlock",
+      "file": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/pthread.h",
+      "line": 405,
+      "signature": "int (pthread_mutex_t * _Nonnull)",
+      "external": true,
+      "first_seen": {
+        "file": "src/sync.c",
+        "line": 16,
+        "column": 5,
+        "snippet": "pthread_mutex_unlock(&guard);"
+      }
+    },
+    {
+      "id": "ext:766fabbbcd243cc9",
+      "kind": "external_function",
+      "name": "pthread_cond_signal",
+      "file": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/pthread.h",
+      "line": 309,
+      "signature": "int (pthread_cond_t * _Nonnull)",
+      "external": true,
+      "first_seen": {
+        "file": "src/sync.c",
+        "line": 14,
+        "column": 5,
+        "snippet": "pthread_cond_signal(&ready);"
+      }
+    },
+    {
+      "id": "ext:8bdd37479c90a299",
+      "kind": "external_function",
+      "name": "pthread_create",
+      "file": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/pthread.h",
+      "line": 338,
+      "signature": "int (pthread_t  _Nullable *restrict _Nonnull, const pthread_attr_t *restrict _Nullable, void * _Nullable (* _Nonnull)(void * _Nullable), void *restrict _Nullable)",
+      "external": true,
+      "first_seen": {
+        "file": "src/sync.c",
+        "line": 21,
+        "column": 5,
+        "snippet": "pthread_create(&worker_thread, NULL, worker, NULL);"
+      }
+    },
+    {
+      "id": "ext:99f8b7a11f19ffab",
+      "kind": "external_function",
+      "name": "pthread_cond_wait",
+      "file": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/pthread.h",
+      "line": 320,
+      "signature": "int (pthread_cond_t *restrict _Nonnull, pthread_mutex_t *restrict _Nonnull)",
+      "external": true,
+      "first_seen": {
+        "file": "src/sync.c",
+        "line": 28,
+        "column": 9,
+        "snippet": "pthread_cond_wait(&ready, &guard);"
+      }
+    },
+    {
+      "id": "ext:e108a903906fbc28",
+      "kind": "external_function",
+      "name": "pthread_mutex_lock",
+      "file": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/pthread.h",
+      "line": 393,
+      "signature": "int (pthread_mutex_t * _Nonnull)",
+      "external": true,
+      "first_seen": {
+        "file": "src/sync.c",
+        "line": 12,
+        "column": 5,
+        "snippet": "pthread_mutex_lock(&guard);"
+      }
+    },
+    {
+      "id": "ext:f2fd7097d0760c2c",
+      "kind": "external_function",
+      "name": "pthread_join",
+      "file": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/pthread.h",
+      "line": 371,
+      "signature": "int (pthread_t _Nonnull, void * _Nullable * _Nullable)",
+      "external": true,
+      "first_seen": {
+        "file": "src/sync.c",
+        "line": 22,
+        "column": 5,
+        "snippet": "pthread_join(worker_thread, NULL);"
+      }
+    },
+    {
+      "id": "fn:main",
+      "kind": "function",
+      "name": "main",
+      "file": "src/sync.c",
+      "line": 45,
+      "signature": "int (void)",
+      "module": ""
+    },
+    {
+      "id": "fn:observe_mailbox",
+      "kind": "function",
+      "name": "observe_mailbox",
+      "file": "src/sync.c",
+      "line": 33,
+      "signature": "int (void)",
+      "module": ""
+    },
+    {
+      "id": "fn:relaxed_observe",
+      "kind": "function",
+      "name": "relaxed_observe",
+      "file": "src/sync.c",
+      "line": 41,
+      "signature": "int (void)",
+      "module": ""
+    },
+    {
+      "id": "fn:relaxed_publish",
+      "kind": "function",
+      "name": "relaxed_publish",
+      "file": "src/sync.c",
+      "line": 37,
+      "signature": "void (void)",
+      "module": ""
+    },
+    {
+      "id": "fn:start_worker",
+      "kind": "function",
+      "name": "start_worker",
+      "file": "src/sync.c",
+      "line": 20,
+      "signature": "void (void)",
+      "module": ""
+    },
+    {
+      "id": "fn:wait_worker",
+      "kind": "function",
+      "name": "wait_worker",
+      "file": "src/sync.c",
+      "line": 25,
+      "signature": "void (void)",
+      "module": ""
+    },
+    {
+      "id": "fn:worker",
+      "kind": "function",
+      "name": "worker",
+      "file": "src/sync.c",
+      "line": 11,
+      "signature": "void *(void *)",
+      "module": ""
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_1546331c630f",
+      "source": "fn:main",
+      "target": "fn:relaxed_publish",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/sync.c",
+        "line": 49,
+        "column": 5,
+        "snippet": "relaxed_publish();"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_48c7436129a6"
+      ]
+    },
+    {
+      "id": "e_527d72f1dbc9",
+      "source": "fn:main",
+      "target": "fn:wait_worker",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/sync.c",
+        "line": 47,
+        "column": 5,
+        "snippet": "wait_worker();"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_cdacfc4f270f"
+      ]
+    },
+    {
+      "id": "e_582222a69db8",
+      "source": "fn:worker",
+      "target": "ext:230f34c13102d0a8",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/sync.c",
+        "line": 16,
+        "column": 5,
+        "snippet": "pthread_mutex_unlock(&guard);"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_efb93f3e15e9"
+      ]
+    },
+    {
+      "id": "e_63637ac28f93",
+      "source": "fn:start_worker",
+      "target": "ext:8bdd37479c90a299",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/sync.c",
+        "line": 21,
+        "column": 5,
+        "snippet": "pthread_create(&worker_thread, NULL, worker, NULL);"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_ee8cf816bb0c"
+      ]
+    },
+    {
+      "id": "e_74abd5618c4a",
+      "source": "fn:wait_worker",
+      "target": "ext:99f8b7a11f19ffab",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/sync.c",
+        "line": 28,
+        "column": 9,
+        "snippet": "pthread_cond_wait(&ready, &guard);"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_c3808ff09c17"
+      ]
+    },
+    {
+      "id": "e_751ceffe4a0d",
+      "source": "fn:main",
+      "target": "fn:relaxed_observe",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/sync.c",
+        "line": 50,
+        "column": 12,
+        "snippet": "return relaxed_observe();"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_75c9626d2f25"
+      ]
+    },
+    {
+      "id": "e_82f0eda67253",
+      "source": "fn:worker",
+      "target": "ext:766fabbbcd243cc9",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/sync.c",
+        "line": 14,
+        "column": 5,
+        "snippet": "pthread_cond_signal(&ready);"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_38640faef7c9"
+      ]
+    },
+    {
+      "id": "e_89b233194b12",
+      "source": "fn:wait_worker",
+      "target": "ext:230f34c13102d0a8",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/sync.c",
+        "line": 30,
+        "column": 5,
+        "snippet": "pthread_mutex_unlock(&guard);"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_b27e5a2eebdf"
+      ]
+    },
+    {
+      "id": "e_8a84cde73576",
+      "source": "fn:wait_worker",
+      "target": "ext:e108a903906fbc28",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/sync.c",
+        "line": 26,
+        "column": 5,
+        "snippet": "pthread_mutex_lock(&guard);"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_f24a3c1b65e0"
+      ]
+    },
+    {
+      "id": "e_9bb5ca579ff4",
+      "source": "fn:main",
+      "target": "fn:start_worker",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/sync.c",
+        "line": 46,
+        "column": 5,
+        "snippet": "start_worker();"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_5f8b961425c0"
+      ]
+    },
+    {
+      "id": "e_9c3e8845a168",
+      "source": "fn:start_worker",
+      "target": "ext:f2fd7097d0760c2c",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/sync.c",
+        "line": 22,
+        "column": 5,
+        "snippet": "pthread_join(worker_thread, NULL);"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_74d1a1c8bb45"
+      ]
+    },
+    {
+      "id": "e_b157a9d50ac0",
+      "source": "fn:main",
+      "target": "fn:observe_mailbox",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/sync.c",
+        "line": 48,
+        "column": 5,
+        "snippet": "observe_mailbox();"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_99fce5f62d5d"
+      ]
+    },
+    {
+      "id": "e_cba1e53f120b",
+      "source": "fn:worker",
+      "target": "ext:e108a903906fbc28",
+      "kind": "direct_call",
+      "call_site": {
+        "file": "src/sync.c",
+        "line": 12,
+        "column": 5,
+        "snippet": "pthread_mutex_lock(&guard);"
+      },
+      "condition": null,
+      "execution_context": null,
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_47c9d2379974"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev_38640faef7c9",
+      "kind": "call_site",
+      "location": {
+        "file": "src/sync.c",
+        "line": 14,
+        "column": 5,
+        "snippet": "pthread_cond_signal(&ready);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_47c9d2379974",
+      "kind": "call_site",
+      "location": {
+        "file": "src/sync.c",
+        "line": 12,
+        "column": 5,
+        "snippet": "pthread_mutex_lock(&guard);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_48c7436129a6",
+      "kind": "call_site",
+      "location": {
+        "file": "src/sync.c",
+        "line": 49,
+        "column": 5,
+        "snippet": "relaxed_publish();"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_5f8b961425c0",
+      "kind": "call_site",
+      "location": {
+        "file": "src/sync.c",
+        "line": 46,
+        "column": 5,
+        "snippet": "start_worker();"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_74d1a1c8bb45",
+      "kind": "call_site",
+      "location": {
+        "file": "src/sync.c",
+        "line": 22,
+        "column": 5,
+        "snippet": "pthread_join(worker_thread, NULL);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_75c9626d2f25",
+      "kind": "call_site",
+      "location": {
+        "file": "src/sync.c",
+        "line": 50,
+        "column": 12,
+        "snippet": "return relaxed_observe();"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_99fce5f62d5d",
+      "kind": "call_site",
+      "location": {
+        "file": "src/sync.c",
+        "line": 48,
+        "column": 5,
+        "snippet": "observe_mailbox();"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_b27e5a2eebdf",
+      "kind": "call_site",
+      "location": {
+        "file": "src/sync.c",
+        "line": 30,
+        "column": 5,
+        "snippet": "pthread_mutex_unlock(&guard);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_c3808ff09c17",
+      "kind": "call_site",
+      "location": {
+        "file": "src/sync.c",
+        "line": 28,
+        "column": 9,
+        "snippet": "pthread_cond_wait(&ready, &guard);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_cdacfc4f270f",
+      "kind": "call_site",
+      "location": {
+        "file": "src/sync.c",
+        "line": 47,
+        "column": 5,
+        "snippet": "wait_worker();"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_ee8cf816bb0c",
+      "kind": "call_site",
+      "location": {
+        "file": "src/sync.c",
+        "line": 21,
+        "column": 5,
+        "snippet": "pthread_create(&worker_thread, NULL, worker, NULL);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_efb93f3e15e9",
+      "kind": "call_site",
+      "location": {
+        "file": "src/sync.c",
+        "line": 16,
+        "column": 5,
+        "snippet": "pthread_mutex_unlock(&guard);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    },
+    {
+      "id": "ev_f24a3c1b65e0",
+      "kind": "call_site",
+      "location": {
+        "file": "src/sync.c",
+        "line": 26,
+        "column": 5,
+        "snippet": "pthread_mutex_lock(&guard);"
+      },
+      "role": "supports",
+      "build_profile": "independent-micro-v1"
+    }
+  ]
+}

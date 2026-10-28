@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "run_id": "independent_sync_v1",
+  "result_type": "resource_flow",
+  "status": "not_available",
+  "generated_at": "2026-10-28T07:30:44Z",
+  "source": {
+    "repository": "independent/sync-v1",
+    "commit": "3333333333333333333333333333333333333333",
+    "build_profile": "independent-micro-v1",
+    "analyzer": "libclang compact AST + clang++",
+    "generated_at": "2026-10-28T07:30:44Z",
+    "origin": "analyzer",
+    "provider": "native_resource_flow_v1"
+  },
+  "items": [],
+  "evidence": [],
+  "warnings": []
+}

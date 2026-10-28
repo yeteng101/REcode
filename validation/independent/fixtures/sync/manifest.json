@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "project_id": "sync",
+  "status": "frozen",
+  "frozen_at": "2026-10-28T07:29:13+00:00",
+  "protocol": "specification_first_closed_world",
+  "repository": "independent/sync-v1",
+  "commit": "3333333333333333333333333333333333333333",
+  "gold_sha256": "42832830d076c67fe653374a49886674695d9c11fef8318cc18958db0c5f1428",
+  "spec_sha256": "baa4fbb4b2265e64d41ab326638f9c80b716571a6fef70141f56d5048c0171f7",
+  "source_sha256": {
+    "source/src/sync.c": "9c5e99a6049cad31060ea923c281f9c88b33e4f5f2012180760847e7021aacb3"
+  },
+  "label_counts": {
+    "positive": 8,
+    "negative": 0
+  }
+}

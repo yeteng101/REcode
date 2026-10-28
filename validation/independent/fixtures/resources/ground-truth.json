@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "independent-resources-v1",
+  "identity_profile": "source_anchor_v1",
+  "annotation_scope": {
+    "mode": "closed_world",
+    "categories": [
+      "resource_flow"
+    ],
+    "paths": [
+      "src/resources.c"
+    ]
+  },
+  "review": {
+    "method": "specification_first_ai_authored_microbenchmark",
+    "label_authority": "codex_source_specification_review",
+    "human_review": "pending",
+    "limitation": "Small synthetic repository; measures these source operations only."
+  },
+  "repository": "independent/resources-v1",
+  "commit": "2222222222222222222222222222222222222222",
+  "cases": [
+    {
+      "id": "resource_create_record_acquire",
+      "category": "resource_flow",
+      "identity": [
+        "create_record",
+        "src/resources.c",
+        6
+      ],
+      "kind": "acquire",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/resources.c",
+          "line": 6,
+          "snippet": "char *buffer = malloc(32);"
+        }
+      ]
+    },
+    {
+      "id": "resource_destroy_record_release",
+      "category": "resource_flow",
+      "identity": [
+        "destroy_record",
+        "src/resources.c",
+        11
+      ],
+      "kind": "release",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/resources.c",
+          "line": 11,
+          "snippet": "free(buffer);"
+        }
+      ]
+    },
+    {
+      "id": "resource_transfer_owner",
+      "category": "resource_flow",
+      "identity": [
+        "transfer_and_release",
+        "src/resources.c",
+        22
+      ],
+      "kind": "transfer",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/resources.c",
+          "line": 22,
+          "snippet": "char *owner = create_record();"
+        }
+      ]
+    },
+    {
+      "id": "resource_open_acquire",
+      "category": "resource_flow",
+      "identity": [
+        "open_and_close",
+        "src/resources.c",
+        15
+      ],
+      "kind": "acquire",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/resources.c",
+          "line": 15,
+          "snippet": "int fd = open(path, O_RDONLY);"
+        }
+      ]
+    },
+    {
+      "id": "resource_close_release",
+      "category": "resource_flow",
+      "identity": [
+        "open_and_close",
+        "src/resources.c",
+        17
+      ],
+      "kind": "release",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/resources.c",
+          "line": 17,
+          "snippet": "close(fd);"
+        }
+      ]
+    },
+    {
+      "id": "resource_leak_acquire",
+      "category": "resource_flow",
+      "identity": [
+        "leak_on_visible_path",
+        "src/resources.c",
+        28
+      ],
+      "kind": "acquire",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/resources.c",
+          "line": 28,
+          "snippet": "char *buffer = malloc(8);"
+        }
+      ]
+    }
+  ]
+}

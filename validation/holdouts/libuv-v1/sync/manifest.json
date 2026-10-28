@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "project_id": "sync",
+  "status": "frozen",
+  "frozen_at": "2026-10-28T07:26:20+00:00",
+  "protocol": "post_synthetic_freeze_closed_world",
+  "repository": "libuv/libuv",
+  "commit": "8fb9cb919489a48880680a56efecff6a7dfb4504",
+  "gold_sha256": "3bbdc70ce926e1c51d2e06a3663e6c3bfa4233a0c7b26be633882468d00eabe5",
+  "spec_sha256": "523bd1d2f01adbfbf52b996de6296a7adc86201ad10127b225ec0a070477eea2",
+  "source_sha256": {
+    "src/unix/thread.c": "00eb9de2161ff4c8435c691069416f0bf6faaddb8118a276704cd7dd07039c2c"
+  },
+  "input_graph": "demo/libuv/graph.json",
+  "input_graph_sha256": "eeb7caf8584a3602d142da2acc40b989bc5a8a66b387ede59f1865a93a4e2e54",
+  "label_counts": {
+    "positive": 3,
+    "negative": 0
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.0",
+  "project_id": "resources",
+  "status": "succeeded",
+  "protocol": "post_synthetic_freeze_closed_world",
+  "frozen_at": "2026-10-28T07:26:20+00:00",
+  "started_at": "2026-10-28T07:28:18+00:00",
+  "finished_at": "2026-10-28T07:28:23+00:00",
+  "gold_sha256": "6b7133f81e15b47f7f3fa070aea418434daf65934b7a475df99e49d967d6af19",
+  "input_graph_sha256": "eeb7caf8584a3602d142da2acc40b989bc5a8a66b387ede59f1865a93a4e2e54",
+  "target_category": "resource_flow",
+  "metrics": {
+    "input_status": "partial",
+    "gold_positive": 5,
+    "gold_negative": 0,
+    "tp": 5,
+    "fp": 0,
+    "fn": 0,
+    "tn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "type_accuracy": 1.0,
+    "evidence_hit_rate": 1.0,
+    "coverage": 1.0,
+    "unconfirmed_ratio": 1.0,
+    "unlabelled_predictions": 0,
+    "out_of_scope_predictions": 235,
+    "prediction_count": 240,
+    "duplicate_predictions": 0,
+    "confirmed_only": {
+      "precision": null,
+      "recall": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "f1": 0.0
+    },
+    "errors_by_type": {},
+    "cases": [
+      {
+        "case_id": "libuv_resource_dlerror_free",
+        "verdict": "tp",
+        "evidence_hit": true,
+        "kind": "release",
+        "identity": [
+          "uv__dlerror",
+          "src/unix/dl.c",
+          68
+        ],
+        "notes": ""
+      },
+      {
+        "case_id": "libuv_resource_dlerror_strdup",
+        "verdict": "tp",
+        "evidence_hit": true,
+        "kind": "acquire",
+        "identity": [
+          "uv__dlerror",
+          "src/unix/dl.c",
+          73
+        ],
+        "notes": ""
+      },
+      {
+        "case_id": "libuv_resource_dlclose_free",
+        "verdict": "tp",
+        "evidence_hit": true,
+        "kind": "release",
+        "identity": [
+          "uv_dlclose",
+          "src/unix/dl.c",
+          42
+        ],
+        "notes": ""
+      },
+      {
+        "case_id": "libuv_resource_dlclose",
+        "verdict": "tp",
+        "evidence_hit": true,
+        "kind": "release",
+        "identity": [
+          "uv_dlclose",
+          "src/unix/dl.c",
+          47
+        ],
+        "notes": ""
+      },
+      {
+        "case_id": "libuv_resource_dlopen",
+        "verdict": "tp",
+        "evidence_hit": true,
+        "kind": "acquire",
+        "identity": [
+          "uv_dlopen",
+          "src/unix/dl.c",
+          36
+        ],
+        "notes": ""
+      }
+    ]
+  },
+  "labelled_accuracy": 1.0
+}

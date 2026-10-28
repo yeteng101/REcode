@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0",
+  "project_id": "sync",
+  "status": "succeeded",
+  "protocol": "post_synthetic_freeze_closed_world",
+  "frozen_at": "2026-10-28T07:26:20+00:00",
+  "started_at": "2026-10-28T07:28:23+00:00",
+  "finished_at": "2026-10-28T07:28:29+00:00",
+  "gold_sha256": "3bbdc70ce926e1c51d2e06a3663e6c3bfa4233a0c7b26be633882468d00eabe5",
+  "input_graph_sha256": "eeb7caf8584a3602d142da2acc40b989bc5a8a66b387ede59f1865a93a4e2e54",
+  "target_category": "sync_relation",
+  "metrics": {
+    "input_status": "succeeded",
+    "gold_positive": 3,
+    "gold_negative": 0,
+    "tp": 1,
+    "fp": 0,
+    "fn": 2,
+    "tn": 0,
+    "precision": 1.0,
+    "recall": 0.3333333333333333,
+    "f1": 0.5,
+    "type_accuracy": 1.0,
+    "evidence_hit_rate": 1.0,
+    "coverage": 0.3333333333333333,
+    "unconfirmed_ratio": 1.0,
+    "unlabelled_predictions": 0,
+    "out_of_scope_predictions": 204,
+    "prediction_count": 205,
+    "duplicate_predictions": 1,
+    "confirmed_only": {
+      "precision": null,
+      "recall": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "f1": 0.0
+    },
+    "errors_by_type": {
+      "happens_before": 2
+    },
+    "cases": [
+      {
+        "case_id": "libuv_sync_lock_timedwait",
+        "verdict": "fn",
+        "evidence_hit": false,
+        "kind": "happens_before",
+        "identity": [
+          "uv_cond_destroy",
+          "uv_cond_destroy",
+          "src/unix/thread.c",
+          782,
+          "src/unix/thread.c",
+          788
+        ],
+        "notes": ""
+      },
+      {
+        "case_id": "libuv_sync_lock_unlock",
+        "verdict": "tp",
+        "evidence_hit": true,
+        "kind": "happens_before",
+        "identity": [
+          "uv_cond_destroy",
+          "uv_cond_destroy",
+          "src/unix/thread.c",
+          782,
+          "src/unix/thread.c",
+          792
+        ],
+        "notes": ""
+      },
+      {
+        "case_id": "libuv_sync_timedwait_unlock",
+        "verdict": "fn",
+        "evidence_hit": false,
+        "kind": "happens_before",
+        "identity": [
+          "uv_cond_destroy",
+          "uv_cond_destroy",
+          "src/unix/thread.c",
+          788,
+          "src/unix/thread.c",
+          792
+        ],
+        "notes": ""
+      }
+    ]
+  },
+  "labelled_accuracy": 0.3333333333333333
+}

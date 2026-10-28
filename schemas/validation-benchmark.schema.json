@@ -9,6 +9,40 @@
     "repository": {"type": "string", "minLength": 1},
     "commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
     "review": {"type": "object"},
+    "identity_profile": {
+      "enum": ["default", "source_anchor_v1"]
+    },
+    "annotation_scope": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "enum": ["open_world", "closed_world"]
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "enum": ["call_chain", "resource_flow", "sync_relation"]
+          },
+          "uniqueItems": true
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "functions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      }
+    },
     "cases": {
       "type": "array",
       "minItems": 1,

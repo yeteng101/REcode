@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "libuv-post-freeze-resources-v1",
+  "identity_profile": "source_anchor_v1",
+  "annotation_scope": {
+    "mode": "closed_world",
+    "categories": [
+      "resource_flow"
+    ],
+    "paths": [
+      "src/unix/dl.c"
+    ]
+  },
+  "review": {
+    "method": "post_freeze_source_review_by_codex",
+    "human_review": "pending",
+    "limitation": "Single-file holdout authored after the synthetic suite was frozen."
+  },
+  "repository": "libuv/libuv",
+  "commit": "8fb9cb919489a48880680a56efecff6a7dfb4504",
+  "cases": [
+    {
+      "id": "libuv_resource_dlopen",
+      "category": "resource_flow",
+      "identity": [
+        "uv_dlopen",
+        "src/unix/dl.c",
+        36
+      ],
+      "kind": "acquire",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/unix/dl.c",
+          "line": 36,
+          "snippet": "lib->handle = dlopen(filename, RTLD_LAZY);"
+        }
+      ]
+    },
+    {
+      "id": "libuv_resource_dlclose_free",
+      "category": "resource_flow",
+      "identity": [
+        "uv_dlclose",
+        "src/unix/dl.c",
+        42
+      ],
+      "kind": "release",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/unix/dl.c",
+          "line": 42,
+          "snippet": "uv__free(lib->errmsg);"
+        }
+      ]
+    },
+    {
+      "id": "libuv_resource_dlclose",
+      "category": "resource_flow",
+      "identity": [
+        "uv_dlclose",
+        "src/unix/dl.c",
+        47
+      ],
+      "kind": "release",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/unix/dl.c",
+          "line": 47,
+          "snippet": "dlclose(lib->handle);"
+        }
+      ]
+    },
+    {
+      "id": "libuv_resource_dlerror_free",
+      "category": "resource_flow",
+      "identity": [
+        "uv__dlerror",
+        "src/unix/dl.c",
+        68
+      ],
+      "kind": "release",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/unix/dl.c",
+          "line": 68,
+          "snippet": "uv__free(lib->errmsg);"
+        }
+      ]
+    },
+    {
+      "id": "libuv_resource_dlerror_strdup",
+      "category": "resource_flow",
+      "identity": [
+        "uv__dlerror",
+        "src/unix/dl.c",
+        73
+      ],
+      "kind": "acquire",
+      "expected_exists": true,
+      "evidence": [
+        {
+          "file": "src/unix/dl.c",
+          "line": 73,
+          "snippet": "lib->errmsg = uv__strdup(errmsg);"
+        }
+      ]
+    }
+  ]
+}
