@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import json
+import tempfile
+from contextlib import nullcontext
 import urllib.error
 import urllib.request
 from pathlib import Path
 from typing import Any, Callable
 
 from .llm_bridge import DEFAULT_MODEL, api_key, llm_enabled
+from .tool_trace import ToolTraceRecorder
 
 
 CHAT_URL = "https://api.openai.com/v1/chat/completions"
@@ -24,10 +27,27 @@ class AgentContext:
         *,
         repo_root: Path | str | None = None,
         run_id: str = "run_libuv_1.50.0",
+        trace: ToolTraceRecorder | None = None,
     ) -> None:
         self.workspace = Path(workspace)
         self.repo_root = Path(repo_root or Path.cwd())
         self.run_id = run_id
+        self.trace = trace
+
+    def ensure_trace(self) -> ToolTraceRecorder:
+        if self.trace is None:
+            safe_run_id = "".join(
+                char if char.isalnum() or char in "-_" else "_"
+                for char in self.run_id
+            )
+            self.trace = ToolTraceRecorder(
+                Path(tempfile.gettempdir())
+                / "code-reverse-agent-traces"
+                / f"tool-trace-{safe_run_id}.jsonl",
+                run_id=self.run_id,
+                metadata={"workspace": str(self.workspace), "repo_root": str(self.repo_root)},
+            )
+        return self.trace
 
     def _find_artifact(self, *names: str) -> Path | None:
         for name in names:
@@ -451,6 +471,7 @@ def _tool_analyze_repo(ctx: AgentContext, args: dict[str, Any]) -> Any:
             archive=True,
             log_paths=args.get("logs") or None,
             optimized_ir=bool(args.get("optimized_ir")),
+            trace=ctx.trace,
         )
     from .nl_repo import analyze_repository
 
@@ -510,15 +531,35 @@ def _reachable_subgraph(
 
 def execute_tool(ctx: AgentContext, name: str, args: dict[str, Any]) -> str:
     implementation = TOOL_IMPLEMENTATIONS.get(name)
-    if implementation is None:
-        raise AgentToolError(f"未知工具: {name}")
-    try:
-        result = implementation(ctx, args)
-    except Exception as exc:
-        result = {"error": str(exc)}
+    if not isinstance(args, dict):
+        args = {}
+    span = ctx.trace.span(name, args) if ctx.trace is not None else nullcontext()
+    error: Exception | None = None
+    result: Any = None
+    with span as current_span:
+        if implementation is None:
+            error = AgentToolError(f"未知工具: {name}")
+            result = {"error": str(error)}
+            if current_span is not None and hasattr(current_span, "set_status"):
+                current_span.set_status("error")
+        else:
+            try:
+                result = implementation(ctx, args)
+                if isinstance(result, dict) and result.get("error"):
+                    if current_span is not None and hasattr(current_span, "set_status"):
+                        current_span.set_status("error")
+            except Exception as exc:
+                error = exc
+                result = {"error": str(exc)}
+                if current_span is not None and hasattr(current_span, "set_status"):
+                    current_span.set_status("error")
+        if current_span is not None and hasattr(current_span, "set_result"):
+            current_span.set_result(result)
     text = json.dumps(result, ensure_ascii=False)
     if len(text) > MAX_TOOL_RESULT_CHARS:
         text = text[:MAX_TOOL_RESULT_CHARS] + "\n...truncated"
+    if implementation is None and error is not None:
+        raise error
     return text
 
 
@@ -575,6 +616,7 @@ def run_agent(
 ) -> dict[str, Any]:
     if not llm_enabled():
         return fallback_answer(question, ctx)
+    ctx.ensure_trace()
     messages: list[dict[str, Any]] = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": question},
@@ -585,7 +627,10 @@ def run_agent(
         messages.append(message)
         tool_calls = message.get("tool_calls") or []
         if not tool_calls:
-            return _final_result(message, trace, question, ctx)
+            return _finish_agent_result(
+                _final_result(message, trace, question, ctx),
+                ctx,
+            )
         for tool_call in tool_calls[:4]:
             name = tool_call.get("function", {}).get("name", "")
             raw_args = tool_call.get("function", {}).get("arguments", "{}")
@@ -595,7 +640,7 @@ def run_agent(
                 args = {}
             try:
                 output = execute_tool(ctx, name, args)
-                status = "ok"
+                status = "error" if output.startswith('{"error"') else "ok"
             except Exception as exc:
                 output = json.dumps({"error": str(exc)}, ensure_ascii=False)
                 status = "error"
@@ -607,7 +652,7 @@ def run_agent(
                     "content": output,
                 }
             )
-    return {
+    return _finish_agent_result({
         "run_id": ctx.run_id,
         "question": question,
         "answer": "Agent 已达到最大工具调用步数，未能生成最终答案。",
@@ -615,8 +660,17 @@ def run_agent(
         "evidence_chain": [],
         "disclaimer": "达到 max_steps 限制。",
         "tool_calls": trace,
+        "tool_trace": str(ctx.trace.path) if ctx.trace is not None else "",
         "status": "partial",
-    }
+    }, ctx)
+
+
+def _finish_agent_result(result: dict[str, Any], ctx: AgentContext) -> dict[str, Any]:
+    if ctx.trace is not None:
+        summary = ctx.trace.finish(str(result.get("status") or "unknown"))
+        result["tool_trace"] = str(ctx.trace.path)
+        result["tool_trace_summary"] = summary
+    return result
 
 
 def _final_result(
@@ -638,6 +692,14 @@ def _final_result(
         for evidence_id in evidence_ids
         if evidence_id in evidence_by_id
     ]
+    evidence_status = "succeeded"
+    disclaimer = str(parsed.get("disclaimer", ""))
+    if not evidence_chain and str(parsed.get("answer") or "").strip():
+        evidence_status = "partial"
+        disclaimer = (
+            (disclaimer + " ").strip()
+            + "答案没有可验证的源码 evidence，不能视为已确认结论。"
+        )
     return {
         "run_id": ctx.run_id,
         "question": question,
@@ -645,19 +707,21 @@ def _final_result(
         "confidence": float(parsed.get("confidence", 0.5)),
         "evidence_chain": evidence_chain,
         "paths": parsed.get("paths", []),
-        "disclaimer": parsed.get("disclaimer", ""),
+        "disclaimer": disclaimer,
         "tool_calls": trace,
-        "status": "succeeded",
+        "tool_trace": str(ctx.trace.path) if ctx.trace is not None else "",
+        "status": evidence_status,
     }
 
 
 def fallback_answer(question: str, ctx: AgentContext) -> dict[str, Any]:
+    ctx.ensure_trace()
     analysis = ctx.read_analysis()
     if analysis:
         answer = f"当前未配置大模型 API Key，以下为规则模板结果。\n\n{analysis[:4000]}"
     else:
         answer = "当前未配置 OPENAI_API_KEY，且没有找到 analysis.md。"
-    return {
+    result = {
         "run_id": ctx.run_id,
         "question": question,
         "answer": answer,
@@ -665,5 +729,9 @@ def fallback_answer(question: str, ctx: AgentContext) -> dict[str, Any]:
         "evidence_chain": [],
         "disclaimer": "规则模板结果，非大模型分析。",
         "tool_calls": [],
+        "tool_trace": str(ctx.trace.path) if ctx.trace is not None else "",
         "status": "partial",
     }
+    if ctx.trace is not None:
+        result["tool_trace_summary"] = ctx.trace.finish("partial")
+    return result

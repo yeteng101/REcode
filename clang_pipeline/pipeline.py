@@ -4,10 +4,19 @@ import argparse
 import json
 import shutil
 import subprocess
+import time
+from contextlib import nullcontext
 from pathlib import Path
 from typing import Any
 
 from .clang_ast import read_json, relpath, utc_now, write_json
+from .execution import (
+    AnalysisTimedOut,
+    CancellationToken,
+    ClangStageError,
+    PipelineStageError,
+)
+from .tool_trace import ToolTraceRecorder
 
 
 DEFAULT_SOURCE = "demo/sample"
@@ -161,6 +170,57 @@ def build_pipeline_config(
     }
 
 
+def _terminate_process(process: subprocess.Popen) -> tuple[str, str]:
+    try:
+        process.terminate()
+        return process.communicate(timeout=3)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        return process.communicate()
+
+
+def _run_stage_process(
+    command: list[str],
+    *,
+    stage: str,
+    timeout_seconds: float,
+    cancel_token: CancellationToken | None,
+) -> subprocess.CompletedProcess[str]:
+    started = time.monotonic()
+    process = subprocess.Popen(
+        command,
+        cwd=Path.cwd(),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    while True:
+        if cancel_token is not None:
+            if cancel_token.is_cancelled:
+                _terminate_process(process)
+                cancel_token.check(stage)
+        remaining = timeout_seconds - (time.monotonic() - started)
+        if remaining <= 0:
+            stdout, stderr = _terminate_process(process)
+            raise AnalysisTimedOut(
+                f"Stage {stage} timed out after {timeout_seconds:g}s",
+                stage=stage,
+                retryable=True,
+                details={"stdout": stdout[-2000:], "stderr": stderr[-2000:]},
+            )
+        try:
+            stdout, stderr = process.communicate(timeout=min(0.5, remaining))
+            break
+        except subprocess.TimeoutExpired:
+            continue
+    return subprocess.CompletedProcess(
+        command,
+        process.returncode,
+        stdout,
+        stderr,
+    )
+
+
 def run_pipeline(
     *,
     source_root: Path,
@@ -175,7 +235,12 @@ def run_pipeline(
     entry_symbols: list[str] | None = None,
     optimized_ir: bool = False,
     log_paths: list[str | Path] | None = None,
+    cancel_token: CancellationToken | None = None,
+    trace: ToolTraceRecorder | None = None,
+    stage_timeout: float = 1200,
 ) -> dict[str, Any]:
+    if cancel_token is not None:
+        cancel_token.check("pipeline")
     workspace.mkdir(parents=True, exist_ok=True)
     logs_dir = workspace / "logs"
     logs_dir.mkdir(parents=True, exist_ok=True)
@@ -211,35 +276,69 @@ def run_pipeline(
 
     results = []
     for stage in pipeline_config["stages"]:
+        if cancel_token is not None:
+            cancel_token.check(stage["name"])
         command = [str(item).replace("{workspace}", str(workspace)) for item in stage["command"]]
-        completed = subprocess.run(
-            command,
-            cwd=Path.cwd(),
-            capture_output=True,
-            text=True,
-            timeout=1200,
-            check=False,
-        )
-        if completed.returncode != 0:
-            raise RuntimeError(
-                f"Stage {stage['name']} failed: {completed.stderr.strip() or completed.stdout.strip()}"
+        span = (
+            trace.span(
+                f"pipeline.{stage['name']}",
+                {
+                    "command": command,
+                    "inputs": stage.get("inputs", []),
+                    "outputs": stage.get("outputs", []),
+                },
             )
-        try:
-            summary = json.loads(completed.stdout.strip().splitlines()[-1])
-        except (json.JSONDecodeError, IndexError):
-            summary = {"stage": stage["name"], "status": "unknown"}
-        results.append(summary)
+            if trace is not None
+            else nullcontext()
+        )
+        with span as current_span:
+            completed = _run_stage_process(
+                command,
+                stage=stage["name"],
+                timeout_seconds=stage_timeout,
+                cancel_token=cancel_token,
+            )
+            if completed.returncode != 0:
+                error_type = (
+                    ClangStageError
+                    if stage["name"].startswith(("01-", "02-", "03-", "04-"))
+                    else PipelineStageError
+                )
+                raise error_type(
+                    f"Stage {stage['name']} failed: "
+                    f"{completed.stderr.strip() or completed.stdout.strip()}",
+                    stage=stage["name"],
+                    retryable=True,
+                    details={
+                        "returncode": completed.returncode,
+                        "stdout": completed.stdout[-4000:],
+                        "stderr": completed.stderr[-4000:],
+                    },
+                )
+            try:
+                summary = json.loads(completed.stdout.strip().splitlines()[-1])
+            except (json.JSONDecodeError, IndexError):
+                summary = {"stage": stage["name"], "status": "unknown"}
+            results.append(summary)
+            if current_span is not None and hasattr(current_span, "set_result"):
+                current_span.set_result(summary)
 
     native_summary: dict[str, Any]
-    try:
-        from .native_export import run_native_export
+    if cancel_token is not None:
+        cancel_token.check("native-export")
+    native_span = trace.span("native_export", {"workspace": str(workspace)}) if trace else nullcontext()
+    with native_span as current_span:
+        try:
+            from .native_export import run_native_export
 
-        native_summary = run_native_export(workspace)
-    except Exception as exc:  # native extraction must not hide the base pipeline
-        native_summary = {
-            "status": "failed",
-            "error": str(exc),
-        }
+            native_summary = run_native_export(workspace)
+            if current_span is not None and hasattr(current_span, "set_result"):
+                current_span.set_result(native_summary)
+        except Exception as exc:  # native extraction must not hide the base pipeline
+            native_summary = {
+                "status": "failed",
+                "error": str(exc),
+            }
 
     if publish_dir is not None:
         report_dir = workspace / "07-report"
@@ -283,6 +382,7 @@ def run_pipeline(
         "workspace": str(workspace),
         "results": results,
         "native": native_summary,
+        "trace": str(trace.path) if trace is not None else "",
     }
 
 

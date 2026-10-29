@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from clang_pipeline.agent import AgentContext, execute_tool, fallback_answer
+from clang_pipeline.agent import AgentContext, execute_tool, fallback_answer, run_agent
 from clang_pipeline.agent_context import build_agent_context, write_agent_context
 from clang_pipeline.agent_runner import _ask_claude_code
 from clang_pipeline.mcp_server import _mcp_tools, _respond
@@ -101,6 +102,27 @@ class AgentToolTests(unittest.TestCase):
         self.assertEqual("uv_run 调用 uv__io_poll", result["answer"])
         self.assertEqual(0.9, result["confidence"])
         self.assertEqual("ev_a3dcf6ec0abb", result["evidence_chain"][0]["id"])
+
+    def test_answer_without_evidence_is_marked_partial(self) -> None:
+        response = {
+            "role": "assistant",
+            "content": json.dumps(
+                {
+                    "answer": "这是一个未经验证的结论",
+                    "confidence": 0.8,
+                    "evidence_ids": [],
+                },
+                ensure_ascii=False,
+            ),
+        }
+        with patch("clang_pipeline.agent.llm_enabled", return_value=True), patch(
+            "clang_pipeline.agent.chat_completion",
+            return_value=response,
+        ):
+            result = run_agent("这个函数做了什么？", self.ctx)
+        self.assertEqual("partial", result["status"])
+        self.assertIn("evidence", result["disclaimer"])
+        self.assertTrue(result["tool_trace_summary"]["event_count"] >= 0)
 
 
 if __name__ == "__main__":

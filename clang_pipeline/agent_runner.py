@@ -74,6 +74,7 @@ def _ask_claude_code(
     model: str | None,
     focus: list[str] | None,
 ) -> dict[str, Any]:
+    ctx.ensure_trace()
     context_path = write_agent_context(ctx, question, focus=focus)
     prompt = (
         f"请先读取上下文文件 {context_path}，再回答下面的问题。\n"
@@ -81,14 +82,29 @@ def _ask_claude_code(
         f"证据 ID 必须从上下文 evidence[].id 或工具返回结果中选取；没有证据时返回空数组。\n\n"
         f"问题：{question}"
     )
-    payload = run_claude_code(
-        prompt,
-        system_prompt=SYSTEM_PROMPT,
-        model=model,
-        cwd=ctx.repo_root,
-        json_schema=ANSWER_SCHEMA,
-        add_dirs=[ctx.workspace],
-    )
+    with ctx.trace.span(
+        "claude_code.ask",
+        {
+            "question": question,
+            "model": model or "",
+            "focus": focus or [],
+            "context_file": str(context_path),
+        },
+    ) as trace_span:
+        payload = run_claude_code(
+            prompt,
+            system_prompt=SYSTEM_PROMPT,
+            model=model,
+            cwd=ctx.repo_root,
+            json_schema=ANSWER_SCHEMA,
+            add_dirs=[ctx.workspace],
+        )
+        trace_span.set_result(
+            {
+                "structured_output": bool(payload.get("structured_output")),
+                "result_present": bool(payload.get("result")),
+            }
+        )
     content = payload.get("structured_output")
     if content is None:
         content = payload.get("result")
@@ -103,14 +119,22 @@ def _ask_claude_code(
         parsed = payload
 
     evidence_chain = _evidence_chain(ctx, parsed.get("evidence_ids", []))
-    return {
+    status = "succeeded"
+    disclaimer = str(parsed.get("disclaimer", ""))
+    if not evidence_chain and str(parsed.get("answer") or "").strip():
+        status = "partial"
+        disclaimer = (
+            (disclaimer + " ").strip()
+            + "答案没有可验证的源码 evidence，不能视为已确认结论。"
+        )
+    result = {
         "run_id": ctx.run_id,
         "question": question,
         "answer": parsed.get("answer", str(payload)),
         "confidence": float(parsed.get("confidence", 0.5)),
         "evidence_chain": evidence_chain,
         "paths": parsed.get("paths", []),
-        "disclaimer": parsed.get("disclaimer", ""),
+        "disclaimer": disclaimer,
         "tool_calls": [
             {
                 "tool": "claude-code",
@@ -118,9 +142,12 @@ def _ask_claude_code(
                 "arguments": {"context_file": str(context_path)},
             }
         ],
-        "status": "succeeded",
+        "tool_trace": str(ctx.trace.path),
+        "status": status,
         "backend": "claude-code",
     }
+    result["tool_trace_summary"] = ctx.trace.finish(status)
+    return result
 
 
 def _evidence_chain(ctx: AgentContext, evidence_ids: list[str]) -> list[dict[str, Any]]:

@@ -23,6 +23,8 @@
 > 评测协议与 Agent 闭环：[validation/external/protocol-v1.json](validation/external/protocol-v1.json)
 > [评测报告](docs/external-protocol-v1-2026-10-29.md)
 >
+> Agent Trace 与异常恢复：[docs/agent-tool-trace.md](docs/agent-tool-trace.md)
+>
 > 汇报与答辩：[docs/reporting-guide-2026-10-16.md](docs/reporting-guide-2026-10-16.md)
 >
 > 本周把代码逆向分析结果从固定示例图升级为仓库无关、自动生成、嵌入 Agent 流程的
@@ -137,6 +139,9 @@ output/
 ├── run-result.json
 ├── report.md
 ├── visualization.html
+├── trace/
+│   ├── tool-trace.jsonl
+│   └── tool-trace-summary.json
 ├── knowledge/
 │   ├── build-profile.json
 │   ├── log-facts.json

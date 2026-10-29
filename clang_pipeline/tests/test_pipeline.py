@@ -6,6 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from clang_pipeline.execution import AnalysisCancelled, CancellationToken
 from clang_pipeline.pipeline import run_pipeline
 from clang_pipeline.resource_flow import analyze_resource_flow
 
@@ -17,6 +18,20 @@ EXTERNAL_FIXTURE = ROOT / "clang_pipeline" / "tests" / "fixtures"
 
 @unittest.skipUnless(shutil.which("clang++"), "clang++ is required")
 class ClangPipelineTests(unittest.TestCase):
+    def test_cancelled_pipeline_stops_before_launching_stages(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            token = CancellationToken()
+            token.cancel("test cancellation")
+            with self.assertRaises(AnalysisCancelled):
+                run_pipeline(
+                    source_root=SAMPLE,
+                    workspace=Path(tmp) / "workspace",
+                    run_id="run_cancel_test",
+                    build_profile="demo-poll",
+                    publish_dir=None,
+                    cancel_token=token,
+                )
+
     def test_seven_stages_produce_evidence_graph(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             workspace = Path(tmp) / "workspace"

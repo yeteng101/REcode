@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/code-reverse/tool-trace.schema.json",
+  "title": "Agent tool trace event",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "trace_id",
+    "run_id",
+    "span_id",
+    "tool",
+    "arguments",
+    "status",
+    "started_at",
+    "finished_at",
+    "duration_ms",
+    "result",
+    "error"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "tool-trace-v1"
+    },
+    "trace_id": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "span_id": {
+      "type": "string"
+    },
+    "parent_span_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tool": {
+      "type": "string",
+      "minLength": 1
+    },
+    "arguments": {
+      "type": "object"
+    },
+    "status": {
+      "type": "string",
+      "minLength": 1
+    },
+    "started_at": {
+      "type": "string"
+    },
+    "finished_at": {
+      "type": "string"
+    },
+    "duration_ms": {
+      "type": "number",
+      "minimum": 0
+    },
+    "result": {
+      "type": "object",
+      "required": [
+        "type",
+        "bytes",
+        "sha256",
+        "preview",
+        "truncated"
+      ]
+    },
+    "error": {
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  }
+}

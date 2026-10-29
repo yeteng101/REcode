@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import uuid
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -13,6 +14,7 @@ from .agent import AGENT_TOOLS, AgentContext
 from .agent_runner import ask_question
 from .agent_jobs import AnalysisJobManager, JobError
 from .llm_bridge import LLMNotConfigured
+from .tool_trace import ToolTraceRecorder
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,7 +33,17 @@ def job_manager() -> AnalysisJobManager:
         allow_local = os.environ.get("CRA_ALLOW_LOCAL_REPOSITORIES", "1") == "1"
         _JOB_MANAGER = AnalysisJobManager(
             root,
+            max_workers=max(1, int(os.environ.get("CRA_MAX_WORKERS", "2"))),
             allow_local_repositories=allow_local,
+            job_timeout_seconds=float(
+                os.environ.get("CRA_JOB_TIMEOUT_SECONDS", "1800")
+            ),
+            max_repository_files=int(
+                os.environ.get("CRA_MAX_REPOSITORY_FILES", "20000")
+            ),
+            max_repository_bytes=int(
+                os.environ.get("CRA_MAX_REPOSITORY_BYTES", str(1024 * 1024 * 1024))
+            ),
         )
     return _JOB_MANAGER
 
@@ -48,7 +60,7 @@ def default_workspace() -> Path:
 
 
 class AgentHandler(BaseHTTPRequestHandler):
-    server_version = "CodeReverseAgentServer/0.1"
+    server_version = "CodeReverseAgentServer/0.4"
 
     def _write_json(self, status: int, payload: dict[str, Any]) -> None:
         encoded = json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
@@ -72,7 +84,7 @@ class AgentHandler(BaseHTTPRequestHandler):
                 {
                     "status": "ok",
                     "service": "code-reverse-agent",
-                    "version": "0.3.0",
+                    "version": "0.4.0",
                     "job_root": str(job_manager().output_root),
                 },
             )
@@ -97,6 +109,16 @@ class AgentHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
+        if path.startswith("/api/v1/agent/analyze/") and path.endswith("/cancel"):
+            job_id = path.split("/")[-2]
+            try:
+                self._write_json(HTTPStatus.ACCEPTED, job_manager().cancel(job_id))
+            except JobError as exc:
+                self._write_json(
+                    HTTPStatus.NOT_FOUND,
+                    {"status": "failed", "error": {"code": "not_found", "message": str(exc)}},
+                )
+            return
         if path == "/api/v1/agent/analyze":
             try:
                 body = self._read_json()
@@ -142,6 +164,17 @@ class AgentHandler(BaseHTTPRequestHandler):
                 workspace,
                 repo_root=ROOT,
                 run_id=run_id,
+                trace=ToolTraceRecorder(
+                    Path(
+                        os.environ.get(
+                            "CRA_TRACE_ROOT",
+                            str(ROOT / "artifacts" / "agent-traces"),
+                        )
+                    )
+                    / f"{run_id}_{uuid.uuid4().hex[:12]}.jsonl",
+                    run_id=run_id,
+                    metadata={"workspace": str(workspace)},
+                ),
             )
             result = ask_question(
                 str(body["question"]).strip(),
@@ -151,6 +184,9 @@ class AgentHandler(BaseHTTPRequestHandler):
                 model=body.get("model"),
                 focus=focus if isinstance(focus, list) else None,
             )
+            result["tool_trace"] = str(ctx.trace.path) if ctx.trace is not None else ""
+            if ctx.trace is not None:
+                ctx.trace.finish(result.get("status", "succeeded"))
             self._write_json(HTTPStatus.OK, result)
         except LLMNotConfigured as exc:
             self._write_json(
@@ -180,6 +216,7 @@ def main() -> None:
     print("POST /api/v1/agent/ask  (自然语言提问)")
     print("POST /api/v1/agent/analyze  (仓库 URL -> 分析任务)")
     print("GET  /api/v1/agent/analyze/{job_id}")
+    print("POST /api/v1/agent/analyze/{job_id}/cancel")
     print("GET  /api/v1/agent/tools")
     print("GET  /health")
     try:

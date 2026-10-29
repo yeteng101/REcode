@@ -9,7 +9,9 @@ from pathlib import Path
 from unittest.mock import patch
 
 from clang_pipeline.cli import command_repo
+from clang_pipeline.execution import RepositoryNotFoundError, RepositoryTooLargeError
 from clang_pipeline.repo_agent import (
+    build_compile_commands,
     _relativize_json_paths,
     repository_identity,
     run_repo_analysis,
@@ -119,6 +121,23 @@ class RepoAgentTests(unittest.TestCase):
             self.assertIn("external/resource-flow.json", manifest["outputs"].values())
             self.assertIn("external/sync-relations.json", manifest["outputs"].values())
             self.assertIn("external/race-analysis.json", manifest["outputs"].values())
+            self.assertIn("trace/tool-trace.jsonl", manifest["outputs"].values())
+            self.assertTrue((output / "trace" / "tool-trace.jsonl").is_file())
+            trace_rows = [
+                json.loads(line)
+                for line in (output / "trace" / "tool-trace.jsonl").read_text(
+                    encoding="utf-8"
+                ).splitlines()
+            ]
+            self.assertTrue(
+                {"analyze_repo", "checkout_repository", "pipeline.01-index"}
+                <= {row["tool"] for row in trace_rows}
+            )
+            for row in trace_rows:
+                self.assertIn("arguments", row)
+                self.assertIn("status", row)
+                self.assertIn("duration_ms", row)
+                self.assertIn("result", row)
             self.assertIn("external/knowledge-graph.json", manifest["outputs"].values())
 
             for path in (
@@ -178,6 +197,51 @@ class RepoAgentTests(unittest.TestCase):
             self.assertGreater(manifest["summary"]["nodes"], 0)
             self.assertGreater(manifest["summary"]["call_items"], 0)
             self.assertTrue((output / "visualization.html").exists())
+
+    def test_missing_repository_returns_typed_error_and_error_json(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "missing-output"
+            with self.assertRaises(RepositoryNotFoundError):
+                run_repo_analysis(
+                    (Path(tmp) / "does-not-exist").as_uri(),
+                    output_dir=output,
+                    archive=False,
+                )
+            self.assertTrue((output / "error.json").is_file())
+            self.assertTrue((output / "trace" / "tool-trace-summary.json").is_file())
+
+    def test_repository_file_limit_is_enforced(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "small"
+            source.mkdir()
+            (source / "main.c").write_text("int main(void) { return 0; }", encoding="utf-8")
+            with self.assertRaises(RepositoryTooLargeError):
+                run_repo_analysis(
+                    source.as_uri(),
+                    output_dir=Path(tmp) / "output",
+                    archive=False,
+                    max_repository_files=0,
+                )
+
+    def test_cmake_failure_falls_back_to_generic_compile_commands(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "repo"
+            repo.mkdir()
+            (repo / "CMakeLists.txt").write_text(
+                "this is not valid cmake",
+                encoding="utf-8",
+            )
+            (repo / "main.c").write_text("int main(void) { return 0; }", encoding="utf-8")
+            commands = build_compile_commands(
+                repo,
+                log_path=Path(tmp) / "build.log",
+            )
+            self.assertEqual(1, len(commands))
+            self.assertIn("main.c", commands[0]["file"])
+            self.assertIn(
+                "falling back to generic compile commands",
+                (Path(tmp) / "build.log").read_text(encoding="utf-8"),
+            )
 
 
 if __name__ == "__main__":

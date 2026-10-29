@@ -91,6 +91,24 @@ def build_agent_context(
                 "race-analysis.json",
                 "09-race-analysis/race-analysis.json",
             ),
+            "tool_trace": (
+                str(ctx.trace.path)
+                if ctx.trace is not None
+                else _artifact_path(
+                    ctx.workspace,
+                    "trace/tool-trace.jsonl",
+                    "tool-trace.jsonl",
+                )
+            ),
+            "tool_trace_summary": (
+                str(ctx.trace.summary_path)
+                if ctx.trace is not None
+                else _artifact_path(
+                    ctx.workspace,
+                    "trace/tool-trace-summary.json",
+                    "tool-trace-summary.json",
+                )
+            ),
         },
     }
 
