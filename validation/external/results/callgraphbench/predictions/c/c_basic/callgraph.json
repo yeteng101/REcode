@@ -5,22 +5,34 @@
     {
       "caller": "c:c_basic:greet",
       "callee": "c:c_basic:format_name",
-      "kind": "direct"
+      "kind": "direct",
+      "evidence_ids": [
+        "ev_4673ecb2bf5e"
+      ]
     },
     {
       "caller": "c:c_basic:main",
       "callee": "c:c_basic:make_user",
-      "kind": "direct"
+      "kind": "direct",
+      "evidence_ids": [
+        "ev_f5fcc99474fe"
+      ]
     },
     {
       "caller": "c:c_basic:main",
       "callee": "c:c_basic:welcome",
-      "kind": "direct"
+      "kind": "direct",
+      "evidence_ids": [
+        "ev_97c68dd25edf"
+      ]
     },
     {
       "caller": "c:c_basic:welcome",
       "callee": "c:c_basic:greet",
-      "kind": "direct"
+      "kind": "direct",
+      "evidence_ids": [
+        "ev_f6d0812bf0d3"
+      ]
     }
   ]
 }

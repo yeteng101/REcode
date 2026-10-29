@@ -1,0 +1,352 @@
+{
+  "schema_version": "selection-v1",
+  "selection_id": "svcomp-concurrency-v1",
+  "dataset": "svcomp-concurrency",
+  "source": {
+    "repo": "https://gitlab.com/sosy-lab/benchmarking/sv-benchmarks.git",
+    "revision": "7efe28dd29576b46927b7a34e8f742bd90966a75",
+    "license": "Varies by task; retain task provenance"
+  },
+  "unit": "task_property",
+  "identity_fields": [
+    "task_file",
+    "property_file"
+  ],
+  "rules": [
+    "use the pinned SV-COMP case index",
+    "expected_verdict=true is the safe negative class",
+    "expected_verdict=false is the property-violation positive class",
+    "do not drop unparsable tasks; emit unknown instead"
+  ],
+  "counts": {
+    "cases": 20,
+    "units": 20,
+    "positive_units": 10,
+    "negative_units": 10
+  },
+  "cases": [
+    {
+      "id": "bigshot_s",
+      "task_file": "c/pthread/bigshot_s.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "bigshot_s2",
+      "task_file": "c/pthread/bigshot_s2.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "butterfly",
+      "task_file": "c/pthread/butterfly.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "fib_safe-10",
+      "task_file": "c/pthread/fib_safe-10.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "fib_safe-11",
+      "task_file": "c/pthread/fib_safe-11.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "fib_safe-12",
+      "task_file": "c/pthread/fib_safe-12.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "fib_safe-5",
+      "task_file": "c/pthread/fib_safe-5.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "fib_safe-6",
+      "task_file": "c/pthread/fib_safe-6.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "fib_safe-7",
+      "task_file": "c/pthread/fib_safe-7.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "fib_unsafe-10",
+      "task_file": "c/pthread/fib_unsafe-10.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "bigshot_p",
+      "task_file": "c/pthread/bigshot_p.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "fib_safe-10-racy",
+      "task_file": "c/pthread/fib_safe-10-racy.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "fib_safe-11-racy",
+      "task_file": "c/pthread/fib_safe-11-racy.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "fib_safe-12-racy",
+      "task_file": "c/pthread/fib_safe-12-racy.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "fib_safe-5-racy",
+      "task_file": "c/pthread/fib_safe-5-racy.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "fib_safe-6-racy",
+      "task_file": "c/pthread/fib_safe-6-racy.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "fib_safe-7-racy",
+      "task_file": "c/pthread/fib_safe-7-racy.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "fib_unsafe-10-racy",
+      "task_file": "c/pthread/fib_unsafe-10-racy.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "fib_unsafe-11-racy",
+      "task_file": "c/pthread/fib_unsafe-11-racy.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "fib_unsafe-12-racy",
+      "task_file": "c/pthread/fib_unsafe-12-racy.yml",
+      "property": "../properties/no-data-race.prp",
+      "subproperty": ""
+    }
+  ],
+  "units": [
+    {
+      "id": "unit_9c70dcf2fb33769a",
+      "case_id": "bigshot_s",
+      "identity": {
+        "task_file": "c/pthread/bigshot_s.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "no_race",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_30d62032ff3846b2",
+      "case_id": "bigshot_s2",
+      "identity": {
+        "task_file": "c/pthread/bigshot_s2.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "no_race",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_3a31d74fe0c6032c",
+      "case_id": "butterfly",
+      "identity": {
+        "task_file": "c/pthread/butterfly.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "no_race",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_c6029405c8462b02",
+      "case_id": "fib_safe-10",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-10.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "no_race",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_5f4fb06010667294",
+      "case_id": "fib_safe-11",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-11.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "no_race",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_84f30cd236d487cc",
+      "case_id": "fib_safe-12",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-12.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "no_race",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_0ab398bb28e9ceb3",
+      "case_id": "fib_safe-5",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-5.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "no_race",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_163dddaf28dc030e",
+      "case_id": "fib_safe-6",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-6.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "no_race",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_0a555fae4376efca",
+      "case_id": "fib_safe-7",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-7.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "no_race",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_a26fa5eb64fa29a0",
+      "case_id": "fib_unsafe-10",
+      "identity": {
+        "task_file": "c/pthread/fib_unsafe-10.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "no_race",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_765b759c72ae05f4",
+      "case_id": "bigshot_p",
+      "identity": {
+        "task_file": "c/pthread/bigshot_p.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "race",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_ae6dcf4f381d4e1d",
+      "case_id": "fib_safe-10-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-10-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "race",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_25e3c6454398a292",
+      "case_id": "fib_safe-11-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-11-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "race",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_fbb59003d87608a0",
+      "case_id": "fib_safe-12-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-12-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "race",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_3bba79a8d7151ff2",
+      "case_id": "fib_safe-5-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-5-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "race",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_98a45b4a9e6b46f2",
+      "case_id": "fib_safe-6-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-6-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "race",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_8031e24e05a42f25",
+      "case_id": "fib_safe-7-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-7-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "race",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_06624c13e3242fb6",
+      "case_id": "fib_unsafe-10-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_unsafe-10-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "race",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_7b7624eac11b4e9b",
+      "case_id": "fib_unsafe-11-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_unsafe-11-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "race",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_49a0f0ae33072907",
+      "case_id": "fib_unsafe-12-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_unsafe-12-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "label": "race",
+      "expected_verdict": false
+    }
+  ],
+  "exclusions": []
+}

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Evaluate resource-flow leak detection on SV-COMP MemSafety tasks."""
+"""Evaluate tri-state resource-leak analysis on SV-COMP MemSafety tasks."""
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 import shutil
@@ -13,6 +14,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from clang_pipeline.clang_ast import read_json, write_json
+from clang_pipeline.evaluation_protocol import (
+    prediction_envelope,
+    validate_prediction_document,
+)
 from clang_pipeline.pipeline import run_pipeline
 from clang_pipeline.repo_agent import _relativize_json_paths
 from clang_pipeline.resource_flow import analyze_resource_flow
@@ -20,6 +25,7 @@ from clang_pipeline.resource_flow import analyze_resource_flow
 
 DATASET = ROOT / ".benchmark-cache/svcomp26"
 CASES = ROOT / "validation/external/results/svcomp/cases.json"
+SELECTION = ROOT / "validation/external/selections/svcomp-memsafety-v1.json"
 OUTPUT = ROOT / "validation/external/results/svcomp/memsafety"
 
 
@@ -51,13 +57,70 @@ def compile_commands(repo: Path) -> list[dict]:
     return commands
 
 
+def select_cases(cases: list[dict], limit: int | None) -> list[dict]:
+    if limit is None or limit >= len(cases):
+        return cases
+    positives = [case for case in cases if not case["expected_verdict"]]
+    negatives = [case for case in cases if case["expected_verdict"]]
+    selected = []
+    for index in range(max(len(positives), len(negatives))):
+        if index < len(positives):
+            selected.append(positives[index])
+        if index < len(negatives):
+            selected.append(negatives[index])
+        if len(selected) >= limit:
+            break
+    return selected[:limit]
+
+
+def score(rows: list[dict]) -> dict:
+    answered = [row for row in rows if row["status"] != "unknown"]
+    tp = sum(row["expected_leak"] and row["status"] == "leak" for row in answered)
+    fp = sum(not row["expected_leak"] and row["status"] == "leak" for row in answered)
+    fn = sum(row["expected_leak"] and row["status"] == "no_leak" for row in answered)
+    tn = sum(not row["expected_leak"] and row["status"] == "no_leak" for row in answered)
+    unknown = len(rows) - len(answered)
+    precision_denominator = tp + fp
+    recall_denominator = tp + fn
+    return {
+        "tp": tp,
+        "fp": fp,
+        "fn": fn,
+        "tn": tn,
+        "unknown": unknown,
+        "precision": tp / precision_denominator if precision_denominator else None,
+        "recall": tp / recall_denominator if recall_denominator else None,
+        "unknown_rate": unknown / len(rows) if rows else None,
+        "coverage": len(answered) / len(rows) if rows else None,
+        "accuracy": (tp + tn) / len(rows) if rows and unknown == 0 else None,
+    }
+
+
+def format_rate(value: float | None) -> str:
+    return "N/A" if value is None else f"{value:.2%}"
+
+
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--cases", type=Path, default=CASES)
+    parser.add_argument("--selection", type=Path, default=SELECTION)
+    parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--limit", type=int)
+    args = parser.parse_args()
     if not CASES.is_file() or not DATASET.is_dir():
         raise SystemExit("prepare SV-COMP cases first")
-    source = json.loads(CASES.read_text(encoding="utf-8"))
-    cases = source["groups"]["memsafety"]
+    source = json.loads(args.cases.read_text(encoding="utf-8"))
+    selection = json.loads(args.selection.read_text(encoding="utf-8"))
+    selected_ids = {unit["case_id"] for unit in selection["units"]}
+    cases = [
+        case
+        for case in source["groups"]["memsafety"]
+        if case["id"] in selected_ids
+    ]
+    cases = select_cases(cases, args.limit)
+    predictions = []
     rows = []
-    tp = fp = tn = fn = 0
+    skipped = []
     with tempfile.TemporaryDirectory(prefix="svcomp-memsafety-") as temp_dir:
         temp_root = Path(temp_dir)
         for index, case in enumerate(cases):
@@ -66,83 +129,132 @@ def main() -> int:
             repo.mkdir(parents=True)
             for value in case["input_files"]:
                 source_path = task_dir / value
-                destination = repo / source_path.name
-                shutil.copyfile(source_path, destination)
+                shutil.copyfile(source_path, repo / source_path.name)
             workspace = repo / ".workspace"
-            run_pipeline(
-                source_root=repo,
-                workspace=workspace,
-                run_id=f"svcomp_{case['id']}",
-                build_profile="svcomp26-memsafety",
-                compile_commands=compile_commands(repo),
-                repository="sv-comp/2026/memsafety",
-                commit="7efe28dd29576b46927b7a34e8f742bd90966a75",
+            try:
+                run_pipeline(
+                    source_root=repo,
+                    workspace=workspace,
+                    run_id=f"svcomp_{case['id']}",
+                    build_profile="svcomp26-memsafety",
+                    compile_commands=compile_commands(repo),
+                    repository="sv-comp/2026/memsafety",
+                    commit="7efe28dd29576b46927b7a34e8f742bd90966a75",
+                )
+                graph = _relativize_json_paths(
+                    read_json(workspace / "07-report" / "graph.json"),
+                    repo,
+                )
+                flow = analyze_resource_flow(graph, source_root=repo)
+                predicted_violation = any(
+                    path.get("termination_reason") == "release_not_found"
+                    for item in flow.get("items", [])
+                    for path in item.get("paths", [])
+                )
+                status = "leak" if predicted_violation else "no_leak"
+                evidence = [
+                    {
+                        "id": entry["id"],
+                        "file": entry["location"]["file"],
+                        "line": entry["location"]["line"],
+                        "snippet": entry["location"].get("snippet", ""),
+                    }
+                    for entry in flow.get("evidence", [])
+                    if entry.get("location")
+                ][:50]
+                reason = (
+                    "resource path ends without release"
+                    if predicted_violation
+                    else "no analyzed resource path ends without release"
+                )
+                confidence = 0.55 if predicted_violation else 0.4
+            except Exception as exc:
+                status = "unknown"
+                evidence = []
+                reason = str(exc).splitlines()[-1][:300]
+                confidence = 0.0
+                skipped.append({"id": case["id"], "reason": reason})
+            identity = {
+                "task_file": case["task_file"],
+                "property_file": case["property"],
+                "subproperty": case["subproperty"],
+            }
+            predictions.append(
+                {
+                    "id": case["id"],
+                    "identity": identity,
+                    "status": status,
+                    "confidence": confidence,
+                    "evidence": evidence,
+                    "details": {
+                        "reason": reason,
+                        "input_files": case["input_files"],
+                    },
+                }
             )
-            graph = _relativize_json_paths(
-                read_json(workspace / "07-report" / "graph.json"),
-                repo,
-            )
-            flow = analyze_resource_flow(graph, source_root=repo)
-            predicted_violation = any(
-                path.get("termination_reason") == "release_not_found"
-                for item in flow.get("items", [])
-                for path in item.get("paths", [])
-            )
-            expected_violation = not case["expected_verdict"]
-            if expected_violation and predicted_violation:
-                tp += 1
-            elif expected_violation:
-                fn += 1
-            elif predicted_violation:
-                fp += 1
-            else:
-                tn += 1
             rows.append(
                 {
                     "id": case["id"],
-                    "expected_violation": expected_violation,
-                    "predicted_violation": predicted_violation,
-                    "resource_items": len(flow.get("items", [])),
+                    "expected_leak": not bool(case["expected_verdict"]),
+                    "status": status,
+                    "reason": reason,
                 }
             )
-    precision_denominator = tp + fp
-    recall_denominator = tp + fn
+    envelope = prediction_envelope(
+        dataset="svcomp-memsafety",
+        generator={
+            "name": "resource-flow-native",
+            "version": "1.0.0",
+            "mode": "deterministic",
+            "parameters": {
+                "strategy": "resource-path-termination",
+                "gold_exposed_to_analyzer": False,
+            },
+        },
+        predictions=predictions,
+    )
+    validate_prediction_document(envelope, expected_dataset="svcomp-memsafety")
+    metrics = score(rows)
     report = {
         "schema_version": "1.0",
         "dataset": "SV-COMP 2026 C.MemSafety",
-        "commit": "7efe28dd29576b46927b7a34e8f742bd90966a75",
+        "selection_id": selection["selection_id"],
+        "commit": selection["source"]["revision"],
         "property": "valid-memtrack",
-        "metric": "binary memory-leak violation classification",
-        "tp": tp,
-        "fp": fp,
-        "fn": fn,
-        "tn": tn,
-        "precision": tp / precision_denominator if precision_denominator else None,
-        "recall": tp / recall_denominator if recall_denominator else None,
-        "accuracy": (tp + tn) / len(rows) if rows else None,
+        "metric": "tri-state memory-leak violation classification",
+        **metrics,
         "cases": rows,
+        "skipped_cases": skipped,
     }
-    OUTPUT.mkdir(parents=True, exist_ok=True)
-    write_json(OUTPUT / "report.json", report)
-    lines = [
-        "# SV-COMP MemSafety resource-flow baseline",
-        "",
-        "| TP | FP | FN | TN | Precision | Recall | Accuracy |",
-        "|---:|---:|---:|---:|---:|---:|---:|",
-        "| {tp} | {fp} | {fn} | {tn} | {p} | {r} | {a} |".format(
-            tp=tp,
-            fp=fp,
-            fn=fn,
-            tn=tn,
-            p="N/A" if report["precision"] is None else f"{report['precision']:.2%}",
-            r="N/A" if report["recall"] is None else f"{report['recall']:.2%}",
-            a="N/A" if report["accuracy"] is None else f"{report['accuracy']:.2%}",
-        ),
-        "",
-        "Only the official `valid-memtrack` subset is evaluated.",
-    ]
-    (OUTPUT / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(json.dumps(report, ensure_ascii=False, indent=2))
+    write_json(args.output / "predictions.json", envelope)
+    write_json(args.output / "report.json", report)
+    (args.output / "report.md").write_text(
+        "\n".join(
+            [
+                "# SV-COMP MemSafety resource-flow baseline",
+                "",
+                "| TP | FP | FN | TN | Unknown | Precision | Recall | Coverage |",
+                "|---:|---:|---:|---:|---:|---:|---:|---:|",
+                "| {tp} | {fp} | {fn} | {tn} | {unknown} | {p} | {r} | "
+                "{coverage} |".format(
+                    tp=metrics["tp"],
+                    fp=metrics["fp"],
+                    fn=metrics["fn"],
+                    tn=metrics["tn"],
+                    unknown=metrics["unknown"],
+                    p=format_rate(metrics["precision"]),
+                    r=format_rate(metrics["recall"]),
+                    coverage=format_rate(metrics["coverage"]),
+                ),
+                "",
+                "Only valid-memtrack tasks are evaluated. Unknown results remain",
+                "in the prediction JSON and are excluded from binary metrics.",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    print(json.dumps(metrics, ensure_ascii=False, indent=2))
     return 0
 
 

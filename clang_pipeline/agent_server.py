@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -10,10 +11,29 @@ from urllib.parse import urlparse
 
 from .agent import AGENT_TOOLS, AgentContext
 from .agent_runner import ask_question
+from .agent_jobs import AnalysisJobManager, JobError
 from .llm_bridge import LLMNotConfigured
 
 
 ROOT = Path(__file__).resolve().parents[1]
+_JOB_MANAGER: AnalysisJobManager | None = None
+
+
+def job_manager() -> AnalysisJobManager:
+    global _JOB_MANAGER
+    if _JOB_MANAGER is None:
+        root = Path(
+            os.environ.get(
+                "CRA_JOB_ROOT",
+                str(ROOT / "artifacts" / "agent-jobs"),
+            )
+        )
+        allow_local = os.environ.get("CRA_ALLOW_LOCAL_REPOSITORIES", "1") == "1"
+        _JOB_MANAGER = AnalysisJobManager(
+            root,
+            allow_local_repositories=allow_local,
+        )
+    return _JOB_MANAGER
 
 
 def default_workspace() -> Path:
@@ -49,11 +69,26 @@ class AgentHandler(BaseHTTPRequestHandler):
         if path == "/health":
             self._write_json(
                 HTTPStatus.OK,
-                {"status": "ok", "service": "code-reverse-agent", "version": "0.2.0"},
+                {
+                    "status": "ok",
+                    "service": "code-reverse-agent",
+                    "version": "0.3.0",
+                    "job_root": str(job_manager().output_root),
+                },
             )
             return
         if path == "/api/v1/agent/tools":
             self._write_json(HTTPStatus.OK, {"tools": AGENT_TOOLS})
+            return
+        if path.startswith("/api/v1/agent/analyze/"):
+            job_id = path.rsplit("/", 1)[-1]
+            try:
+                self._write_json(HTTPStatus.OK, job_manager().get(job_id))
+            except JobError as exc:
+                self._write_json(
+                    HTTPStatus.NOT_FOUND,
+                    {"status": "failed", "error": {"code": "not_found", "message": str(exc)}},
+                )
             return
         self._write_json(
             HTTPStatus.NOT_FOUND,
@@ -62,6 +97,32 @@ class AgentHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
+        if path == "/api/v1/agent/analyze":
+            try:
+                body = self._read_json()
+                if not isinstance(body, dict) or not str(body.get("repository_url", "")).strip():
+                    raise ValueError("repository_url 不能为空")
+                result = job_manager().submit(
+                    str(body["repository_url"]),
+                    branch=body.get("branch"),
+                    commit=body.get("commit"),
+                    build_profile=body.get("build_profile"),
+                    entry_symbols=body.get("entry_symbols"),
+                    log_paths=body.get("logs"),
+                    optimized_ir=bool(body.get("optimized_ir")),
+                )
+                self._write_json(HTTPStatus.ACCEPTED, result)
+            except (ValueError, JobError) as exc:
+                self._write_json(
+                    HTTPStatus.BAD_REQUEST,
+                    {"status": "failed", "error": {"code": "bad_request", "message": str(exc)}},
+                )
+            except Exception as exc:
+                self._write_json(
+                    HTTPStatus.INTERNAL_SERVER_ERROR,
+                    {"status": "failed", "error": {"code": "internal_error", "message": str(exc)}},
+                )
+            return
         if path != "/api/v1/agent/ask":
             self._write_json(
                 HTTPStatus.NOT_FOUND,
@@ -117,6 +178,8 @@ def main() -> None:
     server = ThreadingHTTPServer((args.host, args.port), AgentHandler)
     print(f"Agent Server: http://{args.host}:{args.port}")
     print("POST /api/v1/agent/ask  (自然语言提问)")
+    print("POST /api/v1/agent/analyze  (仓库 URL -> 分析任务)")
+    print("GET  /api/v1/agent/analyze/{job_id}")
     print("GET  /api/v1/agent/tools")
     print("GET  /health")
     try:

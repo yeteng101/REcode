@@ -1,0 +1,1420 @@
+{
+  "schema_version": "external-prediction-v1",
+  "protocol_id": "external-v1",
+  "dataset": "svcomp-memsafety",
+  "generator": {
+    "name": "resource-flow-native",
+    "version": "1.0.0",
+    "mode": "deterministic",
+    "parameters": {
+      "strategy": "resource-path-termination",
+      "gold_exposed_to_analyzer": false
+    }
+  },
+  "predictions": [
+    {
+      "id": "960521-1-2",
+      "identity": {
+        "task_file": "c/memsafety/960521-1-2.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_00afd3c2b263",
+          "file": "960521-1-2.i",
+          "line": 536,
+          "snippet": "a = malloc (n * sizeof(*a));"
+        },
+        {
+          "id": "ev_212773ab5233",
+          "file": "960521-1-2.i",
+          "line": 536,
+          "snippet": "a = malloc (n * sizeof(*a));"
+        },
+        {
+          "id": "ev_c3c8de91eb8f",
+          "file": "960521-1-2.i",
+          "line": 537,
+          "snippet": "b = malloc (n * sizeof(*b));"
+        },
+        {
+          "id": "ev_de4415b6d03f",
+          "file": "960521-1-2.i",
+          "line": 543,
+          "snippet": "{ free(a); free(b-1); }"
+        },
+        {
+          "id": "ev_e5dc1bf6207c",
+          "file": "960521-1-2.i",
+          "line": 537,
+          "snippet": "b = malloc (n * sizeof(*b));"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "960521-1-2.i"
+        ]
+      }
+    },
+    {
+      "id": "lockfree-3_0",
+      "identity": {
+        "task_file": "c/memsafety/lockfree-3.0.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_244011dbb11e",
+          "file": "lockfree-3.0.i",
+          "line": 548,
+          "snippet": "x1->next = t1;"
+        },
+        {
+          "id": "ev_54a8c0e506ac",
+          "file": "lockfree-3.0.i",
+          "line": 534,
+          "snippet": "static struct cell *x1 = ((void *)0);"
+        },
+        {
+          "id": "ev_709b822a7eba",
+          "file": "lockfree-3.0.i",
+          "line": 533,
+          "snippet": "static struct cell *t1 = ((void *)0);"
+        },
+        {
+          "id": "ev_8581f12d963e",
+          "file": "lockfree-3.0.i",
+          "line": 601,
+          "snippet": "struct cell *next = garbage->next;"
+        },
+        {
+          "id": "ev_89f346c7be23",
+          "file": "lockfree-3.0.i",
+          "line": 537,
+          "snippet": "x1 = malloc(sizeof(*x1));"
+        },
+        {
+          "id": "ev_9e128f6b463a",
+          "file": "lockfree-3.0.i",
+          "line": 537,
+          "snippet": "x1 = malloc(sizeof(*x1));"
+        },
+        {
+          "id": "ev_d49a6e95b833",
+          "file": "lockfree-3.0.i",
+          "line": 603,
+          "snippet": "garbage = next;"
+        },
+        {
+          "id": "ev_d6a1ecbf3f87",
+          "file": "lockfree-3.0.i",
+          "line": 552,
+          "snippet": "S = x1;"
+        },
+        {
+          "id": "ev_def669b37f4e",
+          "file": "lockfree-3.0.i",
+          "line": 602,
+          "snippet": "free(garbage);"
+        },
+        {
+          "id": "ev_ea758a005779",
+          "file": "lockfree-3.0.i",
+          "line": 539,
+          "snippet": "x1->next = ((void *)0);"
+        },
+        {
+          "id": "ev_fa60c8d2d7cf",
+          "file": "lockfree-3.0.i",
+          "line": 545,
+          "snippet": "t1 = S;"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "lockfree-3.0.i"
+        ]
+      }
+    },
+    {
+      "id": "test-0019-1",
+      "identity": {
+        "task_file": "c/memsafety/test-0019-1.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_058671c2e956",
+          "file": "test-0019-1.i",
+          "line": 530,
+          "snippet": "pdata->hi = malloc(24);"
+        },
+        {
+          "id": "ev_2d624170329f",
+          "file": "test-0019-1.i",
+          "line": 534,
+          "snippet": "void *lo = data.lo;"
+        },
+        {
+          "id": "ev_376878526745",
+          "file": "test-0019-1.i",
+          "line": 538,
+          "snippet": "free(lo);"
+        },
+        {
+          "id": "ev_6bce21b20ccb",
+          "file": "test-0019-1.i",
+          "line": 529,
+          "snippet": "pdata->lo = malloc(16);"
+        },
+        {
+          "id": "ev_7a2729df5b68",
+          "file": "test-0019-1.i",
+          "line": 529,
+          "snippet": "pdata->lo = malloc(16);"
+        },
+        {
+          "id": "ev_e4ea96b49c93",
+          "file": "test-0019-1.i",
+          "line": 530,
+          "snippet": "pdata->hi = malloc(24);"
+        },
+        {
+          "id": "ev_f67bb9460be1",
+          "file": "test-0019-1.i",
+          "line": 539,
+          "snippet": "free(hi);"
+        },
+        {
+          "id": "ev_f8a12827ef68",
+          "file": "test-0019-1.i",
+          "line": 535,
+          "snippet": "void *hi = data.hi;"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "test-0019-1.i"
+        ]
+      }
+    },
+    {
+      "id": "test-0102-1",
+      "identity": {
+        "task_file": "c/memsafety/test-0102-1.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_2882a547282b",
+          "file": "test-0102-1.i",
+          "line": 555,
+          "snippet": "now = next;"
+        },
+        {
+          "id": "ev_2b9900545238",
+          "file": "test-0102-1.i",
+          "line": 587,
+          "snippet": "struct top_list *top = malloc(sizeof(*top));"
+        },
+        {
+          "id": "ev_2ce66e01b4c9",
+          "file": "test-0102-1.i",
+          "line": 571,
+          "snippet": "struct sub_list *sub = malloc(sizeof(*sub));"
+        },
+        {
+          "id": "ev_3cb449791e33",
+          "file": "test-0102-1.i",
+          "line": 571,
+          "snippet": "struct sub_list *sub = malloc(sizeof(*sub));"
+        },
+        {
+          "id": "ev_48ccc1b47bc7",
+          "file": "test-0102-1.i",
+          "line": 551,
+          "snippet": "struct sub_list *now = ((struct sub_list *)((char *)(head->next)-(unsigned long)(&((struct sub_list *)0)->link)));"
+        },
+        {
+          "id": "ev_6257a087ab2e",
+          "file": "test-0102-1.i",
+          "line": 565,
+          "snippet": "free(now);"
+        },
+        {
+          "id": "ev_7dec8068921d",
+          "file": "test-0102-1.i",
+          "line": 587,
+          "snippet": "struct top_list *top = malloc(sizeof(*top));"
+        },
+        {
+          "id": "ev_9899628981a0",
+          "file": "test-0102-1.i",
+          "line": 566,
+          "snippet": "now = next;"
+        },
+        {
+          "id": "ev_9ab6ba3ec68c",
+          "file": "test-0102-1.i",
+          "line": 553,
+          "snippet": "struct sub_list *next = ((struct sub_list *)((char *)(now->link.next)-(unsigned long)(&((struct sub_list *)0)->link)));"
+        },
+        {
+          "id": "ev_a86b48fe17f9",
+          "file": "test-0102-1.i",
+          "line": 562,
+          "snippet": "struct top_list *next = ((struct top_list *)((char *)(now->link.next)-(unsigned long)(&((struct top_list *)0)->link)));"
+        },
+        {
+          "id": "ev_d8879752b203",
+          "file": "test-0102-1.i",
+          "line": 554,
+          "snippet": "free(now);"
+        },
+        {
+          "id": "ev_fb492d60fb98",
+          "file": "test-0102-1.i",
+          "line": 560,
+          "snippet": "struct top_list *now = ((struct top_list *)((char *)(head->next)-(unsigned long)(&((struct top_list *)0)->link)));"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "test-0102-1.i"
+        ]
+      }
+    },
+    {
+      "id": "test-0134",
+      "identity": {
+        "task_file": "c/memsafety/test-0134.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_4f9a73530e8f",
+          "file": "test-0134.i",
+          "line": 567,
+          "snippet": "struct node *node = malloc(sizeof *node);"
+        },
+        {
+          "id": "ev_b1beedf56358",
+          "file": "test-0134.i",
+          "line": 585,
+          "snippet": "free(((struct node *)((char *)(next)-(unsigned long)(&((struct node *)0)->linkage))));"
+        },
+        {
+          "id": "ev_f66f5e9fbc08",
+          "file": "test-0134.i",
+          "line": 567,
+          "snippet": "struct node *node = malloc(sizeof *node);"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "test-0134.i"
+        ]
+      }
+    },
+    {
+      "id": "test-0158-1",
+      "identity": {
+        "task_file": "c/memsafety/test-0158-1.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "status": "no_leak",
+      "confidence": 0.4,
+      "evidence": [
+        {
+          "id": "ev_8cd06e0d98f6",
+          "file": "test-0158-1.i",
+          "line": 533,
+          "snippet": "data.p0 = malloc(37U);"
+        },
+        {
+          "id": "ev_9f57545732d1",
+          "file": "test-0158-1.i",
+          "line": 535,
+          "snippet": "free(data.p0);"
+        },
+        {
+          "id": "ev_cf81dea7efa0",
+          "file": "test-0158-1.i",
+          "line": 533,
+          "snippet": "data.p0 = malloc(37U);"
+        }
+      ],
+      "details": {
+        "reason": "no analyzed resource path ends without release",
+        "input_files": [
+          "test-0158-1.i"
+        ]
+      }
+    },
+    {
+      "id": "test-0214",
+      "identity": {
+        "task_file": "c/memsafety/test-0214.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_2ba18a6f8567",
+          "file": "test-0214.i",
+          "line": 709,
+          "snippet": "item_p item = (*list)[from];"
+        },
+        {
+          "id": "ev_3b57b16b3a57",
+          "file": "test-0214.i",
+          "line": 741,
+          "snippet": "item_p cursor = list[end_point];"
+        },
+        {
+          "id": "ev_59562f8d797f",
+          "file": "test-0214.i",
+          "line": 745,
+          "snippet": "cursor = next;"
+        },
+        {
+          "id": "ev_5dcf73e2dabe",
+          "file": "test-0214.i",
+          "line": 743,
+          "snippet": "item_p next = (*cursor)[direction];"
+        },
+        {
+          "id": "ev_62385b4d49f7",
+          "file": "test-0214.i",
+          "line": 662,
+          "snippet": "free(list);"
+        },
+        {
+          "id": "ev_84d7fd77198c",
+          "file": "test-0214.i",
+          "line": 713,
+          "snippet": "free(item);"
+        },
+        {
+          "id": "ev_8758d1c32bfd",
+          "file": "test-0214.i",
+          "line": 744,
+          "snippet": "free(cursor);"
+        },
+        {
+          "id": "ev_9742c7217983",
+          "file": "test-0214.i",
+          "line": 667,
+          "snippet": "user_item_p item = malloc(sizeof *item);"
+        },
+        {
+          "id": "ev_d843fe2c13ca",
+          "file": "test-0214.i",
+          "line": 667,
+          "snippet": "user_item_p item = malloc(sizeof *item);"
+        },
+        {
+          "id": "ev_e4c50dfb6752",
+          "file": "test-0214.i",
+          "line": 703,
+          "snippet": "free((*list)[LIST_BEG]);"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "test-0214.i"
+        ]
+      }
+    },
+    {
+      "id": "test-0217",
+      "identity": {
+        "task_file": "c/memsafety/test-0217.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_1a4e754939cb",
+          "file": "test-0217.i",
+          "line": 667,
+          "snippet": "user_item_p item = malloc(sizeof *item);"
+        },
+        {
+          "id": "ev_2048c7aca189",
+          "file": "test-0217.i",
+          "line": 749,
+          "snippet": "cursor = next;"
+        },
+        {
+          "id": "ev_67ca3760587b",
+          "file": "test-0217.i",
+          "line": 717,
+          "snippet": "free(item);"
+        },
+        {
+          "id": "ev_68463bac58da",
+          "file": "test-0217.i",
+          "line": 662,
+          "snippet": "free(list);"
+        },
+        {
+          "id": "ev_93dd420f638b",
+          "file": "test-0217.i",
+          "line": 713,
+          "snippet": "item_p item = (*list)[from];"
+        },
+        {
+          "id": "ev_9545a0341ff4",
+          "file": "test-0217.i",
+          "line": 745,
+          "snippet": "item_p cursor = list[end_point];"
+        },
+        {
+          "id": "ev_adf2cf48f720",
+          "file": "test-0217.i",
+          "line": 748,
+          "snippet": "free(cursor);"
+        },
+        {
+          "id": "ev_c98cb8457e1d",
+          "file": "test-0217.i",
+          "line": 707,
+          "snippet": "free((*list)[LIST_BEG]);"
+        },
+        {
+          "id": "ev_cb7df9949bd0",
+          "file": "test-0217.i",
+          "line": 747,
+          "snippet": "item_p next = (*cursor)[direction];"
+        },
+        {
+          "id": "ev_fffe50159051",
+          "file": "test-0217.i",
+          "line": 667,
+          "snippet": "user_item_p item = malloc(sizeof *item);"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "test-0217.i"
+        ]
+      }
+    },
+    {
+      "id": "test-0218",
+      "identity": {
+        "task_file": "c/memsafety/test-0218.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "status": "no_leak",
+      "confidence": 0.4,
+      "evidence": [
+        {
+          "id": "ev_0c4dc497af75",
+          "file": "test-0218.i",
+          "line": 743,
+          "snippet": "cursor = next;"
+        },
+        {
+          "id": "ev_0ff2db80648b",
+          "file": "test-0218.i",
+          "line": 663,
+          "snippet": "item_p item = malloc(sizeof *item);"
+        },
+        {
+          "id": "ev_4c03a5355454",
+          "file": "test-0218.i",
+          "line": 742,
+          "snippet": "free(cursor);"
+        },
+        {
+          "id": "ev_5686dd14b0ed",
+          "file": "test-0218.i",
+          "line": 690,
+          "snippet": "item_p item = create_item(to, cursor);"
+        },
+        {
+          "id": "ev_5f029a2315c7",
+          "file": "test-0218.i",
+          "line": 684,
+          "snippet": "*cursor = item;"
+        },
+        {
+          "id": "ev_682e3b5b5749",
+          "file": "test-0218.i",
+          "line": 739,
+          "snippet": "item_p cursor = list[end_point];"
+        },
+        {
+          "id": "ev_8bad5c3caa76",
+          "file": "test-0218.i",
+          "line": 741,
+          "snippet": "item_p next = (*cursor)[direction];"
+        },
+        {
+          "id": "ev_a481a574f67a",
+          "file": "test-0218.i",
+          "line": 663,
+          "snippet": "item_p item = malloc(sizeof *item);"
+        },
+        {
+          "id": "ev_da24e4c0006d",
+          "file": "test-0218.i",
+          "line": 679,
+          "snippet": "item_p link = *cursor;"
+        },
+        {
+          "id": "ev_e0b14757c1be",
+          "file": "test-0218.i",
+          "line": 690,
+          "snippet": "item_p item = create_item(to, cursor);"
+        },
+        {
+          "id": "ev_eaebaaf57ea8",
+          "file": "test-0218.i",
+          "line": 678,
+          "snippet": "cursor = (item_p *) &(**cursor)[link_field];"
+        }
+      ],
+      "details": {
+        "reason": "no analyzed resource path ends without release",
+        "input_files": [
+          "test-0218.i"
+        ]
+      }
+    },
+    {
+      "id": "test-0219",
+      "identity": {
+        "task_file": "c/memsafety/test-0219.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_088db8a6b176",
+          "file": "test-0219.i",
+          "line": 670,
+          "snippet": "list = next;"
+        },
+        {
+          "id": "ev_0f76be5da65f",
+          "file": "test-0219.i",
+          "line": 695,
+          "snippet": "list = next;"
+        },
+        {
+          "id": "ev_1df691b97a6b",
+          "file": "test-0219.i",
+          "line": 669,
+          "snippet": "free(list);"
+        },
+        {
+          "id": "ev_3ee3b0fcf1fc",
+          "file": "test-0219.i",
+          "line": 694,
+          "snippet": "free(list);"
+        },
+        {
+          "id": "ev_6348c27096d4",
+          "file": "test-0219.i",
+          "line": 658,
+          "snippet": "item->proto = malloc(119U);"
+        },
+        {
+          "id": "ev_67cd34bd4f28",
+          "file": "test-0219.i",
+          "line": 692,
+          "snippet": "struct L1 *next = list->next;"
+        },
+        {
+          "id": "ev_8971841efa2b",
+          "file": "test-0219.i",
+          "line": 641,
+          "snippet": "void *ptr = malloc(nmemb * size);"
+        },
+        {
+          "id": "ev_9b3837f8d1cf",
+          "file": "test-0219.i",
+          "line": 667,
+          "snippet": "struct L2 *next = list->next;"
+        },
+        {
+          "id": "ev_a2a9c3efab2b",
+          "file": "test-0219.i",
+          "line": 668,
+          "snippet": "free(list->proto);"
+        },
+        {
+          "id": "ev_bf24b367a0e5",
+          "file": "test-0219.i",
+          "line": 658,
+          "snippet": "item->proto = malloc(119U);"
+        },
+        {
+          "id": "ev_daba34ebcc2f",
+          "file": "test-0219.i",
+          "line": 641,
+          "snippet": "void *ptr = malloc(nmemb * size);"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "test-0219.i"
+        ]
+      }
+    },
+    {
+      "id": "20020406-1",
+      "identity": {
+        "task_file": "c/memsafety/20020406-1.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_05ceb96a9db9",
+          "file": "20020406-1.i",
+          "line": 931,
+          "snippet": "ug = DUPFFnew(df);"
+        },
+        {
+          "id": "ev_063cb63a1d26",
+          "file": "20020406-1.i",
+          "line": 931,
+          "snippet": "ug = DUPFFnew(df);"
+        },
+        {
+          "id": "ev_08b9d3710d12",
+          "file": "20020406-1.i",
+          "line": 932,
+          "snippet": "vf = DUPFFnew(dg);"
+        },
+        {
+          "id": "ev_0f4707d0a1e3",
+          "file": "20020406-1.i",
+          "line": 933,
+          "snippet": "vg = DUPFFnew(df); vg->coeffs[0] = 1; vg->deg = 0;"
+        },
+        {
+          "id": "ev_1bc871f1205f",
+          "file": "20020406-1.i",
+          "line": 933,
+          "snippet": "vg = DUPFFnew(df); vg->coeffs[0] = 1; vg->deg = 0;"
+        },
+        {
+          "id": "ev_296086a9996b",
+          "file": "20020406-1.i",
+          "line": 894,
+          "snippet": "DUPFF ans = (DUPFF)malloc(sizeof(struct DUPFFstruct));"
+        },
+        {
+          "id": "ev_74e38064ac30",
+          "file": "20020406-1.i",
+          "line": 961,
+          "snippet": "*gcofac = ug;"
+        },
+        {
+          "id": "ev_794308824314",
+          "file": "20020406-1.i",
+          "line": 930,
+          "snippet": "uf = DUPFFnew(dg); uf->coeffs[0] = 1; uf->deg = 0;"
+        },
+        {
+          "id": "ev_79c93869a0f0",
+          "file": "20020406-1.i",
+          "line": 967,
+          "snippet": "f = DUPFFnew(1); f->coeffs[1] = 1; f->deg = 1;"
+        },
+        {
+          "id": "ev_85c02c1a4f95",
+          "file": "20020406-1.i",
+          "line": 894,
+          "snippet": "DUPFF ans = (DUPFF)malloc(sizeof(struct DUPFFstruct));"
+        },
+        {
+          "id": "ev_a88ea05324cd",
+          "file": "20020406-1.i",
+          "line": 967,
+          "snippet": "f = DUPFFnew(1); f->coeffs[1] = 1; f->deg = 1;"
+        },
+        {
+          "id": "ev_ce08c6d220bd",
+          "file": "20020406-1.i",
+          "line": 968,
+          "snippet": "g = DUPFFnew(2); g->coeffs[2] = 1; g->deg = 2;"
+        },
+        {
+          "id": "ev_d1dc178e9a35",
+          "file": "20020406-1.i",
+          "line": 968,
+          "snippet": "g = DUPFFnew(2); g->coeffs[2] = 1; g->deg = 2;"
+        },
+        {
+          "id": "ev_dc2196f314e9",
+          "file": "20020406-1.i",
+          "line": 960,
+          "snippet": "*fcofac = uf;"
+        },
+        {
+          "id": "ev_e6cd01ffe745",
+          "file": "20020406-1.i",
+          "line": 932,
+          "snippet": "vf = DUPFFnew(dg);"
+        },
+        {
+          "id": "ev_ed982adc39f8",
+          "file": "20020406-1.i",
+          "line": 930,
+          "snippet": "uf = DUPFFnew(dg); uf->coeffs[0] = 1; uf->deg = 0;"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "20020406-1.i"
+        ]
+      }
+    },
+    {
+      "id": "20051113-1",
+      "identity": {
+        "task_file": "c/memsafety/20051113-1.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_09bd9df47c40",
+          "file": "20051113-1.i",
+          "line": 575,
+          "snippet": "Struct3 *p = malloc (sizeof (int) + 3 * sizeof(Union));"
+        },
+        {
+          "id": "ev_9d10096021cb",
+          "file": "20051113-1.i",
+          "line": 575,
+          "snippet": "Struct3 *p = malloc (sizeof (int) + 3 * sizeof(Union));"
+        },
+        {
+          "id": "ev_c885aab29aa1",
+          "file": "20051113-1.i",
+          "line": 588,
+          "snippet": "p = ((void *)0);"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "20051113-1.i"
+        ]
+      }
+    },
+    {
+      "id": "global-atexit-2",
+      "identity": {
+        "task_file": "c/memsafety/global-atexit-2.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_018f89f3c45b",
+          "file": "global-atexit-2.i",
+          "line": 574,
+          "snippet": "g = (int **) malloc(sizeof(int *));"
+        },
+        {
+          "id": "ev_02037c901166",
+          "file": "global-atexit-2.i",
+          "line": 559,
+          "snippet": "g = ((void *)0);"
+        },
+        {
+          "id": "ev_1d5bab2c0f40",
+          "file": "global-atexit-2.i",
+          "line": 563,
+          "snippet": "free(*g);"
+        },
+        {
+          "id": "ev_3f8096c8a9ab",
+          "file": "global-atexit-2.i",
+          "line": 558,
+          "snippet": "free(g);"
+        },
+        {
+          "id": "ev_561fb4b83376",
+          "file": "global-atexit-2.i",
+          "line": 569,
+          "snippet": "*g = (int *) malloc(sizeof(int));"
+        },
+        {
+          "id": "ev_582ac2a4d41a",
+          "file": "global-atexit-2.i",
+          "line": 578,
+          "snippet": "free(g);"
+        },
+        {
+          "id": "ev_5d365b3f2d75",
+          "file": "global-atexit-2.i",
+          "line": 574,
+          "snippet": "g = (int **) malloc(sizeof(int *));"
+        },
+        {
+          "id": "ev_76000207500e",
+          "file": "global-atexit-2.i",
+          "line": 579,
+          "snippet": "g = ((void *)0);"
+        },
+        {
+          "id": "ev_d28c519de4ba",
+          "file": "global-atexit-2.i",
+          "line": 569,
+          "snippet": "*g = (int *) malloc(sizeof(int));"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "global-atexit-2.i"
+        ]
+      }
+    },
+    {
+      "id": "lockfree-3_1",
+      "identity": {
+        "task_file": "c/memsafety/lockfree-3.1.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_034347f69a9c",
+          "file": "lockfree-3.1.i",
+          "line": 552,
+          "snippet": "S = x1;"
+        },
+        {
+          "id": "ev_1c4d28e28d40",
+          "file": "lockfree-3.1.i",
+          "line": 537,
+          "snippet": "x1 = malloc(sizeof(*x1));"
+        },
+        {
+          "id": "ev_1cd60460324a",
+          "file": "lockfree-3.1.i",
+          "line": 602,
+          "snippet": "free(garbage);"
+        },
+        {
+          "id": "ev_31ca30b3bd7d",
+          "file": "lockfree-3.1.i",
+          "line": 603,
+          "snippet": "garbage = next;"
+        },
+        {
+          "id": "ev_341d884b2887",
+          "file": "lockfree-3.1.i",
+          "line": 548,
+          "snippet": "x1->next = t1;"
+        },
+        {
+          "id": "ev_8278b5ab21dd",
+          "file": "lockfree-3.1.i",
+          "line": 537,
+          "snippet": "x1 = malloc(sizeof(*x1));"
+        },
+        {
+          "id": "ev_95ee42f23189",
+          "file": "lockfree-3.1.i",
+          "line": 545,
+          "snippet": "t1 = S;"
+        },
+        {
+          "id": "ev_b6da90d23860",
+          "file": "lockfree-3.1.i",
+          "line": 539,
+          "snippet": "x1->next = ((void *)0);"
+        },
+        {
+          "id": "ev_ee17c288b1b5",
+          "file": "lockfree-3.1.i",
+          "line": 601,
+          "snippet": "struct cell *next = garbage->next;"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "lockfree-3.1.i"
+        ]
+      }
+    },
+    {
+      "id": "lockfree-3_2",
+      "identity": {
+        "task_file": "c/memsafety/lockfree-3.2.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_38f4120b8969",
+          "file": "lockfree-3.2.i",
+          "line": 552,
+          "snippet": "S = x1;"
+        },
+        {
+          "id": "ev_484e6e15bd21",
+          "file": "lockfree-3.2.i",
+          "line": 537,
+          "snippet": "x1 = malloc(sizeof(*x1));"
+        },
+        {
+          "id": "ev_4dcca722a151",
+          "file": "lockfree-3.2.i",
+          "line": 602,
+          "snippet": "free(garbage);"
+        },
+        {
+          "id": "ev_5cb1ee1862b2",
+          "file": "lockfree-3.2.i",
+          "line": 545,
+          "snippet": "t1 = S;"
+        },
+        {
+          "id": "ev_67192430dc2e",
+          "file": "lockfree-3.2.i",
+          "line": 603,
+          "snippet": "garbage = next;"
+        },
+        {
+          "id": "ev_c499263d40db",
+          "file": "lockfree-3.2.i",
+          "line": 537,
+          "snippet": "x1 = malloc(sizeof(*x1));"
+        },
+        {
+          "id": "ev_d366a27bf0b2",
+          "file": "lockfree-3.2.i",
+          "line": 539,
+          "snippet": "x1->next = ((void *)0);"
+        },
+        {
+          "id": "ev_dcafb5f3fbf4",
+          "file": "lockfree-3.2.i",
+          "line": 601,
+          "snippet": "struct cell *next = garbage->next;"
+        },
+        {
+          "id": "ev_dd84bfeb7af7",
+          "file": "lockfree-3.2.i",
+          "line": 548,
+          "snippet": "x1->next = t1;"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "lockfree-3.2.i"
+        ]
+      }
+    },
+    {
+      "id": "lockfree-3_3",
+      "identity": {
+        "task_file": "c/memsafety/lockfree-3.3.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_00af1dff8668",
+          "file": "lockfree-3.3.i",
+          "line": 602,
+          "snippet": "free(garbage);"
+        },
+        {
+          "id": "ev_1298c8bf259e",
+          "file": "lockfree-3.3.i",
+          "line": 539,
+          "snippet": "x1->next = ((void *)0);"
+        },
+        {
+          "id": "ev_17265359efb2",
+          "file": "lockfree-3.3.i",
+          "line": 552,
+          "snippet": "S = x1;"
+        },
+        {
+          "id": "ev_1e65bd933b4b",
+          "file": "lockfree-3.3.i",
+          "line": 537,
+          "snippet": "x1 = malloc(sizeof(*x1));"
+        },
+        {
+          "id": "ev_4faafaf0b9e1",
+          "file": "lockfree-3.3.i",
+          "line": 537,
+          "snippet": "x1 = malloc(sizeof(*x1));"
+        },
+        {
+          "id": "ev_71ce517e01d5",
+          "file": "lockfree-3.3.i",
+          "line": 603,
+          "snippet": "garbage = next;"
+        },
+        {
+          "id": "ev_b9e22cca3c86",
+          "file": "lockfree-3.3.i",
+          "line": 545,
+          "snippet": "t1 = S;"
+        },
+        {
+          "id": "ev_c1f76d1f3010",
+          "file": "lockfree-3.3.i",
+          "line": 548,
+          "snippet": "x1->next = t1;"
+        },
+        {
+          "id": "ev_ff4b8fbacf81",
+          "file": "lockfree-3.3.i",
+          "line": 601,
+          "snippet": "struct cell *next = garbage->next;"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "lockfree-3.3.i"
+        ]
+      }
+    },
+    {
+      "id": "test-0019-2",
+      "identity": {
+        "task_file": "c/memsafety/test-0019-2.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_068137505001",
+          "file": "test-0019-2.i",
+          "line": 540,
+          "snippet": "data->lo = (void *) 0;"
+        },
+        {
+          "id": "ev_1c748f8dfc6b",
+          "file": "test-0019-2.i",
+          "line": 530,
+          "snippet": "pdata->hi = malloc(24);"
+        },
+        {
+          "id": "ev_3cf78a1c0d38",
+          "file": "test-0019-2.i",
+          "line": 535,
+          "snippet": "void *hi = data->hi;"
+        },
+        {
+          "id": "ev_53316024e893",
+          "file": "test-0019-2.i",
+          "line": 538,
+          "snippet": "free(hi);"
+        },
+        {
+          "id": "ev_5635e0c21e00",
+          "file": "test-0019-2.i",
+          "line": 541,
+          "snippet": "data->hi = (void *) 0;"
+        },
+        {
+          "id": "ev_62f8a141fd81",
+          "file": "test-0019-2.i",
+          "line": 529,
+          "snippet": "pdata->lo = malloc(16);"
+        },
+        {
+          "id": "ev_819d56e86e60",
+          "file": "test-0019-2.i",
+          "line": 534,
+          "snippet": "void *lo = data->lo;"
+        },
+        {
+          "id": "ev_a462bfaa0726",
+          "file": "test-0019-2.i",
+          "line": 537,
+          "snippet": "free(lo);"
+        },
+        {
+          "id": "ev_d47c923ee769",
+          "file": "test-0019-2.i",
+          "line": 529,
+          "snippet": "pdata->lo = malloc(16);"
+        },
+        {
+          "id": "ev_ef1f03b451bd",
+          "file": "test-0019-2.i",
+          "line": 530,
+          "snippet": "pdata->hi = malloc(24);"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "test-0019-2.i"
+        ]
+      }
+    },
+    {
+      "id": "test-0102-2",
+      "identity": {
+        "task_file": "c/memsafety/test-0102-2.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_17525ac17142",
+          "file": "test-0102-2.i",
+          "line": 553,
+          "snippet": "struct sub_list *next = ((struct sub_list *)((char *)(now->link.next)-(unsigned long)(&((struct sub_list *)0)->link)));"
+        },
+        {
+          "id": "ev_29945b1a8360",
+          "file": "test-0102-2.i",
+          "line": 586,
+          "snippet": "struct top_list *top = malloc(sizeof(*top));"
+        },
+        {
+          "id": "ev_635765969bc5",
+          "file": "test-0102-2.i",
+          "line": 560,
+          "snippet": "struct top_list *now = ((struct top_list *)((char *)(head->next)-(unsigned long)(&((struct top_list *)0)->link)));"
+        },
+        {
+          "id": "ev_693cb5fed630",
+          "file": "test-0102-2.i",
+          "line": 555,
+          "snippet": "now = next;"
+        },
+        {
+          "id": "ev_7bff15cfafa3",
+          "file": "test-0102-2.i",
+          "line": 564,
+          "snippet": "free(now);"
+        },
+        {
+          "id": "ev_801d34f87469",
+          "file": "test-0102-2.i",
+          "line": 562,
+          "snippet": "struct top_list *next = ((struct top_list *)((char *)(now->link.next)-(unsigned long)(&((struct top_list *)0)->link)));"
+        },
+        {
+          "id": "ev_835ab46f7cc7",
+          "file": "test-0102-2.i",
+          "line": 554,
+          "snippet": "free(now);"
+        },
+        {
+          "id": "ev_97a1b546c9cf",
+          "file": "test-0102-2.i",
+          "line": 586,
+          "snippet": "struct top_list *top = malloc(sizeof(*top));"
+        },
+        {
+          "id": "ev_a8c5354971c4",
+          "file": "test-0102-2.i",
+          "line": 565,
+          "snippet": "now = next;"
+        },
+        {
+          "id": "ev_ab2f22acbf76",
+          "file": "test-0102-2.i",
+          "line": 570,
+          "snippet": "struct sub_list *sub = malloc(sizeof(*sub));"
+        },
+        {
+          "id": "ev_da7567f65cf0",
+          "file": "test-0102-2.i",
+          "line": 570,
+          "snippet": "struct sub_list *sub = malloc(sizeof(*sub));"
+        },
+        {
+          "id": "ev_eddfa7825a58",
+          "file": "test-0102-2.i",
+          "line": 551,
+          "snippet": "struct sub_list *now = ((struct sub_list *)((char *)(head->next)-(unsigned long)(&((struct sub_list *)0)->link)));"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "test-0102-2.i"
+        ]
+      }
+    },
+    {
+      "id": "test-0158-2",
+      "identity": {
+        "task_file": "c/memsafety/test-0158-2.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_06db326a7304",
+          "file": "test-0158-2.i",
+          "line": 533,
+          "snippet": "data.p0 = malloc(37U);"
+        },
+        {
+          "id": "ev_b23c2e57e307",
+          "file": "test-0158-2.i",
+          "line": 533,
+          "snippet": "data.p0 = malloc(37U);"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "test-0158-2.i"
+        ]
+      }
+    },
+    {
+      "id": "test-0220",
+      "identity": {
+        "task_file": "c/memsafety/test-0220.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "status": "leak",
+      "confidence": 0.55,
+      "evidence": [
+        {
+          "id": "ev_29aa0a011309",
+          "file": "test-0220.i",
+          "line": 694,
+          "snippet": "free(list);"
+        },
+        {
+          "id": "ev_54f42032f0a7",
+          "file": "test-0220.i",
+          "line": 641,
+          "snippet": "void *ptr = malloc(nmemb * size);"
+        },
+        {
+          "id": "ev_57a9d9989d73",
+          "file": "test-0220.i",
+          "line": 692,
+          "snippet": "struct L1 *next = list->next;"
+        },
+        {
+          "id": "ev_6413eaf64f15",
+          "file": "test-0220.i",
+          "line": 695,
+          "snippet": "list = next;"
+        },
+        {
+          "id": "ev_65b17f1d5954",
+          "file": "test-0220.i",
+          "line": 666,
+          "snippet": "free(list->proto);"
+        },
+        {
+          "id": "ev_78ebcc081b1f",
+          "file": "test-0220.i",
+          "line": 658,
+          "snippet": "item->proto = malloc(119U);"
+        },
+        {
+          "id": "ev_8b20b80946f5",
+          "file": "test-0220.i",
+          "line": 641,
+          "snippet": "void *ptr = malloc(nmemb * size);"
+        },
+        {
+          "id": "ev_c3c215017623",
+          "file": "test-0220.i",
+          "line": 658,
+          "snippet": "item->proto = malloc(119U);"
+        },
+        {
+          "id": "ev_cfbec242f988",
+          "file": "test-0220.i",
+          "line": 670,
+          "snippet": "list = next;"
+        },
+        {
+          "id": "ev_deea907d7f3f",
+          "file": "test-0220.i",
+          "line": 669,
+          "snippet": "free(list);"
+        },
+        {
+          "id": "ev_e213d4ea8fdd",
+          "file": "test-0220.i",
+          "line": 668,
+          "snippet": "struct L2 *next = list->next;"
+        }
+      ],
+      "details": {
+        "reason": "resource path ends without release",
+        "input_files": [
+          "test-0220.i"
+        ]
+      }
+    }
+  ]
+}

@@ -118,6 +118,7 @@ class RepoAgentTests(unittest.TestCase):
             self.assertIn("external/call-chains.json", manifest["outputs"].values())
             self.assertIn("external/resource-flow.json", manifest["outputs"].values())
             self.assertIn("external/sync-relations.json", manifest["outputs"].values())
+            self.assertIn("external/race-analysis.json", manifest["outputs"].values())
             self.assertIn("external/knowledge-graph.json", manifest["outputs"].values())
 
             for path in (
@@ -127,6 +128,7 @@ class RepoAgentTests(unittest.TestCase):
                 "external/call-chains.json",
                 "external/resource-flow.json",
                 "external/sync-relations.json",
+                "external/race-analysis.json",
                 "external/knowledge-graph.json",
                 "knowledge/build-profile.json",
                 "knowledge/log-facts.json",
@@ -142,12 +144,16 @@ class RepoAgentTests(unittest.TestCase):
             sync = json.loads(
                 (output / "external/sync-relations.json").read_text()
             )
+            races = json.loads(
+                (output / "external/race-analysis.json").read_text()
+            )
             knowledge = json.loads(
                 (output / "external/knowledge-graph.json").read_text()
             )
             self.assertTrue(calls["items"])
             self.assertTrue(resources["items"])
             self.assertTrue(sync["items"])
+            self.assertIn(races["label"], {"race", "no_race", "unknown"})
             self.assertGreater(knowledge["summary"]["log_events"], 0)
             for document in (calls, resources, sync):
                 self.assertNotIn(

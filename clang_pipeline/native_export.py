@@ -7,6 +7,7 @@ from .clang_ast import read_json, write_json
 from .compiler_facts import extract_build_profile, optimized_ir_facts
 from .knowledge_graph import build_knowledge_graph
 from .log_facts import collect_log_facts
+from .race_detector import analyze_race_source
 from .resource_flow import analyze_resource_flow
 from .sync_flow import analyze_sync_relations
 from .visualization import write_visualization
@@ -32,6 +33,20 @@ def run_native_export(
     request = read_json(request_path) if request_path.exists() else {}
     resource_flow = analyze_resource_flow(graph, source_root=source_root)
     sync_relations = analyze_sync_relations(graph, source_root=source_root)
+    race_analysis = (
+        analyze_race_source(source_root, graph=graph)
+        if source_root
+        else {
+            "schema_version": "1.0",
+            "result_type": "race_analysis",
+            "status": "not_available",
+            "label": "unknown",
+            "reason": "source_root unavailable",
+            "items": [],
+            "evidence": [],
+            "warnings": [],
+        }
+    )
     compile_commands_path = workspace_path / "compile_commands.json"
     compile_commands = (
         list(read_json(compile_commands_path))
@@ -74,10 +89,14 @@ def run_native_export(
     sync_path = workspace_path / "09-sync-relations" / "sync-relations.json"
     external_resource = workspace_path / "external" / "resource-flow.json"
     external_sync = workspace_path / "external" / "sync-relations.json"
+    race_path = workspace_path / "09-race-analysis" / "race-analysis.json"
+    external_race = workspace_path / "external" / "race-analysis.json"
     write_json(resource_path, resource_flow)
     write_json(sync_path, sync_relations)
+    write_json(race_path, race_analysis)
     write_json(external_resource, resource_flow)
     write_json(external_sync, sync_relations)
+    write_json(external_race, race_analysis)
     knowledge_dir = workspace_path / "10-knowledge"
     write_json(knowledge_dir / "build-profile.json", build_profile)
     write_json(knowledge_dir / "log-facts.json", log_facts)
@@ -88,6 +107,7 @@ def run_native_export(
         graph,
         resource_flow=resource_flow,
         sync_relations=sync_relations,
+        race_analysis=race_analysis,
         knowledge_graph=knowledge_graph,
     )
     return {
@@ -107,7 +127,14 @@ def run_native_export(
         "external": {
             "resource_flow": str(external_resource),
             "sync_relations": str(external_sync),
+            "race_analysis": str(external_race),
             "knowledge_graph": str(workspace_path / "external" / "knowledge-graph.json"),
+        },
+        "race_analysis": {
+            "status": race_analysis["status"],
+            "label": race_analysis["label"],
+            "items": len(race_analysis["items"]),
+            "path": str(race_path),
         },
         "knowledge_graph": {
             "status": "succeeded",

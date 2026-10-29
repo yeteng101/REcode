@@ -1,136 +1,141 @@
 {
   "schema_version": "1.0",
   "dataset": "SV-COMP 2026 C.MemSafety",
+  "selection_id": "svcomp-memsafety-v1",
   "commit": "7efe28dd29576b46927b7a34e8f742bd90966a75",
   "property": "valid-memtrack",
-  "metric": "binary memory-leak violation classification",
+  "metric": "tri-state memory-leak violation classification",
   "tp": 10,
-  "fp": 10,
+  "fp": 8,
   "fn": 0,
-  "tn": 0,
-  "precision": 0.5,
+  "tn": 2,
+  "unknown": 0,
+  "precision": 0.5555555555555556,
   "recall": 1.0,
-  "accuracy": 0.5,
+  "unknown_rate": 0.0,
+  "coverage": 1.0,
+  "accuracy": 0.6,
   "cases": [
     {
       "id": "960521-1-2",
-      "expected_violation": false,
-      "predicted_violation": true,
-      "resource_items": 3
+      "expected_leak": false,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "lockfree-3_0",
-      "expected_violation": false,
-      "predicted_violation": true,
-      "resource_items": 2
+      "expected_leak": false,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "test-0019-1",
-      "expected_violation": false,
-      "predicted_violation": true,
-      "resource_items": 4
+      "expected_leak": false,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "test-0102-1",
-      "expected_violation": false,
-      "predicted_violation": true,
-      "resource_items": 4
+      "expected_leak": false,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "test-0134",
-      "expected_violation": false,
-      "predicted_violation": true,
-      "resource_items": 2
+      "expected_leak": false,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "test-0158-1",
-      "expected_violation": false,
-      "predicted_violation": true,
-      "resource_items": 2
+      "expected_leak": false,
+      "status": "no_leak",
+      "reason": "no analyzed resource path ends without release"
     },
     {
       "id": "test-0214",
-      "expected_violation": false,
-      "predicted_violation": true,
-      "resource_items": 5
+      "expected_leak": false,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "test-0217",
-      "expected_violation": false,
-      "predicted_violation": true,
-      "resource_items": 5
+      "expected_leak": false,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "test-0218",
-      "expected_violation": false,
-      "predicted_violation": true,
-      "resource_items": 5
+      "expected_leak": false,
+      "status": "no_leak",
+      "reason": "no analyzed resource path ends without release"
     },
     {
       "id": "test-0219",
-      "expected_violation": false,
-      "predicted_violation": true,
-      "resource_items": 5
+      "expected_leak": false,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "20020406-1",
-      "expected_violation": true,
-      "predicted_violation": true,
-      "resource_items": 1
+      "expected_leak": true,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "20051113-1",
-      "expected_violation": true,
-      "predicted_violation": true,
-      "resource_items": 1
+      "expected_leak": true,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "global-atexit-2",
-      "expected_violation": true,
-      "predicted_violation": true,
-      "resource_items": 5
+      "expected_leak": true,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "lockfree-3_1",
-      "expected_violation": true,
-      "predicted_violation": true,
-      "resource_items": 2
+      "expected_leak": true,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "lockfree-3_2",
-      "expected_violation": true,
-      "predicted_violation": true,
-      "resource_items": 2
+      "expected_leak": true,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "lockfree-3_3",
-      "expected_violation": true,
-      "predicted_violation": true,
-      "resource_items": 2
+      "expected_leak": true,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "test-0019-2",
-      "expected_violation": true,
-      "predicted_violation": true,
-      "resource_items": 4
+      "expected_leak": true,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "test-0102-2",
-      "expected_violation": true,
-      "predicted_violation": true,
-      "resource_items": 4
+      "expected_leak": true,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "test-0158-2",
-      "expected_violation": true,
-      "predicted_violation": true,
-      "resource_items": 1
+      "expected_leak": true,
+      "status": "leak",
+      "reason": "resource path ends without release"
     },
     {
       "id": "test-0220",
-      "expected_violation": true,
-      "predicted_violation": true,
-      "resource_items": 5
+      "expected_leak": true,
+      "status": "leak",
+      "reason": "resource path ends without release"
     }
-  ]
+  ],
+  "skipped_cases": []
 }

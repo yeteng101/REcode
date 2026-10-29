@@ -297,6 +297,7 @@ def _prepare_data(
     verification: dict[str, Any],
     analysis_text: str,
     knowledge_graph: dict[str, Any] | None = None,
+    race_analysis: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     nodes = graph.get("nodes", [])
     edges = graph.get("edges", [])
@@ -326,6 +327,11 @@ def _prepare_data(
     knowledge_graph = knowledge_graph or {}
     knowledge_entities = knowledge_graph.get("entities", [])
     knowledge_relations = knowledge_graph.get("relations", [])
+    race_analysis = race_analysis or {}
+    race_labels = Counter(
+        str(item.get("status") or "unknown")
+        for item in race_analysis.get("items", [])
+    )
 
     return {
         "run_id": str(graph.get("run_id", "")),
@@ -342,6 +348,7 @@ def _prepare_data(
             "coverage": round(float(coverage), 4) if coverage is not None else None,
             "resource_items": len(resource_flow.get("items", [])),
             "sync_items": len(sync_relations.get("items", [])),
+            "race_items": len(race_analysis.get("items", [])),
             "knowledge_entities": len(knowledge_entities),
             "knowledge_relations": len(knowledge_relations),
         },
@@ -369,6 +376,12 @@ def _prepare_data(
         "sync_relations": {
             "status": sync_relations.get("status", "not_available"),
             "types": dict(sync_types.most_common()),
+        },
+        "race": {
+            "status": race_analysis.get("status", "not_available"),
+            "label": race_analysis.get("label", "unknown"),
+            "reason": race_analysis.get("reason", ""),
+            "types": dict(race_labels.most_common()),
         },
         "knowledge": {
             "summary": knowledge_graph.get("summary", {}),
@@ -398,6 +411,7 @@ def write_visualization(
     *,
     resource_flow: dict[str, Any] | None = None,
     sync_relations: dict[str, Any] | None = None,
+    race_analysis: dict[str, Any] | None = None,
     knowledge_graph: dict[str, Any] | None = None,
     output: str | Path | None = None,
 ) -> Path:
@@ -417,6 +431,14 @@ def write_visualization(
             "09-sync-relations/sync-relations.json",
             "external/sync-relations.json",
             "sync-relations.json",
+        )
+    )
+    race_analysis = race_analysis or _optional_json(
+        _artifact(
+            workspace_path,
+            "09-race-analysis/race-analysis.json",
+            "external/race-analysis.json",
+            "race-analysis.json",
         )
     )
     knowledge_graph = knowledge_graph or _optional_json(
@@ -475,6 +497,7 @@ def write_visualization(
         verification,
         analysis_text,
         knowledge_graph,
+        race_analysis,
     )
     report_dir = workspace_path / "07-report"
     target = Path(output).resolve() if output else (
@@ -1375,6 +1398,8 @@ TEMPLATE = r"""<!doctype html>
           .map(([name, value]) => `<span class="tag">${name} ${value}</span>`).join("");
         const syncTags = Object.entries(data.sync_relations.types)
           .map(([name, value]) => `<span class="tag">${name} ${value}</span>`).join("");
+        const raceTags = Object.entries(data.race.types)
+          .map(([name, value]) => `<span class="tag">${name} ${value}</span>`).join("");
         const paths = data.key_chains.map((path) =>
           `<li>${path.summary || path.source || path.id}${path.termination_reason ? ` · ${path.termination_reason}` : ""}</li>`
         ).join("");
@@ -1384,6 +1409,10 @@ TEMPLATE = r"""<!doctype html>
            </div>
            <div class="finding-card"><h3>Sync Relations</h3>
              <div class="tag-row">${syncTags || '<span class="tag">not available</span>'}</div>
+           </div>
+           <div class="finding-card"><h3>Race Analysis</h3>
+             <div class="tag-row">${raceTags || '<span class="tag">not available</span>'}</div>
+             <div class="module-meta">${data.race.label || "unknown"} · ${data.race.reason || ""}</div>
            </div>
            <div class="finding-card"><h3>Key Chains</h3>
              <ul class="path-list">${paths || "<li>None</li>"}</ul>

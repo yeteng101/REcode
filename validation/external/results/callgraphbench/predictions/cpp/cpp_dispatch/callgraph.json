@@ -5,17 +5,26 @@
     {
       "caller": "cpp:cpp_dispatch:main",
       "callee": "cpp:cpp_dispatch:orchestrate",
-      "kind": "direct"
+      "kind": "direct",
+      "evidence_ids": [
+        "ev_2a33f0e63575"
+      ]
     },
     {
       "caller": "cpp:cpp_dispatch:orchestrate",
       "callee": "cpp:cpp_dispatch:choose_rule",
-      "kind": "direct"
+      "kind": "direct",
+      "evidence_ids": [
+        "ev_30b3114e8b7f"
+      ]
     },
     {
       "caller": "cpp:cpp_dispatch:orchestrate",
       "callee": "cpp:cpp_dispatch:execute_rule",
-      "kind": "direct"
+      "kind": "direct",
+      "evidence_ids": [
+        "ev_28a23e92ce4a"
+      ]
     }
   ]
 }

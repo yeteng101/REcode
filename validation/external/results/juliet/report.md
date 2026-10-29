@@ -1,8 +1,8 @@
-# NIST Juliet CWE-401 resource-flow baseline
+# NIST Juliet CWE-401 leak baseline
 
-| TP | FP | FN | TN | Precision | Recall | Accuracy |
-|---:|---:|---:|---:|---:|---:|---:|
-| 15 | 45 | 0 | 24 | 25.00% | 100.00% | 46.43% |
+| TP | FP | FN | TN | Unknown | Precision | Recall | Coverage |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 5 | 0 | 0 | 23 | 0 | 100.00% | 100.00% | 100.00% |
 
-Only CWE-401 memory-leak cases are evaluated; platform-specific
-cases that cannot be parsed on the current host are listed as skipped.
+Only CWE401_Memory_Leak is included. Unknown results remain in
+the prediction file and are excluded from binary metrics.

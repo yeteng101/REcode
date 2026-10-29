@@ -38,7 +38,14 @@ def functions(source: Path) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--limit-per-cwe", type=int, default=5)
+    parser.add_argument(
+        "--cwe",
+        action="append",
+        choices=CWES,
+        help="CWE to include; defaults to CWE401 memory leak",
+    )
     args = parser.parse_args()
+    selected_cwes = tuple(args.cwe or ("CWE401_Memory_Leak",))
     if not DATASET.is_dir():
         parser.error(
             "Juliet is not fetched; run scripts/fetch_external_benchmarks.py "
@@ -46,7 +53,7 @@ def main() -> int:
         )
     cases = []
     for language in ("C", "Cpp"):
-        for cwe in CWES:
+        for cwe in selected_cwes:
             root = DATASET / language / "testcases" / cwe
             if not root.is_dir():
                 continue
@@ -87,7 +94,7 @@ def main() -> int:
         "official_sha256": "ada9d7e1c323d283446df3f55bdee0d00bda1fed786785fe98764d58688f38eb",
         "license": "CC0-1.0 / public domain",
         "selection": {
-            "cwes": list(CWES),
+            "cwes": list(selected_cwes),
             "limit_per_cwe": args.limit_per_cwe,
         },
         "cases": cases,

@@ -226,6 +226,9 @@ def _relativize_json_paths(value: Any, source_root: Path) -> Any:
     if isinstance(value, list):
         return [_relativize_json_paths(item, source_root) for item in value]
     if isinstance(value, str) and value:
+        root_text = str(root)
+        if root_text in value:
+            value = value.replace(root_text + "/", "").replace(root_text, "")
         path = Path(value)
         candidates = [path] if path.is_absolute() else [path, Path.cwd() / path]
         for candidate in candidates:
@@ -290,7 +293,7 @@ def bundle_artifacts(
         if source.exists():
             shutil.copyfile(source, output_dir / name)
 
-    for name in ("resource-flow.json", "sync-relations.json"):
+    for name in ("resource-flow.json", "sync-relations.json", "race-analysis.json"):
         source = workspace / "external" / name
         if source.exists():
             shutil.copyfile(source, external_dir / name)
@@ -318,6 +321,11 @@ def bundle_artifacts(
     graph = read_json(workspace / "07-report" / "graph.json")
     resource_flow = read_json(external_dir / "resource-flow.json")
     sync_relations = read_json(external_dir / "sync-relations.json")
+    race_analysis = (
+        read_json(external_dir / "race-analysis.json")
+        if (external_dir / "race-analysis.json").exists()
+        else {"label": "unknown", "items": []}
+    )
     call_chains = read_json(external_dir / "call-chains.json")
     knowledge_graph = (
         read_json(external_dir / "knowledge-graph.json")
@@ -339,6 +347,8 @@ def bundle_artifacts(
             "evidence": len(graph.get("evidence", [])),
             "resource_items": len(resource_flow.get("items", [])),
             "sync_items": len(sync_relations.get("items", [])),
+            "race_items": len(race_analysis.get("items", [])),
+            "race_label": race_analysis.get("label", "unknown"),
             "call_items": len(call_chains.get("items", [])),
             "knowledge_entities": len(knowledge_graph.get("entities", [])),
             "knowledge_relations": len(knowledge_graph.get("relations", [])),
@@ -348,6 +358,7 @@ def bundle_artifacts(
             "call_chains": "external/call-chains.json",
             "resource_flow": "external/resource-flow.json",
             "sync_relations": "external/sync-relations.json",
+            "race_analysis": "external/race-analysis.json",
             "knowledge_graph": "external/knowledge-graph.json",
             "logs": "logs",
             "graph": "graph.json",
@@ -419,6 +430,7 @@ def run_repo_analysis(
         graph=read_json(target_output / "graph.json"),
         resource_flow=read_json(target_output / "external" / "resource-flow.json"),
         sync_relations=read_json(target_output / "external" / "sync-relations.json"),
+        race_analysis=read_json(target_output / "external" / "race-analysis.json"),
         output=target_output / "visualization.html",
     )
     archive_path = ""

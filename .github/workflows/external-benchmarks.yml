@@ -6,7 +6,11 @@ on:
     paths:
       - ".github/workflows/external-benchmarks.yml"
       - "validation/external/**"
+      - "clang_pipeline/agent_jobs.py"
+      - "clang_pipeline/evaluation_protocol.py"
+      - "clang_pipeline/race_detector.py"
       - "scripts/*benchmark*.py"
+      - "scripts/*external*.py"
       - "scripts/prepare_*.py"
       - "scripts/run_*.py"
 
@@ -31,23 +35,22 @@ jobs:
         run: python scripts/fetch_external_benchmarks.py --group call_graph --group resource_flow --group sync_relation
       - name: Prepare external case indexes
         run: |
-          python scripts/prepare_juliet.py --limit-per-cwe 5
+          python scripts/prepare_juliet.py --limit-per-cwe 5 --cwe CWE401_Memory_Leak
           python scripts/prepare_dataracebench.py --per-label 12
           python scripts/prepare_svcomp.py --limit 20
-      - name: Run call-graph benchmarks
+      - name: Build and validate benchmark protocol
         run: |
-          python scripts/run_callgraphbench.py
-          python scripts/extract_cgbench.py
-      - name: Run resource-flow benchmarks
+          python scripts/build_external_selections.py
+          python scripts/check_external_protocol.py
+      - name: Run dry run
+        run: python scripts/run_external_dry_run.py
+      - name: Run full fixed baseline
         run: |
-          python scripts/run_juliet_resource.py
-          python scripts/run_svcomp_memsafety.py
-      - name: Run synchronization benchmarks
+          python scripts/run_external_baseline.py --skip-dry-run
+      - name: Validate external benchmark code and protocol
         run: |
-          python scripts/run_dataracebench.py
-          python scripts/run_svcomp_concurrency.py
-      - name: Validate external benchmark code
-        run: python -m unittest validation.tests.test_external_benchmarks -v
+          python -m unittest validation.tests.test_external_benchmarks validation.tests.test_external_protocol clang_pipeline.tests.test_race_detector clang_pipeline.tests.test_agent_jobs -v
+          python scripts/freeze_external_protocol.py --check
       - name: Upload external benchmark results
         uses: actions/upload-artifact@v4
         if: always()

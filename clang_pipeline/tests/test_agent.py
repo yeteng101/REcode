@@ -42,9 +42,9 @@ class AgentToolTests(unittest.TestCase):
         source = execute_tool(
             self.ctx,
             "get_source_snippet",
-            {"file": "third_party/libuv/src/unix/core.c", "line": 460},
+            {"file": "clang_pipeline/tests/fixtures/external_flow.c", "line": 7},
         )
-        self.assertIn("uv__io_poll(loop, timeout);", source)
+        self.assertIn("int fd = open(path, flags);", source)
 
     def test_fallback_without_api_key(self) -> None:
         result = fallback_answer("uv_run 调用了谁？", self.ctx)

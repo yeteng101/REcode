@@ -1,4 +1,4 @@
-# 周会内容（2026-10-16）
+# 周会内容（2026-10-29）
 
 > 详细材料：[docs/weekly-2026-10-16.md](docs/weekly-2026-10-16.md)
 >
@@ -20,16 +20,22 @@
 >
 > 外部评测集接入：[docs/external-benchmarks-2026-10-28.md](docs/external-benchmarks-2026-10-28.md)
 >
+> 评测协议与 Agent 闭环：[validation/external/protocol-v1.json](validation/external/protocol-v1.json)
+> [评测报告](docs/external-protocol-v1-2026-10-29.md)
+>
 > 汇报与答辩：[docs/reporting-guide-2026-10-16.md](docs/reporting-guide-2026-10-16.md)
 >
 > 本周把代码逆向分析结果从固定示例图升级为仓库无关、自动生成、嵌入 Agent 流程的
 > 交互式可视化报告。流水线阶段 07 生成 `visualization.html`，原生分析完成后补充
-> resource-flow 和 sync-relations，Agent 工具 `get_visualization` 可返回该文件路径。
+> resource-flow、sync-relations 和 race-analysis，Agent 工具
+> `get_visualization` / `get_races` 可返回对应结果。
 >
 > 外部评测已切换到 CallGraphBench + CG-Bench、NIST Juliet + SV-COMP
 > C.MemSafety、DataRaceBench + SV-COMP C.Concurrency。
 > CallGraphBench 官方 C/C++ 6 个 case 首轮结果：Precision 100%、Recall 58.06%、
-> F1 73.47%。旧 libuv/Redis 数字仅保留为 regression，不作为独立准确率证据。
+> F1 73.47%。CG-Bench Agent target-set baseline 已完成：Precision 67.60%、
+> Recall 77.84%、Coverage 86.42%。旧 libuv/Redis 数字仅保留为 regression，
+> 不作为独立准确率证据。
 > libuv / Redis 图已重新生成，分别包含 216 / 55 个 external function 节点。
 > 同一个 URL Subagent 已对独立 C 和 C++ 示例仓库完成迁移验证，可分析任意 C/C++ 仓库。
 >
@@ -49,11 +55,11 @@
 | 指标 | 口径 | 当前结果 |
 |---|---|---|
 | CallGraphBench | 官方 C/C++ 调用图边级 Gold | Precision 100%，Recall 58.06%，F1 73.47% |
-| CG-Bench | 真实项目函数指针 callsite | 105 个 callsite，614 个目标已提取 |
-| NIST Juliet | CWE-401 逐函数泄漏判定 | Precision 25%，Recall 100%，Accuracy 46.43% |
-| SV-COMP C.MemSafety | valid-memtrack 泄漏判定 | Precision 50%，Recall 100%，Accuracy 50% |
-| DataRaceBench | race/no-race source baseline | Precision 50%，Recall 100%，Accuracy 50% |
-| SV-COMP C.Concurrency | 同步关系存在性基线 | Precision 50%，Recall 100%，Accuracy 50% |
+| CG-Bench | callsite target-set Agent 预测 | Precision 67.60%，Recall 77.84%，Coverage 86.42% |
+| NIST Juliet | CWE-401 函数级泄漏判定 | Precision 100%，Recall 100%，Coverage 100% |
+| SV-COMP C.MemSafety | valid-memtrack 泄漏判定 | Precision 55.56%，Recall 100%，Coverage 100% |
+| DataRaceBench | race/no-race/unknown 三值判定 | 已回答样本 Precision 100%，Recall 100%，Coverage 75% |
+| SV-COMP C.Concurrency | race/no-race/unknown 三值判定 | Precision 100%，Recall 100%，Coverage 100% |
 
 旧 libuv/Redis 对比已标记为 regression-only。其调用链 Gold 与预测图部分同源，
 不能继续用于证明独立准确率。
@@ -66,15 +72,15 @@
 CallGraphBench、CG-Bench、NIST Juliet、SV-COMP、DataRaceBench。
 CallGraphBench 当前 Precision 100%、Recall 58.06%，主要缺口是函数指针、C++ 构造/方法和虚调用。
 
-第二，CG-Bench 已用官方解析器提取 105 个真实函数指针 callsite、614 个目标，
-后续直接评估 Agent 的 target-set 预测。
+第二，CG-Bench 已用官方解析器提取 104 个有效 callsite、611 个目标，
+Agent 已输出 target-set prediction、evidence 和工具 trace；未知结果单独统计。
 
 第三，Juliet、SV-COMP MemSafety、DataRaceBench 和 SV-COMP Concurrency
-已完成首轮外部基线。当前 Precision 大多只有 25% 到 50%，说明资源生命周期和
-race 判定存在明显误报，不再使用自建小样本掩盖问题。
+已完成首轮外部基线。并发已从“存在同步即安全”升级为 `race` / `no_race` /
+`unknown` 三值判定；MemSafety 仍有明显误报，不能包装成最终准确率。
 
-下一阶段重点是补齐资源安全和并发安全适配器，并修复 CallGraphBench 暴露的
-函数指针和 C++ 成员调用漏检。
+下一阶段重点是补齐资源安全和并发安全的路径/别名能力，修复 CallGraphBench
+暴露的函数指针和 C++ 成员调用漏检，并把固定评测协议接入 CI。
 
 ### 一句话总结
 
@@ -97,6 +103,16 @@ python3 -m clang_pipeline.cli repo \
 优化后的 LLVM IR，把内联/消除/新增调用写入知识图谱。
 分析完成后可用 `scripts/watch_log_facts.py` 持续 tail 新日志，并增量刷新知识图谱。
 
+也可以启动 Agent 服务，通过 URL 提交异步任务：
+
+```bash
+python3 -m clang_pipeline.agent_server --host 127.0.0.1 --port 8090
+curl -sS -X POST http://127.0.0.1:8090/api/v1/agent/analyze \
+  -H 'Content-Type: application/json' \
+  -d '{"repository_url":"https://github.com/example/project.git"}'
+curl -sS http://127.0.0.1:8090/api/v1/agent/analyze/<job_id>
+```
+
 该命令会自动完成：
 
 ```text
@@ -104,8 +120,8 @@ Git URL
   -> 检出仓库并解析 commit
   -> 探测 compile_commands / CMake / 通用编译命令
   -> 七阶段 Clang 流水线
-  -> 资源流与同步关系原生分析
-  -> 调用图、资源流、同步关系 JSON 导出
+  -> 资源流、同步关系与三值 race 原生分析
+  -> 调用图、资源流、同步关系、race JSON 导出
   -> visualization.html 生成
   -> manifest.json + zip 结果包
 ```
@@ -131,6 +147,7 @@ output/
     ├── call-chains.json
     ├── resource-flow.json
     ├── sync-relations.json
+    ├── race-analysis.json
     └── knowledge-graph.json
 ```
 

@@ -1,0 +1,1478 @@
+{
+  "schema_version": "external-prediction-v1",
+  "protocol_id": "external-v1",
+  "dataset": "svcomp-concurrency",
+  "generator": {
+    "name": "race-detector-native",
+    "version": "1.0.0",
+    "mode": "deterministic",
+    "parameters": {
+      "strategy": "pthread-lifetime-atomic-and-openmp-index",
+      "gold_exposed_to_analyzer": false
+    }
+  },
+  "predictions": [
+    {
+      "id": "bigshot_s",
+      "identity": {
+        "task_file": "c/pthread/bigshot_s.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "no_race",
+      "confidence": 0.72,
+      "evidence": [
+        {
+          "id": "ev_3551b91384b1",
+          "file": "bigshot_s.i",
+          "line": 1116,
+          "snippet": "if (v) strcpy(v, \"\");"
+        },
+        {
+          "id": "ev_565ae0706a3b",
+          "file": "bigshot_s.i",
+          "line": 1126,
+          "snippet": "__VERIFIER_assert(!v || v[0] == '');"
+        },
+        {
+          "id": "ev_88b70f4c84b2",
+          "file": "bigshot_s.i",
+          "line": 1111,
+          "snippet": "v = malloc(sizeof(char) * 8);"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "input_files": [
+          "bigshot_s.i"
+        ]
+      }
+    },
+    {
+      "id": "bigshot_s2",
+      "identity": {
+        "task_file": "c/pthread/bigshot_s2.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "no_race",
+      "confidence": 0.72,
+      "evidence": [
+        {
+          "id": "ev_83efd936a30a",
+          "file": "bigshot_s2.i",
+          "line": 1116,
+          "snippet": "if (v) strcpy(v, \"\");"
+        },
+        {
+          "id": "ev_8d520bde2976",
+          "file": "bigshot_s2.i",
+          "line": 1111,
+          "snippet": "v = malloc(sizeof(char) * 8);"
+        },
+        {
+          "id": "ev_cd04ac57211f",
+          "file": "bigshot_s2.i",
+          "line": 1126,
+          "snippet": "__VERIFIER_assert(v[0] == '');"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "input_files": [
+          "bigshot_s2.i"
+        ]
+      }
+    },
+    {
+      "id": "butterfly",
+      "identity": {
+        "task_file": "c/pthread/butterfly.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "no_race",
+      "confidence": 0.6,
+      "evidence": [
+        {
+          "id": "ev_10024cd29659",
+          "file": "butterfly.i",
+          "line": 776,
+          "snippet": "n = 2;"
+        },
+        {
+          "id": "ev_193e1151110d",
+          "file": "butterfly.i",
+          "line": 743,
+          "snippet": "m = 1;"
+        },
+        {
+          "id": "ev_262f7ccbdabc",
+          "file": "butterfly.i",
+          "line": 744,
+          "snippet": "int rx = x;"
+        },
+        {
+          "id": "ev_3a3ee1569986",
+          "file": "butterfly.i",
+          "line": 752,
+          "snippet": "int ry = y;"
+        },
+        {
+          "id": "ev_56dc87501c72",
+          "file": "butterfly.i",
+          "line": 770,
+          "snippet": "int rm = m;"
+        },
+        {
+          "id": "ev_58ce8f531fca",
+          "file": "butterfly.i",
+          "line": 758,
+          "snippet": "x = 1;"
+        },
+        {
+          "id": "ev_5d85aec0d5b8",
+          "file": "butterfly.i",
+          "line": 767,
+          "snippet": "y = 2;"
+        },
+        {
+          "id": "ev_5dc450e33a0f",
+          "file": "butterfly.i",
+          "line": 769,
+          "snippet": "x = 2;"
+        },
+        {
+          "id": "ev_6ffb2bd32201",
+          "file": "butterfly.i",
+          "line": 777,
+          "snippet": "int rw = w;"
+        },
+        {
+          "id": "ev_72943b32e1c2",
+          "file": "butterfly.i",
+          "line": 759,
+          "snippet": "w = 1;"
+        },
+        {
+          "id": "ev_8c62be1d0a06",
+          "file": "butterfly.i",
+          "line": 768,
+          "snippet": "w = 2;"
+        },
+        {
+          "id": "ev_908532a58c67",
+          "file": "butterfly.i",
+          "line": 742,
+          "snippet": "int rw = w;"
+        },
+        {
+          "id": "ev_a0ef77906f7e",
+          "file": "butterfly.i",
+          "line": 750,
+          "snippet": "int rw = w;"
+        },
+        {
+          "id": "ev_c1d070d357a5",
+          "file": "butterfly.i",
+          "line": 784,
+          "snippet": "int rw = w;"
+        },
+        {
+          "id": "ev_dd53c36a785e",
+          "file": "butterfly.i",
+          "line": 760,
+          "snippet": "y = 1;"
+        },
+        {
+          "id": "ev_e721eb7d6e5b",
+          "file": "butterfly.i",
+          "line": 783,
+          "snippet": "m = 2;"
+        },
+        {
+          "id": "ev_ead3d73cea68",
+          "file": "butterfly.i",
+          "line": 751,
+          "snippet": "n = 1;"
+        },
+        {
+          "id": "ev_f60d00399cf5",
+          "file": "butterfly.i",
+          "line": 761,
+          "snippet": "int rn = n;"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "input_files": [
+          "butterfly.i"
+        ]
+      }
+    },
+    {
+      "id": "fib_safe-10",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-10.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "no_race",
+      "confidence": 0.6,
+      "evidence": [
+        {
+          "id": "ev_0b15ce509cf4",
+          "file": "fib_safe-10.i",
+          "line": 697,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_1388751d2e15",
+          "file": "fib_safe-10.i",
+          "line": 687,
+          "snippet": "for (p = 0; p < 10; p++) {"
+        },
+        {
+          "id": "ev_281986fababb",
+          "file": "fib_safe-10.i",
+          "line": 724,
+          "snippet": "_Bool assert_cond = i <= correct && j <= correct;"
+        },
+        {
+          "id": "ev_2b78e47d6905",
+          "file": "fib_safe-10.i",
+          "line": 724,
+          "snippet": "_Bool assert_cond = i <= correct && j <= correct;"
+        },
+        {
+          "id": "ev_2e1f36f69d15",
+          "file": "fib_safe-10.i",
+          "line": 695,
+          "snippet": "for (q = 0; q < 10; q++) {"
+        },
+        {
+          "id": "ev_8a9cc6148546",
+          "file": "fib_safe-10.i",
+          "line": 689,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_a9382744ec5a",
+          "file": "fib_safe-10.i",
+          "line": 697,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_c2c940c38f22",
+          "file": "fib_safe-10.i",
+          "line": 718,
+          "snippet": "j = 1;"
+        },
+        {
+          "id": "ev_e5a3b9172116",
+          "file": "fib_safe-10.i",
+          "line": 689,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_ff7eb8d1381a",
+          "file": "fib_safe-10.i",
+          "line": 715,
+          "snippet": "i = 1;"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "input_files": [
+          "fib_safe-10.i"
+        ]
+      }
+    },
+    {
+      "id": "fib_safe-11",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-11.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "no_race",
+      "confidence": 0.6,
+      "evidence": [
+        {
+          "id": "ev_19e331daece8",
+          "file": "fib_safe-11.i",
+          "line": 697,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_2afad12ff50e",
+          "file": "fib_safe-11.i",
+          "line": 715,
+          "snippet": "i = 1;"
+        },
+        {
+          "id": "ev_611e2b4c65ca",
+          "file": "fib_safe-11.i",
+          "line": 724,
+          "snippet": "_Bool assert_cond = i <= correct && j <= correct;"
+        },
+        {
+          "id": "ev_6db5bac691cf",
+          "file": "fib_safe-11.i",
+          "line": 695,
+          "snippet": "for (q = 0; q < 11; q++) {"
+        },
+        {
+          "id": "ev_795f158b479f",
+          "file": "fib_safe-11.i",
+          "line": 697,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_90c2fc286bb5",
+          "file": "fib_safe-11.i",
+          "line": 687,
+          "snippet": "for (p = 0; p < 11; p++) {"
+        },
+        {
+          "id": "ev_d2f016fbcb1e",
+          "file": "fib_safe-11.i",
+          "line": 718,
+          "snippet": "j = 1;"
+        },
+        {
+          "id": "ev_db23d82749e1",
+          "file": "fib_safe-11.i",
+          "line": 724,
+          "snippet": "_Bool assert_cond = i <= correct && j <= correct;"
+        },
+        {
+          "id": "ev_fa15f5feaf34",
+          "file": "fib_safe-11.i",
+          "line": 689,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_ffbafcd05626",
+          "file": "fib_safe-11.i",
+          "line": 689,
+          "snippet": "i = i + j;"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "input_files": [
+          "fib_safe-11.i"
+        ]
+      }
+    },
+    {
+      "id": "fib_safe-12",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-12.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "no_race",
+      "confidence": 0.6,
+      "evidence": [
+        {
+          "id": "ev_0a4efe367ced",
+          "file": "fib_safe-12.i",
+          "line": 697,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_0cf5cc948c59",
+          "file": "fib_safe-12.i",
+          "line": 715,
+          "snippet": "i = 1;"
+        },
+        {
+          "id": "ev_1ed1b1889201",
+          "file": "fib_safe-12.i",
+          "line": 697,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_27169c1d9917",
+          "file": "fib_safe-12.i",
+          "line": 695,
+          "snippet": "for (q = 0; q < 12; q++) {"
+        },
+        {
+          "id": "ev_2c0b06ed0660",
+          "file": "fib_safe-12.i",
+          "line": 689,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_3fe69cfbfb43",
+          "file": "fib_safe-12.i",
+          "line": 689,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_883737facce1",
+          "file": "fib_safe-12.i",
+          "line": 724,
+          "snippet": "_Bool assert_cond = i <= correct && j <= correct;"
+        },
+        {
+          "id": "ev_9679128157f2",
+          "file": "fib_safe-12.i",
+          "line": 718,
+          "snippet": "j = 1;"
+        },
+        {
+          "id": "ev_a420fed68191",
+          "file": "fib_safe-12.i",
+          "line": 687,
+          "snippet": "for (p = 0; p < 12; p++) {"
+        },
+        {
+          "id": "ev_d28fed80ace2",
+          "file": "fib_safe-12.i",
+          "line": 724,
+          "snippet": "_Bool assert_cond = i <= correct && j <= correct;"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "input_files": [
+          "fib_safe-12.i"
+        ]
+      }
+    },
+    {
+      "id": "fib_safe-5",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-5.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "no_race",
+      "confidence": 0.6,
+      "evidence": [
+        {
+          "id": "ev_1fd441f5e98b",
+          "file": "fib_safe-5.i",
+          "line": 718,
+          "snippet": "j = 1;"
+        },
+        {
+          "id": "ev_58f269fe837c",
+          "file": "fib_safe-5.i",
+          "line": 715,
+          "snippet": "i = 1;"
+        },
+        {
+          "id": "ev_8b7c79cdf68e",
+          "file": "fib_safe-5.i",
+          "line": 687,
+          "snippet": "for (p = 0; p < 5; p++) {"
+        },
+        {
+          "id": "ev_ac283a053cd8",
+          "file": "fib_safe-5.i",
+          "line": 697,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_adeebd2a7a36",
+          "file": "fib_safe-5.i",
+          "line": 724,
+          "snippet": "_Bool assert_cond = i <= correct && j <= correct;"
+        },
+        {
+          "id": "ev_b955c7b83ddf",
+          "file": "fib_safe-5.i",
+          "line": 689,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_ba3d5bc4058d",
+          "file": "fib_safe-5.i",
+          "line": 697,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_bd9dbf76ca74",
+          "file": "fib_safe-5.i",
+          "line": 695,
+          "snippet": "for (q = 0; q < 5; q++) {"
+        },
+        {
+          "id": "ev_dde94e6ec0e4",
+          "file": "fib_safe-5.i",
+          "line": 724,
+          "snippet": "_Bool assert_cond = i <= correct && j <= correct;"
+        },
+        {
+          "id": "ev_ed5f4806b1f5",
+          "file": "fib_safe-5.i",
+          "line": 689,
+          "snippet": "i = i + j;"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "input_files": [
+          "fib_safe-5.i"
+        ]
+      }
+    },
+    {
+      "id": "fib_safe-6",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-6.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "no_race",
+      "confidence": 0.6,
+      "evidence": [
+        {
+          "id": "ev_0358de046ce6",
+          "file": "fib_safe-6.i",
+          "line": 695,
+          "snippet": "for (q = 0; q < 6; q++) {"
+        },
+        {
+          "id": "ev_097664cd18c5",
+          "file": "fib_safe-6.i",
+          "line": 724,
+          "snippet": "_Bool assert_cond = i <= correct && j <= correct;"
+        },
+        {
+          "id": "ev_143b096cfdfb",
+          "file": "fib_safe-6.i",
+          "line": 697,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_50383d355535",
+          "file": "fib_safe-6.i",
+          "line": 718,
+          "snippet": "j = 1;"
+        },
+        {
+          "id": "ev_a5f180cae0fd",
+          "file": "fib_safe-6.i",
+          "line": 689,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_c5ca8249d8d1",
+          "file": "fib_safe-6.i",
+          "line": 715,
+          "snippet": "i = 1;"
+        },
+        {
+          "id": "ev_e3207523ad34",
+          "file": "fib_safe-6.i",
+          "line": 687,
+          "snippet": "for (p = 0; p < 6; p++) {"
+        },
+        {
+          "id": "ev_e799c106e055",
+          "file": "fib_safe-6.i",
+          "line": 689,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_f3368345aa96",
+          "file": "fib_safe-6.i",
+          "line": 724,
+          "snippet": "_Bool assert_cond = i <= correct && j <= correct;"
+        },
+        {
+          "id": "ev_f57e866c9837",
+          "file": "fib_safe-6.i",
+          "line": 697,
+          "snippet": "j = j + i;"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "input_files": [
+          "fib_safe-6.i"
+        ]
+      }
+    },
+    {
+      "id": "fib_safe-7",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-7.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "no_race",
+      "confidence": 0.6,
+      "evidence": [
+        {
+          "id": "ev_18adbeddcd6e",
+          "file": "fib_safe-7.i",
+          "line": 718,
+          "snippet": "j = 1;"
+        },
+        {
+          "id": "ev_7e04dd4cdee2",
+          "file": "fib_safe-7.i",
+          "line": 697,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_89dcb93c3b15",
+          "file": "fib_safe-7.i",
+          "line": 687,
+          "snippet": "for (p = 0; p < 7; p++) {"
+        },
+        {
+          "id": "ev_9ec3475f8601",
+          "file": "fib_safe-7.i",
+          "line": 695,
+          "snippet": "for (q = 0; q < 7; q++) {"
+        },
+        {
+          "id": "ev_a4f673e9bfd3",
+          "file": "fib_safe-7.i",
+          "line": 689,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_ab651de42efd",
+          "file": "fib_safe-7.i",
+          "line": 724,
+          "snippet": "_Bool assert_cond = i <= correct && j <= correct;"
+        },
+        {
+          "id": "ev_d599dba29170",
+          "file": "fib_safe-7.i",
+          "line": 697,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_ea0b2eb8cfe3",
+          "file": "fib_safe-7.i",
+          "line": 724,
+          "snippet": "_Bool assert_cond = i <= correct && j <= correct;"
+        },
+        {
+          "id": "ev_f21f44c29778",
+          "file": "fib_safe-7.i",
+          "line": 689,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_f46674669d99",
+          "file": "fib_safe-7.i",
+          "line": 715,
+          "snippet": "i = 1;"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "input_files": [
+          "fib_safe-7.i"
+        ]
+      }
+    },
+    {
+      "id": "fib_unsafe-10",
+      "identity": {
+        "task_file": "c/pthread/fib_unsafe-10.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "no_race",
+      "confidence": 0.6,
+      "evidence": [
+        {
+          "id": "ev_0261c1392899",
+          "file": "fib_unsafe-10.i",
+          "line": 718,
+          "snippet": "j = 1;"
+        },
+        {
+          "id": "ev_1a70266e9335",
+          "file": "fib_unsafe-10.i",
+          "line": 689,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_1b1098b26601",
+          "file": "fib_unsafe-10.i",
+          "line": 687,
+          "snippet": "for (p = 0; p < 10; p++) {"
+        },
+        {
+          "id": "ev_7d88a204da42",
+          "file": "fib_unsafe-10.i",
+          "line": 689,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_9dd79ba8397d",
+          "file": "fib_unsafe-10.i",
+          "line": 697,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_aa24cafecb9d",
+          "file": "fib_unsafe-10.i",
+          "line": 697,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_b9659bedb63d",
+          "file": "fib_unsafe-10.i",
+          "line": 724,
+          "snippet": "_Bool assert_cond = i < correct && j < correct;"
+        },
+        {
+          "id": "ev_dcfcfcc7f574",
+          "file": "fib_unsafe-10.i",
+          "line": 724,
+          "snippet": "_Bool assert_cond = i < correct && j < correct;"
+        },
+        {
+          "id": "ev_eed4aa3dda5a",
+          "file": "fib_unsafe-10.i",
+          "line": 715,
+          "snippet": "i = 1;"
+        },
+        {
+          "id": "ev_f379aa508009",
+          "file": "fib_unsafe-10.i",
+          "line": 695,
+          "snippet": "for (q = 0; q < 10; q++) {"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "input_files": [
+          "fib_unsafe-10.i"
+        ]
+      }
+    },
+    {
+      "id": "bigshot_p",
+      "identity": {
+        "task_file": "c/pthread/bigshot_p.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "race",
+      "confidence": 0.78,
+      "evidence": [
+        {
+          "id": "ev_2f118ba49442",
+          "file": "bigshot_p.i",
+          "line": 1111,
+          "snippet": "v = calloc(8, sizeof(char));"
+        },
+        {
+          "id": "ev_e1bef9b2c2c3",
+          "file": "bigshot_p.i",
+          "line": 1126,
+          "snippet": "__VERIFIER_assert(!v || v[0] == '');"
+        },
+        {
+          "id": "ev_f0e25441645e",
+          "file": "bigshot_p.i",
+          "line": 1116,
+          "snippet": "if (v) strcpy(v, \"\");"
+        }
+      ],
+      "details": {
+        "reason": "shared variable v is written without a common lock across threads",
+        "input_files": [
+          "bigshot_p.i"
+        ]
+      }
+    },
+    {
+      "id": "fib_safe-10-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-10-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "race",
+      "confidence": 0.78,
+      "evidence": [
+        {
+          "id": "ev_0154a1dc4e23",
+          "file": "fib_safe-10-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_06dfbd815ebf",
+          "file": "fib_safe-10-racy.i",
+          "line": 688,
+          "snippet": "for (p = 0; p < 10; p++) {"
+        },
+        {
+          "id": "ev_2340cb8ce165",
+          "file": "fib_safe-10-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_8e58e41546aa",
+          "file": "fib_safe-10-racy.i",
+          "line": 716,
+          "snippet": "i = 1;"
+        },
+        {
+          "id": "ev_94f084121442",
+          "file": "fib_safe-10-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_9be94d4f2d48",
+          "file": "fib_safe-10-racy.i",
+          "line": 725,
+          "snippet": "if(i <= correct && j <= correct) ;"
+        },
+        {
+          "id": "ev_ae35565ac0d5",
+          "file": "fib_safe-10-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_b21f232fb3b6",
+          "file": "fib_safe-10-racy.i",
+          "line": 696,
+          "snippet": "for (q = 0; q < 10; q++) {"
+        },
+        {
+          "id": "ev_d99b098a1fd8",
+          "file": "fib_safe-10-racy.i",
+          "line": 725,
+          "snippet": "if(i <= correct && j <= correct) ;"
+        },
+        {
+          "id": "ev_f21b04d17213",
+          "file": "fib_safe-10-racy.i",
+          "line": 719,
+          "snippet": "j = 1;"
+        }
+      ],
+      "details": {
+        "reason": "shared variable i is written without a common lock across threads",
+        "input_files": [
+          "fib_safe-10-racy.i"
+        ]
+      }
+    },
+    {
+      "id": "fib_safe-11-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-11-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "race",
+      "confidence": 0.78,
+      "evidence": [
+        {
+          "id": "ev_05d4b2c32bec",
+          "file": "fib_safe-11-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_0fd61e1a255c",
+          "file": "fib_safe-11-racy.i",
+          "line": 716,
+          "snippet": "i = 1;"
+        },
+        {
+          "id": "ev_1aa0192850ee",
+          "file": "fib_safe-11-racy.i",
+          "line": 688,
+          "snippet": "for (p = 0; p < 11; p++) {"
+        },
+        {
+          "id": "ev_23adb80c31f1",
+          "file": "fib_safe-11-racy.i",
+          "line": 719,
+          "snippet": "j = 1;"
+        },
+        {
+          "id": "ev_6dfba413f96e",
+          "file": "fib_safe-11-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_ae2d462c78a1",
+          "file": "fib_safe-11-racy.i",
+          "line": 725,
+          "snippet": "if(i <= correct && j <= correct) ;"
+        },
+        {
+          "id": "ev_b37f25b6141d",
+          "file": "fib_safe-11-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_b92addd2eb3f",
+          "file": "fib_safe-11-racy.i",
+          "line": 696,
+          "snippet": "for (q = 0; q < 11; q++) {"
+        },
+        {
+          "id": "ev_b95ecb5a1629",
+          "file": "fib_safe-11-racy.i",
+          "line": 725,
+          "snippet": "if(i <= correct && j <= correct) ;"
+        },
+        {
+          "id": "ev_bf02f5d59c3c",
+          "file": "fib_safe-11-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        }
+      ],
+      "details": {
+        "reason": "shared variable i is written without a common lock across threads",
+        "input_files": [
+          "fib_safe-11-racy.i"
+        ]
+      }
+    },
+    {
+      "id": "fib_safe-12-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-12-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "race",
+      "confidence": 0.78,
+      "evidence": [
+        {
+          "id": "ev_3dade2de37c6",
+          "file": "fib_safe-12-racy.i",
+          "line": 696,
+          "snippet": "for (q = 0; q < 12; q++) {"
+        },
+        {
+          "id": "ev_7f38be77e795",
+          "file": "fib_safe-12-racy.i",
+          "line": 688,
+          "snippet": "for (p = 0; p < 12; p++) {"
+        },
+        {
+          "id": "ev_8b27b7dd4f70",
+          "file": "fib_safe-12-racy.i",
+          "line": 719,
+          "snippet": "j = 1;"
+        },
+        {
+          "id": "ev_9aa4fa05d25a",
+          "file": "fib_safe-12-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_9d5c264ac1b1",
+          "file": "fib_safe-12-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_9ea4ae37e9a9",
+          "file": "fib_safe-12-racy.i",
+          "line": 725,
+          "snippet": "if(i <= correct && j <= correct) ;"
+        },
+        {
+          "id": "ev_a36aae5bd07b",
+          "file": "fib_safe-12-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_c80e6f0bb5bd",
+          "file": "fib_safe-12-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_e3c6aa7a53be",
+          "file": "fib_safe-12-racy.i",
+          "line": 725,
+          "snippet": "if(i <= correct && j <= correct) ;"
+        },
+        {
+          "id": "ev_ead388fe6b4a",
+          "file": "fib_safe-12-racy.i",
+          "line": 716,
+          "snippet": "i = 1;"
+        }
+      ],
+      "details": {
+        "reason": "shared variable i is written without a common lock across threads",
+        "input_files": [
+          "fib_safe-12-racy.i"
+        ]
+      }
+    },
+    {
+      "id": "fib_safe-5-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-5-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "race",
+      "confidence": 0.78,
+      "evidence": [
+        {
+          "id": "ev_13a9608ebee6",
+          "file": "fib_safe-5-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_450e60b660d7",
+          "file": "fib_safe-5-racy.i",
+          "line": 725,
+          "snippet": "if(i <= correct && j <= correct) ;"
+        },
+        {
+          "id": "ev_53d3336f5116",
+          "file": "fib_safe-5-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_62ef8f2c61f8",
+          "file": "fib_safe-5-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_890227762b51",
+          "file": "fib_safe-5-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_b938ef59dc9e",
+          "file": "fib_safe-5-racy.i",
+          "line": 696,
+          "snippet": "for (q = 0; q < 5; q++) {"
+        },
+        {
+          "id": "ev_bf48f83089c2",
+          "file": "fib_safe-5-racy.i",
+          "line": 725,
+          "snippet": "if(i <= correct && j <= correct) ;"
+        },
+        {
+          "id": "ev_c77ee9f4f324",
+          "file": "fib_safe-5-racy.i",
+          "line": 716,
+          "snippet": "i = 1;"
+        },
+        {
+          "id": "ev_d770874ed797",
+          "file": "fib_safe-5-racy.i",
+          "line": 688,
+          "snippet": "for (p = 0; p < 5; p++) {"
+        },
+        {
+          "id": "ev_f613142526d6",
+          "file": "fib_safe-5-racy.i",
+          "line": 719,
+          "snippet": "j = 1;"
+        }
+      ],
+      "details": {
+        "reason": "shared variable i is written without a common lock across threads",
+        "input_files": [
+          "fib_safe-5-racy.i"
+        ]
+      }
+    },
+    {
+      "id": "fib_safe-6-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-6-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "race",
+      "confidence": 0.78,
+      "evidence": [
+        {
+          "id": "ev_0cd8970f49a5",
+          "file": "fib_safe-6-racy.i",
+          "line": 696,
+          "snippet": "for (q = 0; q < 6; q++) {"
+        },
+        {
+          "id": "ev_121c0c3ef6af",
+          "file": "fib_safe-6-racy.i",
+          "line": 716,
+          "snippet": "i = 1;"
+        },
+        {
+          "id": "ev_52b586eda4cc",
+          "file": "fib_safe-6-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_5884fc934bfd",
+          "file": "fib_safe-6-racy.i",
+          "line": 725,
+          "snippet": "if(i <= correct && j <= correct) ;"
+        },
+        {
+          "id": "ev_6b50f39e104c",
+          "file": "fib_safe-6-racy.i",
+          "line": 719,
+          "snippet": "j = 1;"
+        },
+        {
+          "id": "ev_96a9c42d1410",
+          "file": "fib_safe-6-racy.i",
+          "line": 725,
+          "snippet": "if(i <= correct && j <= correct) ;"
+        },
+        {
+          "id": "ev_b1847a47b00b",
+          "file": "fib_safe-6-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_b2a482cccf24",
+          "file": "fib_safe-6-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_bf55974b1a2e",
+          "file": "fib_safe-6-racy.i",
+          "line": 688,
+          "snippet": "for (p = 0; p < 6; p++) {"
+        },
+        {
+          "id": "ev_f63a7bbcec07",
+          "file": "fib_safe-6-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        }
+      ],
+      "details": {
+        "reason": "shared variable i is written without a common lock across threads",
+        "input_files": [
+          "fib_safe-6-racy.i"
+        ]
+      }
+    },
+    {
+      "id": "fib_safe-7-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_safe-7-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "race",
+      "confidence": 0.78,
+      "evidence": [
+        {
+          "id": "ev_135f312a18d6",
+          "file": "fib_safe-7-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_192d8eae7ac5",
+          "file": "fib_safe-7-racy.i",
+          "line": 725,
+          "snippet": "if(i <= correct && j <= correct) ;"
+        },
+        {
+          "id": "ev_2ded90f59fc0",
+          "file": "fib_safe-7-racy.i",
+          "line": 725,
+          "snippet": "if(i <= correct && j <= correct) ;"
+        },
+        {
+          "id": "ev_39e7bb6d0707",
+          "file": "fib_safe-7-racy.i",
+          "line": 716,
+          "snippet": "i = 1;"
+        },
+        {
+          "id": "ev_3a1563e2dc43",
+          "file": "fib_safe-7-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_3fdbe6372c12",
+          "file": "fib_safe-7-racy.i",
+          "line": 688,
+          "snippet": "for (p = 0; p < 7; p++) {"
+        },
+        {
+          "id": "ev_7a57e51b2e64",
+          "file": "fib_safe-7-racy.i",
+          "line": 696,
+          "snippet": "for (q = 0; q < 7; q++) {"
+        },
+        {
+          "id": "ev_bcbc0ad2b586",
+          "file": "fib_safe-7-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_ec190b227eda",
+          "file": "fib_safe-7-racy.i",
+          "line": 719,
+          "snippet": "j = 1;"
+        },
+        {
+          "id": "ev_f5f901024dba",
+          "file": "fib_safe-7-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        }
+      ],
+      "details": {
+        "reason": "shared variable i is written without a common lock across threads",
+        "input_files": [
+          "fib_safe-7-racy.i"
+        ]
+      }
+    },
+    {
+      "id": "fib_unsafe-10-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_unsafe-10-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "race",
+      "confidence": 0.78,
+      "evidence": [
+        {
+          "id": "ev_0300ca9ee236",
+          "file": "fib_unsafe-10-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_34874409dd79",
+          "file": "fib_unsafe-10-racy.i",
+          "line": 688,
+          "snippet": "for (p = 0; p < 10; p++) {"
+        },
+        {
+          "id": "ev_3f4c70ccb535",
+          "file": "fib_unsafe-10-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_4ff8e57dd5af",
+          "file": "fib_unsafe-10-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_9d244d395868",
+          "file": "fib_unsafe-10-racy.i",
+          "line": 725,
+          "snippet": "if(i < correct && j < correct) ;"
+        },
+        {
+          "id": "ev_9dc88cad1feb",
+          "file": "fib_unsafe-10-racy.i",
+          "line": 719,
+          "snippet": "j = 1;"
+        },
+        {
+          "id": "ev_9ef6fae965ad",
+          "file": "fib_unsafe-10-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_b4943d0c909d",
+          "file": "fib_unsafe-10-racy.i",
+          "line": 716,
+          "snippet": "i = 1;"
+        },
+        {
+          "id": "ev_c5037bc6473b",
+          "file": "fib_unsafe-10-racy.i",
+          "line": 696,
+          "snippet": "for (q = 0; q < 10; q++) {"
+        },
+        {
+          "id": "ev_da216a696b51",
+          "file": "fib_unsafe-10-racy.i",
+          "line": 725,
+          "snippet": "if(i < correct && j < correct) ;"
+        }
+      ],
+      "details": {
+        "reason": "shared variable i is written without a common lock across threads",
+        "input_files": [
+          "fib_unsafe-10-racy.i"
+        ]
+      }
+    },
+    {
+      "id": "fib_unsafe-11-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_unsafe-11-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "race",
+      "confidence": 0.78,
+      "evidence": [
+        {
+          "id": "ev_13b137ea07fe",
+          "file": "fib_unsafe-11-racy.i",
+          "line": 725,
+          "snippet": "if(i < correct && j < correct) ;"
+        },
+        {
+          "id": "ev_406af6a5988c",
+          "file": "fib_unsafe-11-racy.i",
+          "line": 725,
+          "snippet": "if(i < correct && j < correct) ;"
+        },
+        {
+          "id": "ev_46b6e9456f7a",
+          "file": "fib_unsafe-11-racy.i",
+          "line": 696,
+          "snippet": "for (q = 0; q < 11; q++) {"
+        },
+        {
+          "id": "ev_81a1edaaf3b5",
+          "file": "fib_unsafe-11-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_8580fffb80ba",
+          "file": "fib_unsafe-11-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_a52add56f23e",
+          "file": "fib_unsafe-11-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_a8311d4a1ded",
+          "file": "fib_unsafe-11-racy.i",
+          "line": 688,
+          "snippet": "for (p = 0; p < 11; p++) {"
+        },
+        {
+          "id": "ev_dbd89016226e",
+          "file": "fib_unsafe-11-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_f1fb6a5f337d",
+          "file": "fib_unsafe-11-racy.i",
+          "line": 719,
+          "snippet": "j = 1;"
+        },
+        {
+          "id": "ev_f3ed7256e5d0",
+          "file": "fib_unsafe-11-racy.i",
+          "line": 716,
+          "snippet": "i = 1;"
+        }
+      ],
+      "details": {
+        "reason": "shared variable i is written without a common lock across threads",
+        "input_files": [
+          "fib_unsafe-11-racy.i"
+        ]
+      }
+    },
+    {
+      "id": "fib_unsafe-12-racy",
+      "identity": {
+        "task_file": "c/pthread/fib_unsafe-12-racy.yml",
+        "property_file": "../properties/no-data-race.prp"
+      },
+      "status": "race",
+      "confidence": 0.78,
+      "evidence": [
+        {
+          "id": "ev_43c1772b839f",
+          "file": "fib_unsafe-12-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_5bf723cb0348",
+          "file": "fib_unsafe-12-racy.i",
+          "line": 725,
+          "snippet": "if(i < correct && j < correct) ;"
+        },
+        {
+          "id": "ev_7ef45d12d3e7",
+          "file": "fib_unsafe-12-racy.i",
+          "line": 725,
+          "snippet": "if(i < correct && j < correct) ;"
+        },
+        {
+          "id": "ev_7f0de6c93872",
+          "file": "fib_unsafe-12-racy.i",
+          "line": 716,
+          "snippet": "i = 1;"
+        },
+        {
+          "id": "ev_8584a10cd09e",
+          "file": "fib_unsafe-12-racy.i",
+          "line": 696,
+          "snippet": "for (q = 0; q < 12; q++) {"
+        },
+        {
+          "id": "ev_8b1ea68b4d7c",
+          "file": "fib_unsafe-12-racy.i",
+          "line": 719,
+          "snippet": "j = 1;"
+        },
+        {
+          "id": "ev_b4fbc5e6920c",
+          "file": "fib_unsafe-12-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        },
+        {
+          "id": "ev_c6b527d7aa0f",
+          "file": "fib_unsafe-12-racy.i",
+          "line": 688,
+          "snippet": "for (p = 0; p < 12; p++) {"
+        },
+        {
+          "id": "ev_da8851a1e5e7",
+          "file": "fib_unsafe-12-racy.i",
+          "line": 690,
+          "snippet": "i = i + j;"
+        },
+        {
+          "id": "ev_f5d8a530f398",
+          "file": "fib_unsafe-12-racy.i",
+          "line": 698,
+          "snippet": "j = j + i;"
+        }
+      ],
+      "details": {
+        "reason": "shared variable i is written without a common lock across threads",
+        "input_files": [
+          "fib_unsafe-12-racy.i"
+        ]
+      }
+    }
+  ]
+}

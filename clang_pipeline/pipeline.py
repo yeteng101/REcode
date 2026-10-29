@@ -258,7 +258,7 @@ def run_pipeline(
             )
         ]
         sources.append(workspace / "pipeline.json")
-        for name in ("resource-flow.json", "sync-relations.json"):
+        for name in ("resource-flow.json", "sync-relations.json", "race-analysis.json"):
             sources.append(workspace / "external" / name)
         for source in sources:
             if source.exists():

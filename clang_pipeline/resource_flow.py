@@ -290,6 +290,8 @@ def _operation(edge: dict[str, Any], graph: dict[str, Any], kind: str) -> dict[s
 def _pair_key(source: str, target: str) -> str:
     if source in SOURCE_PAIR_RULES:
         return f"family:{SOURCE_PAIR_RULES[source]}"
+    if target in RELEASE_TARGETS:
+        return f"family:{target}"
     if target in PAIR_RULES:
         return f"family:{PAIR_RULES[target]}"
     return f"single:{source}:{target}"

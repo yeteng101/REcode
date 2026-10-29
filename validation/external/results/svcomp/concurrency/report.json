@@ -1,136 +1,202 @@
 {
   "schema_version": "1.0",
   "dataset": "SV-COMP 2026 C.Concurrency",
+  "selection_id": "svcomp-concurrency-v1",
   "commit": "7efe28dd29576b46927b7a34e8f742bd90966a75",
   "property": "no-data-race",
-  "metric": "synchronization-presence baseline",
+  "metric": "tri-state data-race classification",
   "tp": 10,
-  "fp": 10,
+  "fp": 0,
   "fn": 0,
-  "tn": 0,
-  "precision": 0.5,
-  "recall": 1.0,
-  "accuracy": 0.5,
+  "tn": 10,
+  "unknown": 0,
+  "race_precision": 1.0,
+  "race_recall": 1.0,
+  "false_race_rate": 0.0,
+  "no_race_recall": 1.0,
+  "unknown_rate": 0.0,
+  "coverage": 1.0,
+  "accuracy": 1.0,
   "cases": [
     {
       "id": "bigshot_s",
-      "expected_no_race": true,
-      "predicted_no_race": true,
-      "sync_relations": 3
+      "expected_race": false,
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+      "input_files": [
+        "bigshot_s.i"
+      ]
     },
     {
       "id": "bigshot_s2",
-      "expected_no_race": true,
-      "predicted_no_race": true,
-      "sync_relations": 3
+      "expected_race": false,
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+      "input_files": [
+        "bigshot_s2.i"
+      ]
     },
     {
       "id": "butterfly",
-      "expected_no_race": true,
-      "predicted_no_race": true,
-      "sync_relations": 11
+      "expected_race": false,
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+      "input_files": [
+        "butterfly.i"
+      ]
     },
     {
       "id": "fib_safe-10",
-      "expected_no_race": true,
-      "predicted_no_race": true,
-      "sync_relations": 1
+      "expected_race": false,
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+      "input_files": [
+        "fib_safe-10.i"
+      ]
     },
     {
       "id": "fib_safe-11",
-      "expected_no_race": true,
-      "predicted_no_race": true,
-      "sync_relations": 1
+      "expected_race": false,
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+      "input_files": [
+        "fib_safe-11.i"
+      ]
     },
     {
       "id": "fib_safe-12",
-      "expected_no_race": true,
-      "predicted_no_race": true,
-      "sync_relations": 1
+      "expected_race": false,
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+      "input_files": [
+        "fib_safe-12.i"
+      ]
     },
     {
       "id": "fib_safe-5",
-      "expected_no_race": true,
-      "predicted_no_race": true,
-      "sync_relations": 1
+      "expected_race": false,
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+      "input_files": [
+        "fib_safe-5.i"
+      ]
     },
     {
       "id": "fib_safe-6",
-      "expected_no_race": true,
-      "predicted_no_race": true,
-      "sync_relations": 1
+      "expected_race": false,
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+      "input_files": [
+        "fib_safe-6.i"
+      ]
     },
     {
       "id": "fib_safe-7",
-      "expected_no_race": true,
-      "predicted_no_race": true,
-      "sync_relations": 1
+      "expected_race": false,
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+      "input_files": [
+        "fib_safe-7.i"
+      ]
     },
     {
       "id": "fib_unsafe-10",
-      "expected_no_race": true,
-      "predicted_no_race": true,
-      "sync_relations": 1
+      "expected_race": false,
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+      "input_files": [
+        "fib_unsafe-10.i"
+      ]
     },
     {
       "id": "bigshot_p",
-      "expected_no_race": false,
-      "predicted_no_race": true,
-      "sync_relations": 4
+      "expected_race": true,
+      "status": "race",
+      "reason": "shared variable v is written without a common lock across threads",
+      "input_files": [
+        "bigshot_p.i"
+      ]
     },
     {
       "id": "fib_safe-10-racy",
-      "expected_no_race": false,
-      "predicted_no_race": true,
-      "sync_relations": 1
+      "expected_race": true,
+      "status": "race",
+      "reason": "shared variable i is written without a common lock across threads",
+      "input_files": [
+        "fib_safe-10-racy.i"
+      ]
     },
     {
       "id": "fib_safe-11-racy",
-      "expected_no_race": false,
-      "predicted_no_race": true,
-      "sync_relations": 1
+      "expected_race": true,
+      "status": "race",
+      "reason": "shared variable i is written without a common lock across threads",
+      "input_files": [
+        "fib_safe-11-racy.i"
+      ]
     },
     {
       "id": "fib_safe-12-racy",
-      "expected_no_race": false,
-      "predicted_no_race": true,
-      "sync_relations": 1
+      "expected_race": true,
+      "status": "race",
+      "reason": "shared variable i is written without a common lock across threads",
+      "input_files": [
+        "fib_safe-12-racy.i"
+      ]
     },
     {
       "id": "fib_safe-5-racy",
-      "expected_no_race": false,
-      "predicted_no_race": true,
-      "sync_relations": 1
+      "expected_race": true,
+      "status": "race",
+      "reason": "shared variable i is written without a common lock across threads",
+      "input_files": [
+        "fib_safe-5-racy.i"
+      ]
     },
     {
       "id": "fib_safe-6-racy",
-      "expected_no_race": false,
-      "predicted_no_race": true,
-      "sync_relations": 1
+      "expected_race": true,
+      "status": "race",
+      "reason": "shared variable i is written without a common lock across threads",
+      "input_files": [
+        "fib_safe-6-racy.i"
+      ]
     },
     {
       "id": "fib_safe-7-racy",
-      "expected_no_race": false,
-      "predicted_no_race": true,
-      "sync_relations": 1
+      "expected_race": true,
+      "status": "race",
+      "reason": "shared variable i is written without a common lock across threads",
+      "input_files": [
+        "fib_safe-7-racy.i"
+      ]
     },
     {
       "id": "fib_unsafe-10-racy",
-      "expected_no_race": false,
-      "predicted_no_race": true,
-      "sync_relations": 1
+      "expected_race": true,
+      "status": "race",
+      "reason": "shared variable i is written without a common lock across threads",
+      "input_files": [
+        "fib_unsafe-10-racy.i"
+      ]
     },
     {
       "id": "fib_unsafe-11-racy",
-      "expected_no_race": false,
-      "predicted_no_race": true,
-      "sync_relations": 1
+      "expected_race": true,
+      "status": "race",
+      "reason": "shared variable i is written without a common lock across threads",
+      "input_files": [
+        "fib_unsafe-11-racy.i"
+      ]
     },
     {
       "id": "fib_unsafe-12-racy",
-      "expected_no_race": false,
-      "predicted_no_race": true,
-      "sync_relations": 1
+      "expected_race": true,
+      "status": "race",
+      "reason": "shared variable i is written without a common lock across threads",
+      "input_files": [
+        "fib_unsafe-12-racy.i"
+      ]
     }
   ]
 }

@@ -1,13 +1,14 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-10-28",
+  "generated_at": "2026-10-29T09:06:27Z",
+  "protocol_id": "external-v1",
   "groups": {
     "call_graph": {
       "datasets": [
         "CallGraphBench",
         "CG-Bench"
       ],
-      "status": "in_progress",
+      "status": "locked_baseline_complete",
       "callgraphbench": {
         "status": "baseline_complete",
         "cases": 6,
@@ -19,10 +20,19 @@
         "f1": 0.7346938775510204
       },
       "cgbench": {
-        "status": "gold_extracted",
-        "callsites": 105,
-        "targets": 614,
-        "evaluation": "pending_agent_target_predictions"
+        "status": "agent_baseline_complete",
+        "tp": 411,
+        "fp": 197,
+        "fn": 117,
+        "precision": 0.6759868421052632,
+        "recall": 0.7784090909090909,
+        "f1": 0.7235915492957746,
+        "total_expected_units": 611,
+        "binary_answered_units": 528,
+        "unknown_callsites": 41,
+        "unknown_expected_units": 83,
+        "unknown_callsite_rate": 0.3942307692307692,
+        "coverage": 0.8641571194762684
       }
     },
     "resource_flow": {
@@ -30,37 +40,30 @@
         "NIST Juliet C/C++ 1.3",
         "SV-COMP 2026 C.MemSafety"
       ],
-      "status": "in_progress",
+      "status": "locked_baseline_complete",
       "juliet": {
         "status": "baseline_complete",
-        "cases": 20,
-        "parsed_cases": 15,
-        "skipped_cases": 5,
-        "cwes": [
-          "CWE401",
-          "CWE404",
-          "CWE415",
-          "CWE416"
-        ],
-        "tp": 15,
-        "fp": 45,
+        "scope": "CWE-401 memory leak, function-level classification",
+        "tp": 5,
+        "fp": 0,
         "fn": 0,
-        "tn": 24,
-        "precision": 0.25,
+        "tn": 23,
+        "unknown": 0,
+        "precision": 1.0,
         "recall": 1.0,
-        "accuracy": 0.4642857142857143
+        "coverage": 1.0
       },
       "svcomp_memsafety": {
         "status": "baseline_complete",
-        "cases": 20,
         "property": "valid-memtrack",
         "tp": 10,
-        "fp": 10,
+        "fp": 8,
         "fn": 0,
-        "tn": 0,
-        "precision": 0.5,
+        "tn": 2,
+        "unknown": 0,
+        "precision": 0.5555555555555556,
         "recall": 1.0,
-        "accuracy": 0.5
+        "coverage": 1.0
       }
     },
     "sync_relation": {
@@ -68,31 +71,36 @@
         "DataRaceBench",
         "SV-COMP 2026 C.Concurrency"
       ],
-      "status": "in_progress",
+      "status": "locked_baseline_complete",
       "dataracebench": {
-        "status": "baseline_complete",
+        "status": "native_tristate_baseline_complete",
+        "metric": "tri-state data-race classification",
         "cases": 24,
-        "metric": "source synchronization-presence baseline",
-        "tp": 12,
-        "fp": 12,
+        "tp": 8,
+        "fp": 0,
         "fn": 0,
-        "tn": 0,
-        "precision": 0.5,
-        "recall": 1.0,
-        "accuracy": 0.5
+        "tn": 10,
+        "unknown": 6,
+        "race_precision": 1.0,
+        "race_recall": 1.0,
+        "false_race_rate": 0.0,
+        "no_race_recall": 1.0,
+        "coverage": 0.75
       },
       "svcomp_concurrency": {
-        "status": "baseline_complete",
-        "cases": 20,
+        "status": "native_tristate_baseline_complete",
         "property": "no-data-race",
-        "metric": "synchronization-presence baseline",
+        "cases": 20,
         "tp": 10,
-        "fp": 10,
+        "fp": 0,
         "fn": 0,
-        "tn": 0,
-        "precision": 0.5,
-        "recall": 1.0,
-        "accuracy": 0.5
+        "tn": 10,
+        "unknown": 0,
+        "race_precision": 1.0,
+        "race_recall": 1.0,
+        "false_race_rate": 0.0,
+        "no_race_recall": 1.0,
+        "coverage": 1.0
       }
     }
   }

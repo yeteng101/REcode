@@ -5,17 +5,26 @@
     {
       "caller": "c:c_dynamic:main",
       "callee": "c:c_dynamic:process_device",
-      "kind": "direct"
+      "kind": "direct",
+      "evidence_ids": [
+        "ev_785f813e1346"
+      ]
     },
     {
       "caller": "c:c_dynamic:process_device",
       "callee": "c:c_dynamic:pick_driver",
-      "kind": "direct"
+      "kind": "direct",
+      "evidence_ids": [
+        "ev_d26200dc9439"
+      ]
     },
     {
       "caller": "c:c_dynamic:process_device",
       "callee": "c:c_dynamic:record_metric",
-      "kind": "direct"
+      "kind": "direct",
+      "evidence_ids": [
+        "ev_966f5b0ec520"
+      ]
     }
   ]
 }

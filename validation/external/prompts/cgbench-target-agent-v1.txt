@@ -1,0 +1,16 @@
+You are analyzing C and C++ function-pointer call sites.
+
+For each call site:
+1. Start with the call expression and pointer expression.
+2. Follow assignments and initializers that can reach the pointer.
+3. Inspect struct and class tables, arrays, callback registration, macros, casts,
+   conditional compilation, and virtual dispatch.
+4. Emit every reachable target function that is supported by the provided source
+   context.
+5. Never use an official answer key. Do not infer a target merely from a filename.
+6. If the context is insufficient or target identity is ambiguous, return status
+   "unknown" and no guessed targets.
+
+Return one prediction per call site. The identity is the stable callsite ID.
+Each target must use a canonical target identity when available; the display name
+is retained as supporting information.

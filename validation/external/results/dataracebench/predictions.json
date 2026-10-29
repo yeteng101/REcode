@@ -1,0 +1,1419 @@
+{
+  "schema_version": "external-prediction-v1",
+  "protocol_id": "external-v1",
+  "dataset": "dataracebench",
+  "generator": {
+    "name": "race-detector-native",
+    "version": "1.0.0",
+    "mode": "deterministic",
+    "parameters": {
+      "strategy": "openmp-index-and-synchronization",
+      "gold_exposed_to_analyzer": false
+    }
+  },
+  "predictions": [
+    {
+      "id": "DRB001-antidep1-orig-yes",
+      "identity": {
+        "case_id": "DRB001-antidep1-orig-yes"
+      },
+      "status": "race",
+      "confidence": 0.84,
+      "evidence": [
+        {
+          "id": "ev_60953601fac7",
+          "file": "DRB001-antidep1-orig-yes.c",
+          "line": 64,
+          "snippet": "a[i]=a[i+1]+1;"
+        }
+      ],
+      "details": {
+        "reason": "a has conflicting parallel index expressions in one statement: ['i', 'i+1']",
+        "source_file": "micro-benchmarks/DRB001-antidep1-orig-yes.c"
+      }
+    },
+    {
+      "id": "DRB002-antidep1-var-yes",
+      "identity": {
+        "case_id": "DRB002-antidep1-var-yes"
+      },
+      "status": "race",
+      "confidence": 0.84,
+      "evidence": [
+        {
+          "id": "ev_0fc30b07ee45",
+          "file": "DRB002-antidep1-var-yes.c",
+          "line": 67,
+          "snippet": "a[i]=a[i+1]+1;"
+        }
+      ],
+      "details": {
+        "reason": "a has conflicting parallel index expressions in one statement: ['i', 'i+1']",
+        "source_file": "micro-benchmarks/DRB002-antidep1-var-yes.c"
+      }
+    },
+    {
+      "id": "DRB003-antidep2-orig-yes",
+      "identity": {
+        "case_id": "DRB003-antidep2-orig-yes"
+      },
+      "status": "race",
+      "confidence": 0.84,
+      "evidence": [
+        {
+          "id": "ev_26fff2db6d8a",
+          "file": "DRB003-antidep2-orig-yes.c",
+          "line": 67,
+          "snippet": "a[i][j] += a[i + 1][j];"
+        }
+      ],
+      "details": {
+        "reason": "a has conflicting parallel index expressions in one statement: ['i', 'i + 1']",
+        "source_file": "micro-benchmarks/DRB003-antidep2-orig-yes.c"
+      }
+    },
+    {
+      "id": "DRB004-antidep2-var-yes",
+      "identity": {
+        "case_id": "DRB004-antidep2-var-yes"
+      },
+      "status": "race",
+      "confidence": 0.84,
+      "evidence": [
+        {
+          "id": "ev_cb1ae2ca1091",
+          "file": "DRB004-antidep2-var-yes.c",
+          "line": 70,
+          "snippet": "a[i][j] += a[i + 1][j];"
+        }
+      ],
+      "details": {
+        "reason": "a has conflicting parallel index expressions in one statement: ['i', 'i + 1']",
+        "source_file": "micro-benchmarks/DRB004-antidep2-var-yes.c"
+      }
+    },
+    {
+      "id": "DRB005-indirectaccess1-orig-yes",
+      "identity": {
+        "case_id": "DRB005-indirectaccess1-orig-yes"
+      },
+      "status": "unknown",
+      "confidence": 0.4,
+      "evidence": [
+        {
+          "id": "ev_28f9c0f5635f",
+          "file": "DRB005-indirectaccess1-orig-yes.c",
+          "line": 128,
+          "snippet": "xa1[idx]+= 1.0 + i;"
+        },
+        {
+          "id": "ev_2b84c220d8a6",
+          "file": "DRB005-indirectaccess1-orig-yes.c",
+          "line": 127,
+          "snippet": "int idx = indexSet[i];"
+        },
+        {
+          "id": "ev_7a6bff0cd3ba",
+          "file": "DRB005-indirectaccess1-orig-yes.c",
+          "line": 129,
+          "snippet": "xa2[idx]+= 3.0 + i;"
+        }
+      ],
+      "details": {
+        "reason": "shared accesses exist but index disjointness cannot be proven: xa1[idx], xa2[idx]",
+        "source_file": "micro-benchmarks/DRB005-indirectaccess1-orig-yes.c"
+      }
+    },
+    {
+      "id": "DRB006-indirectaccess2-orig-yes",
+      "identity": {
+        "case_id": "DRB006-indirectaccess2-orig-yes"
+      },
+      "status": "unknown",
+      "confidence": 0.4,
+      "evidence": [
+        {
+          "id": "ev_9e15226ba08c",
+          "file": "DRB006-indirectaccess2-orig-yes.c",
+          "line": 127,
+          "snippet": "int idx = indexSet[i];"
+        },
+        {
+          "id": "ev_cce42099a96d",
+          "file": "DRB006-indirectaccess2-orig-yes.c",
+          "line": 129,
+          "snippet": "xa2[idx]+= 3.0;"
+        },
+        {
+          "id": "ev_d445dc7185eb",
+          "file": "DRB006-indirectaccess2-orig-yes.c",
+          "line": 128,
+          "snippet": "xa1[idx]+= 1.0;"
+        }
+      ],
+      "details": {
+        "reason": "shared accesses exist but index disjointness cannot be proven: xa1[idx], xa2[idx]",
+        "source_file": "micro-benchmarks/DRB006-indirectaccess2-orig-yes.c"
+      }
+    },
+    {
+      "id": "DRB007-indirectaccess3-orig-yes",
+      "identity": {
+        "case_id": "DRB007-indirectaccess3-orig-yes"
+      },
+      "status": "unknown",
+      "confidence": 0.4,
+      "evidence": [
+        {
+          "id": "ev_135c64265010",
+          "file": "DRB007-indirectaccess3-orig-yes.c",
+          "line": 129,
+          "snippet": "xa2[idx]+= 3.0;"
+        },
+        {
+          "id": "ev_57d2001ce809",
+          "file": "DRB007-indirectaccess3-orig-yes.c",
+          "line": 128,
+          "snippet": "xa1[idx]+= 1.0;"
+        },
+        {
+          "id": "ev_d4663e9900c0",
+          "file": "DRB007-indirectaccess3-orig-yes.c",
+          "line": 127,
+          "snippet": "int idx = indexSet[i];"
+        }
+      ],
+      "details": {
+        "reason": "shared accesses exist but index disjointness cannot be proven: xa1[idx], xa2[idx]",
+        "source_file": "micro-benchmarks/DRB007-indirectaccess3-orig-yes.c"
+      }
+    },
+    {
+      "id": "DRB008-indirectaccess4-orig-yes",
+      "identity": {
+        "case_id": "DRB008-indirectaccess4-orig-yes"
+      },
+      "status": "unknown",
+      "confidence": 0.4,
+      "evidence": [
+        {
+          "id": "ev_794dbb78309b",
+          "file": "DRB008-indirectaccess4-orig-yes.c",
+          "line": 128,
+          "snippet": "xa1[idx]+= 1.0;"
+        },
+        {
+          "id": "ev_9d5c5361e98b",
+          "file": "DRB008-indirectaccess4-orig-yes.c",
+          "line": 129,
+          "snippet": "xa2[idx]+= 3.0;"
+        },
+        {
+          "id": "ev_ffc395a7bcc1",
+          "file": "DRB008-indirectaccess4-orig-yes.c",
+          "line": 127,
+          "snippet": "int idx = indexSet[i];"
+        }
+      ],
+      "details": {
+        "reason": "shared accesses exist but index disjointness cannot be proven: xa1[idx], xa2[idx]",
+        "source_file": "micro-benchmarks/DRB008-indirectaccess4-orig-yes.c"
+      }
+    },
+    {
+      "id": "DRB009-lastprivatemissing-orig-yes",
+      "identity": {
+        "case_id": "DRB009-lastprivatemissing-orig-yes"
+      },
+      "status": "race",
+      "confidence": 0.86,
+      "evidence": [
+        {
+          "id": "ev_4442257650f0",
+          "file": "DRB009-lastprivatemissing-orig-yes.c",
+          "line": 59,
+          "snippet": "x=i;"
+        }
+      ],
+      "details": {
+        "reason": "shared scalar x is written by parallel iterations",
+        "source_file": "micro-benchmarks/DRB009-lastprivatemissing-orig-yes.c"
+      }
+    },
+    {
+      "id": "DRB010-lastprivatemissing-var-yes",
+      "identity": {
+        "case_id": "DRB010-lastprivatemissing-var-yes"
+      },
+      "status": "race",
+      "confidence": 0.86,
+      "evidence": [
+        {
+          "id": "ev_3eddef97a115",
+          "file": "DRB010-lastprivatemissing-var-yes.c",
+          "line": 63,
+          "snippet": "x=i;"
+        }
+      ],
+      "details": {
+        "reason": "shared scalar x is written by parallel iterations",
+        "source_file": "micro-benchmarks/DRB010-lastprivatemissing-var-yes.c"
+      }
+    },
+    {
+      "id": "DRB011-minusminus-orig-yes",
+      "identity": {
+        "case_id": "DRB011-minusminus-orig-yes"
+      },
+      "status": "race",
+      "confidence": 0.86,
+      "evidence": [
+        {
+          "id": "ev_085584dea016",
+          "file": "DRB011-minusminus-orig-yes.c",
+          "line": 73,
+          "snippet": "if (x[i]<=0) {"
+        },
+        {
+          "id": "ev_1e4bf87dff38",
+          "file": "DRB011-minusminus-orig-yes.c",
+          "line": 74,
+          "snippet": "numNodes2-- ;"
+        }
+      ],
+      "details": {
+        "reason": "shared scalar numNodes2 is written by parallel iterations",
+        "source_file": "micro-benchmarks/DRB011-minusminus-orig-yes.c"
+      }
+    },
+    {
+      "id": "DRB012-minusminus-var-yes",
+      "identity": {
+        "case_id": "DRB012-minusminus-var-yes"
+      },
+      "status": "race",
+      "confidence": 0.86,
+      "evidence": [
+        {
+          "id": "ev_830f469aabd9",
+          "file": "DRB012-minusminus-var-yes.c",
+          "line": 73,
+          "snippet": "if (x[i]<=0) {"
+        },
+        {
+          "id": "ev_bce86f17b5d5",
+          "file": "DRB012-minusminus-var-yes.c",
+          "line": 74,
+          "snippet": "numNodes2-- ;"
+        }
+      ],
+      "details": {
+        "reason": "shared scalar numNodes2 is written by parallel iterations",
+        "source_file": "micro-benchmarks/DRB012-minusminus-var-yes.c"
+      }
+    },
+    {
+      "id": "DRB041-3mm-parallel-no",
+      "identity": {
+        "case_id": "DRB041-3mm-parallel-no"
+      },
+      "status": "no_race",
+      "confidence": 0.72,
+      "evidence": [
+        {
+          "id": "ev_01b992ac64dc",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 235,
+          "snippet": "A[c1][c2] = ((double )c1) * c2 / ni;"
+        },
+        {
+          "id": "ev_02b5fc06eca3",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 391,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_02f915ce1e11",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 380,
+          "snippet": "C[c1][c2] = ((double )c1) * (c2 + 3) / nl;"
+        },
+        {
+          "id": "ev_03d501bcdefd",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 484,
+          "snippet": "C[c1][c2] = ((double )c1) * (c2 + 3) / nl;"
+        },
+        {
+          "id": "ev_04b82a138b20",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 129,
+          "snippet": "A[c1][c2] = ((double )c1) * c2 / ni;"
+        },
+        {
+          "id": "ev_05fb144df4d7",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 461,
+          "snippet": "C[c1][c2] = ((double )c1) * (c2 + 3) / nl;"
+        },
+        {
+          "id": "ev_077e66715584",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 368,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_08f883f64e3a",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 77,
+          "snippet": "D[c1][c2] = ((double )c1) * (c2 + 2) / nk;"
+        },
+        {
+          "id": "ev_095683a02db5",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 38,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_0a9fe2d87b6b",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 121,
+          "snippet": "C[c1][c2] = ((double )c1) * (c2 + 3) / nl;"
+        },
+        {
+          "id": "ev_0aa8e4f025e3",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 554,
+          "snippet": "F[c1][c2] += C[c1][c5] * D[c5][c2];"
+        },
+        {
+          "id": "ev_0b778e1aef95",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 173,
+          "snippet": "A[c1][c2] = ((double )c1) * c2 / ni;"
+        },
+        {
+          "id": "ev_0bb81021e12c",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 243,
+          "snippet": "A[c1][c2] = ((double )c1) * c2 / ni;"
+        },
+        {
+          "id": "ev_0cfc961288f2",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 403,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_0e2591cc81d6",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 177,
+          "snippet": "A[c1][c2] = ((double )c1) * c2 / ni;"
+        },
+        {
+          "id": "ev_0f192b89a9b9",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 400,
+          "snippet": "D[c1][c2] = ((double )c1) * (c2 + 2) / nk;"
+        },
+        {
+          "id": "ev_1079fc87c8db",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 431,
+          "snippet": "D[c1][c2] = ((double )c1) * (c2 + 2) / nk;"
+        },
+        {
+          "id": "ev_11457cc36332",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 32,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_1158788e50e9",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 90,
+          "snippet": "D[c1][c2] = ((double )c1) * (c2 + 2) / nk;"
+        },
+        {
+          "id": "ev_116eeab05c1c",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 399,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_1217aca7ebbe",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 546,
+          "snippet": "G[c1][c2] = 0;"
+        },
+        {
+          "id": "ev_14842e4605d7",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 189,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_17aef430eabc",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 492,
+          "snippet": "D[c1][c2] = ((double )c1) * (c2 + 2) / nk;"
+        },
+        {
+          "id": "ev_1b1dcd332242",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 283,
+          "snippet": "A[c1][c2] = ((double )c1) * c2 / ni;"
+        },
+        {
+          "id": "ev_1c0dc062e615",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 268,
+          "snippet": "C[c1][c2] = ((double )c1) * (c2 + 3) / nl;"
+        },
+        {
+          "id": "ev_1cc87982015d",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 76,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_1d86d772f93c",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 430,
+          "snippet": "C[c1][c2] = ((double )c1) * (c2 + 3) / nl;"
+        },
+        {
+          "id": "ev_2161f4fc1b72",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 245,
+          "snippet": "D[c1][c2] = ((double )c1) * (c2 + 2) / nk;"
+        },
+        {
+          "id": "ev_21b6ff3d2b23",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 67,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_24319b882cc5",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 61,
+          "snippet": "D[c1][c2] = ((double )c1) * (c2 + 2) / nk;"
+        },
+        {
+          "id": "ev_2a4c526b7e65",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 339,
+          "snippet": "C[c1][c2] = ((double )c1) * (c2 + 3) / nl;"
+        },
+        {
+          "id": "ev_2c50e95356f3",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 547,
+          "snippet": "F[c1][c2] = 0;"
+        },
+        {
+          "id": "ev_2c884ff2d19a",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 342,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_2ce9c8c3dcfc",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 333,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_2cf537aaebb9",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 568,
+          "snippet": "E[c1][c2] += A[c1][c5] * B[c5][c2];"
+        },
+        {
+          "id": "ev_2f054eb84528",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 212,
+          "snippet": "A[c1][c2] = ((double )c1) * c2 / ni;"
+        },
+        {
+          "id": "ev_31c364ea3e74",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 188,
+          "snippet": "A[c1][c2] = ((double )c1) * c2 / ni;"
+        },
+        {
+          "id": "ev_31e4a37ca137",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 138,
+          "snippet": "A[c1][c2] = ((double )c1) * c2 / ni;"
+        },
+        {
+          "id": "ev_3283dfa2c880",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 80,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_3571a2791c34",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 47,
+          "snippet": "A[c1][c2] = ((double )c1) * c2 / ni;"
+        },
+        {
+          "id": "ev_358359faf12e",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 104,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_377d1e072d45",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 114,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_39974a3a55c6",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 325,
+          "snippet": "A[c1][c2] = ((double )c1) * c2 / ni;"
+        },
+        {
+          "id": "ev_3a00dd6cffc4",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 135,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_3a2b99f14958",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 72,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_3efdc4d60576",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 422,
+          "snippet": "B[c1][c2] = ((double )c1) * (c2 + 1) / nj;"
+        },
+        {
+          "id": "ev_3fa04f3c99cf",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 476,
+          "snippet": "C[c1][c2] = ((double )c1) * (c2 + 3) / nl;"
+        },
+        {
+          "id": "ev_40f117e4c274",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 34,
+          "snippet": "D[c1][c2] = ((double )c1) * (c2 + 2) / nk;"
+        },
+        {
+          "id": "ev_45cbc0a0ef3e",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 353,
+          "snippet": "C[c1][c2] = ((double )c1) * (c2 + 3) / nl;"
+        },
+        {
+          "id": "ev_4cca40ef7edf",
+          "file": "DRB041-3mm-parallel-no.c",
+          "line": 571,
+          "snippet": "G[c1][c5] += E[c1][c2] * F[c2][c5];"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "source_file": "micro-benchmarks/DRB041-3mm-parallel-no.c"
+      }
+    },
+    {
+      "id": "DRB042-3mm-tile-no",
+      "identity": {
+        "case_id": "DRB042-3mm-tile-no"
+      },
+      "status": "no_race",
+      "confidence": 0.72,
+      "evidence": [
+        {
+          "id": "ev_010ca3765ae7",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 751,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_01850520affa",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 144,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_01c27f4aa69f",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 1352,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_01e71d14a840",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 110,
+          "snippet": "D[c3][c4] = ((double )c3) * (c4 + 2) / nk;"
+        },
+        {
+          "id": "ev_022d90d8a91a",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 925,
+          "snippet": "C[c3][c4] = ((double )c3) * (c4 + 3) / nl;"
+        },
+        {
+          "id": "ev_02cef4094316",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 916,
+          "snippet": "A[c3][c4] = ((double )c3) * c4 / ni;"
+        },
+        {
+          "id": "ev_02e3274e5153",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 327,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_02fb01c1275b",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 450,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_035489c69473",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 1083,
+          "snippet": "A[c3][c4] = ((double )c3) * c4 / ni;"
+        },
+        {
+          "id": "ev_03b26caeced5",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 2063,
+          "snippet": "D[c3][c4] = ((double )c3) * (c4 + 2) / nk;"
+        },
+        {
+          "id": "ev_046161b44005",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 432,
+          "snippet": "C[c3][c4] = ((double )c3) * (c4 + 3) / nl;"
+        },
+        {
+          "id": "ev_04940a77c44c",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 1044,
+          "snippet": "D[c3][c4] = ((double )c3) * (c4 + 2) / nk;"
+        },
+        {
+          "id": "ev_04c7c5646fcb",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 565,
+          "snippet": "A[c3][c4] = ((double )c3) * c4 / ni;"
+        },
+        {
+          "id": "ev_04e27aea14c7",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 539,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_05dbcc85f197",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 2354,
+          "snippet": "D[c3][c4] = ((double )c3) * (c4 + 2) / nk;"
+        },
+        {
+          "id": "ev_07db059b78b9",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 213,
+          "snippet": "D[c3][c4] = ((double )c3) * (c4 + 2) / nk;"
+        },
+        {
+          "id": "ev_07ffb2f0e378",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 640,
+          "snippet": "A[c3][c4] = ((double )c3) * c4 / ni;"
+        },
+        {
+          "id": "ev_08768129772f",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 1464,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_0a6b6a4107e6",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 315,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_0a73441c8930",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 437,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_0aa7e0d167b0",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 2272,
+          "snippet": "D[c3][c4] = ((double )c3) * (c4 + 2) / nk;"
+        },
+        {
+          "id": "ev_0bb09cc5c6af",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 83,
+          "snippet": "D[c3][c4] = ((double )c3) * (c4 + 2) / nk;"
+        },
+        {
+          "id": "ev_0c032e8dcc21",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 1742,
+          "snippet": "C[c3][c4] = ((double )c3) * (c4 + 3) / nl;"
+        },
+        {
+          "id": "ev_0c0757336a3c",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 1237,
+          "snippet": "D[c3][c4] = ((double )c3) * (c4 + 2) / nk;"
+        },
+        {
+          "id": "ev_0d472a53c733",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 555,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_0d4b61e2fbaa",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 1837,
+          "snippet": "A[c3][c4] = ((double )c3) * c4 / ni;"
+        },
+        {
+          "id": "ev_0e25161ef38a",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 2077,
+          "snippet": "D[c3][c4] = ((double )c3) * (c4 + 2) / nk;"
+        },
+        {
+          "id": "ev_0edd247ef105",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 408,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_0efae6cd6955",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 782,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_0f5e42a07daa",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 2112,
+          "snippet": "D[c3][c4] = ((double )c3) * (c4 + 2) / nk;"
+        },
+        {
+          "id": "ev_0f72d5bccb3e",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 1362,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_0f8c694f4b09",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 2221,
+          "snippet": "C[c3][c4] = ((double )c3) * (c4 + 3) / nl;"
+        },
+        {
+          "id": "ev_0fdc235dcbd6",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 1533,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_11046346f1f8",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 366,
+          "snippet": "A[c3][c4] = ((double )c3) * c4 / ni;"
+        },
+        {
+          "id": "ev_115ccf43bd76",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 2511,
+          "snippet": "D[c3][c4] = ((double )c3) * (c4 + 2) / nk;"
+        },
+        {
+          "id": "ev_1177a7fa92f2",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 1954,
+          "snippet": "A[c3][c4] = ((double )c3) * c4 / ni;"
+        },
+        {
+          "id": "ev_12c5431ffdb3",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 667,
+          "snippet": "A[c3][c4] = ((double )c3) * c4 / ni;"
+        },
+        {
+          "id": "ev_12f2a77dc845",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 2126,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_1327f82ea12a",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 1838,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_162fd2be5787",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 788,
+          "snippet": "A[c3][c4] = ((double )c3) * c4 / ni;"
+        },
+        {
+          "id": "ev_1637e9ac4058",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 921,
+          "snippet": "A[c3][c4] = ((double )c3) * c4 / ni;"
+        },
+        {
+          "id": "ev_16706e6e44c8",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 1019,
+          "snippet": "A[c3][c4] = ((double )c3) * c4 / ni;"
+        },
+        {
+          "id": "ev_17739d4f201a",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 124,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_17808d2f7bf7",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 651,
+          "snippet": "A[c3][c4] = ((double )c3) * c4 / ni;"
+        },
+        {
+          "id": "ev_17b67a0cfa6f",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 262,
+          "snippet": "B[c3][c4] = ((double )c3) * (c4 + 1) / nj;"
+        },
+        {
+          "id": "ev_17e06b320e79",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 1337,
+          "snippet": "C[c3][c4] = ((double )c3) * (c4 + 3) / nl;"
+        },
+        {
+          "id": "ev_185bb6310e0a",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 886,
+          "snippet": "C[c3][c4] = ((double )c3) * (c4 + 3) / nl;"
+        },
+        {
+          "id": "ev_1876940d2021",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 1155,
+          "snippet": "A[c3][c4] = ((double )c3) * c4 / ni;"
+        },
+        {
+          "id": "ev_199bb7852bb4",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 1015,
+          "snippet": "C[c3][c4] = ((double )c3) * (c4 + 3) / nl;"
+        },
+        {
+          "id": "ev_19b16b46e677",
+          "file": "DRB042-3mm-tile-no.c",
+          "line": 1165,
+          "snippet": "A[c3][c4] = ((double )c3) * c4 / ni;"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "source_file": "micro-benchmarks/DRB042-3mm-tile-no.c"
+      }
+    },
+    {
+      "id": "DRB043-adi-parallel-no",
+      "identity": {
+        "case_id": "DRB043-adi-parallel-no"
+      },
+      "status": "no_race",
+      "confidence": 0.72,
+      "evidence": [
+        {
+          "id": "ev_0b0ed0e574a3",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 95,
+          "snippet": "X[500 - 2 - c8][c2] = (X[500 - 2 - c8][c2] - X[500 - c8 - 3][c2] * A[500 - 3 - c8][c2]) / B[500 - 2 - c8][c2];"
+        },
+        {
+          "id": "ev_1bcdb989efa8",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 73,
+          "snippet": "B[c2][c8] = B[c2][c8] - A[c2][c8] * A[c2][c8] / B[c2][c8 - 1];"
+        },
+        {
+          "id": "ev_1c86f1c9bb03",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 84,
+          "snippet": "X[c2][500 - 1] = X[c2][500 - 1] / B[c2][500 - 1];"
+        },
+        {
+          "id": "ev_1e9b9a40c5fc",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 32,
+          "snippet": "X[c1][c2] = (((double )c1) * (c2 + 1) + 1) / n;"
+        },
+        {
+          "id": "ev_21771abe2b8a",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 89,
+          "snippet": "B[c8][c2] = B[c8][c2] - A[c8][c2] * A[c8][c2] / B[c8 - 1][c2];"
+        },
+        {
+          "id": "ev_23822f8d4265",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 92,
+          "snippet": "X[c8][c2] = X[c8][c2] - X[c8 - 1][c2] * A[c8][c2] / B[c8 - 1][c2];"
+        },
+        {
+          "id": "ev_251bbdbda902",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 33,
+          "snippet": "A[c1][c2] = (((double )c1) * (c2 + 2) + 2) / n;"
+        },
+        {
+          "id": "ev_3117d823f194",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 95,
+          "snippet": "X[500 - 2 - c8][c2] = (X[500 - 2 - c8][c2] - X[500 - c8 - 3][c2] * A[500 - 3 - c8][c2]) / B[500 - 2 - c8][c2];"
+        },
+        {
+          "id": "ev_3cd063726b01",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 79,
+          "snippet": "X[c2][500 - c8 - 2] = (X[c2][500 - 2 - c8] - X[c2][500 - 2 - c8 - 1] * A[c2][500 - c8 - 3]) / B[c2][500 - 3 - c8];"
+        },
+        {
+          "id": "ev_52124661e054",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 34,
+          "snippet": "B[c1][c2] = (((double )c1) * (c2 + 3) + 3) / n;"
+        },
+        {
+          "id": "ev_76e283f67f2b",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 84,
+          "snippet": "X[c2][500 - 1] = X[c2][500 - 1] / B[c2][500 - 1];"
+        },
+        {
+          "id": "ev_8f5428e1dd52",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 100,
+          "snippet": "X[500 - 1][c2] = X[500 - 1][c2] / B[500 - 1][c2];"
+        },
+        {
+          "id": "ev_a0b0174dad7e",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 76,
+          "snippet": "X[c2][c8] = X[c2][c8] - X[c2][c8 - 1] * A[c2][c8] / B[c2][c8 - 1];"
+        },
+        {
+          "id": "ev_b5106282689a",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 76,
+          "snippet": "X[c2][c8] = X[c2][c8] - X[c2][c8 - 1] * A[c2][c8] / B[c2][c8 - 1];"
+        },
+        {
+          "id": "ev_c668c13208be",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 100,
+          "snippet": "X[500 - 1][c2] = X[500 - 1][c2] / B[500 - 1][c2];"
+        },
+        {
+          "id": "ev_cb19febd9670",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 79,
+          "snippet": "X[c2][500 - c8 - 2] = (X[c2][500 - 2 - c8] - X[c2][500 - 2 - c8 - 1] * A[c2][500 - c8 - 3]) / B[c2][500 - 3 - c8];"
+        },
+        {
+          "id": "ev_cfb10ed6ae47",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 79,
+          "snippet": "X[c2][500 - c8 - 2] = (X[c2][500 - 2 - c8] - X[c2][500 - 2 - c8 - 1] * A[c2][500 - c8 - 3]) / B[c2][500 - 3 - c8];"
+        },
+        {
+          "id": "ev_d4fcbf22759d",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 76,
+          "snippet": "X[c2][c8] = X[c2][c8] - X[c2][c8 - 1] * A[c2][c8] / B[c2][c8 - 1];"
+        },
+        {
+          "id": "ev_e5161cc66708",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 92,
+          "snippet": "X[c8][c2] = X[c8][c2] - X[c8 - 1][c2] * A[c8][c2] / B[c8 - 1][c2];"
+        },
+        {
+          "id": "ev_e7ea9054fe7c",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 89,
+          "snippet": "B[c8][c2] = B[c8][c2] - A[c8][c2] * A[c8][c2] / B[c8 - 1][c2];"
+        },
+        {
+          "id": "ev_f14b07cc8f2d",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 95,
+          "snippet": "X[500 - 2 - c8][c2] = (X[500 - 2 - c8][c2] - X[500 - c8 - 3][c2] * A[500 - 3 - c8][c2]) / B[500 - 2 - c8][c2];"
+        },
+        {
+          "id": "ev_f610bc1d2127",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 73,
+          "snippet": "B[c2][c8] = B[c2][c8] - A[c2][c8] * A[c2][c8] / B[c2][c8 - 1];"
+        },
+        {
+          "id": "ev_fa3712d2eb20",
+          "file": "DRB043-adi-parallel-no.c",
+          "line": 92,
+          "snippet": "X[c8][c2] = X[c8][c2] - X[c8 - 1][c2] * A[c8][c2] / B[c8 - 1][c2];"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "source_file": "micro-benchmarks/DRB043-adi-parallel-no.c"
+      }
+    },
+    {
+      "id": "DRB044-adi-tile-no",
+      "identity": {
+        "case_id": "DRB044-adi-tile-no"
+      },
+      "status": "unknown",
+      "confidence": 0.4,
+      "evidence": [
+        {
+          "id": "ev_0645c4dcc68e",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 36,
+          "snippet": "X[c3][c4] = (((double )c3) * (c4 + 1) + 1) / n;"
+        },
+        {
+          "id": "ev_110bf2e9629e",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 138,
+          "snippet": "X[n - 2 - c9][c15] = (X[n - 2 - c9][c15] - X[n - c9 - 3][c15] * A[n - 3 - c9][c15]) / B[n - 2 - c9][c15];"
+        },
+        {
+          "id": "ev_2e162c1c631a",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 86,
+          "snippet": "B[c15][c9] = B[c15][c9] - A[c15][c9] * A[c15][c9] / B[c15][c9 - 1];"
+        },
+        {
+          "id": "ev_35309c72f60d",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 38,
+          "snippet": "B[c3][c4] = (((double )c3) * (c4 + 3) + 3) / n;"
+        },
+        {
+          "id": "ev_4a54b4ad0914",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 130,
+          "snippet": "X[c9][c15] = X[c9][c15] - X[c9 - 1][c15] * A[c9][c15] / B[c9 - 1][c15];"
+        },
+        {
+          "id": "ev_63e6f40182fa",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 122,
+          "snippet": "B[c9][c15] = B[c9][c15] - A[c9][c15] * A[c9][c15] / B[c9 - 1][c15];"
+        },
+        {
+          "id": "ev_6a075b95ae2f",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 122,
+          "snippet": "B[c9][c15] = B[c9][c15] - A[c9][c15] * A[c9][c15] / B[c9 - 1][c15];"
+        },
+        {
+          "id": "ev_7672d6fc5b07",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 37,
+          "snippet": "A[c3][c4] = (((double )c3) * (c4 + 2) + 2) / n;"
+        },
+        {
+          "id": "ev_7fac030bfbc8",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 86,
+          "snippet": "B[c15][c9] = B[c15][c9] - A[c15][c9] * A[c15][c9] / B[c15][c9 - 1];"
+        },
+        {
+          "id": "ev_812c92fe4bc3",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 112,
+          "snippet": "X[c15][n - 1] = X[c15][n - 1] / B[c15][n - 1];"
+        },
+        {
+          "id": "ev_8d3789b73206",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 138,
+          "snippet": "X[n - 2 - c9][c15] = (X[n - 2 - c9][c15] - X[n - c9 - 3][c15] * A[n - 3 - c9][c15]) / B[n - 2 - c9][c15];"
+        },
+        {
+          "id": "ev_9d95fecee6eb",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 102,
+          "snippet": "X[c15][n - c9 - 2] = (X[c15][n - 2 - c9] - X[c15][n - 2 - c9 - 1] * A[c15][n - c9 - 3]) / B[c15][n - 3 - c9];"
+        },
+        {
+          "id": "ev_a1aa3e082a94",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 102,
+          "snippet": "X[c15][n - c9 - 2] = (X[c15][n - 2 - c9] - X[c15][n - 2 - c9 - 1] * A[c15][n - c9 - 3]) / B[c15][n - 3 - c9];"
+        },
+        {
+          "id": "ev_a9f4ce822ea4",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 94,
+          "snippet": "X[c15][c9] = X[c15][c9] - X[c15][c9 - 1] * A[c15][c9] / B[c15][c9 - 1];"
+        },
+        {
+          "id": "ev_ae80ca1e4d22",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 148,
+          "snippet": "X[n - 1][c15] = X[n - 1][c15] / B[n - 1][c15];"
+        },
+        {
+          "id": "ev_c6b40d7c040b",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 130,
+          "snippet": "X[c9][c15] = X[c9][c15] - X[c9 - 1][c15] * A[c9][c15] / B[c9 - 1][c15];"
+        },
+        {
+          "id": "ev_cfefc905a378",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 148,
+          "snippet": "X[n - 1][c15] = X[n - 1][c15] / B[n - 1][c15];"
+        },
+        {
+          "id": "ev_db8ca6f48c6b",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 138,
+          "snippet": "X[n - 2 - c9][c15] = (X[n - 2 - c9][c15] - X[n - c9 - 3][c15] * A[n - 3 - c9][c15]) / B[n - 2 - c9][c15];"
+        },
+        {
+          "id": "ev_dbd961e23ad2",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 112,
+          "snippet": "X[c15][n - 1] = X[c15][n - 1] / B[c15][n - 1];"
+        },
+        {
+          "id": "ev_dd036da6da16",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 94,
+          "snippet": "X[c15][c9] = X[c15][c9] - X[c15][c9 - 1] * A[c15][c9] / B[c15][c9 - 1];"
+        },
+        {
+          "id": "ev_e3dc7666e7ca",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 130,
+          "snippet": "X[c9][c15] = X[c9][c15] - X[c9 - 1][c15] * A[c9][c15] / B[c9 - 1][c15];"
+        },
+        {
+          "id": "ev_e8908dcf6f20",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 94,
+          "snippet": "X[c15][c9] = X[c15][c9] - X[c15][c9 - 1] * A[c15][c9] / B[c15][c9 - 1];"
+        },
+        {
+          "id": "ev_f1e5f60be3dd",
+          "file": "DRB044-adi-tile-no.c",
+          "line": 102,
+          "snippet": "X[c15][n - c9 - 2] = (X[c15][n - 2 - c9] - X[c15][n - 2 - c9 - 1] * A[c15][n - c9 - 3]) / B[c15][n - 3 - c9];"
+        }
+      ],
+      "details": {
+        "reason": "shared accesses exist but index disjointness cannot be proven: B[c15 | n - 3 - c9], X[c15 | n - 2 - c9], X[c15 | n - 2 - c9 - 1], X[c15 | n - c9 - 2]",
+        "source_file": "micro-benchmarks/DRB044-adi-tile-no.c"
+      }
+    },
+    {
+      "id": "DRB045-doall1-orig-no",
+      "identity": {
+        "case_id": "DRB045-doall1-orig-no"
+      },
+      "status": "no_race",
+      "confidence": 0.72,
+      "evidence": [
+        {
+          "id": "ev_3c23f269f1d6",
+          "file": "DRB045-doall1-orig-no.c",
+          "line": 56,
+          "snippet": "a[i]=a[i]+1;"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "source_file": "micro-benchmarks/DRB045-doall1-orig-no.c"
+      }
+    },
+    {
+      "id": "DRB046-doall2-orig-no",
+      "identity": {
+        "case_id": "DRB046-doall2-orig-no"
+      },
+      "status": "no_race",
+      "confidence": 0.72,
+      "evidence": [],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "source_file": "micro-benchmarks/DRB046-doall2-orig-no.c"
+      }
+    },
+    {
+      "id": "DRB047-doallchar-orig-no",
+      "identity": {
+        "case_id": "DRB047-doallchar-orig-no"
+      },
+      "status": "no_race",
+      "confidence": 0.72,
+      "evidence": [
+        {
+          "id": "ev_67d0442080a0",
+          "file": "DRB047-doallchar-orig-no.c",
+          "line": 59,
+          "snippet": "a[i]=a[i]+1;"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "source_file": "micro-benchmarks/DRB047-doallchar-orig-no.c"
+      }
+    },
+    {
+      "id": "DRB048-firstprivate-orig-no",
+      "identity": {
+        "case_id": "DRB048-firstprivate-orig-no"
+      },
+      "status": "no_race",
+      "confidence": 0.72,
+      "evidence": [
+        {
+          "id": "ev_ad757a6e8d44",
+          "file": "DRB048-firstprivate-orig-no.c",
+          "line": 57,
+          "snippet": "a[i] = a[i]+g;"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "source_file": "micro-benchmarks/DRB048-firstprivate-orig-no.c"
+      }
+    },
+    {
+      "id": "DRB049-fprintf-orig-no",
+      "identity": {
+        "case_id": "DRB049-fprintf-orig-no"
+      },
+      "status": "no_race",
+      "confidence": 0.72,
+      "evidence": [
+        {
+          "id": "ev_ba134c0177f9",
+          "file": "DRB049-fprintf-orig-no.c",
+          "line": 72,
+          "snippet": "fprintf(pfile, \"\", A[i] );"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "source_file": "micro-benchmarks/DRB049-fprintf-orig-no.c"
+      }
+    },
+    {
+      "id": "DRB050-functionparameter-orig-no",
+      "identity": {
+        "case_id": "DRB050-functionparameter-orig-no"
+      },
+      "status": "no_race",
+      "confidence": 0.72,
+      "evidence": [
+        {
+          "id": "ev_b88bcb8f65d5",
+          "file": "DRB050-functionparameter-orig-no.c",
+          "line": 56,
+          "snippet": "o1[i] = volnew_o8;"
+        },
+        {
+          "id": "ev_cb157ac9ae27",
+          "file": "DRB050-functionparameter-orig-no.c",
+          "line": 55,
+          "snippet": "double volnew_o8 = 0.5 * c[i];"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "source_file": "micro-benchmarks/DRB050-functionparameter-orig-no.c"
+      }
+    },
+    {
+      "id": "DRB051-getthreadnum-orig-no",
+      "identity": {
+        "case_id": "DRB051-getthreadnum-orig-no"
+      },
+      "status": "no_race",
+      "confidence": 0.9,
+      "evidence": [
+        {
+          "id": "ev_bd28129c95fc",
+          "file": "DRB051-getthreadnum-orig-no.c",
+          "line": 59,
+          "snippet": "numThreads = omp_get_num_threads();"
+        }
+      ],
+      "details": {
+        "reason": "all recognized concurrent regions are synchronized or index-partitioned",
+        "source_file": "micro-benchmarks/DRB051-getthreadnum-orig-no.c"
+      }
+    },
+    {
+      "id": "DRB052-indirectaccesssharebase-orig-no",
+      "identity": {
+        "case_id": "DRB052-indirectaccesssharebase-orig-no"
+      },
+      "status": "unknown",
+      "confidence": 0.4,
+      "evidence": [
+        {
+          "id": "ev_2abc712d1851",
+          "file": "DRB052-indirectaccesssharebase-orig-no.c",
+          "line": 119,
+          "snippet": "xa1[idx]+= 1.0;"
+        },
+        {
+          "id": "ev_8ec45f5f41e1",
+          "file": "DRB052-indirectaccesssharebase-orig-no.c",
+          "line": 118,
+          "snippet": "int idx = indexSet[i];"
+        },
+        {
+          "id": "ev_afd20b8bb8e6",
+          "file": "DRB052-indirectaccesssharebase-orig-no.c",
+          "line": 120,
+          "snippet": "xa2[idx]+= 3.0;"
+        }
+      ],
+      "details": {
+        "reason": "shared accesses exist but index disjointness cannot be proven: xa1[idx], xa2[idx]",
+        "source_file": "micro-benchmarks/DRB052-indirectaccesssharebase-orig-no.c"
+      }
+    }
+  ]
+}

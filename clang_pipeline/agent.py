@@ -63,6 +63,27 @@ class AgentContext:
             "10-knowledge/knowledge-graph.json",
         )
 
+    def load_resource_flow(self) -> dict[str, Any]:
+        return self.load_json(
+            "external/resource-flow.json",
+            "resource-flow.json",
+            "08-resource-flow/resource-flow.json",
+        )
+
+    def load_sync_relations(self) -> dict[str, Any]:
+        return self.load_json(
+            "external/sync-relations.json",
+            "sync-relations.json",
+            "09-sync-relations/sync-relations.json",
+        )
+
+    def load_races(self) -> dict[str, Any]:
+        return self.load_json(
+            "external/race-analysis.json",
+            "race-analysis.json",
+            "09-race-analysis/race-analysis.json",
+        )
+
     def visualization_path(self) -> Path | None:
         return self._find_artifact(
             "07-report/visualization.html",
@@ -218,6 +239,47 @@ AGENT_TOOLS: list[dict[str, Any]] = [
     {
         "type": "function",
         "function": {
+            "name": "get_resource_flow",
+            "description": "获取已提取的资源获取、释放、跨函数所有权和未闭环路径。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "function": {"type": "string"},
+                    "limit": {"type": "integer", "minimum": 1, "maximum": 500},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_sync_relations",
+            "description": "获取锁、原子操作、线程 join、条件和队列的同步关系。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "function": {"type": "string"},
+                    "limit": {"type": "integer", "minimum": 1, "maximum": 500},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_races",
+            "description": "获取 race、no_race、unknown 三值并发数据竞争分析。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "limit": {"type": "integer", "minimum": 1, "maximum": 500},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "get_visualization",
             "description": "获取当前分析结果的可视化 HTML 文件路径。",
             "parameters": {"type": "object", "properties": {}},
@@ -268,6 +330,61 @@ def _tool_get_knowledge_graph(ctx: AgentContext, args: dict[str, Any]) -> Any:
         "summary": knowledge.get("summary", {}),
         "entities": knowledge.get("entities", [])[:500],
         "relations": knowledge.get("relations", [])[:800],
+    }
+
+
+def _tool_get_resource_flow(ctx: AgentContext, args: dict[str, Any]) -> Any:
+    document = ctx.load_resource_flow()
+    function = args.get("function")
+    limit = int(args.get("limit", 100))
+    items = document.get("items", [])
+    if function:
+        items = [
+            item
+            for item in items
+            if any(
+                operation.get("function") == function
+                for operation in item.get("operations", [])
+            )
+        ]
+    return {
+        "status": document.get("status"),
+        "items": items[:limit],
+        "warnings": document.get("warnings", []),
+    }
+
+
+def _tool_get_sync_relations(ctx: AgentContext, args: dict[str, Any]) -> Any:
+    document = ctx.load_sync_relations()
+    function = args.get("function")
+    limit = int(args.get("limit", 100))
+    items = document.get("items", [])
+    if function:
+        items = [
+            item
+            for item in items
+            if function
+            in {
+                item.get("source", {}).get("function"),
+                item.get("target", {}).get("function"),
+            }
+        ]
+    return {
+        "status": document.get("status"),
+        "items": items[:limit],
+        "warnings": document.get("warnings", []),
+    }
+
+
+def _tool_get_races(ctx: AgentContext, args: dict[str, Any]) -> Any:
+    document = ctx.load_races()
+    limit = int(args.get("limit", 100))
+    return {
+        "status": document.get("status"),
+        "label": document.get("label"),
+        "reason": document.get("reason"),
+        "items": document.get("items", [])[:limit],
+        "warnings": document.get("warnings", []),
     }
 
 
@@ -353,6 +470,9 @@ TOOL_IMPLEMENTATIONS: dict[str, Callable[[AgentContext, dict[str, Any]], Any]] =
     "get_key_chains": _tool_get_key_chains,
     "get_architecture": _tool_get_architecture,
     "get_knowledge_graph": _tool_get_knowledge_graph,
+    "get_resource_flow": _tool_get_resource_flow,
+    "get_sync_relations": _tool_get_sync_relations,
+    "get_races": _tool_get_races,
     "get_visualization": _tool_get_visualization,
     "get_evidence": _tool_get_evidence,
     "get_source_snippet": _tool_get_source_snippet,

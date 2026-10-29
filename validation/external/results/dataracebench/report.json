@@ -1,159 +1,165 @@
 {
   "schema_version": "1.0",
   "dataset": "DataRaceBench",
+  "selection_id": "dataracebench-v1",
   "commit": "7d07c5d637fa80f1fd7c239bdc34ae53094badc2",
-  "metric": "source synchronization-presence baseline",
-  "tp": 12,
-  "fp": 12,
+  "metric": "tri-state data-race classification",
+  "tp": 8,
+  "fp": 0,
   "fn": 0,
-  "tn": 0,
-  "precision": 0.5,
-  "recall": 1.0,
-  "accuracy": 0.5,
+  "tn": 10,
+  "unknown": 6,
+  "race_precision": 1.0,
+  "race_recall": 1.0,
+  "false_race_rate": 0.0,
+  "no_race_recall": 1.0,
+  "unknown_rate": 0.25,
+  "coverage": 0.75,
+  "accuracy": null,
   "cases": [
     {
       "id": "DRB001-antidep1-orig-yes",
       "expected_race": true,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "race",
+      "reason": "a has conflicting parallel index expressions in one statement: ['i', 'i+1']"
     },
     {
       "id": "DRB002-antidep1-var-yes",
       "expected_race": true,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "race",
+      "reason": "a has conflicting parallel index expressions in one statement: ['i', 'i+1']"
     },
     {
       "id": "DRB003-antidep2-orig-yes",
       "expected_race": true,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "race",
+      "reason": "a has conflicting parallel index expressions in one statement: ['i', 'i + 1']"
     },
     {
       "id": "DRB004-antidep2-var-yes",
       "expected_race": true,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "race",
+      "reason": "a has conflicting parallel index expressions in one statement: ['i', 'i + 1']"
     },
     {
       "id": "DRB005-indirectaccess1-orig-yes",
       "expected_race": true,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "unknown",
+      "reason": "shared accesses exist but index disjointness cannot be proven: xa1[idx], xa2[idx]"
     },
     {
       "id": "DRB006-indirectaccess2-orig-yes",
       "expected_race": true,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "unknown",
+      "reason": "shared accesses exist but index disjointness cannot be proven: xa1[idx], xa2[idx]"
     },
     {
       "id": "DRB007-indirectaccess3-orig-yes",
       "expected_race": true,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "unknown",
+      "reason": "shared accesses exist but index disjointness cannot be proven: xa1[idx], xa2[idx]"
     },
     {
       "id": "DRB008-indirectaccess4-orig-yes",
       "expected_race": true,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "unknown",
+      "reason": "shared accesses exist but index disjointness cannot be proven: xa1[idx], xa2[idx]"
     },
     {
       "id": "DRB009-lastprivatemissing-orig-yes",
       "expected_race": true,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "race",
+      "reason": "shared scalar x is written by parallel iterations"
     },
     {
       "id": "DRB010-lastprivatemissing-var-yes",
       "expected_race": true,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "race",
+      "reason": "shared scalar x is written by parallel iterations"
     },
     {
       "id": "DRB011-minusminus-orig-yes",
       "expected_race": true,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "race",
+      "reason": "shared scalar numNodes2 is written by parallel iterations"
     },
     {
       "id": "DRB012-minusminus-var-yes",
       "expected_race": true,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "race",
+      "reason": "shared scalar numNodes2 is written by parallel iterations"
     },
     {
       "id": "DRB041-3mm-parallel-no",
       "expected_race": false,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned"
     },
     {
       "id": "DRB042-3mm-tile-no",
       "expected_race": false,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned"
     },
     {
       "id": "DRB043-adi-parallel-no",
       "expected_race": false,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned"
     },
     {
       "id": "DRB044-adi-tile-no",
       "expected_race": false,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "unknown",
+      "reason": "shared accesses exist but index disjointness cannot be proven: B[c15 | n - 3 - c9], X[c15 | n - 2 - c9], X[c15 | n - 2 - c9 - 1], X[c15 | n - c9 - 2]"
     },
     {
       "id": "DRB045-doall1-orig-no",
       "expected_race": false,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned"
     },
     {
       "id": "DRB046-doall2-orig-no",
       "expected_race": false,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned"
     },
     {
       "id": "DRB047-doallchar-orig-no",
       "expected_race": false,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned"
     },
     {
       "id": "DRB048-firstprivate-orig-no",
       "expected_race": false,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned"
     },
     {
       "id": "DRB049-fprintf-orig-no",
       "expected_race": false,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned"
     },
     {
       "id": "DRB050-functionparameter-orig-no",
       "expected_race": false,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned"
     },
     {
       "id": "DRB051-getthreadnum-orig-no",
       "expected_race": false,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "no_race",
+      "reason": "all recognized concurrent regions are synchronized or index-partitioned"
     },
     {
       "id": "DRB052-indirectaccesssharebase-orig-no",
       "expected_race": false,
-      "predicted_race": true,
-      "synchronization_marker": false
+      "status": "unknown",
+      "reason": "shared accesses exist but index disjointness cannot be proven: xa1[idx], xa2[idx]"
     }
   ]
 }

@@ -1,149 +1,204 @@
 #!/usr/bin/env python3
-"""Evaluate synchronization-relation presence on SV-COMP Concurrency tasks."""
+"""Evaluate tri-state race analysis on the pinned SV-COMP C.Concurrency subset."""
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
-import shutil
 import sys
-import tempfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from clang_pipeline.clang_ast import read_json, write_json
-from clang_pipeline.pipeline import run_pipeline
-from clang_pipeline.repo_agent import _relativize_json_paths
-from clang_pipeline.sync_flow import analyze_sync_relations
+from clang_pipeline.evaluation_protocol import (
+    prediction_envelope,
+    validate_prediction_document,
+    write_json,
+)
+from clang_pipeline.race_detector import analyze_race_source
 
 
 DATASET = ROOT / ".benchmark-cache/svcomp26"
 CASES = ROOT / "validation/external/results/svcomp/cases.json"
+SELECTION = ROOT / "validation/external/selections/svcomp-concurrency-v1.json"
 OUTPUT = ROOT / "validation/external/results/svcomp/concurrency"
 
 
-def compile_commands(repo: Path) -> list[dict]:
-    commands = []
-    for source in sorted(repo.iterdir()):
-        if source.suffix not in {".c", ".i", ".cpp"}:
-            continue
-        cpp = source.suffix == ".cpp"
-        compiler = "clang++" if cpp else "clang"
-        commands.append(
-            {
-                "directory": str(repo),
-                "file": str(source),
-                "arguments": [
-                    compiler,
-                    "-x",
-                    "c++" if cpp else "c",
-                    "-std=c++17" if cpp else "-std=c11",
-                    "-D__regparm__(x)=",
-                    "-I",
-                    str(repo),
-                    str(source),
-                ],
-                "compiler": compiler,
-                "defines": [],
-            }
-        )
-    return commands
+def select_cases(cases: list[dict], limit: int | None) -> list[dict]:
+    if limit is None or limit >= len(cases):
+        return cases
+    positives = [case for case in cases if not case["expected_verdict"]]
+    negatives = [case for case in cases if case["expected_verdict"]]
+    selected = []
+    for index in range(max(len(positives), len(negatives))):
+        if index < len(positives):
+            selected.append(positives[index])
+        if index < len(negatives):
+            selected.append(negatives[index])
+        if len(selected) >= limit:
+            break
+    return selected[:limit]
 
 
-def main() -> int:
-    if not CASES.is_file() or not DATASET.is_dir():
-        raise SystemExit("prepare SV-COMP cases first")
-    source = json.loads(CASES.read_text(encoding="utf-8"))
-    cases = source["groups"]["concurrency"]
-    rows = []
-    tp = fp = tn = fn = 0
-    with tempfile.TemporaryDirectory(prefix="svcomp-concurrency-") as temp_dir:
-        temp_root = Path(temp_dir)
-        for index, case in enumerate(cases):
-            task_dir = (DATASET / case["task_file"]).parent
-            repo = temp_root / f"{index:03d}_{case['id']}"
-            repo.mkdir(parents=True)
-            for value in case["input_files"]:
-                source_path = task_dir / value
-                shutil.copyfile(source_path, repo / source_path.name)
-            workspace = repo / ".workspace"
-            run_pipeline(
-                source_root=repo,
-                workspace=workspace,
-                run_id=f"svcomp_{case['id']}",
-                build_profile="svcomp26-concurrency",
-                compile_commands=compile_commands(repo),
-                repository="sv-comp/2026/concurrency",
-                commit="7efe28dd29576b46927b7a34e8f742bd90966a75",
-            )
-            graph = _relativize_json_paths(
-                read_json(workspace / "07-report" / "graph.json"),
-                repo,
-            )
-            sync = analyze_sync_relations(graph, source_root=repo)
-            predicted_no_race = bool(sync.get("items"))
-            expected_no_race = bool(case["expected_verdict"])
-            if expected_no_race and predicted_no_race:
-                tp += 1
-            elif expected_no_race:
-                fn += 1
-            elif predicted_no_race:
-                fp += 1
-            else:
-                tn += 1
-            rows.append(
-                {
-                    "id": case["id"],
-                    "expected_no_race": expected_no_race,
-                    "predicted_no_race": predicted_no_race,
-                    "sync_relations": len(sync.get("items", [])),
-                }
-            )
+def score(rows: list[dict]) -> dict:
+    answered = [row for row in rows if row["status"] != "unknown"]
+    tp = sum(row["expected_race"] and row["status"] == "race" for row in answered)
+    fp = sum(not row["expected_race"] and row["status"] == "race" for row in answered)
+    fn = sum(row["expected_race"] and row["status"] == "no_race" for row in answered)
+    tn = sum(not row["expected_race"] and row["status"] == "no_race" for row in answered)
+    unknown = len(rows) - len(answered)
     precision_denominator = tp + fp
     recall_denominator = tp + fn
-    report = {
-        "schema_version": "1.0",
-        "dataset": "SV-COMP 2026 C.Concurrency",
-        "commit": "7efe28dd29576b46927b7a34e8f742bd90966a75",
-        "property": "no-data-race",
-        "metric": "synchronization-presence baseline",
+    return {
         "tp": tp,
         "fp": fp,
         "fn": fn,
         "tn": tn,
-        "precision": tp / precision_denominator if precision_denominator else None,
-        "recall": tp / recall_denominator if recall_denominator else None,
-        "accuracy": (tp + tn) / len(rows) if rows else None,
+        "unknown": unknown,
+        "race_precision": tp / precision_denominator if precision_denominator else None,
+        "race_recall": tp / recall_denominator if recall_denominator else None,
+        "false_race_rate": fp / (fp + tn) if fp + tn else None,
+        "no_race_recall": tn / (tn + fp) if tn + fp else None,
+        "unknown_rate": unknown / len(rows) if rows else None,
+        "coverage": len(answered) / len(rows) if rows else None,
+        "accuracy": (tp + tn) / len(rows) if rows and unknown == 0 else None,
+    }
+
+
+def format_rate(value: float | None) -> str:
+    return "N/A" if value is None else f"{value:.2%}"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--cases", type=Path, default=CASES)
+    parser.add_argument("--selection", type=Path, default=SELECTION)
+    parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--limit", type=int)
+    args = parser.parse_args()
+    if not CASES.is_file() or not DATASET.is_dir():
+        raise SystemExit("prepare SV-COMP cases first")
+    source = json.loads(args.cases.read_text(encoding="utf-8"))
+    selection = json.loads(args.selection.read_text(encoding="utf-8"))
+    selected_by_id = {
+        unit["case_id"]: unit
+        for unit in selection["units"]
+    }
+    cases = [
+        case
+        for case in source["groups"]["concurrency"]
+        if case["id"] in selected_by_id
+    ]
+    cases = select_cases(cases, args.limit)
+    predictions = []
+    rows = []
+    for case in cases:
+        task_dir = (DATASET / case["task_file"]).parent
+        sources = [task_dir / value for value in case["input_files"]]
+        try:
+            analysis = analyze_race_source(task_dir, source_files=sources)
+            status = analysis["label"]
+            evidence = [
+                {
+                    "id": item["id"],
+                    "file": item["location"]["file"],
+                    "line": item["location"]["line"],
+                    "snippet": item["location"].get("snippet", ""),
+                }
+                for item in analysis.get("evidence", [])
+            ][:50]
+            reason = analysis.get("reason", "")
+            confidence = float(analysis.get("confidence", 0.0))
+        except Exception as exc:
+            status = "unknown"
+            evidence = []
+            reason = str(exc)
+            confidence = 0.0
+        identity = {
+            "task_file": case["task_file"],
+            "property_file": case["property"],
+        }
+        predictions.append(
+            {
+                "id": case["id"],
+                "identity": identity,
+                "status": status,
+                "confidence": confidence,
+                "evidence": evidence,
+                "details": {
+                    "reason": reason,
+                    "input_files": case["input_files"],
+                },
+            }
+        )
+        rows.append(
+            {
+                "id": case["id"],
+                "expected_race": not bool(case["expected_verdict"]),
+                "status": status,
+                "reason": reason,
+                "input_files": case["input_files"],
+            }
+        )
+    envelope = prediction_envelope(
+        dataset="svcomp-concurrency",
+        generator={
+            "name": "race-detector-native",
+            "version": "1.0.0",
+            "mode": "deterministic",
+            "parameters": {
+                "strategy": "pthread-lifetime-atomic-and-openmp-index",
+                "gold_exposed_to_analyzer": False,
+            },
+        },
+        predictions=predictions,
+    )
+    validate_prediction_document(envelope, expected_dataset="svcomp-concurrency")
+    metrics = score(rows)
+    report = {
+        "schema_version": "1.0",
+        "dataset": "SV-COMP 2026 C.Concurrency",
+        "selection_id": selection["selection_id"],
+        "commit": selection["source"]["revision"],
+        "property": "no-data-race",
+        "metric": "tri-state data-race classification",
+        **metrics,
         "cases": rows,
     }
-    OUTPUT.mkdir(parents=True, exist_ok=True)
-    write_json(OUTPUT / "report.json", report)
-    (OUTPUT / "report.md").write_text(
+    write_json(args.output / "predictions.json", envelope)
+    write_json(args.output / "report.json", report)
+    (args.output / "report.md").write_text(
         "\n".join(
             [
-                "# SV-COMP Concurrency synchronization baseline",
+                "# SV-COMP C.Concurrency tri-state race baseline",
                 "",
-                "| TP | FP | FN | TN | Precision | Recall | Accuracy |",
-                "|---:|---:|---:|---:|---:|---:|---:|",
-                "| {tp} | {fp} | {fn} | {tn} | {p} | {r} | {a} |".format(
-                    tp=tp,
-                    fp=fp,
-                    fn=fn,
-                    tn=tn,
-                    p="N/A" if report["precision"] is None else f"{report['precision']:.2%}",
-                    r="N/A" if report["recall"] is None else f"{report['recall']:.2%}",
-                    a="N/A" if report["accuracy"] is None else f"{report['accuracy']:.2%}",
+                "| TP | FP | FN | TN | Unknown | Race Precision | Race Recall | "
+                "False Race Rate | No-race Recall | Coverage |",
+                "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+                "| {tp} | {fp} | {fn} | {tn} | {unknown} | {p} | {r} | "
+                "{frr} | {nrr} | {coverage} |".format(
+                    tp=metrics["tp"],
+                    fp=metrics["fp"],
+                    fn=metrics["fn"],
+                    tn=metrics["tn"],
+                    unknown=metrics["unknown"],
+                    p=format_rate(metrics["race_precision"]),
+                    r=format_rate(metrics["race_recall"]),
+                    frr=format_rate(metrics["false_race_rate"]),
+                    nrr=format_rate(metrics["no_race_recall"]),
+                    coverage=format_rate(metrics["coverage"]),
                 ),
                 "",
-                "This is a baseline that predicts `no-data-race` when at least one",
-                "synchronization relation is extracted. It is not a full race detector.",
+                "This is a fixed 20-task subset, not the complete SV-COMP suite.",
+                "Unknown results are excluded from the binary confusion matrix and",
+                "remain visible in the prediction JSON.",
             ]
         )
         + "\n",
         encoding="utf-8",
     )
-    print(json.dumps(report, ensure_ascii=False, indent=2))
+    print(json.dumps(metrics, ensure_ascii=False, indent=2))
     return 0
 
 

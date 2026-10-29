@@ -73,6 +73,24 @@ def build_agent_context(
                 "knowledge-graph.json",
                 "10-knowledge/knowledge-graph.json",
             ),
+            "resource_flow": _artifact_path(
+                ctx.workspace,
+                "external/resource-flow.json",
+                "resource-flow.json",
+                "08-resource-flow/resource-flow.json",
+            ),
+            "sync_relations": _artifact_path(
+                ctx.workspace,
+                "external/sync-relations.json",
+                "sync-relations.json",
+                "09-sync-relations/sync-relations.json",
+            ),
+            "race_analysis": _artifact_path(
+                ctx.workspace,
+                "external/race-analysis.json",
+                "race-analysis.json",
+                "09-race-analysis/race-analysis.json",
+            ),
         },
     }
 

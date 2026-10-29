@@ -1,0 +1,393 @@
+{
+  "schema_version": "external-prediction-v1",
+  "protocol_id": "external-v1",
+  "dataset": "callgraphbench",
+  "generator": {
+    "name": "clang_pipeline-native",
+    "version": "1.0.0",
+    "mode": "deterministic",
+    "parameters": {
+      "gold_exposed_to_analyzer": false
+    }
+  },
+  "predictions": [
+    {
+      "id": "c/c_basic::c:c_basic:greet->c:c_basic:format_name",
+      "identity": {
+        "caller": "c:c_basic:greet",
+        "callee": "c:c_basic:format_name"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_4673ecb2bf5e",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "c/c_basic",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "c/c_basic::c:c_basic:main->c:c_basic:make_user",
+      "identity": {
+        "caller": "c:c_basic:main",
+        "callee": "c:c_basic:make_user"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_f5fcc99474fe",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "c/c_basic",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "c/c_basic::c:c_basic:main->c:c_basic:welcome",
+      "identity": {
+        "caller": "c:c_basic:main",
+        "callee": "c:c_basic:welcome"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_97c68dd25edf",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "c/c_basic",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "c/c_basic::c:c_basic:welcome->c:c_basic:greet",
+      "identity": {
+        "caller": "c:c_basic:welcome",
+        "callee": "c:c_basic:greet"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_f6d0812bf0d3",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "c/c_basic",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "c/c_dynamic::c:c_dynamic:main->c:c_dynamic:process_device",
+      "identity": {
+        "caller": "c:c_dynamic:main",
+        "callee": "c:c_dynamic:process_device"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_785f813e1346",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "c/c_dynamic",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "c/c_dynamic::c:c_dynamic:process_device->c:c_dynamic:pick_driver",
+      "identity": {
+        "caller": "c:c_dynamic:process_device",
+        "callee": "c:c_dynamic:pick_driver"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_d26200dc9439",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "c/c_dynamic",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "c/c_dynamic::c:c_dynamic:process_device->c:c_dynamic:record_metric",
+      "identity": {
+        "caller": "c:c_dynamic:process_device",
+        "callee": "c:c_dynamic:record_metric"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_966f5b0ec520",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "c/c_dynamic",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "c/c_multifile::c:c_multifile:main->c:c_multifile:audit_result",
+      "identity": {
+        "caller": "c:c_multifile:main",
+        "callee": "c:c_multifile:audit_result"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_ba83fc7d399f",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "c/c_multifile",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "c/c_multifile::c:c_multifile:main->c:c_multifile:run_pipeline",
+      "identity": {
+        "caller": "c:c_multifile:main",
+        "callee": "c:c_multifile:run_pipeline"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_b582c80fe124",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "c/c_multifile",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "c/c_multifile::c:c_multifile:run_pipeline->c:c_multifile:audit_result",
+      "identity": {
+        "caller": "c:c_multifile:run_pipeline",
+        "callee": "c:c_multifile:audit_result"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_1838ac43f5fb",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "c/c_multifile",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "c/c_multifile::c:c_multifile:run_pipeline->c:c_multifile:select_handler",
+      "identity": {
+        "caller": "c:c_multifile:run_pipeline",
+        "callee": "c:c_multifile:select_handler"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_d14224117c0b",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "c/c_multifile",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "cpp/cpp_basic::cpp:cpp_basic:greet->cpp:cpp_basic:formatName",
+      "identity": {
+        "caller": "cpp:cpp_basic:greet",
+        "callee": "cpp:cpp_basic:formatName"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_66f4327c4d3e",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "cpp/cpp_basic",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "cpp/cpp_dispatch::cpp:cpp_dispatch:main->cpp:cpp_dispatch:orchestrate",
+      "identity": {
+        "caller": "cpp:cpp_dispatch:main",
+        "callee": "cpp:cpp_dispatch:orchestrate"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_2a33f0e63575",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "cpp/cpp_dispatch",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "cpp/cpp_dispatch::cpp:cpp_dispatch:orchestrate->cpp:cpp_dispatch:choose_rule",
+      "identity": {
+        "caller": "cpp:cpp_dispatch:orchestrate",
+        "callee": "cpp:cpp_dispatch:choose_rule"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_30b3114e8b7f",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "cpp/cpp_dispatch",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "cpp/cpp_dispatch::cpp:cpp_dispatch:orchestrate->cpp:cpp_dispatch:execute_rule",
+      "identity": {
+        "caller": "cpp:cpp_dispatch:orchestrate",
+        "callee": "cpp:cpp_dispatch:execute_rule"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_28a23e92ce4a",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "cpp/cpp_dispatch",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "cpp/cpp_multifile::cpp:cpp_multifile:main->cpp:cpp_multifile:run",
+      "identity": {
+        "caller": "cpp:cpp_multifile:main",
+        "callee": "cpp:cpp_multifile:run"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_84a959a89826",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "cpp/cpp_multifile",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "cpp/cpp_multifile::cpp:cpp_multifile:run->cpp:cpp_multifile:dispatch",
+      "identity": {
+        "caller": "cpp:cpp_multifile:run",
+        "callee": "cpp:cpp_multifile:dispatch"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_1306d60da59e",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "cpp/cpp_multifile",
+        "kind": "direct"
+      }
+    },
+    {
+      "id": "cpp/cpp_multifile::cpp:cpp_multifile:run->cpp:cpp_multifile:make_handler",
+      "identity": {
+        "caller": "cpp:cpp_multifile:run",
+        "callee": "cpp:cpp_multifile:make_handler"
+      },
+      "status": "predicted",
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "id": "ev_cfcb4a5d9da5",
+          "file": "",
+          "line": 1,
+          "snippet": ""
+        }
+      ],
+      "details": {
+        "case_id": "cpp/cpp_multifile",
+        "kind": "direct"
+      }
+    }
+  ]
+}

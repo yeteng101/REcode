@@ -1,8 +1,9 @@
-# DataRaceBench synchronization baseline
+# DataRaceBench tri-state race baseline
 
-| TP | FP | FN | TN | Precision | Recall | Accuracy |
-|---:|---:|---:|---:|---:|---:|---:|
-| 12 | 12 | 0 | 0 | 50.00% | 100.00% | 50.00% |
+| TP | FP | FN | TN | Unknown | Race Precision | Race Recall | False Race Rate | No-race Recall | Coverage |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 8 | 0 | 0 | 10 | 6 | 100.00% | 100.00% | 0.00% | 100.00% | 75.00% |
 
-This source-only baseline predicts `race` when no explicit OpenMP
-synchronization marker is present. It is not a full race detector.
+Unknown is excluded from the binary confusion matrix and is not
+converted to no-race. Accuracy is intentionally omitted unless
+the unknown count is zero.

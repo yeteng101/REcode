@@ -14,12 +14,17 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from clang_pipeline.clang_ast import read_json, write_json
+from clang_pipeline.evaluation_protocol import (
+    prediction_envelope,
+    validate_prediction_document,
+)
 from clang_pipeline.pipeline import run_pipeline
 from clang_pipeline.repo_agent import _relativize_json_paths, generic_compile_commands
 
 
 BENCHMARK = ROOT / ".benchmark-cache/callgraphbench"
 OUTPUT = ROOT / "validation/external/results/callgraphbench"
+SELECTION = ROOT / "validation/external/selections/callgraphbench-v1.json"
 SUPPORTED_LANGUAGES = ("c", "cpp")
 
 
@@ -85,6 +90,7 @@ def map_graph_edges(graph: dict, manifest: dict, case_root: Path) -> list[dict]:
             "caller": caller,
             "callee": callee,
             "kind": kind_map.get(str(edge.get("kind") or ""), "unknown"),
+            "evidence_ids": list(edge.get("evidence_ids", [])),
         }
     return [edges[key] for key in sorted(edges)]
 
@@ -139,19 +145,24 @@ def score(predictions: dict[tuple[str, str], list[dict]], manifests: dict) -> di
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.parse_args()
+    parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--limit", type=int)
+    args = parser.parse_args()
     if not BENCHMARK.is_dir():
         parser.error(
             "CallGraphBench is not fetched; run scripts/fetch_external_benchmarks.py "
             "--benchmark callgraphbench"
         )
     cases = discover_cases()
+    if args.limit is not None:
+        cases = cases[: args.limit]
     if not cases:
         raise SystemExit("no C/C++ CallGraphBench cases found")
-    OUTPUT.mkdir(parents=True, exist_ok=True)
-    predictions_root = OUTPUT / "predictions"
+    args.output.mkdir(parents=True, exist_ok=True)
+    predictions_root = args.output / "predictions"
     manifests = {}
     prediction_edges = {}
+    evidence_by_case = {}
     with tempfile.TemporaryDirectory(prefix="callgraphbench-") as temp_dir:
         temp_root = Path(temp_dir)
         for language, case_id, case_root, manifest in cases:
@@ -169,43 +180,98 @@ def main() -> int:
                 read_json(workspace / "07-report" / "graph.json"),
                 case_root,
             )
+            key = f"{language}/{case_id}"
+            evidence_by_case[key] = {
+                str(item["id"]): item
+                for item in graph.get("evidence", [])
+            }
             edges = map_graph_edges(graph, manifest, case_root)
             target = predictions_root / language / case_id / "callgraph.json"
-            write_json(
-                target,
-                {
-                    "schema_version": "1.0",
-                    "tool": "code-reverse-agent",
-                    "edges": edges,
-                },
-            )
-            key = f"{language}/{case_id}"
+            write_json(target, {"schema_version": "1.0", "tool": "code-reverse-agent", "edges": edges})
             manifests[key] = manifest
             prediction_edges[key] = edges
 
     summary = score(prediction_edges, manifests)
-    write_json(OUTPUT / "summary.json", summary)
-    command = [
-        sys.executable,
-        str(BENCHMARK / "tools/evaluate.py"),
-        "--benchmark",
-        str(BENCHMARK / "datasets"),
-        "--languages",
-        "c,cpp",
-        "--predictions",
-        str(predictions_root),
-        "--report",
-        str(OUTPUT / "report.md"),
-    ]
-    completed = subprocess.run(
-        command,
-        cwd=BENCHMARK,
-        capture_output=True,
-        text=True,
-        check=False,
+    write_json(args.output / "summary.json", summary)
+    selection = read_json(SELECTION)
+    selected_case_ids = {case["id"] for case in selection["cases"]}
+    edge_predictions = []
+    for key, edges in prediction_edges.items():
+        if key not in selected_case_ids:
+            continue
+        for edge in edges:
+            edge_predictions.append(
+                {
+                    "id": f"{key}::{edge['caller']}->{edge['callee']}",
+                    "identity": {
+                        "caller": edge["caller"],
+                        "callee": edge["callee"],
+                    },
+                    "status": "predicted",
+                    "confidence": 0.7,
+                    "evidence": [
+                        {
+                            "id": evidence_id,
+                            "file": evidence_by_case.get(key, {}).get(
+                                evidence_id, {}
+                            ).get("file", ""),
+                            "line": evidence_by_case.get(key, {}).get(
+                                evidence_id, {}
+                            ).get("line", 1),
+                            "snippet": evidence_by_case.get(key, {}).get(
+                                evidence_id, {}
+                            ).get("snippet", ""),
+                        }
+                        for evidence_id in edge.get("evidence_ids", [])
+                        if evidence_id in evidence_by_case.get(key, {})
+                    ],
+                    "details": {"case_id": key, "kind": edge["kind"]},
+                }
+            )
+    envelope = prediction_envelope(
+        dataset="callgraphbench",
+        generator={
+            "name": "clang_pipeline-native",
+            "version": "1.0.0",
+            "mode": "deterministic",
+            "parameters": {"gold_exposed_to_analyzer": False},
+        },
+        predictions=edge_predictions,
     )
-    if completed.returncode:
-        raise SystemExit(completed.stderr.strip() or completed.stdout.strip())
+    validate_prediction_document(envelope, expected_dataset="callgraphbench")
+    write_json(args.output / "predictions.json", envelope)
+    if args.limit is None:
+        command = [
+            sys.executable,
+            str(BENCHMARK / "tools/evaluate.py"),
+            "--benchmark",
+            str(BENCHMARK / "datasets"),
+            "--languages",
+            "c,cpp",
+            "--predictions",
+            str(predictions_root),
+            "--report",
+            str(args.output / "report.md"),
+        ]
+        completed = subprocess.run(
+            command,
+            cwd=BENCHMARK,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if completed.returncode:
+            raise SystemExit(completed.stderr.strip() or completed.stdout.strip())
+    else:
+        totals = summary["totals"]
+        (args.output / "report.md").write_text(
+            "# CallGraphBench dry run\n\n"
+            f"Cases: {len(cases)}\n\n"
+            f"TP: {totals['tp']}  \n"
+            f"FP: {totals['fp']}  \n"
+            f"FN: {totals['fn']}\n",
+            encoding="utf-8",
+        )
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 0
 
