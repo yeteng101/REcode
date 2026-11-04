@@ -3,6 +3,9 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
+import signal
+import threading
 import uuid
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -12,40 +15,50 @@ from urllib.parse import urlparse
 
 from .agent import AGENT_TOOLS, AgentContext
 from .agent_runner import ask_question
-from .agent_jobs import AnalysisJobManager, JobError
+from .agent_jobs import AnalysisJobManager, IdempotencyConflict, JobError
+from .object_store import FileObjectStore, S3ObjectStore
 from .llm_bridge import LLMNotConfigured
 from .tool_trace import ToolTraceRecorder
 
 
 ROOT = Path(__file__).resolve().parents[1]
 _JOB_MANAGER: AnalysisJobManager | None = None
+_JOB_MANAGER_LOCK = threading.Lock()
+
+
+def configured_job_manager(*, max_workers: int | None = None) -> AnalysisJobManager:
+    root = Path(os.environ.get("CRA_JOB_ROOT", str(ROOT / "artifacts" / "agent-jobs")))
+    backend = os.environ.get("CRA_OBJECT_BACKEND", "file")
+    if backend == "file":
+        store = FileObjectStore(os.environ.get("CRA_OBJECT_ROOT", str(root / "objects")))
+    elif backend == "s3":
+        store = S3ObjectStore(os.environ.get("CRA_S3_BUCKET", ""),
+                              prefix=os.environ.get("CRA_S3_PREFIX", "recode"),
+                              endpoint_url=os.environ.get("CRA_S3_ENDPOINT_URL"))
+    else:
+        raise ValueError("CRA_OBJECT_BACKEND must be file or s3")
+    return AnalysisJobManager(
+        root,
+        database_path=os.environ.get("CRA_JOB_DATABASE"), object_store=store,
+        max_workers=int(os.environ.get("CRA_MAX_WORKERS", "2")) if max_workers is None else max_workers,
+        allow_local_repositories=os.environ.get("CRA_ALLOW_LOCAL_REPOSITORIES", "0") == "1",
+        job_timeout_seconds=float(os.environ.get("CRA_JOB_TIMEOUT_SECONDS", "1800")),
+        max_repository_files=int(os.environ.get("CRA_MAX_REPOSITORY_FILES", "20000")),
+        max_repository_bytes=int(os.environ.get("CRA_MAX_REPOSITORY_BYTES", str(1024 * 1024 * 1024))),
+        max_attempts=int(os.environ.get("CRA_JOB_MAX_ATTEMPTS", "3")),
+        retry_delay_seconds=float(os.environ.get("CRA_JOB_RETRY_DELAY_SECONDS", "5")),
+        lease_seconds=float(os.environ.get("CRA_JOB_LEASE_SECONDS", "30")),
+        retention_seconds=float(os.environ.get("CRA_JOB_RETENTION_SECONDS", str(7 * 86400))),
+        cleanup_interval_seconds=float(os.environ.get("CRA_JOB_CLEANUP_INTERVAL_SECONDS", "60")),
+    )
 
 
 def job_manager() -> AnalysisJobManager:
     global _JOB_MANAGER
-    if _JOB_MANAGER is None:
-        root = Path(
-            os.environ.get(
-                "CRA_JOB_ROOT",
-                str(ROOT / "artifacts" / "agent-jobs"),
-            )
-        )
-        allow_local = os.environ.get("CRA_ALLOW_LOCAL_REPOSITORIES", "1") == "1"
-        _JOB_MANAGER = AnalysisJobManager(
-            root,
-            max_workers=max(1, int(os.environ.get("CRA_MAX_WORKERS", "2"))),
-            allow_local_repositories=allow_local,
-            job_timeout_seconds=float(
-                os.environ.get("CRA_JOB_TIMEOUT_SECONDS", "1800")
-            ),
-            max_repository_files=int(
-                os.environ.get("CRA_MAX_REPOSITORY_FILES", "20000")
-            ),
-            max_repository_bytes=int(
-                os.environ.get("CRA_MAX_REPOSITORY_BYTES", str(1024 * 1024 * 1024))
-            ),
-        )
-    return _JOB_MANAGER
+    with _JOB_MANAGER_LOCK:
+        if _JOB_MANAGER is None:
+            _JOB_MANAGER = configured_job_manager()
+        return _JOB_MANAGER
 
 
 def default_workspace() -> Path:
@@ -92,6 +105,27 @@ class AgentHandler(BaseHTTPRequestHandler):
         if path == "/api/v1/agent/tools":
             self._write_json(HTTPStatus.OK, {"tools": AGENT_TOOLS})
             return
+        parts = path.strip("/").split("/")
+        if len(parts) == 6 and parts[:4] == ["api", "v1", "agent", "analyze"] and parts[5] in {"result", "artifacts"}:
+            try:
+                stream, descriptor = job_manager().open_object(parts[4], parts[5])
+            except (JobError, FileNotFoundError) as exc:
+                self._write_json(HTTPStatus.NOT_FOUND, {"error": {"code": "not_found", "message": str(exc)}})
+                return
+            except Exception:
+                self._write_json(HTTPStatus.SERVICE_UNAVAILABLE, {"error": {"code": "object_store_unavailable"}})
+                return
+            try:
+                self.send_response(HTTPStatus.OK)
+                self.send_header("Content-Type", "application/json" if parts[5] == "result" else "application/gzip")
+                self.send_header("Content-Length", str(descriptor["size"]))
+                filename = "result.json" if parts[5] == "result" else "artifacts.tar.gz"
+                self.send_header("Content-Disposition", f'attachment; filename="{filename}"')
+                self.end_headers()
+                shutil.copyfileobj(stream, self.wfile)
+            finally:
+                stream.close()
+            return
         if path.startswith("/api/v1/agent/analyze/"):
             job_id = path.rsplit("/", 1)[-1]
             try:
@@ -132,8 +166,11 @@ class AgentHandler(BaseHTTPRequestHandler):
                     entry_symbols=body.get("entry_symbols"),
                     log_paths=body.get("logs"),
                     optimized_ir=bool(body.get("optimized_ir")),
+                    idempotency_key=self.headers.get("Idempotency-Key") or body.get("idempotency_key"),
                 )
                 self._write_json(HTTPStatus.ACCEPTED, result)
+            except IdempotencyConflict as exc:
+                self._write_json(HTTPStatus.CONFLICT, {"status": "failed", "error": {"code": "idempotency_conflict", "message": str(exc)}})
             except (ValueError, JobError) as exc:
                 self._write_json(
                     HTTPStatus.BAD_REQUEST,
@@ -211,6 +248,7 @@ def main() -> None:
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8090)
     args = parser.parse_args()
+    job_manager()  # Start recovery and workers even before the first request.
     server = ThreadingHTTPServer((args.host, args.port), AgentHandler)
     print(f"Agent Server: http://{args.host}:{args.port}")
     print("POST /api/v1/agent/ask  (自然语言提问)")
@@ -219,12 +257,19 @@ def main() -> None:
     print("POST /api/v1/agent/analyze/{job_id}/cancel")
     print("GET  /api/v1/agent/tools")
     print("GET  /health")
+    def stop_server(*_args):
+        threading.Thread(target=server.shutdown, daemon=True).start()
+
+    if hasattr(signal, "SIGTERM"):
+        signal.signal(signal.SIGTERM, stop_server)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         pass
     finally:
         server.server_close()
+        if _JOB_MANAGER is not None:
+            _JOB_MANAGER.close()
 
 
 if __name__ == "__main__":

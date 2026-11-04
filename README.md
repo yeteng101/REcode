@@ -1,5 +1,8 @@
 # 周会内容（2026-10-29）
 
+> 生产任务系统（2026-11-04）：[运行、持久化队列、S3 与清理](docs/production-jobs.md)
+> 后续安排：[生产化路线图](docs/production-roadmap.md)
+
 > 详细材料：[docs/weekly-2026-10-16.md](docs/weekly-2026-10-16.md)
 >
 > Claude Code 接入：[docs/claude-code-integration.md](docs/claude-code-integration.md)

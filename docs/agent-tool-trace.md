@@ -130,5 +130,7 @@ python3 -m unittest \
 
 ```bash
 jq -c '{tool,status,duration_ms,result,error}' \
-  artifacts/agent-jobs/<job_id>/trace/tool-trace.jsonl
+  artifacts/agent-jobs/<job_id>/attempt-<n>-<claim>/trace/tool-trace.jsonl
 ```
+
+任务队列现已持久化，每次尝试使用独立 Trace 目录。请以任务状态返回的 `tool_trace_path` 为准；对象下载与运行配置见 [生产任务系统](production-jobs.md)。

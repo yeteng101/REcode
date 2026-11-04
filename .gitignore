@@ -7,3 +7,9 @@ demo/run_clang_demo/
 demo/run_*/
 third_party/
 .benchmark-cache/
+
+# Durable Agent task runtime data
+artifacts/agent-jobs/
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
