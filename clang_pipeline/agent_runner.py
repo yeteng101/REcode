@@ -105,6 +105,8 @@ def _ask_claude_code(
                 "result_present": bool(payload.get("result")),
             }
         )
+    from .observability import record_usage
+    record_usage(model or "claude-code", payload.get("usage", {}), provider="claude-code", cost_usd=payload.get("total_cost_usd"))
     content = payload.get("structured_output")
     if content is None:
         content = payload.get("result")

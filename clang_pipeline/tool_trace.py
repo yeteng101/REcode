@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import threading
 import time
 import uuid
@@ -38,6 +39,8 @@ def _sanitize(value: Any, *, key: str = "", depth: int = 0) -> Any:
     if isinstance(value, (list, tuple)):
         return [_sanitize(item, key=key, depth=depth + 1) for item in value[:100]]
     if isinstance(value, str):
+        value = re.sub(r"(?i)(https?://)[^/@\s]+:[^/@\s]+@", r"\1<redacted>@", value)
+        value = re.sub(r"(?i)(authorization[=:]\s*(?:bearer\s+)?|api[_-]?key[=:]\s*|password[=:]\s*)[^\s,;]+", r"\1<redacted>", value)
         if len(value) <= MAX_ARGUMENT_TEXT:
             return value
         return value[:MAX_ARGUMENT_TEXT] + f"...<truncated {len(value) - MAX_ARGUMENT_TEXT} chars>"

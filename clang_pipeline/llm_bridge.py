@@ -59,6 +59,8 @@ def complete_json(
         detail = exc.read().decode("utf-8", errors="replace")
         raise RuntimeError(f"LLM API 请求失败: {exc.code} {detail}") from exc
 
+    from .observability import record_usage
+    record_usage(data.get("model", model or DEFAULT_MODEL), data.get("usage", {}))
     output_text = data.get("output_text", "")
     if not output_text:
         output_text = _extract_output_text(data)

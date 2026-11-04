@@ -21,6 +21,7 @@ from .execution import AnalysisCancelled, AnalysisError, AnalysisTimedOut, Cance
 from .job_queue import IdempotencyConflict, JobError, JobQueue
 from .object_store import FileObjectStore, ObjectStore
 from .tool_trace import ToolTraceRecorder
+from .observability import Observability
 
 AnalysisRunner = Callable[..., dict[str, Any]]
 logger = logging.getLogger(__name__)
@@ -64,6 +65,7 @@ class AnalysisJobManager:
         self.cleanup_interval_seconds = cleanup_interval_seconds
         self.queue = JobQueue(Path(database_path).resolve() if database_path else self.output_root / "jobs.sqlite3",
                               lease_seconds=lease_seconds, retention_seconds=retention_seconds)
+        self.observability = Observability(self.queue)
         self.object_store = object_store or FileObjectStore(self.output_root / "objects")
         self._runner_is_default = runner is None
         self._runner = runner or self._default_runner
@@ -112,6 +114,8 @@ class AnalysisJobManager:
                 raise JobError(f"{name} must be a list of strings")
         options = dict(branch=branch, commit=commit, build_profile=build_profile,
                        entry_symbols=entry_symbols or [], log_paths=log_paths or [], optimized_ir=bool(optimized_ir))
+        if hasattr(self._runner, "validate_submission"):
+            self._runner.validate_submission(repository_url, options)
         request = {"repository_url": repository_url, "options": options}
         fingerprint = hashlib.sha256(json.dumps(request, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         request["limits"] = dict(job_timeout_seconds=self.job_timeout_seconds,
@@ -128,6 +132,7 @@ class AnalysisJobManager:
                      tool_trace_path=None, tool_trace_summary_path=None,
                      trace=[{"event": "accepted", "timestamp": utc_now(), "message": "analysis queued"}])
         accepted = self.queue.submit(state, request, fingerprint, idempotency_key)
+        self.observability.audit("job.submit", accepted["job_id"], "accepted")
         self._wake.set()
         return accepted
 
@@ -189,6 +194,7 @@ class AnalysisJobManager:
 
     def _run(self, state, request, claim):
         job_id = state["job_id"]
+        attempt_started = time.monotonic()
         token = CancellationToken()
         with self._lock:
             self._tokens[job_id] = token
@@ -244,6 +250,10 @@ class AnalysisJobManager:
                     logger.exception("could not persist failure artifacts for %s", job_id)
         finally:
             try:
+                try:
+                    self.observability.attempt(state, claim, status, time.monotonic() - attempt_started, result)
+                except Exception:
+                    logger.exception("could not persist telemetry for %s", job_id)
                 if not self._stop.is_set():
                     self.queue.finish(job_id, claim, status, result=result, error=error, summary=summary, objects=objects,
                                       retry_delay=min(3600, limits["retry_delay_seconds"] * 2 ** min(state["attempts"] - 1, 16)))
@@ -259,6 +269,7 @@ class AnalysisJobManager:
 
     def cancel(self, job_id: str, reason: str = "cancelled by caller") -> dict[str, Any]:
         state = self.queue.cancel(job_id, reason)
+        self.observability.audit("job.cancel", job_id, state["status"])
         with self._lock:
             token = self._tokens.get(job_id)
             if token:
@@ -293,6 +304,8 @@ class AnalysisJobManager:
         while not self._stop.is_set():
             try:
                 self.cleanup()
+                self.observability.snapshot()
+                self.observability.prune()
             except Exception:
                 logger.exception("job cleanup failed; will retry")
             self._stop.wait(self.cleanup_interval_seconds)

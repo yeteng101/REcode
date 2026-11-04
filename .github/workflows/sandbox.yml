@@ -1,0 +1,35 @@
+name: Sandbox and observability
+on:
+  push:
+    paths: ['clang_pipeline/**', 'deploy/**', '.dockerignore', '.github/workflows/sandbox.yml']
+  pull_request:
+    paths: ['clang_pipeline/**', 'deploy/**', '.dockerignore', '.github/workflows/sandbox.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  isolated-analysis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit and HTTP regression
+        run: |
+          python -m unittest clang_pipeline.tests.test_agent_jobs clang_pipeline.tests.test_durable_jobs clang_pipeline.tests.test_job_http clang_pipeline.tests.test_security clang_pipeline.tests.test_observability -v
+      - name: Build immutable sandbox image for real isolation tests
+        run: |
+          docker run -d --name registry -p 127.0.0.1:5000:5000 registry:2
+          docker pull debian:bookworm-slim
+          BASE_IMAGE=$(docker image inspect debian:bookworm-slim --format '{{index .RepoDigests 0}}')
+          docker build -f deploy/sandbox/Dockerfile --build-arg BASE_IMAGE="$BASE_IMAGE" -t localhost:5000/recode-sandbox:ci .
+          docker push localhost:5000/recode-sandbox:ci
+          SANDBOX_IMAGE=$(docker image inspect localhost:5000/recode-sandbox:ci --format '{{index .RepoDigests 0}}')
+          echo "CRA_SANDBOX_TEST_IMAGE=$SANDBOX_IMAGE" >> "$GITHUB_ENV"
+      - name: Verify real container boundary, quotas and full analysis
+        run: python -m unittest clang_pipeline.tests.test_sandbox_integration -v
+      - name: Check no sandbox containers remain
+        if: always()
+        run: test -z "$(docker ps -q --filter label=recode.sandbox=true)"

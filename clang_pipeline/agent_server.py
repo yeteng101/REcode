@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import hmac
+import re
 import os
 import shutil
 import signal
@@ -11,7 +13,7 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 
 from .agent import AGENT_TOOLS, AgentContext
 from .agent_runner import ask_question
@@ -19,6 +21,8 @@ from .agent_jobs import AnalysisJobManager, IdempotencyConflict, JobError
 from .object_store import FileObjectStore, S3ObjectStore
 from .llm_bridge import LLMNotConfigured
 from .tool_trace import ToolTraceRecorder
+from .sandbox import DockerSandboxRunner, SandboxConfig
+from .security import SecurityError
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -37,8 +41,21 @@ def configured_job_manager(*, max_workers: int | None = None) -> AnalysisJobMana
                               endpoint_url=os.environ.get("CRA_S3_ENDPOINT_URL"))
     else:
         raise ValueError("CRA_OBJECT_BACKEND must be file or s3")
+    mode = os.environ.get("CRA_SANDBOX_MODE", "docker")
+    if mode == "docker":
+        runner = DockerSandboxRunner(SandboxConfig(
+            image=os.environ.get("CRA_SANDBOX_IMAGE", ""),
+            cpus=float(os.environ.get("CRA_SANDBOX_CPUS", "2")),
+            memory_mb=int(os.environ.get("CRA_SANDBOX_MEMORY_MB", "2048")),
+            disk_mb=int(os.environ.get("CRA_SANDBOX_DISK_MB", "1024")),
+            pids=int(os.environ.get("CRA_SANDBOX_PIDS", "128")),
+            timeout_seconds=float(os.environ.get("CRA_JOB_TIMEOUT_SECONDS", "1800"))))
+    elif mode == "development" and os.environ.get("CRA_ENV") == "development":
+        runner = None
+    else:
+        raise ValueError("host execution requires CRA_SANDBOX_MODE=development and CRA_ENV=development")
     return AnalysisJobManager(
-        root,
+        root, runner=runner,
         database_path=os.environ.get("CRA_JOB_DATABASE"), object_store=store,
         max_workers=int(os.environ.get("CRA_MAX_WORKERS", "2")) if max_workers is None else max_workers,
         allow_local_repositories=os.environ.get("CRA_ALLOW_LOCAL_REPOSITORIES", "0") == "1",
@@ -75,13 +92,34 @@ def default_workspace() -> Path:
 class AgentHandler(BaseHTTPRequestHandler):
     server_version = "CodeReverseAgentServer/0.4"
 
+    def send_response(self, code, message=None):
+        super().send_response(code, message)
+        try:
+            job_manager().observability.audit("http." + self.command.lower(), urlparse(self.path).path, str(code))
+        except Exception:
+            import logging
+            logging.getLogger(__name__).exception("HTTP audit failed")
+
+    def _admin_allowed(self):
+        token = os.environ.get("CRA_ADMIN_TOKEN", "")
+        if token:
+            expected = "Bearer " + token
+            return hmac.compare_digest(self.headers.get("Authorization", "").encode(), expected.encode())
+        return self.client_address[0] in {"127.0.0.1", "::1"}
+
+    def _write_bytes(self, status, payload, content_type):
+        self.send_response(status)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(payload)))
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'")
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        self.wfile.write(payload)
+
     def _write_json(self, status: int, payload: dict[str, Any]) -> None:
         encoded = json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Content-Length", str(len(encoded)))
-        self.end_headers()
-        self.wfile.write(encoded)
+        self._write_bytes(status, encoded, "application/json; charset=utf-8")
 
     def _read_json(self) -> Any:
         length = int(self.headers.get("Content-Length", "0"))
@@ -91,6 +129,31 @@ class AgentHandler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
+        if path in {"/dashboard", "/dashboard.js", "/dashboard.css"}:
+            name = {"/dashboard": "dashboard.html", "/dashboard.js": "dashboard.js", "/dashboard.css": "dashboard.css"}[path]
+            content_type = "text/html" if name.endswith("html") else "text/javascript" if name.endswith("js") else "text/css"
+            self._write_bytes(200, (Path(__file__).parent / "web" / name).read_bytes(), content_type + "; charset=utf-8")
+            return
+        if path in {"/metrics", "/api/v1/observability"} or path.endswith("/trace"):
+            if not self._admin_allowed():
+                self._write_json(401, {"error": {"code": "admin_access_required"}})
+                return
+            try:
+                telemetry = job_manager().observability
+                if path == "/metrics":
+                    self._write_bytes(200, telemetry.prometheus().encode(), "text/plain; version=0.0.4")
+                elif path == "/api/v1/observability":
+                    self._write_json(200, telemetry.snapshot())
+                else:
+                    parts = path.strip("/").split("/")
+                    if len(parts) != 6 or parts[:4] != ["api","v1","agent","analyze"]:
+                        raise JobError("trace not found")
+                    query = parse_qs(urlparse(self.path).query)
+                    offset = max(0, int(query.get("offset", ["0"])[0]))
+                    self._write_json(200, telemetry.trace(parts[4], offset=offset))
+            except (JobError, ValueError) as exc:
+                self._write_json(404, {"error": {"code": "not_found", "message": str(exc)}})
+            return
         if path == "/health":
             self._write_json(
                 HTTPStatus.OK,
@@ -98,7 +161,7 @@ class AgentHandler(BaseHTTPRequestHandler):
                     "status": "ok",
                     "service": "code-reverse-agent",
                     "version": "0.4.0",
-                    "job_root": str(job_manager().output_root),
+                    "sandbox": os.environ.get("CRA_SANDBOX_MODE", "docker"),
                 },
             )
             return
@@ -171,6 +234,8 @@ class AgentHandler(BaseHTTPRequestHandler):
                 self._write_json(HTTPStatus.ACCEPTED, result)
             except IdempotencyConflict as exc:
                 self._write_json(HTTPStatus.CONFLICT, {"status": "failed", "error": {"code": "idempotency_conflict", "message": str(exc)}})
+            except SecurityError as exc:
+                self._write_json(403, {"status": "failed", "error": exc.to_dict()})
             except (ValueError, JobError) as exc:
                 self._write_json(
                     HTTPStatus.BAD_REQUEST,
@@ -188,12 +253,17 @@ class AgentHandler(BaseHTTPRequestHandler):
                 {"status": "failed", "error": {"code": "not_found", "message": "接口不存在"}},
             )
             return
+        if os.environ.get("CRA_SANDBOX_MODE", "docker") != "development" or os.environ.get("CRA_ENV") != "development":
+            self._write_json(403, {"error": {"code": "host_ask_disabled", "message": "host workspace/model tools are disabled in production"}})
+            return
         try:
             body = self._read_json()
             if not isinstance(body, dict) or not str(body.get("question", "")).strip():
                 raise ValueError("question 不能为空")
             workspace = Path(body.get("workspace") or default_workspace()).resolve()
             run_id = str(body.get("run_id") or "run_libuv_1.50.0")
+            if not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", run_id):
+                raise ValueError("invalid run_id")
             max_steps = int(body.get("max_steps", 6))
             backend = str(body.get("backend") or "auto")
             focus = body.get("focus") or []
@@ -213,14 +283,12 @@ class AgentHandler(BaseHTTPRequestHandler):
                     metadata={"workspace": str(workspace)},
                 ),
             )
-            result = ask_question(
-                str(body["question"]).strip(),
-                ctx,
-                backend=backend,
-                max_steps=max_steps,
-                model=body.get("model"),
-                focus=focus if isinstance(focus, list) else None,
-            )
+            with job_manager().observability.usage_scope():
+                result = ask_question(
+                    str(body["question"]).strip(), ctx, backend=backend,
+                    max_steps=max_steps, model=body.get("model"),
+                    focus=focus if isinstance(focus, list) else None,
+                )
             result["tool_trace"] = str(ctx.trace.path) if ctx.trace is not None else ""
             if ctx.trace is not None:
                 ctx.trace.finish(result.get("status", "succeeded"))
@@ -240,7 +308,7 @@ class AgentHandler(BaseHTTPRequestHandler):
             )
 
     def log_message(self, fmt: str, *args: Any) -> None:
-        print(f"[{self.log_date_time_string()}] {self.address_string()} {fmt % args}")
+        pass  # Structured request audit replaces raw URL logging (may contain secrets).
 
 
 def main() -> None:

@@ -1,5 +1,7 @@
 # 周会内容（2026-10-29）
 
+> 沙箱与可观测性（2026-11-04）：[Docker 隔离、Dashboard、Trace、指标与告警](docs/security-observability.md)
+>
 > 生产任务系统（2026-11-04）：[运行、持久化队列、S3 与清理](docs/production-jobs.md)
 > 后续安排：[生产化路线图](docs/production-roadmap.md)
 

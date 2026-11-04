@@ -1,0 +1,45 @@
+groups:
+  - name: recode
+    rules:
+      - alert: REcodeJobFailureRate
+        expr: recode_job_success_rate < 0.8 and recode_job_terminal_count >= 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: REcode task success rate is below 80 percent
+      - alert: REcodeToolFailureRate
+        expr: recode_tool_failure_rate > 0.2 and recode_tool_calls >= 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: REcode tool failure rate is above 20 percent
+      - alert: REcodeUnknownRate
+        expr: recode_unknown_rate > 0.3 and recode_answer_count >= 5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: REcode unknown rate is above 30 percent
+      - alert: REcodeServiceDown
+        expr: up{job="recode"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: REcode metrics endpoint is unavailable
+      - alert: REcodeResourcePressure
+        expr: recode_alert_active{name="resource_pressure"} == 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: REcode container memory sample exceeds threshold
+      - alert: REcodeQueueBacklog
+        expr: recode_alert_active{name="queue_backlog"} == 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: REcode task queue is accumulating work

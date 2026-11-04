@@ -277,7 +277,12 @@ def build_compile_commands(
     log_path: Path | None = None,
     cancel_token: CancellationToken | None = None,
     trace: ToolTraceRecorder | None = None,
+    safe_mode: bool = False,
 ) -> list[dict[str, Any]]:
+    if safe_mode:
+        # Never trust repository-provided command lines, plugins or build files.
+        return generic_compile_commands(repo)
+
     def write_log(text: str) -> None:
         if log_path is None:
             return
@@ -583,6 +588,7 @@ def run_repo_analysis(
     max_repository_files: int = 20000,
     max_repository_bytes: int = 1024 * 1024 * 1024,
     stage_timeout: float = 1200,
+    safe_mode: bool = False,
 ) -> dict[str, Any]:
     target_output = Path(output_dir).expanduser().resolve()
     target_output.mkdir(parents=True, exist_ok=True)
@@ -663,6 +669,7 @@ def run_repo_analysis(
             compile_units = build_compile_commands(
                 repo,
                 log_path=logs_dir / "build.log",
+                safe_mode=safe_mode,
                 cancel_token=cancel_token,
                 trace=trace,
             )
