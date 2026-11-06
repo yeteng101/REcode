@@ -1,0 +1,896 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>REcode · 生产任务系统与沙箱安全</title>
+  <style>
+    :root {
+      --paper: #f4f1e9;
+      --paper-deep: #e9e4d8;
+      --ink: #17201f;
+      --muted: #68716d;
+      --line: #c9c6ba;
+      --teal: #0d6b5b;
+      --teal-soft: #d9e9e2;
+      --orange: #c66a2b;
+      --orange-soft: #f4e1d2;
+      --red: #a94747;
+      --red-soft: #f1dddd;
+      --blue: #315f87;
+      --blue-soft: #dce8f0;
+      --mono: "SFMono-Regular", "Cascadia Code", "Roboto Mono", monospace;
+      --sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--paper); }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+    button { font: inherit; }
+
+    .deck {
+      width: min(1320px, 100%);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 22px 42px 94px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .deck-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .04em;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      font-weight: 600;
+      letter-spacing: .08em;
+    }
+    .brand-mark {
+      width: 10px;
+      height: 10px;
+      background: var(--teal);
+      display: inline-block;
+    }
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .header-meta strong { color: var(--ink); font-weight: 500; }
+
+    .slides {
+      flex: 1;
+      display: block;
+      padding-top: 34px;
+    }
+
+    .slide {
+      display: none;
+      min-height: 0;
+      padding: 12px 0 24px;
+      animation: enter .28s ease-out both;
+    }
+    .slide.active { display: block; }
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .kicker {
+      color: var(--teal);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .slide h1,
+    .slide h2,
+    .slide h3,
+    .slide p { margin-top: 0; }
+    .slide h1 {
+      max-width: 920px;
+      margin-bottom: 22px;
+      font-size: 58px;
+      line-height: 1.12;
+      font-weight: 500;
+      letter-spacing: -.03em;
+    }
+    .slide h2 {
+      margin-bottom: 20px;
+      font-size: 38px;
+      line-height: 1.2;
+      font-weight: 500;
+      letter-spacing: -.025em;
+    }
+    .slide h3 {
+      margin-bottom: 10px;
+      font-size: 18px;
+      line-height: 1.35;
+      font-weight: 600;
+    }
+    .lede {
+      max-width: 820px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.7;
+    }
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+    .mono { font-family: var(--mono); }
+
+    .title-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(220px, .6fr);
+      gap: 54px;
+      align-items: end;
+    }
+    .title-foot {
+      margin-top: 66px;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 24px;
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+    }
+    .status-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 4px 9px;
+      border: 1px solid currentColor;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.3;
+    }
+    .tag.teal { color: var(--teal); }
+    .tag.orange { color: var(--orange); }
+    .tag.red { color: var(--red); }
+    .tag.blue { color: var(--blue); }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 52px;
+    }
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    .rule { border-top: 1px solid var(--line); padding-top: 18px; }
+    .rule.teal { border-color: var(--teal); }
+    .rule.orange { border-color: var(--orange); }
+    .rule.blue { border-color: var(--blue); }
+    .rule.red { border-color: var(--red); }
+
+    .big-number {
+      margin: 8px 0 8px;
+      font-family: var(--mono);
+      font-size: 34px;
+      letter-spacing: -.04em;
+    }
+    .code-block {
+      margin: 0;
+      padding: 15px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      color: var(--teal);
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+    .caption {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: 1fr 36px 1fr 36px 1fr;
+      align-items: center;
+      gap: 0;
+      margin: 34px 0 24px;
+    }
+    .flow-node {
+      min-height: 108px;
+      padding: 16px 16px 14px;
+      border-top: 2px solid var(--teal);
+      background: var(--teal-soft);
+    }
+    .flow-node h3 { margin-bottom: 8px; font-size: 16px; }
+    .flow-node p { margin: 0; color: #355a52; font-size: 12px; line-height: 1.5; }
+    .flow-arrow {
+      text-align: center;
+      color: var(--teal);
+      font-family: var(--mono);
+      font-size: 20px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 0;
+      margin-top: 26px;
+      border-top: 1px solid var(--line);
+    }
+    .stack-row {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 20px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      align-items: start;
+    }
+    .stack-label {
+      color: var(--teal);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+    .stack-copy {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .stack-copy strong { color: var(--ink); font-weight: 500; }
+
+    .table {
+      width: 100%;
+      margin-top: 24px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .table th {
+      color: var(--muted);
+      font-weight: 500;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px 9px 0;
+    }
+    .table td {
+      border-bottom: 1px solid var(--line);
+      padding: 12px 12px 12px 0;
+      vertical-align: top;
+      line-height: 1.55;
+    }
+    .table td:last-child, .table th:last-child { padding-right: 0; }
+    .state {
+      color: var(--teal);
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+    .state.pending { color: var(--orange); }
+    .state.limit { color: var(--red); }
+
+    .split-statement {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(260px, .95fr);
+      gap: 56px;
+      align-items: center;
+      margin-top: 28px;
+    }
+    .statement {
+      padding: 22px 0;
+      border-top: 2px solid var(--orange);
+      border-bottom: 1px solid var(--line);
+      font-size: 26px;
+      line-height: 1.42;
+    }
+    .statement em { color: var(--orange); font-style: normal; font-weight: 500; }
+
+    .bullet-list {
+      display: grid;
+      gap: 13px;
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .bullet-list li {
+      display: grid;
+      grid-template-columns: 15px 1fr;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .bullet-list li::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      margin-top: .55em;
+      background: var(--teal);
+    }
+    .bullet-list.orange li::before { background: var(--orange); }
+    .bullet-list.red li::before { background: var(--red); }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 52px;
+      margin-top: 28px;
+    }
+    .matrix > div { border-top: 1px solid var(--line); padding-top: 13px; }
+    .matrix h3 { margin-bottom: 9px; }
+    .matrix p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+
+    .quote {
+      margin: 42px 0 0;
+      padding-left: 22px;
+      border-left: 3px solid var(--teal);
+      color: var(--ink);
+      font-size: 23px;
+      line-height: 1.5;
+    }
+
+    .deck-footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 5;
+      background: color-mix(in srgb, var(--paper) 94%, transparent);
+      border-top: 1px solid var(--line);
+    }
+    .footer-inner {
+      width: min(1320px, 100%);
+      margin: 0 auto;
+      padding: 13px 42px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+    .counter {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .08em;
+    }
+    .counter strong { color: var(--ink); font-weight: 500; }
+    .controls {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+    .control {
+      min-width: 72px;
+      min-height: 34px;
+      padding: 6px 12px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .control:hover, .control:focus-visible { border-color: var(--teal); color: var(--teal); }
+    .control.next { background: var(--teal); border-color: var(--teal); color: #f7faf6; }
+    .progress {
+      height: 2px;
+      background: var(--paper-deep);
+    }
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      background: var(--teal);
+      transition: width .2s ease;
+    }
+    .hint {
+      justify-self: end;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+
+    .dashboard-map {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 42px;
+      margin-top: 24px;
+    }
+    .endpoint-list {
+      border-top: 1px solid var(--line);
+    }
+    .endpoint {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 10px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .endpoint code {
+      color: var(--teal);
+      font-family: var(--mono);
+      overflow-wrap: anywhere;
+    }
+    .endpoint span { color: var(--muted); }
+
+    .finish {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 56px;
+      align-items: start;
+      margin-top: 36px;
+    }
+    .finish h3 { margin-top: 0; }
+    .finish .big-number { font-size: 28px; color: var(--teal); }
+    .footer-note {
+      margin-top: 34px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 820px) {
+      .deck { padding: 16px 20px 102px; }
+      .deck-header { align-items: flex-start; }
+      .header-meta { display: none; }
+      .slides { padding-top: 24px; }
+      .slide { min-height: auto; padding-bottom: 48px; }
+      .slide h1 { font-size: 40px; }
+      .slide h2 { font-size: 30px; }
+      .lede { font-size: 16px; }
+      .title-grid, .two-col, .three-col, .split-statement, .finish, .dashboard-map {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+      .title-foot { display: block; margin-top: 38px; }
+      .title-foot .small { margin-top: 14px; }
+      .flow { grid-template-columns: 1fr; gap: 0; margin-top: 22px; }
+      .flow-node { min-height: 0; }
+      .flow-arrow { padding: 4px 0; transform: rotate(90deg); }
+      .stack-row { grid-template-columns: 100px 1fr; gap: 12px; }
+      .matrix { grid-template-columns: 1fr; gap: 22px; }
+      .footer-inner { padding: 11px 20px; grid-template-columns: 1fr auto; }
+      .hint { display: none; }
+      .statement { font-size: 22px; }
+      .table { font-size: 12px; }
+      .table th, .table td { padding-right: 8px; }
+    }
+
+    @media (max-width: 480px) {
+      .deck-header { font-size: 10px; }
+      .slide h1 { font-size: 34px; }
+      .slide h2 { font-size: 27px; }
+      .flow-node { padding: 12px; }
+      .stack-row { grid-template-columns: 1fr; gap: 4px; }
+      .control { min-width: 60px; padding-inline: 8px; }
+      .counter { font-size: 10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .deck { width: 100%; min-height: 0; padding: 0; }
+      .deck-header, .deck-footer { display: none; }
+      .slides { padding: 0; }
+      .slide { display: block !important; min-height: 0; page-break-after: always; padding: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" aria-label="REcode 生产任务系统与沙箱安全演示">
+    <header class="deck-header">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span> REcode / SYSTEM BRIEFING</div>
+      <div class="header-meta">
+        <span>2026.11.06</span>
+        <span class="tag teal">基础实现</span>
+        <span>main · b5094bb</span>
+      </div>
+    </header>
+
+    <div class="slides">
+      <section class="slide active" data-title="封面">
+        <div class="kicker">01 / OVERVIEW</div>
+        <div class="title-grid">
+          <div>
+            <h1>把分析 Agent 推进到可运行的生产任务闭环</h1>
+            <p class="lede">本次聚焦两件事：任务如何可靠地执行，以及不可信代码如何在受限环境中执行。验证集扩容和指标优化不在本次主线。</p>
+          </div>
+          <div class="rule teal">
+            <div class="small">本次工作</div>
+            <div class="big-number">生产任务系统<br>沙箱安全</div>
+            <p class="small">代码完成基础实现，仍需目标环境验收。</p>
+          </div>
+        </div>
+        <div class="title-foot">
+          <div class="status-line">
+            <span class="tag teal">SQLite 单主机</span>
+            <span class="tag orange">Docker 隔离</span>
+            <span class="tag blue">Trace / Dashboard</span>
+          </div>
+          <div class="small">一个任务从 URL 开始，经过队列、分析、产物上传，最后可查询、可下载、可审计。</div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="为什么改">
+        <div class="kicker">02 / BEFORE → AFTER</div>
+        <h2>原来的分析能力已经跑通，但任务执行还停留在本地进程</h2>
+        <div class="two-col">
+          <div class="rule orange">
+            <h3>之前</h3>
+            <div class="code-block">API 请求<br>  → ThreadPoolExecutor<br>  → 当前 Python 进程内执行</div>
+            <ul class="bullet-list orange">
+              <li>任务队列和状态在内存中，进程退出后丢失。</li>
+              <li>分析任务和 API 共用进程，长任务会拖住服务。</li>
+              <li>任务不能可靠地跨进程恢复或继续消费。</li>
+            </ul>
+          </div>
+          <div class="rule teal">
+            <h3>现在</h3>
+            <div class="code-block">API → SQLite 任务账本<br>  → Worker 领取<br>  → 分析 / Trace / 上传</div>
+            <ul class="bullet-list">
+              <li>任务状态、重试次数、租约和取消请求持久化。</li>
+              <li>API 和 Worker 可以分开启动、分别扩展。</li>
+              <li>任务异常、重启和超时都有明确的恢复路径。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="任务链路">
+        <div class="kicker">03 / TASK PATH</div>
+        <h2>任务只保存 ID，完整状态以数据库为准</h2>
+        <div class="flow" aria-label="任务从提交到结果下载的流程">
+          <div class="flow-node">
+            <h3>提交请求</h3>
+            <p>校验 URL、commit、幂等键和参数，写入 queued 状态。</p>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <div class="flow-node">
+            <h3>Worker 领取</h3>
+            <p>原子 claim、租约和心跳，避免两个 Worker 执行同一任务。</p>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <div class="flow-node">
+            <h3>分析并发布</h3>
+            <p>生成 JSON、HTML 和 Trace，上传对象存储后标记成功。</p>
+          </div>
+        </div>
+        <div class="two-col">
+          <div>
+            <h3>任务账本</h3>
+            <p class="small">SQLite WAL 保存请求、状态、尝试次数、租约、对象键和生命周期事件。</p>
+          </div>
+          <div>
+            <h3>结果存储</h3>
+            <p class="small">FileObjectStore 或 S3/MinIO 保存结果对象；失败不会提前发布成功。</p>
+          </div>
+        </div>
+        <p class="quote">先把任务状态做对，再让 Worker 去执行。</p>
+      </section>
+
+      <section class="slide" data-title="可靠性能力">
+        <div class="kicker">04 / RELIABILITY</div>
+        <h2>这次真正补上的，是任务失败后的行为</h2>
+        <table class="table">
+          <thead>
+            <tr><th>能力</th><th>当前行为</th><th>状态</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>幂等提交</td><td>相同 Idempotency-Key 返回同一任务；参数不同返回 409。</td><td><span class="state">已实现</span></td></tr>
+            <tr><td>Worker 租约</td><td>心跳续租；Worker 失联后租约过期并重新入队。</td><td><span class="state">已实现</span></td></tr>
+            <tr><td>任务重试</td><td>可重试错误按退避等待；永久错误不重试。</td><td><span class="state">已实现</span></td></tr>
+            <tr><td>任务取消</td><td>取消令牌传递到执行链路，状态进入 cancelling / cancelled。</td><td><span class="state">已实现</span></td></tr>
+            <tr><td>结果发布</td><td>对象上传成功后才发布结果；上传失败可重试。</td><td><span class="state">已实现</span></td></tr>
+            <tr><td>过期清理</td><td>终态结果按保留时间清理对象和工作目录，并保留幂等墓碑。</td><td><span class="state">已实现</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="slide" data-title="故障恢复">
+        <div class="kicker">05 / FAILURE CASES</div>
+        <h2>用明确的错误码和状态机替代“任务卡住”</h2>
+        <div class="matrix">
+          <div>
+            <h3>Worker 被杀</h3>
+            <p>租约到期 → 状态恢复为 queued → 新 Worker 重新领取；超过最大次数才进入 failed。</p>
+          </div>
+          <div>
+            <h3>重复提交</h3>
+            <p>相同幂等键和相同请求直接返回原 job_id，不重复启动分析。</p>
+          </div>
+          <div>
+            <h3>临时故障</h3>
+            <p>网络、对象上传、Worker 异常等可重试错误进入退避队列，不无脑重跑。</p>
+          </div>
+          <div>
+            <h3>永久错误</h3>
+            <p>源码不存在、参数错误、仓库超限、解析永久失败直接 failed，避免浪费资源。</p>
+          </div>
+          <div>
+            <h3>用户取消</h3>
+            <p>取消请求持久化；执行中的 Worker 协作退出，迟到结果不能覆盖 cancelled。</p>
+          </div>
+          <div>
+            <h3>进程重启</h3>
+            <p>任务和错误记录在数据库；重启后查询仍然存在，未完成任务由新 Worker 恢复。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="SQLite 边界">
+        <div class="kicker">06 / STORAGE CHOICE</div>
+        <h2>选择 SQLite：先把单主机闭环做稳</h2>
+        <div class="split-statement">
+          <div class="statement">SQLite 不是“缩小版生产环境”，而是一个<em>边界清晰</em>的单主机持久化方案。</div>
+          <div class="rule orange">
+            <h3>适用</h3>
+            <p class="small">一台服务器；多个 API/Worker 进程；本地持久卷；内部试用和单团队分析服务。</p>
+          </div>
+        </div>
+        <div class="three-col" style="margin-top: 34px;">
+          <div class="rule teal">
+            <h3>可以支持</h3>
+            <p class="small">任务落库、租约恢复、幂等、重试、取消、清理和多进程 Worker。</p>
+          </div>
+          <div class="rule orange">
+            <h3>不要误用</h3>
+            <p class="small">不要把数据库放到 NFS/SMB；不要用它假设多主机高可用。</p>
+          </div>
+          <div class="rule blue">
+            <h3>未来升级</h3>
+            <p class="small">多主机时迁移 PostgreSQL + Redis/RabbitMQ/SQS，对象存储保持不变。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="沙箱分层">
+        <div class="kicker">07 / SANDBOX SECURITY</div>
+        <h2>不可信仓库不是“跑一下脚本”，而是多层边界的组合</h2>
+        <div class="stack">
+          <div class="stack-row">
+            <div class="stack-label">01 / SOURCE</div>
+            <div class="stack-copy"><strong>只接收公开 GitHub HTTPS 仓库</strong>，固定 commit 或受限分支；禁止本地路径、URL 凭证、重定向和任意主机。</div>
+          </div>
+          <div class="stack-row">
+            <div class="stack-label">02 / ARCHIVE</div>
+            <div class="stack-copy"><strong>归档导入前检查</strong>路径穿越、符号链接、硬链接、设备和文件大小；跳过密钥、Agent 指令和 Gold 目录。</div>
+          </div>
+          <div class="stack-row">
+            <div class="stack-label">03 / CONTAINER</div>
+            <div class="stack-copy"><strong>Docker 运行边界</strong>：无网络、无宿主挂载、只读根文件系统、非 root、无 capabilities、限 CPU/内存/磁盘/进程。</div>
+          </div>
+          <div class="stack-row">
+            <div class="stack-label">04 / BUILD</div>
+            <div class="stack-copy"><strong>safe-generic 编译</strong>：不使用仓库自带 CMake、compile_commands、shell 或插件；编译参数由服务生成。</div>
+          </div>
+          <div class="stack-row">
+            <div class="stack-label">05 / OUTPUT</div>
+            <div class="stack-copy"><strong>有界结果导出</strong>：分析结果通过限额 tar 传输，宿主机再次校验路径和文件类型。</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="隔离措施">
+        <div class="kicker">08 / ISOLATION DETAILS</div>
+        <h2>沙箱的重点是减少权限，而不是增加便利</h2>
+        <div class="two-col">
+          <div>
+            <div class="rule teal">
+              <h3>容器层</h3>
+              <ul class="bullet-list">
+                <li>固定 image@sha256 digest，避免运行时漂移。</li>
+                <li>network=none；不挂载 Docker socket 或宿主密钥。</li>
+                <li>read-only rootfs；non-root；cap-drop ALL。</li>
+                <li>cgroups 限制 CPU、内存、swap、磁盘、pids 和文件数。</li>
+                <li>超时、取消和结束都强制清理容器及其子进程。</li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <div class="rule orange">
+              <h3>数据层</h3>
+              <ul class="bullet-list orange">
+                <li>仓库归档先检查，再导入容器。</li>
+                <li>不把宿主机目录直接挂进分析容器。</li>
+                <li>结果只在分析结束后有界导出。</li>
+                <li>对象存储与执行工作区分开。</li>
+                <li>生产环境默认关闭本地仓库和旧宿主问答入口。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p class="caption">这一步不承诺“绝对安全”，目标是让仓库代码不能直接触达宿主网络、文件、密钥和其他用户数据。</p>
+      </section>
+
+      <section class="slide" data-title="Prompt Injection">
+        <div class="kicker">09 / PROMPT INJECTION</div>
+        <h2>最有效的防护不是提示词，而是让生产分析不依赖模型</h2>
+        <div class="split-statement">
+          <div class="statement">生产链路默认执行 <em>Clang 和静态分析工具</em>，仓库里的 README、注释、日志无法改变执行权限。</div>
+          <div class="rule teal">
+            <h3>防注入边界</h3>
+            <ul class="bullet-list">
+              <li>仓库内容全部视为不可信数据，不是指令。</li>
+              <li>生产模式关闭宿主机 Agent 问答入口。</li>
+              <li>源码读取路径限制在 repo root 内。</li>
+              <li>不向容器暴露网络、密钥和评测 Gold。</li>
+              <li>没有 evidence 的结论标记为 partial。</li>
+            </ul>
+          </div>
+        </div>
+        <p class="footer-note">开发模式允许宿主机 Agent 时，提示词只是辅助防线，真正的安全边界仍是工具权限、沙箱和人工验收。</p>
+      </section>
+
+      <section class="slide" data-title="Trace 与 Dashboard">
+        <div class="kicker">10 / OBSERVABILITY</div>
+        <h2>任务系统需要能被看见，Trace 是排障的最小单位</h2>
+        <div class="dashboard-map">
+          <div>
+            <div class="code-block">tool-trace.jsonl<br>tool-trace-summary.json<br>job lifecycle events</div>
+            <ul class="bullet-list">
+              <li>记录工具名称、参数、状态、耗时、结果哈希和错误。</li>
+              <li>父子 Span 还原 checkout、编译、分析、打包和可视化。</li>
+              <li>失败任务保留错误码，便于区分重试和永久失败。</li>
+            </ul>
+          </div>
+          <div class="endpoint-list">
+            <div class="endpoint"><code>/dashboard</code><span>任务、指标、告警和资源页面</span></div>
+            <div class="endpoint"><code>/metrics</code><span>Prometheus 文本指标</span></div>
+            <div class="endpoint"><code>/api/v1/observability</code><span>成功率、工具失败率、成本、unknown</span></div>
+            <div class="endpoint"><code>/api/v1/agent/analyze/{id}/trace</code><span>按任务查看 Span 和生命周期</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="验证情况">
+        <div class="kicker">11 / STATUS</div>
+        <h2>生产任务系统与沙箱安全基础已完成</h2>
+        <div class="finish">
+          <div>
+            <div class="big-number">91 / 93</div>
+            <p class="small">合并后核心测试通过数；2 项真实 Linux Docker 集成测试因当前机器缺少 Docker 跳过。</p>
+            <div class="status-line" style="margin-top: 22px;">
+              <span class="tag teal">任务持久化</span>
+              <span class="tag teal">恢复 / 幂等 / 重试</span>
+              <span class="tag orange">Docker 待目标环境验收</span>
+            </div>
+          </div>
+          <div class="rule orange">
+            <h3>下一阶段</h3>
+            <ul class="bullet-list orange">
+              <li>可观测性生产化：告警、Trace、指标和审计收口。</li>
+              <li>发布工程：镜像、SBOM、CI/CD、Staging、Canary、回滚。</li>
+              <li>Agent 产品质量：函数指针、别名、所有权和并发事实。</li>
+              <li>产品闭环：提交页面、进度、下载和 unknown 复核。</li>
+            </ul>
+          </div>
+        </div>
+        <p class="quote">真实 Docker、S3/MinIO 和告警通道验收仍是可观测性与发布工程的前置条件。</p>
+      </section>
+
+      <section class="slide" data-title="结束">
+        <div class="kicker">12 / TAKEAWAY</div>
+        <h1>先把任务的可靠性和执行的安全边界做对，再谈规模。</h1>
+        <div class="two-col" style="margin-top: 50px;">
+          <div class="rule teal">
+            <h3>这一版最重要的变化</h3>
+            <p class="lede">Agent 不再只是一个能跑分析的函数，而是一个有状态、有恢复、有安全边界、有 Trace 的任务系统。</p>
+          </div>
+          <div class="rule orange">
+            <h3>下一阶段的核心判断</h3>
+            <p class="lede">把可观测性、发布工程、Agent 产品质量和产品闭环连成一条可验收的上线路径。</p>
+          </div>
+        </div>
+        <div class="title-foot">
+          <div class="small">REcode · production task system / sandbox security</div>
+          <div class="small">2026.11.06</div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="deck-footer">
+      <div class="progress" aria-hidden="true"><div class="progress-bar" id="progress-bar"></div></div>
+      <div class="footer-inner">
+        <div class="counter"><strong id="current-slide">01</strong> / <span id="total-slides">12</span></div>
+        <div class="controls">
+          <button class="control" type="button" id="prev" aria-label="上一页">← 上一页</button>
+          <button class="control next" type="button" id="next" aria-label="下一页">下一页 →</button>
+        </div>
+        <div class="hint">← → / Space 翻页</div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (() => {
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const current = document.getElementById("current-slide");
+      const total = document.getElementById("total-slides");
+      const progress = document.getElementById("progress-bar");
+      const prev = document.getElementById("prev");
+      const next = document.getElementById("next");
+      let index = 0;
+
+      total.textContent = String(slides.length).padStart(2, "0");
+
+      function render() {
+        slides.forEach((slide, slideIndex) => {
+          const active = slideIndex === index;
+          slide.classList.toggle("active", active);
+          slide.setAttribute("aria-hidden", String(!active));
+        });
+        current.textContent = String(index + 1).padStart(2, "0");
+        progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+        prev.disabled = index === 0;
+        next.disabled = index === slides.length - 1;
+        history.replaceState(null, "", `#${index + 1}`);
+      }
+
+      function go(delta) {
+        const nextIndex = Math.max(0, Math.min(slides.length - 1, index + delta));
+        if (nextIndex === index) return;
+        index = nextIndex;
+        render();
+      }
+
+      function goToHash() {
+        const parsed = Number(location.hash.replace("#", ""));
+        if (Number.isInteger(parsed) && parsed > 0) {
+          index = Math.min(slides.length - 1, parsed - 1);
+        }
+        render();
+      }
+
+      prev.addEventListener("click", () => go(-1));
+      next.addEventListener("click", () => go(1));
+      document.addEventListener("keydown", (event) => {
+        if (["ArrowRight", "PageDown", " "].includes(event.key)) {
+          event.preventDefault();
+          go(1);
+        }
+        if (["ArrowLeft", "PageUp"].includes(event.key)) {
+          event.preventDefault();
+          go(-1);
+        }
+        if (event.key === "Home") {
+          event.preventDefault();
+          index = 0;
+          render();
+        }
+        if (event.key === "End") {
+          event.preventDefault();
+          index = slides.length - 1;
+          render();
+        }
+      });
+      window.addEventListener("hashchange", goToHash);
+      goToHash();
+    })();
+  </script>
+</body>
+</html>

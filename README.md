@@ -30,6 +30,8 @@
 >
 > Agent Trace 与异常恢复：[docs/agent-tool-trace.md](docs/agent-tool-trace.md)
 >
+> 生产任务系统与沙箱安全演示：[docs/production-task-sandbox-briefing.html](docs/production-task-sandbox-briefing.html)
+>
 > 汇报与答辩：[docs/reporting-guide-2026-10-16.md](docs/reporting-guide-2026-10-16.md)
 >
 > 本周把代码逆向分析结果从固定示例图升级为仓库无关、自动生成、嵌入 Agent 流程的

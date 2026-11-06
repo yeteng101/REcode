@@ -73,7 +73,10 @@ class JobHTTPTests(unittest.TestCase):
             with patch.dict("os.environ", {"CRA_JOB_ROOT": root, "CRA_MAX_WORKERS": "0", "CRA_SANDBOX_IMAGE": "recode/sandbox@sha256:" + "a" * 64}, clear=True):
                 with agent_server.configured_job_manager() as manager:
                     self.assertFalse(manager.allow_local_repositories)
-                    self.assertEqual(manager.queue.path, Path(root) / "jobs.sqlite3")
+                    self.assertEqual(
+                        manager.queue.path,
+                        (Path(root) / "jobs.sqlite3").resolve(),
+                    )
 
 
 if __name__ == "__main__":
