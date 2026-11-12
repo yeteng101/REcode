@@ -1,0 +1,39 @@
+{
+  "schema_version": "concurrency-subagent-run.v1",
+  "status": "awaiting_review",
+  "candidate_count": 3,
+  "coverage": {
+    "complete": false,
+    "reason": "context_bundle:first-group status is partial; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+    "unresolved": [
+      "context_bundle:first-group status is partial; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+      "call_chains:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated",
+      "call_chains:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+      "call_chains:recode_bounded_call_subgraph_paths_not_enumerated",
+      "sync_flows:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+      "sync_flows:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+      "sync_flows:recode_object_declarations_and_aliases_unresolved",
+      "sync_flows:recode_execution_contexts_unresolved",
+      "sync_flows:recode_must_locksets_and_lock_order_unavailable"
+    ]
+  },
+  "budget_summary": {
+    "prepared_review_requests": 3,
+    "deferred_candidates": 0,
+    "unexamined_access_pairs": 0,
+    "automatic_batch_continuation": false
+  },
+  "outputs": {
+    "impact_scope": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\lock-impact-scope.json",
+    "scoped_sync_flow": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\scoped-sync-flow.json",
+    "candidate_bundle": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\candidate-bundle.json",
+    "coordinator_state": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\coordinator-state.json",
+    "review_requests": [
+      "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\review-requests\\race-8c5086f4ef4cab2f.json",
+      "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\review-requests\\race-9a2d4994d45c68a8.json",
+      "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\review-requests\\race-16f81e7c92533f87.json"
+    ]
+  },
+  "next_step": "invoke lock_race_reviewer once per review request, then run scripts/run_coordinator.py collect",
+  "errors": []
+}

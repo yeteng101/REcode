@@ -1,0 +1,574 @@
+{
+  "schema_version": "1.0",
+  "run_id": "run_repository_1794381859",
+  "result_type": "resource_flow",
+  "status": "partial",
+  "generated_at": "2026-11-11T07:24:28Z",
+  "source": {
+    "repository": "yeteng101/REcode",
+    "commit": "e6e3b4222715cea71c150f0dd824ed990e7f567d",
+    "build_profile": "safe-generic",
+    "analyzer": "clang++ -Xclang -ast-dump=json",
+    "generated_at": "2026-11-11T07:24:28Z",
+    "origin": "analyzer",
+    "provider": "native_resource_flow_v1"
+  },
+  "items": [
+    {
+      "id": "rf_3272cf4c09c0",
+      "status": "unconfirmed",
+      "resource": "fd",
+      "resource_expression": "fd",
+      "resource_type": "file_descriptor",
+      "operations": [
+        {
+          "operation_id": "op_4e1560fe4b",
+          "kind": "acquire",
+          "api": "open",
+          "function": "open_and_close",
+          "file": "clang_pipeline/tests/fixtures/external_flow.c",
+          "line": 7,
+          "snippet": "int fd = open(path, flags);",
+          "evidence_ids": [
+            "ev_42e2ca9f3bb1"
+          ],
+          "status": "unconfirmed",
+          "confidence": 0.75,
+          "assignment_chain": [
+            {
+              "file": "clang_pipeline/tests/fixtures/external_flow.c",
+              "line": 7,
+              "lhs": "fd",
+              "rhs": "open(path, flags)",
+              "evidence_id": "ev_32faa6b60e4d"
+            }
+          ]
+        },
+        {
+          "operation_id": "op_bec404d7cb",
+          "kind": "release",
+          "api": "close",
+          "function": "open_and_close",
+          "file": "clang_pipeline/tests/fixtures/external_flow.c",
+          "line": 11,
+          "snippet": "close(fd);",
+          "evidence_ids": [
+            "ev_216b97238de1"
+          ],
+          "status": "unconfirmed",
+          "confidence": 0.75,
+          "assignment_chain": [
+            {
+              "file": "clang_pipeline/tests/fixtures/external_flow.c",
+              "line": 7,
+              "lhs": "fd",
+              "rhs": "open(path, flags)",
+              "evidence_id": "ev_32faa6b60e4d"
+            }
+          ]
+        }
+      ],
+      "owner": "open_and_close",
+      "thread": null,
+      "ownership_model": "visible_acquire_release",
+      "data_flow": [
+        {
+          "file": "clang_pipeline/tests/fixtures/external_flow.c",
+          "line": 7,
+          "lhs": "fd",
+          "rhs": "open(path, flags)",
+          "evidence_id": "ev_32faa6b60e4d"
+        },
+        {
+          "file": "clang_pipeline/tests/fixtures/external_flow.c",
+          "line": 7,
+          "lhs": "fd",
+          "rhs": "open(path, flags)",
+          "evidence_id": "ev_32faa6b60e4d"
+        }
+      ],
+      "assignment_chain": [
+        {
+          "file": "clang_pipeline/tests/fixtures/external_flow.c",
+          "line": 7,
+          "lhs": "fd",
+          "rhs": "open(path, flags)",
+          "evidence_id": "ev_32faa6b60e4d"
+        },
+        {
+          "file": "clang_pipeline/tests/fixtures/external_flow.c",
+          "line": 7,
+          "lhs": "fd",
+          "rhs": "open(path, flags)",
+          "evidence_id": "ev_32faa6b60e4d"
+        }
+      ],
+      "paths": [
+        {
+          "path_id": "rf_3272cf4c09c0_path",
+          "condition": "visible_graph_path",
+          "operations": [
+            "op_4e1560fe4b",
+            "op_bec404d7cb"
+          ],
+          "complete": true,
+          "termination_reason": "release_found",
+          "evidence_ids": [
+            "ev_42e2ca9f3bb1",
+            "ev_216b97238de1"
+          ]
+        }
+      ],
+      "confidence": 0.8,
+      "evidence_ids": [
+        "ev_42e2ca9f3bb1",
+        "ev_216b97238de1"
+      ],
+      "origin": "analyzer"
+    },
+    {
+      "id": "rf_93edbba99929",
+      "status": "unconfirmed",
+      "resource": "rf_flow_7ba8635e449e",
+      "resource_expression": "owner",
+      "resource_type": "memory",
+      "operations": [
+        {
+          "operation_id": "op_1ff08d0b44",
+          "kind": "acquire",
+          "api": "malloc",
+          "function": "allocate_buffer",
+          "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+          "line": 4,
+          "snippet": "char *buffer = malloc(32);",
+          "evidence_ids": [
+            "ev_911de031a03b"
+          ],
+          "status": "unconfirmed",
+          "confidence": 0.75,
+          "assignment_chain": [
+            {
+              "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+              "line": 4,
+              "lhs": "buffer",
+              "rhs": "malloc(32)",
+              "evidence_id": "ev_1d3a695f3a62"
+            }
+          ]
+        },
+        {
+          "operation_id": "transfer_9a15611355",
+          "kind": "transfer",
+          "api": "allocate_buffer",
+          "function": "consume_buffer",
+          "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+          "line": 9,
+          "snippet": "char *owner = allocate_buffer();",
+          "evidence_ids": [
+            "ev_6e641015b307"
+          ],
+          "status": "unconfirmed",
+          "confidence": 0.7,
+          "from_function": "allocate_buffer",
+          "assignment_chain": [
+            {
+              "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+              "line": 9,
+              "lhs": "owner",
+              "rhs": "allocate_buffer()",
+              "evidence_id": "ev_638885c2f0a2"
+            },
+            {
+              "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+              "line": 10,
+              "lhs": "alias",
+              "rhs": "owner",
+              "evidence_id": "ev_1b4298825d76"
+            }
+          ]
+        },
+        {
+          "operation_id": "op_6943c527b9",
+          "kind": "release",
+          "api": "free",
+          "function": "use_after_release",
+          "file": "validation/resource-flow/fixtures/use_after_free.c",
+          "line": 7,
+          "snippet": "free(buf);",
+          "evidence_ids": [
+            "ev_2661d71ea12b"
+          ],
+          "status": "unconfirmed",
+          "confidence": 0.75,
+          "assignment_chain": [
+            {
+              "file": "validation/resource-flow/fixtures/use_after_free.c",
+              "line": 4,
+              "lhs": "buf",
+              "rhs": "malloc(32)",
+              "evidence_id": "ev_5ea3e02c5db0"
+            }
+          ]
+        }
+      ],
+      "owner": "",
+      "thread": null,
+      "ownership_model": "cross_function_transfer",
+      "data_flow": [
+        {
+          "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+          "line": 4,
+          "lhs": "buffer",
+          "rhs": "malloc(32)",
+          "evidence_id": "ev_1d3a695f3a62"
+        },
+        {
+          "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+          "line": 9,
+          "lhs": "owner",
+          "rhs": "allocate_buffer()",
+          "evidence_id": "ev_638885c2f0a2"
+        },
+        {
+          "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+          "line": 10,
+          "lhs": "alias",
+          "rhs": "owner",
+          "evidence_id": "ev_1b4298825d76"
+        },
+        {
+          "file": "validation/resource-flow/fixtures/use_after_free.c",
+          "line": 4,
+          "lhs": "buf",
+          "rhs": "malloc(32)",
+          "evidence_id": "ev_5ea3e02c5db0"
+        }
+      ],
+      "assignment_chain": [
+        {
+          "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+          "line": 4,
+          "lhs": "buffer",
+          "rhs": "malloc(32)",
+          "evidence_id": "ev_1d3a695f3a62"
+        },
+        {
+          "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+          "line": 9,
+          "lhs": "owner",
+          "rhs": "allocate_buffer()",
+          "evidence_id": "ev_638885c2f0a2"
+        },
+        {
+          "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+          "line": 10,
+          "lhs": "alias",
+          "rhs": "owner",
+          "evidence_id": "ev_1b4298825d76"
+        },
+        {
+          "file": "validation/resource-flow/fixtures/use_after_free.c",
+          "line": 4,
+          "lhs": "buf",
+          "rhs": "malloc(32)",
+          "evidence_id": "ev_5ea3e02c5db0"
+        }
+      ],
+      "paths": [
+        {
+          "path_id": "rf_93edbba99929_path",
+          "condition": "visible_graph_path",
+          "operations": [
+            "op_1ff08d0b44",
+            "transfer_9a15611355",
+            "op_6943c527b9"
+          ],
+          "complete": true,
+          "termination_reason": "release_found",
+          "evidence_ids": [
+            "ev_911de031a03b",
+            "ev_6e641015b307",
+            "ev_2661d71ea12b"
+          ]
+        }
+      ],
+      "confidence": 0.8,
+      "evidence_ids": [
+        "ev_911de031a03b",
+        "ev_6e641015b307",
+        "ev_2661d71ea12b"
+      ],
+      "origin": "analyzer"
+    },
+    {
+      "id": "rf_a89a53bc5081",
+      "status": "unconfirmed",
+      "resource": "rf_libuv_getaddrinfo_v1",
+      "resource_expression": "NULL",
+      "resource_type": "memory",
+      "operations": [
+        {
+          "operation_id": "op_bccaa5431c",
+          "kind": "release",
+          "api": "freeaddrinfo",
+          "function": "resolve_host",
+          "file": "clang_pipeline/tests/fixtures/external_flow.c",
+          "line": 24,
+          "snippet": "freeaddrinfo(result);",
+          "evidence_ids": [
+            "ev_851adb899f08"
+          ],
+          "status": "unconfirmed",
+          "confidence": 0.75,
+          "assignment_chain": [
+            {
+              "file": "clang_pipeline/tests/fixtures/external_flow.c",
+              "line": 22,
+              "lhs": "result",
+              "rhs": "NULL",
+              "evidence_id": "ev_e2bf9a37c226"
+            }
+          ]
+        }
+      ],
+      "owner": "resolve_host",
+      "thread": null,
+      "ownership_model": "unresolved_from_visible_graph",
+      "data_flow": [
+        {
+          "file": "clang_pipeline/tests/fixtures/external_flow.c",
+          "line": 22,
+          "lhs": "result",
+          "rhs": "NULL",
+          "evidence_id": "ev_e2bf9a37c226"
+        }
+      ],
+      "assignment_chain": [
+        {
+          "file": "clang_pipeline/tests/fixtures/external_flow.c",
+          "line": 22,
+          "lhs": "result",
+          "rhs": "NULL",
+          "evidence_id": "ev_e2bf9a37c226"
+        }
+      ],
+      "paths": [
+        {
+          "path_id": "rf_a89a53bc5081_path",
+          "condition": "visible_graph_path",
+          "operations": [
+            "op_bccaa5431c"
+          ],
+          "complete": false,
+          "termination_reason": "acquire_not_found",
+          "evidence_ids": [
+            "ev_851adb899f08"
+          ]
+        }
+      ],
+      "confidence": 0.35,
+      "evidence_ids": [
+        "ev_851adb899f08"
+      ],
+      "origin": "analyzer"
+    },
+    {
+      "id": "rf_23e22e64a758",
+      "status": "unconfirmed",
+      "resource": "rf_libuv_getaddrinfo_v1",
+      "resource_expression": "host",
+      "resource_type": "memory",
+      "operations": [
+        {
+          "operation_id": "op_3b184ea916",
+          "kind": "acquire",
+          "api": "getaddrinfo",
+          "function": "resolve_host",
+          "file": "clang_pipeline/tests/fixtures/external_flow.c",
+          "line": 23,
+          "snippet": "getaddrinfo(host, NULL, NULL, &result);",
+          "evidence_ids": [
+            "ev_659f50950ed1"
+          ],
+          "status": "unconfirmed",
+          "confidence": 0.75,
+          "assignment_chain": []
+        }
+      ],
+      "owner": "resolve_host",
+      "thread": null,
+      "ownership_model": "unresolved_from_visible_graph",
+      "data_flow": [],
+      "assignment_chain": [],
+      "paths": [
+        {
+          "path_id": "rf_23e22e64a758_path",
+          "condition": "visible_graph_path",
+          "operations": [
+            "op_3b184ea916"
+          ],
+          "complete": false,
+          "termination_reason": "release_not_found",
+          "evidence_ids": [
+            "ev_659f50950ed1"
+          ]
+        }
+      ],
+      "confidence": 0.35,
+      "evidence_ids": [
+        "ev_659f50950ed1"
+      ],
+      "origin": "analyzer"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev_1b4298825d76",
+      "kind": "assignment",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+        "line": 10,
+        "snippet": "char *alias = owner;"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_1d3a695f3a62",
+      "kind": "assignment",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+        "line": 4,
+        "snippet": "char *buffer = malloc(32);"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_216b97238de1",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 11,
+        "column": 5,
+        "snippet": "close(fd);"
+      },
+      "role": "supports",
+      "build_profile": "safe-generic"
+    },
+    {
+      "id": "ev_2661d71ea12b",
+      "kind": "call_site",
+      "location": {
+        "file": "validation/resource-flow/fixtures/use_after_free.c",
+        "line": 7,
+        "column": 5,
+        "snippet": "free(buf);"
+      },
+      "role": "supports",
+      "build_profile": "safe-generic"
+    },
+    {
+      "id": "ev_32faa6b60e4d",
+      "kind": "assignment",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 7,
+        "snippet": "int fd = open(path, flags);"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_42e2ca9f3bb1",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 7,
+        "column": 14,
+        "snippet": "int fd = open(path, flags);"
+      },
+      "role": "supports",
+      "build_profile": "safe-generic"
+    },
+    {
+      "id": "ev_5ea3e02c5db0",
+      "kind": "assignment",
+      "location": {
+        "file": "validation/resource-flow/fixtures/use_after_free.c",
+        "line": 4,
+        "snippet": "char *buf = malloc(32);"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_638885c2f0a2",
+      "kind": "assignment",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+        "line": 9,
+        "snippet": "char *owner = allocate_buffer();"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_659f50950ed1",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 23,
+        "column": 5,
+        "snippet": "getaddrinfo(host, NULL, NULL, &result);"
+      },
+      "role": "supports",
+      "build_profile": "safe-generic"
+    },
+    {
+      "id": "ev_6e641015b307",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+        "line": 9,
+        "column": 19,
+        "snippet": "char *owner = allocate_buffer();"
+      },
+      "role": "supports",
+      "build_profile": "safe-generic"
+    },
+    {
+      "id": "ev_851adb899f08",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 24,
+        "column": 5,
+        "snippet": "freeaddrinfo(result);"
+      },
+      "role": "supports",
+      "build_profile": "safe-generic"
+    },
+    {
+      "id": "ev_911de031a03b",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+        "line": 4,
+        "column": 20,
+        "snippet": "char *buffer = malloc(32);"
+      },
+      "role": "supports",
+      "build_profile": "safe-generic"
+    },
+    {
+      "id": "ev_e2bf9a37c226",
+      "kind": "assignment",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 22,
+        "snippet": "struct addrinfo *result = NULL;"
+      },
+      "role": "supports"
+    }
+  ],
+  "warnings": [
+    "rf_a89a53bc5081: visible graph has acquire_not_found for resolve_host:rf_libuv_getaddrinfo_v1[NULL]",
+    "rf_23e22e64a758: visible graph has release_not_found for resolve_host:rf_libuv_getaddrinfo_v1[host]"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "artifact_sha256": "d4264c7571017e4aae21b4ad042a24d534e58060043c4c8d75cde1d7d56de7fd",
+  "assertion_lines": [
+    {
+      "end_line": 111,
+      "start_line": 106
+    }
+  ],
+  "basis_evidence_ids": [
+    "ev_ast_3953321a0436c80a",
+    "ev_ast_68e2add3ceebe723",
+    "ev_ast_7c33faf9b6d1a5ef",
+    "ev_ast_5525e55220b96c21",
+    "ev_ast_78be14100d1d1842",
+    "ev_ast_d86ebeb1d913eb54",
+    "ev_ast_f9573c3d4a60c9b4",
+    "diff-1d5a4b4c8fb1a8d657c1"
+  ],
+  "behavior": "After each completed batch k, counter equals 3*4096*k and the actual observe(counter) equals that total plus one. All reads occur while workers are quiescent at harness barriers.",
+  "decision": "approved",
+  "limitations": [
+    "Bounded aligned-start concurrent stress with no forced machine-instruction interleaving or exhaustive concurrency proof.",
+    "The callbacks in this constructed source permit repeated NULL-argument invocation. The test covers their additive behavior. The separate build/smoke plan covers normal entry."
+  ],
+  "observations": "Host inspected all saved driver and metadata lines. Actual workers.c, observe.c and resource.c are included. Arithmetic and product synchronization are unchanged. Assertions inspect completed behavior and accept compatible synchronization implementations. No source-spelling, lock-count or type oracle is present. The complete application entry point is separately checked by the approved build/smoke plan.",
+  "schedule": "Two persistent threads on available separate logical CPUs call actual writer callbacks. Three-party start/completion barriers prevent main-thread reads from overlapping product updates. Product locks and their lifecycle remain untouched. Only completed arithmetic mismatch returns 42. Setup/API/deadline failures return 90. Individual read/write overlap remains OS-dependent and requires repeated defect reproduction before repair."
+}

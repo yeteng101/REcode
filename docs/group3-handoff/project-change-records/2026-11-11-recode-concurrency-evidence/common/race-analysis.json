@@ -1,0 +1,704 @@
+{
+  "schema_version": "1.0",
+  "run_id": "recode-cbug-integration-ee61bb417d0f",
+  "result_type": "race_analysis",
+  "status": "succeeded",
+  "generated_at": "2026-11-11T08:34:00Z",
+  "source": {
+    "repository": "cbug-integration/recode-contract",
+    "commit": "ee61bb417d0f689ab562ec1be1b589155fa0bb15",
+    "build_profile": "recode-linux-clang",
+    "analyzer": "clang++ -Xclang -ast-dump=json",
+    "generated_at": "2026-11-11T08:34:00Z",
+    "origin": "analyzer",
+    "provider": "native_race_detector_v1"
+  },
+  "label": "race",
+  "reason": "shared variable counter is written without a common lock across threads",
+  "confidence": 0.78,
+  "items": [
+    {
+      "id": "race_region_09470ed20858",
+      "status": "race",
+      "confidence": 0.78,
+      "reason": "shared variable counter is written without a common lock across threads",
+      "accesses": [
+        {
+          "id": "access_123638fdde02",
+          "function": "writer_a",
+          "region": "pthread",
+          "memory_location": "mutex",
+          "access": "read",
+          "protected": true,
+          "atomic": false,
+          "private": false,
+          "file": "workers.c",
+          "line": 7,
+          "snippet": "pthread_mutex_lock(&mutex);",
+          "evidence_ids": [
+            "ev_0f0bb2762d50"
+          ]
+        },
+        {
+          "id": "access_860d5b80dc68",
+          "function": "writer_a",
+          "region": "pthread",
+          "memory_location": "counter",
+          "access": "write",
+          "protected": true,
+          "atomic": false,
+          "private": false,
+          "file": "workers.c",
+          "line": 8,
+          "snippet": "counter += 2;",
+          "evidence_ids": [
+            "ev_6df8407b7b2f"
+          ]
+        },
+        {
+          "id": "access_8952ecacd006",
+          "function": "writer_a",
+          "region": "pthread",
+          "memory_location": "mutex",
+          "access": "read",
+          "protected": true,
+          "atomic": false,
+          "private": false,
+          "file": "workers.c",
+          "line": 9,
+          "snippet": "pthread_mutex_unlock(&mutex);",
+          "evidence_ids": [
+            "ev_341b2038164f"
+          ]
+        },
+        {
+          "id": "access_070dc13d0923",
+          "function": "writer_b",
+          "region": "pthread",
+          "memory_location": "mutex",
+          "access": "read",
+          "protected": true,
+          "atomic": false,
+          "private": false,
+          "file": "workers.c",
+          "line": 14,
+          "snippet": "pthread_mutex_lock(&mutex);",
+          "evidence_ids": [
+            "ev_2b0dc09ffd7f"
+          ]
+        },
+        {
+          "id": "access_196ca7298819",
+          "function": "writer_b",
+          "region": "pthread",
+          "memory_location": "counter",
+          "access": "write",
+          "protected": true,
+          "atomic": false,
+          "private": false,
+          "file": "workers.c",
+          "line": 15,
+          "snippet": "counter++;",
+          "evidence_ids": [
+            "ev_2a94a9a8ec9d"
+          ]
+        },
+        {
+          "id": "access_f836e1ecbf4c",
+          "function": "writer_b",
+          "region": "pthread",
+          "memory_location": "mutex",
+          "access": "read",
+          "protected": true,
+          "atomic": false,
+          "private": false,
+          "file": "workers.c",
+          "line": 16,
+          "snippet": "pthread_mutex_unlock(&mutex);",
+          "evidence_ids": [
+            "ev_1ca2de11e4d5"
+          ]
+        },
+        {
+          "id": "access_0217db841429",
+          "function": "main",
+          "region": "pthread",
+          "memory_location": "counter",
+          "access": "read",
+          "protected": false,
+          "atomic": false,
+          "private": false,
+          "file": "workers.c",
+          "line": 25,
+          "snippet": "return observe(counter);",
+          "evidence_ids": [
+            "ev_3e9479853ff5"
+          ]
+        }
+      ],
+      "evidence_ids": [
+        "ev_0f0bb2762d50",
+        "ev_1ca2de11e4d5",
+        "ev_2a94a9a8ec9d",
+        "ev_2b0dc09ffd7f",
+        "ev_341b2038164f",
+        "ev_3e9479853ff5",
+        "ev_6df8407b7b2f"
+      ]
+    }
+  ],
+  "concurrency_facts": [
+    {
+      "schema_version": "1.0",
+      "analysis_basis": "lexical_source_observations",
+      "objects": [],
+      "thread_events": [],
+      "lock_operations": [],
+      "access_bindings": [],
+      "coverage": {
+        "complete": false,
+        "gaps": [
+          "aliases_and_cross_file_bindings_unresolved",
+          "thread_instances_and_overlap_unproved",
+          "path_sensitive_lockset_unavailable"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "analysis_basis": "lexical_source_observations",
+      "objects": [],
+      "thread_events": [],
+      "lock_operations": [],
+      "access_bindings": [],
+      "coverage": {
+        "complete": false,
+        "gaps": [
+          "aliases_and_cross_file_bindings_unresolved",
+          "thread_instances_and_overlap_unproved",
+          "path_sensitive_lockset_unavailable"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "analysis_basis": "lexical_source_observations",
+      "objects": [
+        {
+          "object_id": "global_00c0b804f54319f3",
+          "name": "counter",
+          "type": "int",
+          "declaration": {
+            "file": "workers.c",
+            "line": 3,
+            "snippet": "int counter = 0;"
+          },
+          "linkage": "external",
+          "identity_basis": "lexical_declaration",
+          "identity_confidence": 0.65,
+          "evidence_ids": [
+            "ev_3e2fe2803210"
+          ]
+        },
+        {
+          "object_id": "global_338120ee782ace86",
+          "name": "mutex",
+          "type": "pthread_mutex_t",
+          "declaration": {
+            "file": "workers.c",
+            "line": 4,
+            "snippet": "pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;"
+          },
+          "linkage": "external",
+          "identity_basis": "lexical_declaration",
+          "identity_confidence": 0.65,
+          "evidence_ids": [
+            "ev_b80f9333d3ff"
+          ]
+        }
+      ],
+      "thread_events": [
+        {
+          "id": "sync_site_02f2ea8ed503c095",
+          "api": "pthread_create",
+          "function": "main",
+          "location": {
+            "file": "workers.c",
+            "line": 21,
+            "snippet": "pthread_create(&a, 0, writer_a, 0);"
+          },
+          "evidence_ids": [
+            "ev_fdf2517f0beb"
+          ],
+          "analysis_basis": "lexical_api_site",
+          "kind": "create",
+          "handle_expression": "&a",
+          "entry_function": "writer_a"
+        },
+        {
+          "id": "sync_site_9ccff30cffee4df2",
+          "api": "pthread_create",
+          "function": "main",
+          "location": {
+            "file": "workers.c",
+            "line": 22,
+            "snippet": "pthread_create(&b, 0, writer_b, 0);"
+          },
+          "evidence_ids": [
+            "ev_57abcf333b28"
+          ],
+          "analysis_basis": "lexical_api_site",
+          "kind": "create",
+          "handle_expression": "&b",
+          "entry_function": "writer_b"
+        },
+        {
+          "id": "sync_site_1c6f3603daa86294",
+          "api": "pthread_join",
+          "function": "main",
+          "location": {
+            "file": "workers.c",
+            "line": 23,
+            "snippet": "pthread_join(a, 0);"
+          },
+          "evidence_ids": [
+            "ev_df37f2946854"
+          ],
+          "analysis_basis": "lexical_api_site",
+          "kind": "join",
+          "handle_expression": "a"
+        },
+        {
+          "id": "sync_site_0ee1ca48073fdfed",
+          "api": "pthread_join",
+          "function": "main",
+          "location": {
+            "file": "workers.c",
+            "line": 24,
+            "snippet": "pthread_join(b, 0);"
+          },
+          "evidence_ids": [
+            "ev_ce33dae70d3a"
+          ],
+          "analysis_basis": "lexical_api_site",
+          "kind": "join",
+          "handle_expression": "b"
+        }
+      ],
+      "lock_operations": [
+        {
+          "id": "sync_site_598ebad077e5ba76",
+          "api": "pthread_mutex_lock",
+          "function": "writer_a",
+          "location": {
+            "file": "workers.c",
+            "line": 7,
+            "snippet": "pthread_mutex_lock(&mutex);"
+          },
+          "evidence_ids": [
+            "ev_dd2981808954"
+          ],
+          "analysis_basis": "lexical_api_site",
+          "kind": "acquire",
+          "lock_expression": "&mutex",
+          "declaration_candidate_id": "global_338120ee782ace86"
+        },
+        {
+          "id": "sync_site_6e6b23ce18c39710",
+          "api": "pthread_mutex_unlock",
+          "function": "writer_a",
+          "location": {
+            "file": "workers.c",
+            "line": 9,
+            "snippet": "pthread_mutex_unlock(&mutex);"
+          },
+          "evidence_ids": [
+            "ev_7d9d618c0ce3"
+          ],
+          "analysis_basis": "lexical_api_site",
+          "kind": "release",
+          "lock_expression": "&mutex",
+          "declaration_candidate_id": "global_338120ee782ace86"
+        },
+        {
+          "id": "sync_site_49455859010008b4",
+          "api": "pthread_mutex_lock",
+          "function": "writer_b",
+          "location": {
+            "file": "workers.c",
+            "line": 14,
+            "snippet": "pthread_mutex_lock(&mutex);"
+          },
+          "evidence_ids": [
+            "ev_0e2085fcf172"
+          ],
+          "analysis_basis": "lexical_api_site",
+          "kind": "acquire",
+          "lock_expression": "&mutex",
+          "declaration_candidate_id": "global_338120ee782ace86"
+        },
+        {
+          "id": "sync_site_efd172e94b8f76c2",
+          "api": "pthread_mutex_unlock",
+          "function": "writer_b",
+          "location": {
+            "file": "workers.c",
+            "line": 16,
+            "snippet": "pthread_mutex_unlock(&mutex);"
+          },
+          "evidence_ids": [
+            "ev_d7a2af140393"
+          ],
+          "analysis_basis": "lexical_api_site",
+          "kind": "release",
+          "lock_expression": "&mutex",
+          "declaration_candidate_id": "global_338120ee782ace86"
+        }
+      ],
+      "access_bindings": [
+        {
+          "access_id": "access_123638fdde02",
+          "declaration_candidate_id": "global_338120ee782ace86",
+          "execution_context": {
+            "entry_function": "writer_a",
+            "creation_site_ids": [
+              "sync_site_02f2ea8ed503c095"
+            ],
+            "instance_identity": "unknown",
+            "overlap": "unknown"
+          },
+          "lock_operation_ids": [
+            "sync_site_598ebad077e5ba76",
+            "sync_site_6e6b23ce18c39710"
+          ],
+          "must_lockset_status": "unknown",
+          "must_lockset": [],
+          "coverage_gaps": [
+            "lexical_access_identity_not_ast_bound",
+            "thread_instances_and_overlap_unproved",
+            "path_sensitive_lockset_unavailable"
+          ]
+        },
+        {
+          "access_id": "access_860d5b80dc68",
+          "declaration_candidate_id": "global_00c0b804f54319f3",
+          "execution_context": {
+            "entry_function": "writer_a",
+            "creation_site_ids": [
+              "sync_site_02f2ea8ed503c095"
+            ],
+            "instance_identity": "unknown",
+            "overlap": "unknown"
+          },
+          "lock_operation_ids": [
+            "sync_site_598ebad077e5ba76",
+            "sync_site_6e6b23ce18c39710"
+          ],
+          "must_lockset_status": "unknown",
+          "must_lockset": [],
+          "coverage_gaps": [
+            "lexical_access_identity_not_ast_bound",
+            "thread_instances_and_overlap_unproved",
+            "path_sensitive_lockset_unavailable"
+          ]
+        },
+        {
+          "access_id": "access_8952ecacd006",
+          "declaration_candidate_id": "global_338120ee782ace86",
+          "execution_context": {
+            "entry_function": "writer_a",
+            "creation_site_ids": [
+              "sync_site_02f2ea8ed503c095"
+            ],
+            "instance_identity": "unknown",
+            "overlap": "unknown"
+          },
+          "lock_operation_ids": [
+            "sync_site_598ebad077e5ba76",
+            "sync_site_6e6b23ce18c39710"
+          ],
+          "must_lockset_status": "unknown",
+          "must_lockset": [],
+          "coverage_gaps": [
+            "lexical_access_identity_not_ast_bound",
+            "thread_instances_and_overlap_unproved",
+            "path_sensitive_lockset_unavailable"
+          ]
+        },
+        {
+          "access_id": "access_070dc13d0923",
+          "declaration_candidate_id": "global_338120ee782ace86",
+          "execution_context": {
+            "entry_function": "writer_b",
+            "creation_site_ids": [
+              "sync_site_9ccff30cffee4df2"
+            ],
+            "instance_identity": "unknown",
+            "overlap": "unknown"
+          },
+          "lock_operation_ids": [
+            "sync_site_49455859010008b4",
+            "sync_site_efd172e94b8f76c2"
+          ],
+          "must_lockset_status": "unknown",
+          "must_lockset": [],
+          "coverage_gaps": [
+            "lexical_access_identity_not_ast_bound",
+            "thread_instances_and_overlap_unproved",
+            "path_sensitive_lockset_unavailable"
+          ]
+        },
+        {
+          "access_id": "access_196ca7298819",
+          "declaration_candidate_id": "global_00c0b804f54319f3",
+          "execution_context": {
+            "entry_function": "writer_b",
+            "creation_site_ids": [
+              "sync_site_9ccff30cffee4df2"
+            ],
+            "instance_identity": "unknown",
+            "overlap": "unknown"
+          },
+          "lock_operation_ids": [
+            "sync_site_49455859010008b4",
+            "sync_site_efd172e94b8f76c2"
+          ],
+          "must_lockset_status": "unknown",
+          "must_lockset": [],
+          "coverage_gaps": [
+            "lexical_access_identity_not_ast_bound",
+            "thread_instances_and_overlap_unproved",
+            "path_sensitive_lockset_unavailable"
+          ]
+        },
+        {
+          "access_id": "access_f836e1ecbf4c",
+          "declaration_candidate_id": "global_338120ee782ace86",
+          "execution_context": {
+            "entry_function": "writer_b",
+            "creation_site_ids": [
+              "sync_site_9ccff30cffee4df2"
+            ],
+            "instance_identity": "unknown",
+            "overlap": "unknown"
+          },
+          "lock_operation_ids": [
+            "sync_site_49455859010008b4",
+            "sync_site_efd172e94b8f76c2"
+          ],
+          "must_lockset_status": "unknown",
+          "must_lockset": [],
+          "coverage_gaps": [
+            "lexical_access_identity_not_ast_bound",
+            "thread_instances_and_overlap_unproved",
+            "path_sensitive_lockset_unavailable"
+          ]
+        },
+        {
+          "access_id": "access_0217db841429",
+          "declaration_candidate_id": "global_00c0b804f54319f3",
+          "execution_context": {
+            "entry_function": "main",
+            "creation_site_ids": [],
+            "instance_identity": "unknown",
+            "overlap": "unknown"
+          },
+          "lock_operation_ids": [],
+          "must_lockset_status": "unknown",
+          "must_lockset": [],
+          "coverage_gaps": [
+            "lexical_access_identity_not_ast_bound",
+            "thread_instances_and_overlap_unproved",
+            "path_sensitive_lockset_unavailable"
+          ]
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "gaps": [
+          "aliases_and_cross_file_bindings_unresolved",
+          "thread_instances_and_overlap_unproved",
+          "path_sensitive_lockset_unavailable"
+        ]
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev_0f0bb2762d50",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 7,
+        "snippet": "pthread_mutex_lock(&mutex);"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_1ca2de11e4d5",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 16,
+        "snippet": "pthread_mutex_unlock(&mutex);"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_2a94a9a8ec9d",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 15,
+        "snippet": "counter++;"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_2b0dc09ffd7f",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 14,
+        "snippet": "pthread_mutex_lock(&mutex);"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_341b2038164f",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 9,
+        "snippet": "pthread_mutex_unlock(&mutex);"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_3e9479853ff5",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 25,
+        "snippet": "return observe(counter);"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_6df8407b7b2f",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 8,
+        "snippet": "counter += 2;"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_3e2fe2803210",
+      "kind": "global_declaration",
+      "location": {
+        "file": "workers.c",
+        "line": 3,
+        "snippet": "int counter = 0;"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_b80f9333d3ff",
+      "kind": "global_declaration",
+      "location": {
+        "file": "workers.c",
+        "line": 4,
+        "snippet": "pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_dd2981808954",
+      "kind": "synchronization_api",
+      "location": {
+        "file": "workers.c",
+        "line": 7,
+        "snippet": "pthread_mutex_lock(&mutex);"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_7d9d618c0ce3",
+      "kind": "synchronization_api",
+      "location": {
+        "file": "workers.c",
+        "line": 9,
+        "snippet": "pthread_mutex_unlock(&mutex);"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_0e2085fcf172",
+      "kind": "synchronization_api",
+      "location": {
+        "file": "workers.c",
+        "line": 14,
+        "snippet": "pthread_mutex_lock(&mutex);"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_d7a2af140393",
+      "kind": "synchronization_api",
+      "location": {
+        "file": "workers.c",
+        "line": 16,
+        "snippet": "pthread_mutex_unlock(&mutex);"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_fdf2517f0beb",
+      "kind": "synchronization_api",
+      "location": {
+        "file": "workers.c",
+        "line": 21,
+        "snippet": "pthread_create(&a, 0, writer_a, 0);"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_57abcf333b28",
+      "kind": "synchronization_api",
+      "location": {
+        "file": "workers.c",
+        "line": 22,
+        "snippet": "pthread_create(&b, 0, writer_b, 0);"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_df37f2946854",
+      "kind": "synchronization_api",
+      "location": {
+        "file": "workers.c",
+        "line": 23,
+        "snippet": "pthread_join(a, 0);"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ce33dae70d3a",
+      "kind": "synchronization_api",
+      "location": {
+        "file": "workers.c",
+        "line": 24,
+        "snippet": "pthread_join(b, 0);"
+      },
+      "role": "supports"
+    }
+  ],
+  "files": [
+    "observe.c",
+    "resource.c",
+    "workers.c"
+  ],
+  "warnings": []
+}

@@ -1,0 +1,2654 @@
+{
+  "schema_version": "context-bundle.v1",
+  "status": "ready",
+  "domain": "concurrency",
+  "repository": {
+    "provider": "github",
+    "name": "cbug-integration/recode-contract",
+    "commit_sha": "31f2a0022f3bba56851ba5c255fd4a2224dd0571",
+    "commit_role": "head",
+    "build_profile": "recode-linux-clang",
+    "head_revision": "31f2a0022f3bba56851ba5c255fd4a2224dd0571"
+  },
+  "review_target": {
+    "id": "github-pr-local-integration",
+    "kind": "github_pull_request",
+    "base_revision": "485d4c0c20a67ed8770b967b0f127f7bacf2375f",
+    "head_revision": "31f2a0022f3bba56851ba5c255fd4a2224dd0571",
+    "url": "local:two-commit-integration",
+    "diff_base_revision": "485d4c0c20a67ed8770b967b0f127f7bacf2375f"
+  },
+  "diff": {
+    "format": "unified",
+    "text": "diff --git a/observe.c b/observe.c\nindex 0c2a6d5..9e7f621 100644\n--- a/observe.c\n+++ b/observe.c\n@@ -1,5 +1,5 @@\n #include \"state.h\"\n int observe(int value) {\n     allocate_temporary();\n-    return value;\n+    return value + 1;\n }\ndiff --git a/workers.c b/workers.c\nindex b6540be..04c418b 100644\n--- a/workers.c\n+++ b/workers.c\n@@ -2,18 +2,19 @@\n #include \"state.h\"\n int counter = 0;\n pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;\n+pthread_mutex_t second_mutex = PTHREAD_MUTEX_INITIALIZER;\n void *writer_a(void *unused) {\n     (void)unused;\n     pthread_mutex_lock(&mutex);\n-    counter++;\n+    counter += 2;\n     pthread_mutex_unlock(&mutex);\n     return 0;\n }\n void *writer_b(void *unused) {\n     (void)unused;\n-    pthread_mutex_lock(&mutex);\n+    pthread_mutex_lock(&second_mutex);\n     counter++;\n-    pthread_mutex_unlock(&mutex);\n+    pthread_mutex_unlock(&second_mutex);\n     return 0;\n }\n int main(void) {\n",
+    "changed_files": [
+      "observe.c",
+      "workers.c"
+    ]
+  },
+  "changed_functions": [
+    {
+      "kind": "function",
+      "name": "observe",
+      "qualified_name": "observe",
+      "file": "observe.c",
+      "start_line": 2
+    }
+  ],
+  "call_facts": {
+    "schema_version": "1.0",
+    "run_id": "recode-cbug-integration-31f2a0022f3b:get_call_chains",
+    "task_id": "github-pr-local-integration:get_call_chains",
+    "status": "partial",
+    "analysis_context": {
+      "action": "get_call_chains",
+      "repository": {
+        "provider": "github",
+        "name": "cbug-integration/recode-contract",
+        "commit_sha": "31f2a0022f3bba56851ba5c255fd4a2224dd0571",
+        "commit_role": "head"
+      },
+      "commit_sha": "31f2a0022f3bba56851ba5c255fd4a2224dd0571",
+      "graph_snapshot_id": "recode-40c8af6d7ee431c307ca3f98151da62c1ef2f6cdfe3d2583fbd298ce1ec3da4b",
+      "build_profile": "recode-linux-clang",
+      "analyzer": {
+        "name": "REcode-native-export-adapter",
+        "version": "1.0",
+        "formal_evidence": false
+      },
+      "recode": {
+        "run_id": "recode-cbug-integration-31f2a0022f3b",
+        "artifact_sha256": {
+          "manifest.json": "177b39180023b77a682cf87639e3d8b589a51dec54054b1fa6757be670a871ab",
+          "graph.json": "f6517c675ac5943dd010e0db848ec58577e4a1118c1080b0ac3adef9f7b5b5fe",
+          "external/call-chains.json": "bd814793ed1f72c4209671d3695d744140b76a358c846ac77375818a88118450",
+          "external/resource-flow.json": "71b13d3b0ebf44b26a6d67e128d896d1f930c0dc67ece90e6ab84ad9c7e640bc",
+          "external/sync-relations.json": "7e4c7ec63d3ae4fd3db71ed013b7dd8f8d3b8bff6a198f1b825da10386c8df30",
+          "external/race-analysis.json": "7125eafb9760472402fe0f409060d9432f21baf67b29b094829a31eb3fd1c652"
+        },
+        "native_provider": null,
+        "transport": "job_http"
+      }
+    },
+    "target_resolution": {
+      "requested_total": 1,
+      "resolved_total": 1,
+      "resolved_targets": [
+        {
+          "target_id": "changed-function-1",
+          "node_id": "fn:observe"
+        }
+      ],
+      "unresolved_targets": []
+    },
+    "findings": [
+      {
+        "id": "recode-call-changed-function-1",
+        "kind": "call_chain",
+        "root_node_id": "fn:observe",
+        "target_id": "changed-function-1",
+        "nodes": [
+          {
+            "node_id": "fn:allocate_temporary",
+            "name": "allocate_temporary",
+            "kind": "function",
+            "qualified_name": "allocate_temporary",
+            "signature": "void (void)",
+            "location": {
+              "file": "resource.c",
+              "line": 2
+            }
+          },
+          {
+            "node_id": "fn:free",
+            "name": "free",
+            "kind": "function",
+            "qualified_name": "free",
+            "signature": "void (void *)",
+            "location": {
+              "file": "resource.c",
+              "line": 568
+            }
+          },
+          {
+            "node_id": "fn:main",
+            "name": "main",
+            "kind": "function",
+            "qualified_name": "main",
+            "signature": "int (void)",
+            "location": {
+              "file": "workers.c",
+              "line": 20
+            }
+          },
+          {
+            "node_id": "fn:malloc",
+            "name": "malloc",
+            "kind": "function",
+            "qualified_name": "malloc",
+            "signature": "void *(unsigned long)",
+            "location": {
+              "file": "resource.c",
+              "line": 553
+            }
+          },
+          {
+            "node_id": "fn:observe",
+            "name": "observe",
+            "kind": "function",
+            "qualified_name": "observe",
+            "signature": "int (int)",
+            "location": {
+              "file": "observe.c",
+              "line": 2
+            }
+          },
+          {
+            "node_id": "fn:pthread_create",
+            "name": "pthread_create",
+            "kind": "function",
+            "qualified_name": "pthread_create",
+            "signature": "int (pthread_t *restrict, const pthread_attr_t *restrict, void *(*)(void *), void *restrict)",
+            "location": {
+              "file": "workers.c",
+              "line": 202
+            }
+          },
+          {
+            "node_id": "fn:pthread_join",
+            "name": "pthread_join",
+            "kind": "function",
+            "qualified_name": "pthread_join",
+            "signature": "int (pthread_t, void **)",
+            "location": {
+              "file": "workers.c",
+              "line": 219
+            }
+          }
+        ],
+        "edges": [
+          {
+            "edge_id": "e_0c4a5d907507",
+            "kind": "direct_call",
+            "source_node_id": "fn:allocate_temporary",
+            "target_node_id": "fn:free",
+            "call_site": {
+              "file": "resource.c",
+              "line": 4,
+              "snippet": "free(buffer);",
+              "snippet_sha256": "bc2b3942f9ba1c6cb7a42e7c9a24ca0b2a732e7d6b212ea16ad0cae40db24e71"
+            },
+            "confidence": 1.0,
+            "evidence_ids": [
+              "ev_13d17277c23e"
+            ]
+          },
+          {
+            "edge_id": "e_20b2bcf2d2c8",
+            "kind": "direct_call",
+            "source_node_id": "fn:main",
+            "target_node_id": "fn:observe",
+            "call_site": {
+              "file": "workers.c",
+              "line": 28,
+              "snippet": "",
+              "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "confidence": 1.0,
+            "evidence_ids": [
+              "ev_2d49537f88a5"
+            ]
+          },
+          {
+            "edge_id": "e_63198db62ad8",
+            "kind": "direct_call",
+            "source_node_id": "fn:main",
+            "target_node_id": "fn:pthread_create",
+            "call_site": {
+              "file": "workers.c",
+              "line": 23,
+              "snippet": "pthread_create(&b, 0, writer_b, 0);",
+              "snippet_sha256": "6969499d9f4ceefdb3b5d02f654293e58a5aff3d543c652480c1377357c06e9a"
+            },
+            "confidence": 1.0,
+            "evidence_ids": [
+              "ev_d8ab83107821"
+            ]
+          },
+          {
+            "edge_id": "e_76606278fdd9",
+            "kind": "direct_call",
+            "source_node_id": "fn:main",
+            "target_node_id": "fn:pthread_create",
+            "call_site": {
+              "file": "workers.c",
+              "line": 22,
+              "snippet": "pthread_create(&a, 0, writer_a, 0);",
+              "snippet_sha256": "4637ffa18b236d4c1acb041efc926647702aaf52966181ce5152bfb694128012"
+            },
+            "confidence": 1.0,
+            "evidence_ids": [
+              "ev_cf0813d2c179"
+            ]
+          },
+          {
+            "edge_id": "e_98fd3a9711fb",
+            "kind": "direct_call",
+            "source_node_id": "fn:allocate_temporary",
+            "target_node_id": "fn:malloc",
+            "call_site": {
+              "file": "resource.c",
+              "line": 3,
+              "snippet": "char *buffer = malloc(32);",
+              "snippet_sha256": "6da3bbbce999aaa3043a5373dc90f44602ab04ee0af0032eb527100877c22210"
+            },
+            "confidence": 1.0,
+            "evidence_ids": [
+              "ev_acd4417b6310"
+            ]
+          },
+          {
+            "edge_id": "e_9ec6ea3e1b0d",
+            "kind": "direct_call",
+            "source_node_id": "fn:main",
+            "target_node_id": "fn:pthread_join",
+            "call_site": {
+              "file": "workers.c",
+              "line": 25,
+              "snippet": "pthread_join(b, 0);",
+              "snippet_sha256": "2eb157de5051816ecc652687b0be64d070745c556e54a07a3b20496b2f3030b4"
+            },
+            "confidence": 1.0,
+            "evidence_ids": [
+              "ev_4d4f8c32aa32"
+            ]
+          },
+          {
+            "edge_id": "e_a434042bfa27",
+            "kind": "direct_call",
+            "source_node_id": "fn:observe",
+            "target_node_id": "fn:allocate_temporary",
+            "call_site": {
+              "file": "observe.c",
+              "line": 3,
+              "snippet": "allocate_temporary();",
+              "snippet_sha256": "3aa05981a039d6e0c4b9c81cf162ce6ea076b3520b546731d7bf637695e94f32"
+            },
+            "confidence": 1.0,
+            "evidence_ids": [
+              "ev_d80acc32dae9"
+            ]
+          },
+          {
+            "edge_id": "e_cef428cc9114",
+            "kind": "direct_call",
+            "source_node_id": "fn:main",
+            "target_node_id": "fn:pthread_join",
+            "call_site": {
+              "file": "workers.c",
+              "line": 24,
+              "snippet": "pthread_join(a, 0);",
+              "snippet_sha256": "a91f7bb6b98fae9253c183d33b6f116309db09e567e353e1021815d47f6befa3"
+            },
+            "confidence": 1.0,
+            "evidence_ids": [
+              "ev_be4d26e242c3"
+            ]
+          }
+        ],
+        "evidence_ids": [
+          "ev_13d17277c23e",
+          "ev_2d49537f88a5",
+          "ev_4d4f8c32aa32",
+          "ev_acd4417b6310",
+          "ev_be4d26e242c3",
+          "ev_cf0813d2c179",
+          "ev_d80acc32dae9",
+          "ev_d8ab83107821"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "ev_13d17277c23e",
+        "kind": "call_site",
+        "location": {
+          "file": "resource.c",
+          "line": 4,
+          "snippet": "free(buffer);",
+          "snippet_sha256": "bc2b3942f9ba1c6cb7a42e7c9a24ca0b2a732e7d6b212ea16ad0cae40db24e71"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_2d49537f88a5",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 28,
+          "snippet": "",
+          "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_4d4f8c32aa32",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 25,
+          "snippet": "pthread_join(b, 0);",
+          "snippet_sha256": "2eb157de5051816ecc652687b0be64d070745c556e54a07a3b20496b2f3030b4"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_6a59caf35c62",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 8,
+          "snippet": "pthread_mutex_lock(&mutex);",
+          "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_7ba8304725fa",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 10,
+          "snippet": "pthread_mutex_unlock(&mutex);",
+          "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_acd4417b6310",
+        "kind": "call_site",
+        "location": {
+          "file": "resource.c",
+          "line": 3,
+          "snippet": "char *buffer = malloc(32);",
+          "snippet_sha256": "6da3bbbce999aaa3043a5373dc90f44602ab04ee0af0032eb527100877c22210"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_be4d26e242c3",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 24,
+          "snippet": "pthread_join(a, 0);",
+          "snippet_sha256": "a91f7bb6b98fae9253c183d33b6f116309db09e567e353e1021815d47f6befa3"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_cf0813d2c179",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 22,
+          "snippet": "pthread_create(&a, 0, writer_a, 0);",
+          "snippet_sha256": "4637ffa18b236d4c1acb041efc926647702aaf52966181ce5152bfb694128012"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_d80acc32dae9",
+        "kind": "call_site",
+        "location": {
+          "file": "observe.c",
+          "line": 3,
+          "snippet": "allocate_temporary();",
+          "snippet_sha256": "3aa05981a039d6e0c4b9c81cf162ce6ea076b3520b546731d7bf637695e94f32"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_d8ab83107821",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 23,
+          "snippet": "pthread_create(&b, 0, writer_b, 0);",
+          "snippet_sha256": "6969499d9f4ceefdb3b5d02f654293e58a5aff3d543c652480c1377357c06e9a"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_f22e697c9d13",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 15,
+          "snippet": "pthread_mutex_lock(&second_mutex);",
+          "snippet_sha256": "08065e3d47895eda49051fcc3e06577909eaa31fba0b23b228c61a49665138e3"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_f2a3cf71c04e",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 17,
+          "snippet": "pthread_mutex_unlock(&second_mutex);",
+          "snippet_sha256": "89c719f9c7ce623f1beef892e2db0255f43898a87d98b4f7b29504e1e85912a7"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_bbda2423881a",
+        "kind": "assignment",
+        "location": {
+          "file": "resource.c",
+          "line": 3,
+          "snippet": "char *buffer = malloc(32);",
+          "snippet_sha256": "6da3bbbce999aaa3043a5373dc90f44602ab04ee0af0032eb527100877c22210"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_15f4f886d729",
+        "kind": "memory_access",
+        "location": {
+          "file": "workers.c",
+          "line": 10,
+          "snippet": "pthread_mutex_unlock(&mutex);",
+          "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_27d57ac18f86",
+        "kind": "memory_access",
+        "location": {
+          "file": "workers.c",
+          "line": 26,
+          "snippet": "return observe(counter);",
+          "snippet_sha256": "8d163a762c9ad837964964e7a4266c541df4da3bba57db34e72d748c55bd0b8f"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_6d0836e076b1",
+        "kind": "memory_access",
+        "location": {
+          "file": "workers.c",
+          "line": 17,
+          "snippet": "pthread_mutex_unlock(&second_mutex);",
+          "snippet_sha256": "89c719f9c7ce623f1beef892e2db0255f43898a87d98b4f7b29504e1e85912a7"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_903be66ae2bc",
+        "kind": "memory_access",
+        "location": {
+          "file": "workers.c",
+          "line": 8,
+          "snippet": "pthread_mutex_lock(&mutex);",
+          "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_97ecd25250a0",
+        "kind": "memory_access",
+        "location": {
+          "file": "workers.c",
+          "line": 9,
+          "snippet": "counter += 2;",
+          "snippet_sha256": "6ca04fb8a3e411a964ff8825a4779e7d123a32710cc6ff341b2b97bd4a9b2e0e"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_e7d7370a0ec5",
+        "kind": "memory_access",
+        "location": {
+          "file": "workers.c",
+          "line": 15,
+          "snippet": "pthread_mutex_lock(&second_mutex);",
+          "snippet_sha256": "08065e3d47895eda49051fcc3e06577909eaa31fba0b23b228c61a49665138e3"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_f4e3ce5a5db3",
+        "kind": "memory_access",
+        "location": {
+          "file": "workers.c",
+          "line": 16,
+          "snippet": "counter++;",
+          "snippet_sha256": "87fab714d442dfbe7b9c86da7d4231598a17afbcdcddf22d94e5d966f096e67f"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_3e2fe2803210",
+        "kind": "global_declaration",
+        "location": {
+          "file": "workers.c",
+          "line": 3,
+          "snippet": "int counter = 0;",
+          "snippet_sha256": "14e1aa13fb4a9fe2e2ff0a78610db4357c68c92a83c0fbf3dd937475f9f6da12"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_b80f9333d3ff",
+        "kind": "global_declaration",
+        "location": {
+          "file": "workers.c",
+          "line": 4,
+          "snippet": "pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;",
+          "snippet_sha256": "984d982a6c4e1c7e7b57ee344dd8c6b74f27eab6803d1f6982db5c831a18d323"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_6a0e0951f542",
+        "kind": "global_declaration",
+        "location": {
+          "file": "workers.c",
+          "line": 5,
+          "snippet": "pthread_mutex_t second_mutex = PTHREAD_MUTEX_INITIALIZER;",
+          "snippet_sha256": "72887624c1b8c56a95ac8aed8f2e18ac72e664e1b987162d54a6f1107555643c"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_43b77bf629af",
+        "kind": "synchronization_api",
+        "location": {
+          "file": "workers.c",
+          "line": 8,
+          "snippet": "pthread_mutex_lock(&mutex);",
+          "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_1b9842d0320c",
+        "kind": "synchronization_api",
+        "location": {
+          "file": "workers.c",
+          "line": 10,
+          "snippet": "pthread_mutex_unlock(&mutex);",
+          "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_aae7ce59d2c5",
+        "kind": "synchronization_api",
+        "location": {
+          "file": "workers.c",
+          "line": 15,
+          "snippet": "pthread_mutex_lock(&second_mutex);",
+          "snippet_sha256": "08065e3d47895eda49051fcc3e06577909eaa31fba0b23b228c61a49665138e3"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_68c421e40c93",
+        "kind": "synchronization_api",
+        "location": {
+          "file": "workers.c",
+          "line": 17,
+          "snippet": "pthread_mutex_unlock(&second_mutex);",
+          "snippet_sha256": "89c719f9c7ce623f1beef892e2db0255f43898a87d98b4f7b29504e1e85912a7"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_3b75122eccdc",
+        "kind": "synchronization_api",
+        "location": {
+          "file": "workers.c",
+          "line": 22,
+          "snippet": "pthread_create(&a, 0, writer_a, 0);",
+          "snippet_sha256": "4637ffa18b236d4c1acb041efc926647702aaf52966181ce5152bfb694128012"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_4979e2b8e968",
+        "kind": "synchronization_api",
+        "location": {
+          "file": "workers.c",
+          "line": 23,
+          "snippet": "pthread_create(&b, 0, writer_b, 0);",
+          "snippet_sha256": "6969499d9f4ceefdb3b5d02f654293e58a5aff3d543c652480c1377357c06e9a"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_d9a8d84c57dd",
+        "kind": "synchronization_api",
+        "location": {
+          "file": "workers.c",
+          "line": 24,
+          "snippet": "pthread_join(a, 0);",
+          "snippet_sha256": "a91f7bb6b98fae9253c183d33b6f116309db09e567e353e1021815d47f6befa3"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_8709daefeb17",
+        "kind": "synchronization_api",
+        "location": {
+          "file": "workers.c",
+          "line": 25,
+          "snippet": "pthread_join(b, 0);",
+          "snippet_sha256": "2eb157de5051816ecc652687b0be64d070745c556e54a07a3b20496b2f3030b4"
+        },
+        "role": "supports"
+      }
+    ],
+    "coverage": {
+      "complete": false,
+      "reason": "recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated",
+      "stopped_because": [
+        "recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+        "recode_bounded_call_subgraph_paths_not_enumerated"
+      ],
+      "omitted_record_count": 0,
+      "omitted_record_ids": []
+    },
+    "warnings": [],
+    "errors": []
+  },
+  "resource_facts": null,
+  "sync_facts": {
+    "schema_version": "1.0",
+    "run_id": "recode-cbug-integration-31f2a0022f3b:get_sync_flows",
+    "task_id": "github-pr-local-integration:get_sync_flows",
+    "status": "partial",
+    "analysis_context": {
+      "action": "get_sync_flows",
+      "repository": {
+        "provider": "github",
+        "name": "cbug-integration/recode-contract",
+        "commit_sha": "31f2a0022f3bba56851ba5c255fd4a2224dd0571",
+        "commit_role": "head"
+      },
+      "commit_sha": "31f2a0022f3bba56851ba5c255fd4a2224dd0571",
+      "graph_snapshot_id": "recode-40c8af6d7ee431c307ca3f98151da62c1ef2f6cdfe3d2583fbd298ce1ec3da4b",
+      "build_profile": "recode-linux-clang",
+      "analyzer": {
+        "name": "REcode-native-export-adapter",
+        "version": "1.0",
+        "formal_evidence": false
+      },
+      "recode": {
+        "run_id": "recode-cbug-integration-31f2a0022f3b",
+        "artifact_sha256": {
+          "manifest.json": "177b39180023b77a682cf87639e3d8b589a51dec54054b1fa6757be670a871ab",
+          "graph.json": "f6517c675ac5943dd010e0db848ec58577e4a1118c1080b0ac3adef9f7b5b5fe",
+          "external/call-chains.json": "bd814793ed1f72c4209671d3695d744140b76a358c846ac77375818a88118450",
+          "external/resource-flow.json": "71b13d3b0ebf44b26a6d67e128d896d1f930c0dc67ece90e6ab84ad9c7e640bc",
+          "external/sync-relations.json": "7e4c7ec63d3ae4fd3db71ed013b7dd8f8d3b8bff6a198f1b825da10386c8df30",
+          "external/race-analysis.json": "7125eafb9760472402fe0f409060d9432f21baf67b29b094829a31eb3fd1c652"
+        },
+        "native_provider": "native_sync_flow_v1",
+        "transport": "job_http"
+      }
+    },
+    "target_resolution": {
+      "requested_total": 1,
+      "resolved_total": 1,
+      "resolved_targets": [
+        {
+          "target_id": "changed-function-1",
+          "node_id": "fn:observe"
+        }
+      ],
+      "unresolved_targets": []
+    },
+    "findings": [
+      {
+        "id": "recode-native-sync",
+        "kind": "sync_flow",
+        "shared_objects": [
+          {
+            "object_id": "recode-object-4d5fadc01b76affe0bda",
+            "name": "mutex",
+            "type": "pthread_mutex_t",
+            "identity_confidence": 0.65,
+            "declaration": {
+              "file": "workers.c",
+              "line": 4,
+              "snippet": "pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;",
+              "snippet_sha256": "984d982a6c4e1c7e7b57ee344dd8c6b74f27eab6803d1f6982db5c831a18d323"
+            },
+            "evidence_ids": [
+              "ev_15f4f886d729",
+              "ev_1b9842d0320c",
+              "ev_3b75122eccdc",
+              "ev_43b77bf629af",
+              "ev_903be66ae2bc",
+              "ev_b80f9333d3ff"
+            ],
+            "accesses": [
+              {
+                "access_id": "access_fb1881ea2c90",
+                "kind": "read",
+                "function": "writer_a",
+                "location": {
+                  "file": "workers.c",
+                  "line": 8,
+                  "snippet": "pthread_mutex_lock(&mutex);",
+                  "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+                },
+                "execution_context": {
+                  "entry_function": "writer_a",
+                  "creation_sites": [
+                    {
+                      "id": "sync_site_a759b3bf509480c5",
+                      "api": "pthread_create",
+                      "function": "main",
+                      "location": {
+                        "file": "workers.c",
+                        "line": 22,
+                        "snippet": "pthread_create(&a, 0, writer_a, 0);",
+                        "snippet_sha256": "4637ffa18b236d4c1acb041efc926647702aaf52966181ce5152bfb694128012"
+                      },
+                      "evidence_ids": [
+                        "ev_3b75122eccdc"
+                      ],
+                      "analysis_basis": "lexical_api_site",
+                      "kind": "create",
+                      "handle_expression": "&a",
+                      "entry_function": "writer_a"
+                    }
+                  ],
+                  "instance_identity": "unknown",
+                  "overlap": "unknown"
+                },
+                "must_lockset": [],
+                "may_lockset": [],
+                "other_synchronization": [
+                  {
+                    "kind": "unresolved_native_protection",
+                    "evidence_ids": [
+                      "ev_903be66ae2bc"
+                    ]
+                  },
+                  {
+                    "kind": "lexical_lock_observations",
+                    "operations": [
+                      {
+                        "id": "sync_site_ad6e301096dc42b2",
+                        "api": "pthread_mutex_lock",
+                        "function": "writer_a",
+                        "location": {
+                          "file": "workers.c",
+                          "line": 8,
+                          "snippet": "pthread_mutex_lock(&mutex);",
+                          "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+                        },
+                        "evidence_ids": [
+                          "ev_43b77bf629af"
+                        ],
+                        "analysis_basis": "lexical_api_site",
+                        "kind": "acquire",
+                        "lock_expression": "&mutex",
+                        "declaration_candidate_id": "global_338120ee782ace86"
+                      },
+                      {
+                        "id": "sync_site_2fe159af16947ad5",
+                        "api": "pthread_mutex_unlock",
+                        "function": "writer_a",
+                        "location": {
+                          "file": "workers.c",
+                          "line": 10,
+                          "snippet": "pthread_mutex_unlock(&mutex);",
+                          "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+                        },
+                        "evidence_ids": [
+                          "ev_1b9842d0320c"
+                        ],
+                        "analysis_basis": "lexical_api_site",
+                        "kind": "release",
+                        "lock_expression": "&mutex",
+                        "declaration_candidate_id": "global_338120ee782ace86"
+                      }
+                    ],
+                    "must_lockset_status": "unknown"
+                  }
+                ],
+                "confidence": 0.35,
+                "evidence_ids": [
+                  "ev_1b9842d0320c",
+                  "ev_3b75122eccdc",
+                  "ev_43b77bf629af",
+                  "ev_903be66ae2bc",
+                  "ev_b80f9333d3ff"
+                ],
+                "coverage_gaps": [
+                  "lexical_access_identity_not_ast_bound",
+                  "thread_instances_and_overlap_unproved",
+                  "path_sensitive_lockset_unavailable"
+                ]
+              },
+              {
+                "access_id": "access_a50394c46d3e",
+                "kind": "read",
+                "function": "writer_a",
+                "location": {
+                  "file": "workers.c",
+                  "line": 10,
+                  "snippet": "pthread_mutex_unlock(&mutex);",
+                  "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+                },
+                "execution_context": {
+                  "entry_function": "writer_a",
+                  "creation_sites": [
+                    {
+                      "id": "sync_site_a759b3bf509480c5",
+                      "api": "pthread_create",
+                      "function": "main",
+                      "location": {
+                        "file": "workers.c",
+                        "line": 22,
+                        "snippet": "pthread_create(&a, 0, writer_a, 0);",
+                        "snippet_sha256": "4637ffa18b236d4c1acb041efc926647702aaf52966181ce5152bfb694128012"
+                      },
+                      "evidence_ids": [
+                        "ev_3b75122eccdc"
+                      ],
+                      "analysis_basis": "lexical_api_site",
+                      "kind": "create",
+                      "handle_expression": "&a",
+                      "entry_function": "writer_a"
+                    }
+                  ],
+                  "instance_identity": "unknown",
+                  "overlap": "unknown"
+                },
+                "must_lockset": [],
+                "may_lockset": [],
+                "other_synchronization": [
+                  {
+                    "kind": "unresolved_native_protection",
+                    "evidence_ids": [
+                      "ev_15f4f886d729"
+                    ]
+                  },
+                  {
+                    "kind": "lexical_lock_observations",
+                    "operations": [
+                      {
+                        "id": "sync_site_ad6e301096dc42b2",
+                        "api": "pthread_mutex_lock",
+                        "function": "writer_a",
+                        "location": {
+                          "file": "workers.c",
+                          "line": 8,
+                          "snippet": "pthread_mutex_lock(&mutex);",
+                          "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+                        },
+                        "evidence_ids": [
+                          "ev_43b77bf629af"
+                        ],
+                        "analysis_basis": "lexical_api_site",
+                        "kind": "acquire",
+                        "lock_expression": "&mutex",
+                        "declaration_candidate_id": "global_338120ee782ace86"
+                      },
+                      {
+                        "id": "sync_site_2fe159af16947ad5",
+                        "api": "pthread_mutex_unlock",
+                        "function": "writer_a",
+                        "location": {
+                          "file": "workers.c",
+                          "line": 10,
+                          "snippet": "pthread_mutex_unlock(&mutex);",
+                          "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+                        },
+                        "evidence_ids": [
+                          "ev_1b9842d0320c"
+                        ],
+                        "analysis_basis": "lexical_api_site",
+                        "kind": "release",
+                        "lock_expression": "&mutex",
+                        "declaration_candidate_id": "global_338120ee782ace86"
+                      }
+                    ],
+                    "must_lockset_status": "unknown"
+                  }
+                ],
+                "confidence": 0.35,
+                "evidence_ids": [
+                  "ev_15f4f886d729",
+                  "ev_1b9842d0320c",
+                  "ev_3b75122eccdc",
+                  "ev_43b77bf629af",
+                  "ev_b80f9333d3ff"
+                ],
+                "coverage_gaps": [
+                  "lexical_access_identity_not_ast_bound",
+                  "thread_instances_and_overlap_unproved",
+                  "path_sensitive_lockset_unavailable"
+                ]
+              }
+            ],
+            "identity_basis": "lexical_declaration_candidate"
+          },
+          {
+            "object_id": "recode-object-72d940a4686a9d780114",
+            "name": "counter",
+            "type": "int",
+            "identity_confidence": 0.65,
+            "declaration": {
+              "file": "workers.c",
+              "line": 3,
+              "snippet": "int counter = 0;",
+              "snippet_sha256": "14e1aa13fb4a9fe2e2ff0a78610db4357c68c92a83c0fbf3dd937475f9f6da12"
+            },
+            "evidence_ids": [
+              "ev_1b9842d0320c",
+              "ev_27d57ac18f86",
+              "ev_3b75122eccdc",
+              "ev_3e2fe2803210",
+              "ev_43b77bf629af",
+              "ev_4979e2b8e968",
+              "ev_68c421e40c93",
+              "ev_97ecd25250a0",
+              "ev_aae7ce59d2c5",
+              "ev_f4e3ce5a5db3"
+            ],
+            "accesses": [
+              {
+                "access_id": "access_6855230868b0",
+                "kind": "write",
+                "function": "writer_a",
+                "location": {
+                  "file": "workers.c",
+                  "line": 9,
+                  "snippet": "counter += 2;",
+                  "snippet_sha256": "6ca04fb8a3e411a964ff8825a4779e7d123a32710cc6ff341b2b97bd4a9b2e0e"
+                },
+                "execution_context": {
+                  "entry_function": "writer_a",
+                  "creation_sites": [
+                    {
+                      "id": "sync_site_a759b3bf509480c5",
+                      "api": "pthread_create",
+                      "function": "main",
+                      "location": {
+                        "file": "workers.c",
+                        "line": 22,
+                        "snippet": "pthread_create(&a, 0, writer_a, 0);",
+                        "snippet_sha256": "4637ffa18b236d4c1acb041efc926647702aaf52966181ce5152bfb694128012"
+                      },
+                      "evidence_ids": [
+                        "ev_3b75122eccdc"
+                      ],
+                      "analysis_basis": "lexical_api_site",
+                      "kind": "create",
+                      "handle_expression": "&a",
+                      "entry_function": "writer_a"
+                    }
+                  ],
+                  "instance_identity": "unknown",
+                  "overlap": "unknown"
+                },
+                "must_lockset": [],
+                "may_lockset": [],
+                "other_synchronization": [
+                  {
+                    "kind": "unresolved_native_protection",
+                    "evidence_ids": [
+                      "ev_97ecd25250a0"
+                    ]
+                  },
+                  {
+                    "kind": "lexical_lock_observations",
+                    "operations": [
+                      {
+                        "id": "sync_site_ad6e301096dc42b2",
+                        "api": "pthread_mutex_lock",
+                        "function": "writer_a",
+                        "location": {
+                          "file": "workers.c",
+                          "line": 8,
+                          "snippet": "pthread_mutex_lock(&mutex);",
+                          "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+                        },
+                        "evidence_ids": [
+                          "ev_43b77bf629af"
+                        ],
+                        "analysis_basis": "lexical_api_site",
+                        "kind": "acquire",
+                        "lock_expression": "&mutex",
+                        "declaration_candidate_id": "global_338120ee782ace86"
+                      },
+                      {
+                        "id": "sync_site_2fe159af16947ad5",
+                        "api": "pthread_mutex_unlock",
+                        "function": "writer_a",
+                        "location": {
+                          "file": "workers.c",
+                          "line": 10,
+                          "snippet": "pthread_mutex_unlock(&mutex);",
+                          "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+                        },
+                        "evidence_ids": [
+                          "ev_1b9842d0320c"
+                        ],
+                        "analysis_basis": "lexical_api_site",
+                        "kind": "release",
+                        "lock_expression": "&mutex",
+                        "declaration_candidate_id": "global_338120ee782ace86"
+                      }
+                    ],
+                    "must_lockset_status": "unknown"
+                  }
+                ],
+                "confidence": 0.35,
+                "evidence_ids": [
+                  "ev_1b9842d0320c",
+                  "ev_3b75122eccdc",
+                  "ev_3e2fe2803210",
+                  "ev_43b77bf629af",
+                  "ev_97ecd25250a0"
+                ],
+                "coverage_gaps": [
+                  "lexical_access_identity_not_ast_bound",
+                  "thread_instances_and_overlap_unproved",
+                  "path_sensitive_lockset_unavailable"
+                ]
+              },
+              {
+                "access_id": "access_fe90746a4cf8",
+                "kind": "write",
+                "function": "writer_b",
+                "location": {
+                  "file": "workers.c",
+                  "line": 16,
+                  "snippet": "counter++;",
+                  "snippet_sha256": "87fab714d442dfbe7b9c86da7d4231598a17afbcdcddf22d94e5d966f096e67f"
+                },
+                "execution_context": {
+                  "entry_function": "writer_b",
+                  "creation_sites": [
+                    {
+                      "id": "sync_site_41936d19178f1389",
+                      "api": "pthread_create",
+                      "function": "main",
+                      "location": {
+                        "file": "workers.c",
+                        "line": 23,
+                        "snippet": "pthread_create(&b, 0, writer_b, 0);",
+                        "snippet_sha256": "6969499d9f4ceefdb3b5d02f654293e58a5aff3d543c652480c1377357c06e9a"
+                      },
+                      "evidence_ids": [
+                        "ev_4979e2b8e968"
+                      ],
+                      "analysis_basis": "lexical_api_site",
+                      "kind": "create",
+                      "handle_expression": "&b",
+                      "entry_function": "writer_b"
+                    }
+                  ],
+                  "instance_identity": "unknown",
+                  "overlap": "unknown"
+                },
+                "must_lockset": [],
+                "may_lockset": [],
+                "other_synchronization": [
+                  {
+                    "kind": "unresolved_native_protection",
+                    "evidence_ids": [
+                      "ev_f4e3ce5a5db3"
+                    ]
+                  },
+                  {
+                    "kind": "lexical_lock_observations",
+                    "operations": [
+                      {
+                        "id": "sync_site_6951a4a5939da85b",
+                        "api": "pthread_mutex_lock",
+                        "function": "writer_b",
+                        "location": {
+                          "file": "workers.c",
+                          "line": 15,
+                          "snippet": "pthread_mutex_lock(&second_mutex);",
+                          "snippet_sha256": "08065e3d47895eda49051fcc3e06577909eaa31fba0b23b228c61a49665138e3"
+                        },
+                        "evidence_ids": [
+                          "ev_aae7ce59d2c5"
+                        ],
+                        "analysis_basis": "lexical_api_site",
+                        "kind": "acquire",
+                        "lock_expression": "&second_mutex",
+                        "declaration_candidate_id": "global_88c50d129144aa72"
+                      },
+                      {
+                        "id": "sync_site_7c7f6f1253ce8be5",
+                        "api": "pthread_mutex_unlock",
+                        "function": "writer_b",
+                        "location": {
+                          "file": "workers.c",
+                          "line": 17,
+                          "snippet": "pthread_mutex_unlock(&second_mutex);",
+                          "snippet_sha256": "89c719f9c7ce623f1beef892e2db0255f43898a87d98b4f7b29504e1e85912a7"
+                        },
+                        "evidence_ids": [
+                          "ev_68c421e40c93"
+                        ],
+                        "analysis_basis": "lexical_api_site",
+                        "kind": "release",
+                        "lock_expression": "&second_mutex",
+                        "declaration_candidate_id": "global_88c50d129144aa72"
+                      }
+                    ],
+                    "must_lockset_status": "unknown"
+                  }
+                ],
+                "confidence": 0.35,
+                "evidence_ids": [
+                  "ev_3e2fe2803210",
+                  "ev_4979e2b8e968",
+                  "ev_68c421e40c93",
+                  "ev_aae7ce59d2c5",
+                  "ev_f4e3ce5a5db3"
+                ],
+                "coverage_gaps": [
+                  "lexical_access_identity_not_ast_bound",
+                  "thread_instances_and_overlap_unproved",
+                  "path_sensitive_lockset_unavailable"
+                ]
+              },
+              {
+                "access_id": "access_67b8f30d53e1",
+                "kind": "read",
+                "function": "main",
+                "location": {
+                  "file": "workers.c",
+                  "line": 26,
+                  "snippet": "return observe(counter);",
+                  "snippet_sha256": "8d163a762c9ad837964964e7a4266c541df4da3bba57db34e72d748c55bd0b8f"
+                },
+                "execution_context": {
+                  "entry_function": "main",
+                  "creation_sites": [],
+                  "instance_identity": "unknown",
+                  "overlap": "unknown"
+                },
+                "must_lockset": [],
+                "may_lockset": [],
+                "other_synchronization": [
+                  {
+                    "kind": "lexical_lock_observations",
+                    "operations": [],
+                    "must_lockset_status": "unknown"
+                  }
+                ],
+                "confidence": 0.35,
+                "evidence_ids": [
+                  "ev_27d57ac18f86",
+                  "ev_3e2fe2803210"
+                ],
+                "coverage_gaps": [
+                  "lexical_access_identity_not_ast_bound",
+                  "thread_instances_and_overlap_unproved",
+                  "path_sensitive_lockset_unavailable"
+                ]
+              }
+            ],
+            "identity_basis": "lexical_declaration_candidate"
+          },
+          {
+            "object_id": "recode-object-90d0c9b8f488d9e6bb0e",
+            "name": "second_mutex",
+            "type": "pthread_mutex_t",
+            "identity_confidence": 0.65,
+            "declaration": {
+              "file": "workers.c",
+              "line": 5,
+              "snippet": "pthread_mutex_t second_mutex = PTHREAD_MUTEX_INITIALIZER;",
+              "snippet_sha256": "72887624c1b8c56a95ac8aed8f2e18ac72e664e1b987162d54a6f1107555643c"
+            },
+            "evidence_ids": [
+              "ev_4979e2b8e968",
+              "ev_68c421e40c93",
+              "ev_6a0e0951f542",
+              "ev_6d0836e076b1",
+              "ev_aae7ce59d2c5",
+              "ev_e7d7370a0ec5"
+            ],
+            "accesses": [
+              {
+                "access_id": "access_5ba7b82cf4e7",
+                "kind": "read",
+                "function": "writer_b",
+                "location": {
+                  "file": "workers.c",
+                  "line": 15,
+                  "snippet": "pthread_mutex_lock(&second_mutex);",
+                  "snippet_sha256": "08065e3d47895eda49051fcc3e06577909eaa31fba0b23b228c61a49665138e3"
+                },
+                "execution_context": {
+                  "entry_function": "writer_b",
+                  "creation_sites": [
+                    {
+                      "id": "sync_site_41936d19178f1389",
+                      "api": "pthread_create",
+                      "function": "main",
+                      "location": {
+                        "file": "workers.c",
+                        "line": 23,
+                        "snippet": "pthread_create(&b, 0, writer_b, 0);",
+                        "snippet_sha256": "6969499d9f4ceefdb3b5d02f654293e58a5aff3d543c652480c1377357c06e9a"
+                      },
+                      "evidence_ids": [
+                        "ev_4979e2b8e968"
+                      ],
+                      "analysis_basis": "lexical_api_site",
+                      "kind": "create",
+                      "handle_expression": "&b",
+                      "entry_function": "writer_b"
+                    }
+                  ],
+                  "instance_identity": "unknown",
+                  "overlap": "unknown"
+                },
+                "must_lockset": [],
+                "may_lockset": [],
+                "other_synchronization": [
+                  {
+                    "kind": "unresolved_native_protection",
+                    "evidence_ids": [
+                      "ev_e7d7370a0ec5"
+                    ]
+                  },
+                  {
+                    "kind": "lexical_lock_observations",
+                    "operations": [
+                      {
+                        "id": "sync_site_6951a4a5939da85b",
+                        "api": "pthread_mutex_lock",
+                        "function": "writer_b",
+                        "location": {
+                          "file": "workers.c",
+                          "line": 15,
+                          "snippet": "pthread_mutex_lock(&second_mutex);",
+                          "snippet_sha256": "08065e3d47895eda49051fcc3e06577909eaa31fba0b23b228c61a49665138e3"
+                        },
+                        "evidence_ids": [
+                          "ev_aae7ce59d2c5"
+                        ],
+                        "analysis_basis": "lexical_api_site",
+                        "kind": "acquire",
+                        "lock_expression": "&second_mutex",
+                        "declaration_candidate_id": "global_88c50d129144aa72"
+                      },
+                      {
+                        "id": "sync_site_7c7f6f1253ce8be5",
+                        "api": "pthread_mutex_unlock",
+                        "function": "writer_b",
+                        "location": {
+                          "file": "workers.c",
+                          "line": 17,
+                          "snippet": "pthread_mutex_unlock(&second_mutex);",
+                          "snippet_sha256": "89c719f9c7ce623f1beef892e2db0255f43898a87d98b4f7b29504e1e85912a7"
+                        },
+                        "evidence_ids": [
+                          "ev_68c421e40c93"
+                        ],
+                        "analysis_basis": "lexical_api_site",
+                        "kind": "release",
+                        "lock_expression": "&second_mutex",
+                        "declaration_candidate_id": "global_88c50d129144aa72"
+                      }
+                    ],
+                    "must_lockset_status": "unknown"
+                  }
+                ],
+                "confidence": 0.35,
+                "evidence_ids": [
+                  "ev_4979e2b8e968",
+                  "ev_68c421e40c93",
+                  "ev_6a0e0951f542",
+                  "ev_aae7ce59d2c5",
+                  "ev_e7d7370a0ec5"
+                ],
+                "coverage_gaps": [
+                  "lexical_access_identity_not_ast_bound",
+                  "thread_instances_and_overlap_unproved",
+                  "path_sensitive_lockset_unavailable"
+                ]
+              },
+              {
+                "access_id": "access_632f6e307f51",
+                "kind": "read",
+                "function": "writer_b",
+                "location": {
+                  "file": "workers.c",
+                  "line": 17,
+                  "snippet": "pthread_mutex_unlock(&second_mutex);",
+                  "snippet_sha256": "89c719f9c7ce623f1beef892e2db0255f43898a87d98b4f7b29504e1e85912a7"
+                },
+                "execution_context": {
+                  "entry_function": "writer_b",
+                  "creation_sites": [
+                    {
+                      "id": "sync_site_41936d19178f1389",
+                      "api": "pthread_create",
+                      "function": "main",
+                      "location": {
+                        "file": "workers.c",
+                        "line": 23,
+                        "snippet": "pthread_create(&b, 0, writer_b, 0);",
+                        "snippet_sha256": "6969499d9f4ceefdb3b5d02f654293e58a5aff3d543c652480c1377357c06e9a"
+                      },
+                      "evidence_ids": [
+                        "ev_4979e2b8e968"
+                      ],
+                      "analysis_basis": "lexical_api_site",
+                      "kind": "create",
+                      "handle_expression": "&b",
+                      "entry_function": "writer_b"
+                    }
+                  ],
+                  "instance_identity": "unknown",
+                  "overlap": "unknown"
+                },
+                "must_lockset": [],
+                "may_lockset": [],
+                "other_synchronization": [
+                  {
+                    "kind": "unresolved_native_protection",
+                    "evidence_ids": [
+                      "ev_6d0836e076b1"
+                    ]
+                  },
+                  {
+                    "kind": "lexical_lock_observations",
+                    "operations": [
+                      {
+                        "id": "sync_site_6951a4a5939da85b",
+                        "api": "pthread_mutex_lock",
+                        "function": "writer_b",
+                        "location": {
+                          "file": "workers.c",
+                          "line": 15,
+                          "snippet": "pthread_mutex_lock(&second_mutex);",
+                          "snippet_sha256": "08065e3d47895eda49051fcc3e06577909eaa31fba0b23b228c61a49665138e3"
+                        },
+                        "evidence_ids": [
+                          "ev_aae7ce59d2c5"
+                        ],
+                        "analysis_basis": "lexical_api_site",
+                        "kind": "acquire",
+                        "lock_expression": "&second_mutex",
+                        "declaration_candidate_id": "global_88c50d129144aa72"
+                      },
+                      {
+                        "id": "sync_site_7c7f6f1253ce8be5",
+                        "api": "pthread_mutex_unlock",
+                        "function": "writer_b",
+                        "location": {
+                          "file": "workers.c",
+                          "line": 17,
+                          "snippet": "pthread_mutex_unlock(&second_mutex);",
+                          "snippet_sha256": "89c719f9c7ce623f1beef892e2db0255f43898a87d98b4f7b29504e1e85912a7"
+                        },
+                        "evidence_ids": [
+                          "ev_68c421e40c93"
+                        ],
+                        "analysis_basis": "lexical_api_site",
+                        "kind": "release",
+                        "lock_expression": "&second_mutex",
+                        "declaration_candidate_id": "global_88c50d129144aa72"
+                      }
+                    ],
+                    "must_lockset_status": "unknown"
+                  }
+                ],
+                "confidence": 0.35,
+                "evidence_ids": [
+                  "ev_4979e2b8e968",
+                  "ev_68c421e40c93",
+                  "ev_6a0e0951f542",
+                  "ev_6d0836e076b1",
+                  "ev_aae7ce59d2c5"
+                ],
+                "coverage_gaps": [
+                  "lexical_access_identity_not_ast_bound",
+                  "thread_instances_and_overlap_unproved",
+                  "path_sensitive_lockset_unavailable"
+                ]
+              }
+            ],
+            "identity_basis": "lexical_declaration_candidate"
+          }
+        ],
+        "locks": [],
+        "lock_order_edges": [],
+        "callbacks_and_async_boundaries": [],
+        "observed_relations": [
+          {
+            "relation_id": "sync_0d532470c2c6",
+            "relation_type": "thread_join",
+            "source": {
+              "file": "workers.c",
+              "line": 23,
+              "snippet": "pthread_create(&b, 0, writer_b, 0);",
+              "snippet_sha256": "6969499d9f4ceefdb3b5d02f654293e58a5aff3d543c652480c1377357c06e9a"
+            },
+            "target": {
+              "file": "workers.c",
+              "line": 25,
+              "snippet": "pthread_join(b, 0);",
+              "snippet_sha256": "2eb157de5051816ecc652687b0be64d070745c556e54a07a3b20496b2f3030b4"
+            },
+            "order": "happens_before",
+            "confidence": 0.75,
+            "condition": "thread handle b is joined",
+            "evidence_ids": [
+              "ev_d8ab83107821",
+              "ev_4d4f8c32aa32"
+            ]
+          },
+          {
+            "relation_id": "sync_17a4c4ca7590",
+            "relation_type": "mutex_lock",
+            "source": {
+              "file": "workers.c",
+              "line": 8,
+              "snippet": "pthread_mutex_lock(&mutex);",
+              "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+            },
+            "target": {
+              "file": "workers.c",
+              "line": 10,
+              "snippet": "pthread_mutex_unlock(&mutex);",
+              "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+            },
+            "order": "happens_before",
+            "confidence": 0.85,
+            "condition": "same function/resource writer_a:mutex",
+            "evidence_ids": [
+              "ev_6a59caf35c62",
+              "ev_7ba8304725fa"
+            ]
+          },
+          {
+            "relation_id": "sync_9c8d6fbc234d",
+            "relation_type": "thread_join",
+            "source": {
+              "file": "workers.c",
+              "line": 22,
+              "snippet": "pthread_create(&a, 0, writer_a, 0);",
+              "snippet_sha256": "4637ffa18b236d4c1acb041efc926647702aaf52966181ce5152bfb694128012"
+            },
+            "target": {
+              "file": "workers.c",
+              "line": 23,
+              "snippet": "pthread_create(&b, 0, writer_b, 0);",
+              "snippet_sha256": "6969499d9f4ceefdb3b5d02f654293e58a5aff3d543c652480c1377357c06e9a"
+            },
+            "order": "happens_before",
+            "confidence": 0.55,
+            "condition": "program order main:pthread_create",
+            "evidence_ids": [
+              "ev_cf0813d2c179",
+              "ev_d8ab83107821"
+            ]
+          },
+          {
+            "relation_id": "sync_cb99201e0402",
+            "relation_type": "mutex_lock",
+            "source": {
+              "file": "workers.c",
+              "line": 15,
+              "snippet": "pthread_mutex_lock(&second_mutex);",
+              "snippet_sha256": "08065e3d47895eda49051fcc3e06577909eaa31fba0b23b228c61a49665138e3"
+            },
+            "target": {
+              "file": "workers.c",
+              "line": 17,
+              "snippet": "pthread_mutex_unlock(&second_mutex);",
+              "snippet_sha256": "89c719f9c7ce623f1beef892e2db0255f43898a87d98b4f7b29504e1e85912a7"
+            },
+            "order": "happens_before",
+            "confidence": 0.85,
+            "condition": "same function/resource writer_b:second_mutex",
+            "evidence_ids": [
+              "ev_f22e697c9d13",
+              "ev_f2a3cf71c04e"
+            ]
+          },
+          {
+            "relation_id": "sync_e117e1b4be32",
+            "relation_type": "thread_join",
+            "source": {
+              "file": "workers.c",
+              "line": 24,
+              "snippet": "pthread_join(a, 0);",
+              "snippet_sha256": "a91f7bb6b98fae9253c183d33b6f116309db09e567e353e1021815d47f6befa3"
+            },
+            "target": {
+              "file": "workers.c",
+              "line": 25,
+              "snippet": "pthread_join(b, 0);",
+              "snippet_sha256": "2eb157de5051816ecc652687b0be64d070745c556e54a07a3b20496b2f3030b4"
+            },
+            "order": "happens_before",
+            "confidence": 0.55,
+            "condition": "program order main:pthread_join",
+            "evidence_ids": [
+              "ev_be4d26e242c3",
+              "ev_4d4f8c32aa32"
+            ]
+          },
+          {
+            "relation_id": "sync_e5bf71de32ef",
+            "relation_type": "thread_join",
+            "source": {
+              "file": "workers.c",
+              "line": 22,
+              "snippet": "pthread_create(&a, 0, writer_a, 0);",
+              "snippet_sha256": "4637ffa18b236d4c1acb041efc926647702aaf52966181ce5152bfb694128012"
+            },
+            "target": {
+              "file": "workers.c",
+              "line": 24,
+              "snippet": "pthread_join(a, 0);",
+              "snippet_sha256": "a91f7bb6b98fae9253c183d33b6f116309db09e567e353e1021815d47f6befa3"
+            },
+            "order": "happens_before",
+            "confidence": 0.75,
+            "condition": "thread handle a is joined",
+            "evidence_ids": [
+              "ev_cf0813d2c179",
+              "ev_be4d26e242c3"
+            ]
+          }
+        ],
+        "confidence": 0.35,
+        "source_observations": {
+          "objects": [
+            {
+              "object_id": "global_00c0b804f54319f3",
+              "name": "counter",
+              "type": "int",
+              "declaration": {
+                "file": "workers.c",
+                "line": 3,
+                "snippet": "int counter = 0;",
+                "snippet_sha256": "14e1aa13fb4a9fe2e2ff0a78610db4357c68c92a83c0fbf3dd937475f9f6da12"
+              },
+              "linkage": "external",
+              "identity_basis": "lexical_declaration",
+              "identity_confidence": 0.65,
+              "evidence_ids": [
+                "ev_3e2fe2803210"
+              ]
+            },
+            {
+              "object_id": "global_338120ee782ace86",
+              "name": "mutex",
+              "type": "pthread_mutex_t",
+              "declaration": {
+                "file": "workers.c",
+                "line": 4,
+                "snippet": "pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;",
+                "snippet_sha256": "984d982a6c4e1c7e7b57ee344dd8c6b74f27eab6803d1f6982db5c831a18d323"
+              },
+              "linkage": "external",
+              "identity_basis": "lexical_declaration",
+              "identity_confidence": 0.65,
+              "evidence_ids": [
+                "ev_b80f9333d3ff"
+              ]
+            },
+            {
+              "object_id": "global_88c50d129144aa72",
+              "name": "second_mutex",
+              "type": "pthread_mutex_t",
+              "declaration": {
+                "file": "workers.c",
+                "line": 5,
+                "snippet": "pthread_mutex_t second_mutex = PTHREAD_MUTEX_INITIALIZER;",
+                "snippet_sha256": "72887624c1b8c56a95ac8aed8f2e18ac72e664e1b987162d54a6f1107555643c"
+              },
+              "linkage": "external",
+              "identity_basis": "lexical_declaration",
+              "identity_confidence": 0.65,
+              "evidence_ids": [
+                "ev_6a0e0951f542"
+              ]
+            }
+          ],
+          "thread_events": [
+            {
+              "id": "sync_site_a759b3bf509480c5",
+              "api": "pthread_create",
+              "function": "main",
+              "location": {
+                "file": "workers.c",
+                "line": 22,
+                "snippet": "pthread_create(&a, 0, writer_a, 0);",
+                "snippet_sha256": "4637ffa18b236d4c1acb041efc926647702aaf52966181ce5152bfb694128012"
+              },
+              "evidence_ids": [
+                "ev_3b75122eccdc"
+              ],
+              "analysis_basis": "lexical_api_site",
+              "kind": "create",
+              "handle_expression": "&a",
+              "entry_function": "writer_a"
+            },
+            {
+              "id": "sync_site_41936d19178f1389",
+              "api": "pthread_create",
+              "function": "main",
+              "location": {
+                "file": "workers.c",
+                "line": 23,
+                "snippet": "pthread_create(&b, 0, writer_b, 0);",
+                "snippet_sha256": "6969499d9f4ceefdb3b5d02f654293e58a5aff3d543c652480c1377357c06e9a"
+              },
+              "evidence_ids": [
+                "ev_4979e2b8e968"
+              ],
+              "analysis_basis": "lexical_api_site",
+              "kind": "create",
+              "handle_expression": "&b",
+              "entry_function": "writer_b"
+            },
+            {
+              "id": "sync_site_b45567a17a493a8c",
+              "api": "pthread_join",
+              "function": "main",
+              "location": {
+                "file": "workers.c",
+                "line": 24,
+                "snippet": "pthread_join(a, 0);",
+                "snippet_sha256": "a91f7bb6b98fae9253c183d33b6f116309db09e567e353e1021815d47f6befa3"
+              },
+              "evidence_ids": [
+                "ev_d9a8d84c57dd"
+              ],
+              "analysis_basis": "lexical_api_site",
+              "kind": "join",
+              "handle_expression": "a"
+            },
+            {
+              "id": "sync_site_c7c0869f95c6e5cc",
+              "api": "pthread_join",
+              "function": "main",
+              "location": {
+                "file": "workers.c",
+                "line": 25,
+                "snippet": "pthread_join(b, 0);",
+                "snippet_sha256": "2eb157de5051816ecc652687b0be64d070745c556e54a07a3b20496b2f3030b4"
+              },
+              "evidence_ids": [
+                "ev_8709daefeb17"
+              ],
+              "analysis_basis": "lexical_api_site",
+              "kind": "join",
+              "handle_expression": "b"
+            }
+          ],
+          "lock_operations": [
+            {
+              "id": "sync_site_ad6e301096dc42b2",
+              "api": "pthread_mutex_lock",
+              "function": "writer_a",
+              "location": {
+                "file": "workers.c",
+                "line": 8,
+                "snippet": "pthread_mutex_lock(&mutex);",
+                "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+              },
+              "evidence_ids": [
+                "ev_43b77bf629af"
+              ],
+              "analysis_basis": "lexical_api_site",
+              "kind": "acquire",
+              "lock_expression": "&mutex",
+              "declaration_candidate_id": "global_338120ee782ace86"
+            },
+            {
+              "id": "sync_site_2fe159af16947ad5",
+              "api": "pthread_mutex_unlock",
+              "function": "writer_a",
+              "location": {
+                "file": "workers.c",
+                "line": 10,
+                "snippet": "pthread_mutex_unlock(&mutex);",
+                "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+              },
+              "evidence_ids": [
+                "ev_1b9842d0320c"
+              ],
+              "analysis_basis": "lexical_api_site",
+              "kind": "release",
+              "lock_expression": "&mutex",
+              "declaration_candidate_id": "global_338120ee782ace86"
+            },
+            {
+              "id": "sync_site_6951a4a5939da85b",
+              "api": "pthread_mutex_lock",
+              "function": "writer_b",
+              "location": {
+                "file": "workers.c",
+                "line": 15,
+                "snippet": "pthread_mutex_lock(&second_mutex);",
+                "snippet_sha256": "08065e3d47895eda49051fcc3e06577909eaa31fba0b23b228c61a49665138e3"
+              },
+              "evidence_ids": [
+                "ev_aae7ce59d2c5"
+              ],
+              "analysis_basis": "lexical_api_site",
+              "kind": "acquire",
+              "lock_expression": "&second_mutex",
+              "declaration_candidate_id": "global_88c50d129144aa72"
+            },
+            {
+              "id": "sync_site_7c7f6f1253ce8be5",
+              "api": "pthread_mutex_unlock",
+              "function": "writer_b",
+              "location": {
+                "file": "workers.c",
+                "line": 17,
+                "snippet": "pthread_mutex_unlock(&second_mutex);",
+                "snippet_sha256": "89c719f9c7ce623f1beef892e2db0255f43898a87d98b4f7b29504e1e85912a7"
+              },
+              "evidence_ids": [
+                "ev_68c421e40c93"
+              ],
+              "analysis_basis": "lexical_api_site",
+              "kind": "release",
+              "lock_expression": "&second_mutex",
+              "declaration_candidate_id": "global_88c50d129144aa72"
+            }
+          ]
+        },
+        "evidence_ids": [
+          "ev_15f4f886d729",
+          "ev_1b9842d0320c",
+          "ev_27d57ac18f86",
+          "ev_3b75122eccdc",
+          "ev_3e2fe2803210",
+          "ev_43b77bf629af",
+          "ev_4979e2b8e968",
+          "ev_4d4f8c32aa32",
+          "ev_68c421e40c93",
+          "ev_6a0e0951f542",
+          "ev_6a59caf35c62",
+          "ev_6d0836e076b1",
+          "ev_7ba8304725fa",
+          "ev_8709daefeb17",
+          "ev_903be66ae2bc",
+          "ev_97ecd25250a0",
+          "ev_aae7ce59d2c5",
+          "ev_b80f9333d3ff",
+          "ev_be4d26e242c3",
+          "ev_cf0813d2c179",
+          "ev_d8ab83107821",
+          "ev_d9a8d84c57dd",
+          "ev_e7d7370a0ec5",
+          "ev_f22e697c9d13",
+          "ev_f2a3cf71c04e",
+          "ev_f4e3ce5a5db3"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "ev_13d17277c23e",
+        "kind": "call_site",
+        "location": {
+          "file": "resource.c",
+          "line": 4,
+          "snippet": "free(buffer);",
+          "snippet_sha256": "bc2b3942f9ba1c6cb7a42e7c9a24ca0b2a732e7d6b212ea16ad0cae40db24e71"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_2d49537f88a5",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 28,
+          "snippet": "",
+          "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_4d4f8c32aa32",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 25,
+          "snippet": "pthread_join(b, 0);",
+          "snippet_sha256": "2eb157de5051816ecc652687b0be64d070745c556e54a07a3b20496b2f3030b4"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_6a59caf35c62",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 8,
+          "snippet": "pthread_mutex_lock(&mutex);",
+          "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_7ba8304725fa",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 10,
+          "snippet": "pthread_mutex_unlock(&mutex);",
+          "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_acd4417b6310",
+        "kind": "call_site",
+        "location": {
+          "file": "resource.c",
+          "line": 3,
+          "snippet": "char *buffer = malloc(32);",
+          "snippet_sha256": "6da3bbbce999aaa3043a5373dc90f44602ab04ee0af0032eb527100877c22210"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_be4d26e242c3",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 24,
+          "snippet": "pthread_join(a, 0);",
+          "snippet_sha256": "a91f7bb6b98fae9253c183d33b6f116309db09e567e353e1021815d47f6befa3"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_cf0813d2c179",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 22,
+          "snippet": "pthread_create(&a, 0, writer_a, 0);",
+          "snippet_sha256": "4637ffa18b236d4c1acb041efc926647702aaf52966181ce5152bfb694128012"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_d80acc32dae9",
+        "kind": "call_site",
+        "location": {
+          "file": "observe.c",
+          "line": 3,
+          "snippet": "allocate_temporary();",
+          "snippet_sha256": "3aa05981a039d6e0c4b9c81cf162ce6ea076b3520b546731d7bf637695e94f32"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_d8ab83107821",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 23,
+          "snippet": "pthread_create(&b, 0, writer_b, 0);",
+          "snippet_sha256": "6969499d9f4ceefdb3b5d02f654293e58a5aff3d543c652480c1377357c06e9a"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_f22e697c9d13",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 15,
+          "snippet": "pthread_mutex_lock(&second_mutex);",
+          "snippet_sha256": "08065e3d47895eda49051fcc3e06577909eaa31fba0b23b228c61a49665138e3"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_f2a3cf71c04e",
+        "kind": "call_site",
+        "location": {
+          "file": "workers.c",
+          "line": 17,
+          "snippet": "pthread_mutex_unlock(&second_mutex);",
+          "snippet_sha256": "89c719f9c7ce623f1beef892e2db0255f43898a87d98b4f7b29504e1e85912a7"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_bbda2423881a",
+        "kind": "assignment",
+        "location": {
+          "file": "resource.c",
+          "line": 3,
+          "snippet": "char *buffer = malloc(32);",
+          "snippet_sha256": "6da3bbbce999aaa3043a5373dc90f44602ab04ee0af0032eb527100877c22210"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_15f4f886d729",
+        "kind": "memory_access",
+        "location": {
+          "file": "workers.c",
+          "line": 10,
+          "snippet": "pthread_mutex_unlock(&mutex);",
+          "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_27d57ac18f86",
+        "kind": "memory_access",
+        "location": {
+          "file": "workers.c",
+          "line": 26,
+          "snippet": "return observe(counter);",
+          "snippet_sha256": "8d163a762c9ad837964964e7a4266c541df4da3bba57db34e72d748c55bd0b8f"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_6d0836e076b1",
+        "kind": "memory_access",
+        "location": {
+          "file": "workers.c",
+          "line": 17,
+          "snippet": "pthread_mutex_unlock(&second_mutex);",
+          "snippet_sha256": "89c719f9c7ce623f1beef892e2db0255f43898a87d98b4f7b29504e1e85912a7"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_903be66ae2bc",
+        "kind": "memory_access",
+        "location": {
+          "file": "workers.c",
+          "line": 8,
+          "snippet": "pthread_mutex_lock(&mutex);",
+          "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_97ecd25250a0",
+        "kind": "memory_access",
+        "location": {
+          "file": "workers.c",
+          "line": 9,
+          "snippet": "counter += 2;",
+          "snippet_sha256": "6ca04fb8a3e411a964ff8825a4779e7d123a32710cc6ff341b2b97bd4a9b2e0e"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_e7d7370a0ec5",
+        "kind": "memory_access",
+        "location": {
+          "file": "workers.c",
+          "line": 15,
+          "snippet": "pthread_mutex_lock(&second_mutex);",
+          "snippet_sha256": "08065e3d47895eda49051fcc3e06577909eaa31fba0b23b228c61a49665138e3"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_f4e3ce5a5db3",
+        "kind": "memory_access",
+        "location": {
+          "file": "workers.c",
+          "line": 16,
+          "snippet": "counter++;",
+          "snippet_sha256": "87fab714d442dfbe7b9c86da7d4231598a17afbcdcddf22d94e5d966f096e67f"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_3e2fe2803210",
+        "kind": "global_declaration",
+        "location": {
+          "file": "workers.c",
+          "line": 3,
+          "snippet": "int counter = 0;",
+          "snippet_sha256": "14e1aa13fb4a9fe2e2ff0a78610db4357c68c92a83c0fbf3dd937475f9f6da12"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_b80f9333d3ff",
+        "kind": "global_declaration",
+        "location": {
+          "file": "workers.c",
+          "line": 4,
+          "snippet": "pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;",
+          "snippet_sha256": "984d982a6c4e1c7e7b57ee344dd8c6b74f27eab6803d1f6982db5c831a18d323"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_6a0e0951f542",
+        "kind": "global_declaration",
+        "location": {
+          "file": "workers.c",
+          "line": 5,
+          "snippet": "pthread_mutex_t second_mutex = PTHREAD_MUTEX_INITIALIZER;",
+          "snippet_sha256": "72887624c1b8c56a95ac8aed8f2e18ac72e664e1b987162d54a6f1107555643c"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_43b77bf629af",
+        "kind": "synchronization_api",
+        "location": {
+          "file": "workers.c",
+          "line": 8,
+          "snippet": "pthread_mutex_lock(&mutex);",
+          "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_1b9842d0320c",
+        "kind": "synchronization_api",
+        "location": {
+          "file": "workers.c",
+          "line": 10,
+          "snippet": "pthread_mutex_unlock(&mutex);",
+          "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_aae7ce59d2c5",
+        "kind": "synchronization_api",
+        "location": {
+          "file": "workers.c",
+          "line": 15,
+          "snippet": "pthread_mutex_lock(&second_mutex);",
+          "snippet_sha256": "08065e3d47895eda49051fcc3e06577909eaa31fba0b23b228c61a49665138e3"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_68c421e40c93",
+        "kind": "synchronization_api",
+        "location": {
+          "file": "workers.c",
+          "line": 17,
+          "snippet": "pthread_mutex_unlock(&second_mutex);",
+          "snippet_sha256": "89c719f9c7ce623f1beef892e2db0255f43898a87d98b4f7b29504e1e85912a7"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_3b75122eccdc",
+        "kind": "synchronization_api",
+        "location": {
+          "file": "workers.c",
+          "line": 22,
+          "snippet": "pthread_create(&a, 0, writer_a, 0);",
+          "snippet_sha256": "4637ffa18b236d4c1acb041efc926647702aaf52966181ce5152bfb694128012"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_4979e2b8e968",
+        "kind": "synchronization_api",
+        "location": {
+          "file": "workers.c",
+          "line": 23,
+          "snippet": "pthread_create(&b, 0, writer_b, 0);",
+          "snippet_sha256": "6969499d9f4ceefdb3b5d02f654293e58a5aff3d543c652480c1377357c06e9a"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_d9a8d84c57dd",
+        "kind": "synchronization_api",
+        "location": {
+          "file": "workers.c",
+          "line": 24,
+          "snippet": "pthread_join(a, 0);",
+          "snippet_sha256": "a91f7bb6b98fae9253c183d33b6f116309db09e567e353e1021815d47f6befa3"
+        },
+        "role": "supports"
+      },
+      {
+        "id": "ev_8709daefeb17",
+        "kind": "synchronization_api",
+        "location": {
+          "file": "workers.c",
+          "line": 25,
+          "snippet": "pthread_join(b, 0);",
+          "snippet_sha256": "2eb157de5051816ecc652687b0be64d070745c556e54a07a3b20496b2f3030b4"
+        },
+        "role": "supports"
+      }
+    ],
+    "coverage": {
+      "complete": false,
+      "reason": "recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_lexical_object_bindings_require_alias_proof; recode_thread_instances_and_overlap_unproved; recode_path_sensitive_must_locksets_and_lock_order_unavailable",
+      "stopped_because": [
+        "recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+        "recode_lexical_object_bindings_require_alias_proof",
+        "recode_thread_instances_and_overlap_unproved",
+        "recode_path_sensitive_must_locksets_and_lock_order_unavailable"
+      ],
+      "omitted_record_count": 0,
+      "omitted_record_ids": []
+    },
+    "warnings": [],
+    "errors": []
+  },
+  "source_units": [
+    {
+      "path": "observe.c",
+      "revision": "31f2a0022f3bba56851ba5c255fd4a2224dd0571",
+      "content": "#include \"state.h\"\nint observe(int value) {\n    allocate_temporary();\n    return value + 1;\n}\n",
+      "sha256": "350b06c915679658e0c72a74f19346b7b203fe2513132d73c7b31f21235a44f0",
+      "source_sha256": "350b06c915679658e0c72a74f19346b7b203fe2513132d73c7b31f21235a44f0",
+      "content_kind": "full_file",
+      "source_ranges": [
+        {
+          "start_line": 1,
+          "end_line": 5
+        }
+      ],
+      "priority": 100,
+      "selection_reasons": [
+        "review_changed_file",
+        "review_changed_function",
+        "call_fact_evidence",
+        "call_fact_reference",
+        "concurrency_fact_evidence"
+      ],
+      "evidence_ids": [
+        "ev_d80acc32dae9"
+      ]
+    },
+    {
+      "path": "workers.c",
+      "revision": "31f2a0022f3bba56851ba5c255fd4a2224dd0571",
+      "content": "#include <pthread.h>\n#include \"state.h\"\nint counter = 0;\npthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;\npthread_mutex_t second_mutex = PTHREAD_MUTEX_INITIALIZER;\nvoid *writer_a(void *unused) {\n    (void)unused;\n    pthread_mutex_lock(&mutex);\n    counter += 2;\n    pthread_mutex_unlock(&mutex);\n    return 0;\n}\nvoid *writer_b(void *unused) {\n    (void)unused;\n    pthread_mutex_lock(&second_mutex);\n    counter++;\n    pthread_mutex_unlock(&second_mutex);\n    return 0;\n}\nint main(void) {\n    pthread_t a, b;\n    pthread_create(&a, 0, writer_a, 0);\n    pthread_create(&b, 0, writer_b, 0);\n    pthread_join(a, 0);\n    pthread_join(b, 0);\n    return observe(counter);\n}\n",
+      "sha256": "1a0d57dee9bd71a47400c44695ce1c7a2f64ab4fdc8862777edbf508b508de3d",
+      "source_sha256": "1a0d57dee9bd71a47400c44695ce1c7a2f64ab4fdc8862777edbf508b508de3d",
+      "content_kind": "full_file",
+      "source_ranges": [
+        {
+          "start_line": 1,
+          "end_line": 27
+        }
+      ],
+      "priority": 100,
+      "selection_reasons": [
+        "review_changed_file",
+        "call_fact_evidence",
+        "call_fact_reference",
+        "concurrency_fact_evidence",
+        "concurrency_fact_reference"
+      ],
+      "evidence_ids": [
+        "ev_2d49537f88a5",
+        "ev_4d4f8c32aa32",
+        "ev_6a59caf35c62",
+        "ev_7ba8304725fa",
+        "ev_be4d26e242c3",
+        "ev_cf0813d2c179",
+        "ev_d8ab83107821",
+        "ev_f22e697c9d13",
+        "ev_f2a3cf71c04e",
+        "ev_15f4f886d729",
+        "ev_27d57ac18f86",
+        "ev_6d0836e076b1",
+        "ev_903be66ae2bc",
+        "ev_97ecd25250a0",
+        "ev_e7d7370a0ec5",
+        "ev_f4e3ce5a5db3",
+        "ev_3e2fe2803210",
+        "ev_b80f9333d3ff",
+        "ev_6a0e0951f542",
+        "ev_43b77bf629af",
+        "ev_1b9842d0320c",
+        "ev_aae7ce59d2c5",
+        "ev_68c421e40c93",
+        "ev_3b75122eccdc",
+        "ev_4979e2b8e968",
+        "ev_d9a8d84c57dd",
+        "ev_8709daefeb17"
+      ]
+    },
+    {
+      "path": "resource.c",
+      "revision": "31f2a0022f3bba56851ba5c255fd4a2224dd0571",
+      "content": "#include <stdlib.h>\nvoid allocate_temporary(void) {\n    char *buffer = malloc(32);\n    free(buffer);\n}\n",
+      "sha256": "8fada808b270f012ce9085ba46a2d985259cd83826e7f9a0df865698b45b54f0",
+      "source_sha256": "8fada808b270f012ce9085ba46a2d985259cd83826e7f9a0df865698b45b54f0",
+      "content_kind": "full_file",
+      "source_ranges": [
+        {
+          "start_line": 1,
+          "end_line": 5
+        }
+      ],
+      "priority": 85,
+      "selection_reasons": [
+        "call_fact_evidence",
+        "call_fact_reference",
+        "concurrency_fact_evidence"
+      ],
+      "evidence_ids": [
+        "ev_13d17277c23e",
+        "ev_acd4417b6310",
+        "ev_bbda2423881a"
+      ]
+    }
+  ],
+  "evidence_index": {
+    "ev_13d17277c23e": {
+      "id": "ev_13d17277c23e",
+      "kind": "call_site",
+      "location": {
+        "file": "resource.c",
+        "line": 4,
+        "snippet": "free(buffer);",
+        "snippet_sha256": "bc2b3942f9ba1c6cb7a42e7c9a24ca0b2a732e7d6b212ea16ad0cae40db24e71"
+      },
+      "role": "supports"
+    },
+    "ev_2d49537f88a5": {
+      "id": "ev_2d49537f88a5",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 28,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    "ev_4d4f8c32aa32": {
+      "id": "ev_4d4f8c32aa32",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 25,
+        "snippet": "pthread_join(b, 0);",
+        "snippet_sha256": "2eb157de5051816ecc652687b0be64d070745c556e54a07a3b20496b2f3030b4"
+      },
+      "role": "supports"
+    },
+    "ev_6a59caf35c62": {
+      "id": "ev_6a59caf35c62",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 8,
+        "snippet": "pthread_mutex_lock(&mutex);",
+        "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+      },
+      "role": "supports"
+    },
+    "ev_7ba8304725fa": {
+      "id": "ev_7ba8304725fa",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 10,
+        "snippet": "pthread_mutex_unlock(&mutex);",
+        "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+      },
+      "role": "supports"
+    },
+    "ev_acd4417b6310": {
+      "id": "ev_acd4417b6310",
+      "kind": "call_site",
+      "location": {
+        "file": "resource.c",
+        "line": 3,
+        "snippet": "char *buffer = malloc(32);",
+        "snippet_sha256": "6da3bbbce999aaa3043a5373dc90f44602ab04ee0af0032eb527100877c22210"
+      },
+      "role": "supports"
+    },
+    "ev_be4d26e242c3": {
+      "id": "ev_be4d26e242c3",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 24,
+        "snippet": "pthread_join(a, 0);",
+        "snippet_sha256": "a91f7bb6b98fae9253c183d33b6f116309db09e567e353e1021815d47f6befa3"
+      },
+      "role": "supports"
+    },
+    "ev_cf0813d2c179": {
+      "id": "ev_cf0813d2c179",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 22,
+        "snippet": "pthread_create(&a, 0, writer_a, 0);",
+        "snippet_sha256": "4637ffa18b236d4c1acb041efc926647702aaf52966181ce5152bfb694128012"
+      },
+      "role": "supports"
+    },
+    "ev_d80acc32dae9": {
+      "id": "ev_d80acc32dae9",
+      "kind": "call_site",
+      "location": {
+        "file": "observe.c",
+        "line": 3,
+        "snippet": "allocate_temporary();",
+        "snippet_sha256": "3aa05981a039d6e0c4b9c81cf162ce6ea076b3520b546731d7bf637695e94f32"
+      },
+      "role": "supports"
+    },
+    "ev_d8ab83107821": {
+      "id": "ev_d8ab83107821",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 23,
+        "snippet": "pthread_create(&b, 0, writer_b, 0);",
+        "snippet_sha256": "6969499d9f4ceefdb3b5d02f654293e58a5aff3d543c652480c1377357c06e9a"
+      },
+      "role": "supports"
+    },
+    "ev_f22e697c9d13": {
+      "id": "ev_f22e697c9d13",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 15,
+        "snippet": "pthread_mutex_lock(&second_mutex);",
+        "snippet_sha256": "08065e3d47895eda49051fcc3e06577909eaa31fba0b23b228c61a49665138e3"
+      },
+      "role": "supports"
+    },
+    "ev_f2a3cf71c04e": {
+      "id": "ev_f2a3cf71c04e",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 17,
+        "snippet": "pthread_mutex_unlock(&second_mutex);",
+        "snippet_sha256": "89c719f9c7ce623f1beef892e2db0255f43898a87d98b4f7b29504e1e85912a7"
+      },
+      "role": "supports"
+    },
+    "ev_bbda2423881a": {
+      "id": "ev_bbda2423881a",
+      "kind": "assignment",
+      "location": {
+        "file": "resource.c",
+        "line": 3,
+        "snippet": "char *buffer = malloc(32);",
+        "snippet_sha256": "6da3bbbce999aaa3043a5373dc90f44602ab04ee0af0032eb527100877c22210"
+      },
+      "role": "supports"
+    },
+    "ev_15f4f886d729": {
+      "id": "ev_15f4f886d729",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 10,
+        "snippet": "pthread_mutex_unlock(&mutex);",
+        "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+      },
+      "role": "supports"
+    },
+    "ev_27d57ac18f86": {
+      "id": "ev_27d57ac18f86",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 26,
+        "snippet": "return observe(counter);",
+        "snippet_sha256": "8d163a762c9ad837964964e7a4266c541df4da3bba57db34e72d748c55bd0b8f"
+      },
+      "role": "supports"
+    },
+    "ev_6d0836e076b1": {
+      "id": "ev_6d0836e076b1",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 17,
+        "snippet": "pthread_mutex_unlock(&second_mutex);",
+        "snippet_sha256": "89c719f9c7ce623f1beef892e2db0255f43898a87d98b4f7b29504e1e85912a7"
+      },
+      "role": "supports"
+    },
+    "ev_903be66ae2bc": {
+      "id": "ev_903be66ae2bc",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 8,
+        "snippet": "pthread_mutex_lock(&mutex);",
+        "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+      },
+      "role": "supports"
+    },
+    "ev_97ecd25250a0": {
+      "id": "ev_97ecd25250a0",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 9,
+        "snippet": "counter += 2;",
+        "snippet_sha256": "6ca04fb8a3e411a964ff8825a4779e7d123a32710cc6ff341b2b97bd4a9b2e0e"
+      },
+      "role": "supports"
+    },
+    "ev_e7d7370a0ec5": {
+      "id": "ev_e7d7370a0ec5",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 15,
+        "snippet": "pthread_mutex_lock(&second_mutex);",
+        "snippet_sha256": "08065e3d47895eda49051fcc3e06577909eaa31fba0b23b228c61a49665138e3"
+      },
+      "role": "supports"
+    },
+    "ev_f4e3ce5a5db3": {
+      "id": "ev_f4e3ce5a5db3",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 16,
+        "snippet": "counter++;",
+        "snippet_sha256": "87fab714d442dfbe7b9c86da7d4231598a17afbcdcddf22d94e5d966f096e67f"
+      },
+      "role": "supports"
+    },
+    "ev_3e2fe2803210": {
+      "id": "ev_3e2fe2803210",
+      "kind": "global_declaration",
+      "location": {
+        "file": "workers.c",
+        "line": 3,
+        "snippet": "int counter = 0;",
+        "snippet_sha256": "14e1aa13fb4a9fe2e2ff0a78610db4357c68c92a83c0fbf3dd937475f9f6da12"
+      },
+      "role": "supports"
+    },
+    "ev_b80f9333d3ff": {
+      "id": "ev_b80f9333d3ff",
+      "kind": "global_declaration",
+      "location": {
+        "file": "workers.c",
+        "line": 4,
+        "snippet": "pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;",
+        "snippet_sha256": "984d982a6c4e1c7e7b57ee344dd8c6b74f27eab6803d1f6982db5c831a18d323"
+      },
+      "role": "supports"
+    },
+    "ev_6a0e0951f542": {
+      "id": "ev_6a0e0951f542",
+      "kind": "global_declaration",
+      "location": {
+        "file": "workers.c",
+        "line": 5,
+        "snippet": "pthread_mutex_t second_mutex = PTHREAD_MUTEX_INITIALIZER;",
+        "snippet_sha256": "72887624c1b8c56a95ac8aed8f2e18ac72e664e1b987162d54a6f1107555643c"
+      },
+      "role": "supports"
+    },
+    "ev_43b77bf629af": {
+      "id": "ev_43b77bf629af",
+      "kind": "synchronization_api",
+      "location": {
+        "file": "workers.c",
+        "line": 8,
+        "snippet": "pthread_mutex_lock(&mutex);",
+        "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+      },
+      "role": "supports"
+    },
+    "ev_1b9842d0320c": {
+      "id": "ev_1b9842d0320c",
+      "kind": "synchronization_api",
+      "location": {
+        "file": "workers.c",
+        "line": 10,
+        "snippet": "pthread_mutex_unlock(&mutex);",
+        "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+      },
+      "role": "supports"
+    },
+    "ev_aae7ce59d2c5": {
+      "id": "ev_aae7ce59d2c5",
+      "kind": "synchronization_api",
+      "location": {
+        "file": "workers.c",
+        "line": 15,
+        "snippet": "pthread_mutex_lock(&second_mutex);",
+        "snippet_sha256": "08065e3d47895eda49051fcc3e06577909eaa31fba0b23b228c61a49665138e3"
+      },
+      "role": "supports"
+    },
+    "ev_68c421e40c93": {
+      "id": "ev_68c421e40c93",
+      "kind": "synchronization_api",
+      "location": {
+        "file": "workers.c",
+        "line": 17,
+        "snippet": "pthread_mutex_unlock(&second_mutex);",
+        "snippet_sha256": "89c719f9c7ce623f1beef892e2db0255f43898a87d98b4f7b29504e1e85912a7"
+      },
+      "role": "supports"
+    },
+    "ev_3b75122eccdc": {
+      "id": "ev_3b75122eccdc",
+      "kind": "synchronization_api",
+      "location": {
+        "file": "workers.c",
+        "line": 22,
+        "snippet": "pthread_create(&a, 0, writer_a, 0);",
+        "snippet_sha256": "4637ffa18b236d4c1acb041efc926647702aaf52966181ce5152bfb694128012"
+      },
+      "role": "supports"
+    },
+    "ev_4979e2b8e968": {
+      "id": "ev_4979e2b8e968",
+      "kind": "synchronization_api",
+      "location": {
+        "file": "workers.c",
+        "line": 23,
+        "snippet": "pthread_create(&b, 0, writer_b, 0);",
+        "snippet_sha256": "6969499d9f4ceefdb3b5d02f654293e58a5aff3d543c652480c1377357c06e9a"
+      },
+      "role": "supports"
+    },
+    "ev_d9a8d84c57dd": {
+      "id": "ev_d9a8d84c57dd",
+      "kind": "synchronization_api",
+      "location": {
+        "file": "workers.c",
+        "line": 24,
+        "snippet": "pthread_join(a, 0);",
+        "snippet_sha256": "a91f7bb6b98fae9253c183d33b6f116309db09e567e353e1021815d47f6befa3"
+      },
+      "role": "supports"
+    },
+    "ev_8709daefeb17": {
+      "id": "ev_8709daefeb17",
+      "kind": "synchronization_api",
+      "location": {
+        "file": "workers.c",
+        "line": 25,
+        "snippet": "pthread_join(b, 0);",
+        "snippet_sha256": "2eb157de5051816ecc652687b0be64d070745c556e54a07a3b20496b2f3030b4"
+      },
+      "role": "supports"
+    }
+  },
+  "coverage": {
+    "complete": false,
+    "reason": "first-group status is partial; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_lexical_object_bindings_require_alias_proof; recode_thread_instances_and_overlap_unproved; recode_path_sensitive_must_locksets_and_lock_order_unavailable",
+    "unresolved_targets": [],
+    "skipped_files": []
+  },
+  "provenance": {
+    "controlled_input": true,
+    "input_mode": "public_context_manager",
+    "context_manager": {
+      "name": "v2-common.context_manager",
+      "version": "1.0"
+    },
+    "first_group": {
+      "call_run_id": "recode-cbug-integration-31f2a0022f3b:get_call_chains",
+      "domain_run_id": "recode-cbug-integration-31f2a0022f3b:get_sync_flows",
+      "graph_snapshot_id": "recode-40c8af6d7ee431c307ca3f98151da62c1ef2f6cdfe3d2583fbd298ce1ec3da4b"
+    }
+  },
+  "budget": {
+    "policy": "host_facts_with_separate_source_budget",
+    "limit": {
+      "total_chars": 240000,
+      "per_file_chars": 80000
+    },
+    "consumed": {
+      "fixed_chars": 57768,
+      "source_chars": 868,
+      "total_chars": 58636
+    },
+    "delivery": "host_analysis_artifact_not_model_prompt",
+    "truncated": false,
+    "omissions": [],
+    "excerpted_files": []
+  },
+  "agent_input_policy": {
+    "oracle_included": false,
+    "healthy_source_included": false,
+    "source_is_head_revision": true
+  }
+}

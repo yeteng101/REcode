@@ -1,0 +1,38 @@
+{
+  "schema_version": "concurrency-subagent-run.v1",
+  "status": "partial",
+  "candidate_count": 0,
+  "coverage": {
+    "complete": false,
+    "reason": "context_bundle:first-group status is partial; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated; recode_external_or_unavailable_source_records_omitted; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable; recode_external_or_unavailable_source_records_omitted",
+    "unresolved": [
+      "context_bundle:first-group status is partial; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated; recode_external_or_unavailable_source_records_omitted; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable; recode_external_or_unavailable_source_records_omitted",
+      "call_chains:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated; recode_external_or_unavailable_source_records_omitted",
+      "call_chains:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+      "call_chains:recode_bounded_call_subgraph_paths_not_enumerated",
+      "call_chains:recode_external_or_unavailable_source_records_omitted",
+      "sync_flows:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable; recode_external_or_unavailable_source_records_omitted",
+      "sync_flows:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+      "sync_flows:recode_object_declarations_and_aliases_unresolved",
+      "sync_flows:recode_execution_contexts_unresolved",
+      "sync_flows:recode_must_locksets_and_lock_order_unavailable",
+      "sync_flows:recode_external_or_unavailable_source_records_omitted",
+      "impact:no_shared_object_reached_from_change_roots"
+    ]
+  },
+  "budget_summary": {
+    "prepared_review_requests": 0,
+    "deferred_candidates": 0,
+    "unexamined_access_pairs": 0,
+    "automatic_batch_continuation": false
+  },
+  "outputs": {
+    "impact_scope": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\concurrency-acceptance\\lock-impact-scope.json",
+    "scoped_sync_flow": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\concurrency-acceptance\\scoped-sync-flow.json",
+    "candidate_bundle": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\concurrency-acceptance\\candidate-bundle.json",
+    "coordinator_state": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\concurrency-acceptance\\coordinator-state.json",
+    "review_requests": []
+  },
+  "next_step": "collect missing facts before claiming complete coverage",
+  "errors": []
+}

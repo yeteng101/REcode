@@ -1,0 +1,44 @@
+{
+  "schema_version": "review-input.v1",
+  "repository": {
+    "provider": "github",
+    "name": "cbug-integration/recode-contract",
+    "root": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\repository",
+    "commit_sha": "b95a58bf6837eaa5c471991811c39130e7880603",
+    "commit_role": "head",
+    "build_profile": "recode-linux-clang"
+  },
+  "review_target": {
+    "id": "github-pr-local-integration",
+    "kind": "github_pull_request",
+    "base_revision": "d345641d8634ee1af0ee679b7c924ac7078e9b54",
+    "head_revision": "b95a58bf6837eaa5c471991811c39130e7880603",
+    "url": "local:two-commit-integration",
+    "diff_base_revision": "d345641d8634ee1af0ee679b7c924ac7078e9b54"
+  },
+  "diff": {
+    "format": "unified",
+    "text": "diff --git a/observe.c b/observe.c\nindex 0c2a6d5..9e7f621 100644\n--- a/observe.c\n+++ b/observe.c\n@@ -1,5 +1,5 @@\n #include \"state.h\"\n int observe(int value) {\n     allocate_temporary();\n-    return value;\n+    return value + 1;\n }\ndiff --git a/workers.c b/workers.c\nindex b6540be..ea9ac1f 100644\n--- a/workers.c\n+++ b/workers.c\n@@ -5,7 +5,7 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;\n void *writer_a(void *unused) {\n     (void)unused;\n     pthread_mutex_lock(&mutex);\n-    counter++;\n+    counter += 2;\n     pthread_mutex_unlock(&mutex);\n     return 0;\n }\n",
+    "changed_files": [
+      "observe.c",
+      "workers.c"
+    ]
+  },
+  "changed_functions": [
+    {
+      "kind": "function",
+      "name": "observe",
+      "qualified_name": "observe",
+      "file": "observe.c",
+      "start_line": 2
+    }
+  ],
+  "agent_input_policy": {
+    "oracle_included": false,
+    "healthy_source_included": false,
+    "source_is_head_revision": true
+  },
+  "acquisition_coverage_gaps": [
+    "workers.c: changed head lines not assigned to a function: [8]"
+  ]
+}

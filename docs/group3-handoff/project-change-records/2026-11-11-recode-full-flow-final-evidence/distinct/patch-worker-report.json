@@ -1,0 +1,10 @@
+{
+  "schema_version": "lock-race-patch-worker-report/0.1",
+  "candidate_id": "race-6aedb8acec3a6472",
+  "summary": "Restored writer_b's acquisition and release of mutex so both counter updates share the initialized mutex. Preserved source line endings.",
+  "status": "edited",
+  "changed_files": [
+    "workers.c"
+  ],
+  "verification_status": "not_run"
+}

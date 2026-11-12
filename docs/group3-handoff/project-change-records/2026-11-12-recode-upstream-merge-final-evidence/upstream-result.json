@@ -1,0 +1,40 @@
+{
+  "tests": 127,
+  "failures": 2,
+  "errors": 0,
+  "skipped": 2,
+  "failed_tests": [
+    "test_pipeline.ClangPipelineTests.test_external_function_calls_are_preserved",
+    "test_pipeline.ClangPipelineTests.test_seven_stages_produce_evidence_graph"
+  ],
+  "errored_tests": [],
+  "exit_code": 1,
+  "image_id": "sha256:72e94d1851afe57935cefc3a56e817e990fa51ff10b5b90ea92b76c65a6eeb0c",
+  "argv": [
+    "docker",
+    "run",
+    "--rm",
+    "--pull=never",
+    "--network",
+    "none",
+    "--read-only",
+    "--cap-drop=ALL",
+    "--security-opt=no-new-privileges",
+    "--cpus",
+    "2",
+    "--memory",
+    "3g",
+    "--tmpfs",
+    "/tmp:rw,exec,size=1g,mode=1777",
+    "--mount",
+    "type=bind,src=D:\\JDProject\\REcode,dst=/input,readonly",
+    "--mount",
+    "type=bind,src=D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-regression-20261111\\upstream_runner.py,dst=/integration/runner.py,readonly",
+    "--env",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "sha256:72e94d1851afe57935cefc3a56e817e990fa51ff10b5b90ea92b76c65a6eeb0c",
+    "python3",
+    "/integration/runner.py"
+  ],
+  "runner_sha256": "34a98bc9363aa624974edf3b5f715456882274cf43beab55009c429f973b29d2"
+}

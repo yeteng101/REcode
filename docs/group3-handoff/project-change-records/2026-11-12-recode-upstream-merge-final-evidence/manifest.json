@@ -1,0 +1,538 @@
+{
+  "summary": {
+    "status": "passed",
+    "merge_head": "f14e4da3f872e0d24bb24389e3e8fc88c49b8a28",
+    "preserved_local_files": 13,
+    "upstream_changed_files": [
+      "README.md",
+      "scripts/audit_external_failures.py",
+      "validation/external/README.md",
+      "validation/external/results/failure-audit.json",
+      "validation/external/results/failure-audit.md"
+    ],
+    "variants": [
+      {
+        "variant": "common",
+        "head_sha": "926ed8a5ddf406e50c3dcf5ee955b13c8c3f6751",
+        "candidate_count": 0,
+        "reviewed_count": 0,
+        "coverage_complete": true,
+        "reviews": []
+      },
+      {
+        "variant": "missing",
+        "head_sha": "22c1e66409b78c14d8e00511e1361dcf3c900d17",
+        "candidate_count": 1,
+        "reviewed_count": 1,
+        "coverage_complete": true,
+        "reviews": [
+          {
+            "verdict": "defect",
+            "status": "probable"
+          }
+        ]
+      },
+      {
+        "variant": "distinct",
+        "head_sha": "e0afc7adb828e08dd89fda306cf06ac76b8eff0a",
+        "candidate_count": 1,
+        "reviewed_count": 1,
+        "coverage_complete": true,
+        "reviews": [
+          {
+            "verdict": "defect",
+            "status": "probable"
+          }
+        ]
+      }
+    ],
+    "schema_objects": 28,
+    "evidence_files": 63,
+    "framework_tests": 315,
+    "registered_reviewer_invocations": 2,
+    "image_id": "sha256:72e94d1851afe57935cefc3a56e817e990fa51ff10b5b90ea92b76c65a6eeb0c",
+    "image_source_sha256": {
+      "native_export.py": "bce11a323d15cccfd810a07e9f1939c4af44f26dcd1d781d9aa5027fbf76e92c",
+      "race_detector.py": "1cfa02bd604a3393234b4641991064da6b0c5a854c37d5461dc89c14dc07fcaf",
+      "repo_agent.py": "c6bd40cf39fdf5ae590d35293fb266662e0b1c3d171626b6b6c9b8f1367da223",
+      "sandbox.py": "4a7493285fe7e095778d8fe92fe898b47ba3fedbeb81c4a6d6069c3f2c663f52",
+      "sandbox_entry.py": "c20db70cfb09f182020d4898ce3528fe9eb31472a96b195b9a9bf8a2858e6f1d",
+      "stages.py": "50f312b312e448b47c7a11578ab86a700c6fc3b4e22d9785ddddd0aab161c9f2",
+      "concurrency_facts.py": "1ce90d1abef4a8e88e0f2ddf1f23a08c217d60f788e3bb72e52f9f58c3c47aeb",
+      "semantic_sync.py": "764dccb60e5357f460263e21f4fd7565950670972edd79fe1bdcf3eaa6c9ab8c"
+    },
+    "local_limits_invalid_payloads_rejected": 6,
+    "upstream_suite": {
+      "status": "failed",
+      "tests": 127,
+      "passed": 123,
+      "failed": 2,
+      "skipped": 2,
+      "errors": 0
+    },
+    "scope": "Three four-file constructed C PRs, real HTTP/SQLite/object-store/native Docker extraction; two registered model reviews and deterministic result acceptance.",
+    "patch_generation": "not_run",
+    "large_repository_evaluation": "not_run",
+    "production_download_runner": "not_run",
+    "remote_schema_retrieval": "disabled"
+  },
+  "files": [
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\native_export.py",
+      "path": "sources/REcode/native_export.py",
+      "sha256": "bce11a323d15cccfd810a07e9f1939c4af44f26dcd1d781d9aa5027fbf76e92c"
+    },
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\race_detector.py",
+      "path": "sources/REcode/race_detector.py",
+      "sha256": "1cfa02bd604a3393234b4641991064da6b0c5a854c37d5461dc89c14dc07fcaf"
+    },
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\repo_agent.py",
+      "path": "sources/REcode/repo_agent.py",
+      "sha256": "c6bd40cf39fdf5ae590d35293fb266662e0b1c3d171626b6b6c9b8f1367da223"
+    },
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\sandbox.py",
+      "path": "sources/REcode/sandbox.py",
+      "sha256": "4a7493285fe7e095778d8fe92fe898b47ba3fedbeb81c4a6d6069c3f2c663f52"
+    },
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\sandbox_entry.py",
+      "path": "sources/REcode/sandbox_entry.py",
+      "sha256": "c20db70cfb09f182020d4898ce3528fe9eb31472a96b195b9a9bf8a2858e6f1d"
+    },
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\stages.py",
+      "path": "sources/REcode/stages.py",
+      "sha256": "50f312b312e448b47c7a11578ab86a700c6fc3b4e22d9785ddddd0aab161c9f2"
+    },
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\concurrency_facts.py",
+      "path": "sources/REcode/concurrency_facts.py",
+      "sha256": "1ce90d1abef4a8e88e0f2ddf1f23a08c217d60f788e3bb72e52f9f58c3c47aeb"
+    },
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\semantic_sync.py",
+      "path": "sources/REcode/semantic_sync.py",
+      "sha256": "764dccb60e5357f460263e21f4fd7565950670972edd79fe1bdcf3eaa6c9ab8c"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\http\\recode-artifacts\\job_0b4427faa65f4fb9a0e2aba3f43b2044-35qmnuwl\\external\\call-chains.json",
+      "path": "common/native/call-chains.json",
+      "sha256": "f7de1428697027e1b6ba1456cb41bc863a9cdbc7821615f8e2f900392bb868f8"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\http\\recode-artifacts\\job_0b4427faa65f4fb9a0e2aba3f43b2044-35qmnuwl\\external\\resource-flow.json",
+      "path": "common/native/resource-flow.json",
+      "sha256": "400a752941d99c0e2d97246b07eaa3ffefb0f36507a443ca8051f493e8f5ef73"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\http\\recode-artifacts\\job_0b4427faa65f4fb9a0e2aba3f43b2044-35qmnuwl\\external\\sync-relations.json",
+      "path": "common/native/sync-relations.json",
+      "sha256": "ee4939948e1ec986f99247d0e7d4dd86ddaf3f65493828e5167df3dc047ad041"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\http\\recode-artifacts\\job_0b4427faa65f4fb9a0e2aba3f43b2044-35qmnuwl\\external\\race-analysis.json",
+      "path": "common/native/race-analysis.json",
+      "sha256": "275e263400caeed2361bc007e78bf36489fc1f764cbe8ac2cc148d475057d6b0"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\concurrency\\candidate-bundle.json",
+      "path": "common/concurrency/candidate-bundle.json",
+      "sha256": "aa09ad39a3650d41ae718ae40b4d25679e3c153ffbb10b48fa20413829407ab2"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\concurrency\\lock-impact-scope.json",
+      "path": "common/concurrency/lock-impact-scope.json",
+      "sha256": "e8ec294b3b37f48b5cfae208962b475749d160eea5fbce809688a2c27f78d33c"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\concurrency\\coordinator-state.json",
+      "path": "common/concurrency/coordinator-state.json",
+      "sha256": "4a436c4d057d843d0363c015164f03910103b46bfae2d60a83a7b90806ec8041"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\concurrency\\coordinator-result.json",
+      "path": "common/concurrency/coordinator-result.json",
+      "sha256": "33f5279ebf6e69e39ff4c7d7f130f9671d8ea823bcd329784472a45ad0204a5d"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\summary.json",
+      "path": "common/summary.json",
+      "sha256": "3623de0963171626d2601cd435908970bbab3b3a00f9d70216117b32649dae17"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\review-input.json",
+      "path": "common/review-input.json",
+      "sha256": "4a7a0afdca15a5dff1bc971e1aba9fca1c28f2168d0debe1cdbf8f32d75f227b"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\http\\concurrency-context-bundle.json",
+      "path": "common/context-bundle.json",
+      "sha256": "fb50a79d0aca039fed468a3595c5232112dd35b487758f34029e9b9785935201"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\http\\coordination-report.json",
+      "path": "common/coordination-report.json",
+      "sha256": "b15cc6e4b164c24f405eeb8017def73170e1c818be2d7a01fd3302778bce6340"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\native-analysis.log",
+      "path": "common/native-analysis.log",
+      "sha256": "795c16a206e9b786e7483f7cf4395ac8447ec84f98dd6c106274a4e908d91b33"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\http\\recode-artifacts\\job_43b21342335748289ec1201f89f9e76f-t9eu1br5\\external\\call-chains.json",
+      "path": "missing/native/call-chains.json",
+      "sha256": "745954a053f8de75f420dffea13b4fa457dbc7c92860f7958d637fde41166d67"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\http\\recode-artifacts\\job_43b21342335748289ec1201f89f9e76f-t9eu1br5\\external\\resource-flow.json",
+      "path": "missing/native/resource-flow.json",
+      "sha256": "5c9683a75095bd43e0d747b474ffd4521eedb6805ddac435e885cafb330b6bb6"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\http\\recode-artifacts\\job_43b21342335748289ec1201f89f9e76f-t9eu1br5\\external\\sync-relations.json",
+      "path": "missing/native/sync-relations.json",
+      "sha256": "009f604a2b0d9473c467d9c040910ad56833f6b74641e4ee3d01d9bfd964270a"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\http\\recode-artifacts\\job_43b21342335748289ec1201f89f9e76f-t9eu1br5\\external\\race-analysis.json",
+      "path": "missing/native/race-analysis.json",
+      "sha256": "07b62c3a5d5dc01aae6bf1977f77f5598f52b13bb5e03dc09710b23e90a011cb"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\concurrency\\candidate-bundle.json",
+      "path": "missing/concurrency/candidate-bundle.json",
+      "sha256": "908244b4e0d526a20757301eacf19bee32e6f30e0a5aeebd30237459e778a0ab"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\concurrency\\lock-impact-scope.json",
+      "path": "missing/concurrency/lock-impact-scope.json",
+      "sha256": "54889446f79ba94e6c31e2757c58a6f048e599085f2b3f6fbc893d685d923db9"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\concurrency\\coordinator-state.json",
+      "path": "missing/concurrency/coordinator-state.json",
+      "sha256": "e23dc7ee1f6a4dc195b3a7719d38b8e53124d25b44ba44e3aa41dafc66a96873"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\concurrency\\coordinator-result.json",
+      "path": "missing/concurrency/coordinator-result.json",
+      "sha256": "f3f29aa2269dc41dbcdbda346db45c2500ae1ec97e810f2234ec0192be7c0432"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\concurrency\\review-requests\\race-1a47d1b2dea759da.json",
+      "path": "missing/concurrency/review-requests/race-1a47d1b2dea759da.json",
+      "sha256": "f8584c74d8173f141f88849aa39b9c6d7792aab61082481836b7325d7a0db415"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\concurrency\\review-results\\race-1a47d1b2dea759da.json",
+      "path": "missing/concurrency/review-results/race-1a47d1b2dea759da.json",
+      "sha256": "0eb8718a2a6b99660f65600115dd4a78b6cb453522b9797c2ca9271c54946d95"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\summary.json",
+      "path": "missing/summary.json",
+      "sha256": "46f2ab33bd2b954551c57bbd3bba83335f7395dd0030f2e1b54e38ea48dfb7ce"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\review-input.json",
+      "path": "missing/review-input.json",
+      "sha256": "89d677767f8030fe7b21b32646825d65f4603adb8a8f5a1f964235bee094a837"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\http\\concurrency-context-bundle.json",
+      "path": "missing/context-bundle.json",
+      "sha256": "a3d9ba480f747fcab54999e5aff903124b0743d2cb61216b0facb95c51f599fc"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\http\\coordination-report.json",
+      "path": "missing/coordination-report.json",
+      "sha256": "20566229df4feeb31af005d5be77ed40f5845c662a67602d6d98a8f997421487"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\native-analysis.log",
+      "path": "missing/native-analysis.log",
+      "sha256": "2aa7b23ea6c0af4d664219b7b80fad2fffe30790cc6bb086ee5f2b8f4e3adcc4"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\http\\recode-artifacts\\job_f4615d405e90434586923739ac81d990-qxxvu3g3\\external\\call-chains.json",
+      "path": "distinct/native/call-chains.json",
+      "sha256": "5432ab17ea075483e7cd8cc250552838411b23ea3e1d0ba249c54d0a8806e815"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\http\\recode-artifacts\\job_f4615d405e90434586923739ac81d990-qxxvu3g3\\external\\resource-flow.json",
+      "path": "distinct/native/resource-flow.json",
+      "sha256": "a9acca654b0b64d6b1e8d7771c288f82645f4c2b40bb536f3be7d644adfe7832"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\http\\recode-artifacts\\job_f4615d405e90434586923739ac81d990-qxxvu3g3\\external\\sync-relations.json",
+      "path": "distinct/native/sync-relations.json",
+      "sha256": "5462359122928298b9ca8e7d1e9e42fecd0cfeaa63a888ac6fd485e8b53bde01"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\http\\recode-artifacts\\job_f4615d405e90434586923739ac81d990-qxxvu3g3\\external\\race-analysis.json",
+      "path": "distinct/native/race-analysis.json",
+      "sha256": "ef831a0c2ea7676e81768450a53811e399a759bcf4d54010361de8a40e389902"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\concurrency\\candidate-bundle.json",
+      "path": "distinct/concurrency/candidate-bundle.json",
+      "sha256": "7bb4e0de586da0bdaf00ce7b98191d5e30f31a6f5636bf9316aacce2fc1a06eb"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\concurrency\\lock-impact-scope.json",
+      "path": "distinct/concurrency/lock-impact-scope.json",
+      "sha256": "b91f04007820c3f254d00a6b69e3dd7ddae9af754f99a32199ee1b5c79683c29"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\concurrency\\coordinator-state.json",
+      "path": "distinct/concurrency/coordinator-state.json",
+      "sha256": "d81b9ef92906ba85c8f923844467aa8bf2befbf882f2151409f54b3158837a8e"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\concurrency\\coordinator-result.json",
+      "path": "distinct/concurrency/coordinator-result.json",
+      "sha256": "b26aef93e4a241dc948240204eabaf1e27580d660fbe4ebb519efbda680feabe"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\concurrency\\review-requests\\race-6aedb8acec3a6472.json",
+      "path": "distinct/concurrency/review-requests/race-6aedb8acec3a6472.json",
+      "sha256": "76d29c24e38803f749c273b69f604b6e11e568fc53ad8827294ab3a98f74789c"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\concurrency\\review-results\\race-6aedb8acec3a6472.json",
+      "path": "distinct/concurrency/review-results/race-6aedb8acec3a6472.json",
+      "sha256": "9fd999b7c1f2e29a425b9bf27b40fdc707ee6bc36a8bbd1a97d93dff9d0e328f"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\summary.json",
+      "path": "distinct/summary.json",
+      "sha256": "0738270d2f3a8ef24bd2a9f24bc99ee309922027d1b5b91de36a8967b3219e4d"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\review-input.json",
+      "path": "distinct/review-input.json",
+      "sha256": "17bc59ad74375d1897c9433fa7dcd152db04e58e2b255f8ef10b80fcdf5d2c6b"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\http\\concurrency-context-bundle.json",
+      "path": "distinct/context-bundle.json",
+      "sha256": "d4480e27975507d8aab7f21ff8a8fd86269f4861894509f2c91a93a36ee76f21"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\http\\coordination-report.json",
+      "path": "distinct/coordination-report.json",
+      "sha256": "325737c5a6298d32cd5cf02f9438f717f679156042e28433b0efa63a68c30685"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\native-analysis.log",
+      "path": "distinct/native-analysis.log",
+      "sha256": "09d7e1885ec371a4cebd0dfc23880dcdfb97439f0d9239396dc38a7ecf6c3f9f"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\merge-record.json",
+      "path": "merge-record.json",
+      "sha256": "71892ebcb74e1acea1570fb0b2cc36be23838abe9d78b582e07fdb010d63d901"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\local-before.patch",
+      "path": "local-before.patch",
+      "sha256": "9a814510d623f3ebc606e25266c92c2c03912dd75777aef6b0df60ebc3ccc88b"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\upstream-update.json",
+      "path": "upstream-update.json",
+      "sha256": "57060feb3bb2428993bdfdf2d2c724def3516a20195c17f5ff060f6b9f8d860e"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\upstream-commit.txt",
+      "path": "upstream-commit.txt",
+      "sha256": "a771b3d4fd639efe833b81947c500398da989703f212f7ef26a91621137ec4d7"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\framework-final\\result.json",
+      "path": "framework-result.json",
+      "sha256": "180d77b2cbf4ae4f9d6717686e85ec32fc076a763ca3523abbd1059fb246b0a5"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\upstream-result.json",
+      "path": "upstream-result.json",
+      "sha256": "fa047d4a7ae0085fef6762118b2175a18b94597667fe2ae312d7d9418e96e8d0"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\upstream-full.log",
+      "path": "upstream-full.log",
+      "sha256": "79c7e9ae7b318fbe34230ab9b62ec4085f56c16921c1138a549420b196d6bf6f"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\audit.py",
+      "path": "audit.py",
+      "sha256": "76768710a6bdbe95bf88b9bfcc01edf16b829ff1650beeb90c708b768f969bea"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\audit-initial-error.json",
+      "path": "audit-initial-error.json",
+      "sha256": "2048358741489c90bad1ab2e933004a1bb4867ce17601d5f22e6dda59bf55539"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\impact-schema-before.json",
+      "path": "impact-schema-before.json",
+      "sha256": "b1e4dc10f322f8e47d71ed81d6c2b4520b006b814054108f41569e8df838267f"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-impact-scope.schema.json",
+      "path": "impact-schema-final.json",
+      "sha256": "1a128c0f9ce50b426802e9090c16b84d72e14f645cebba209b8f6072ba17f500"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\test_race_pair_correctness.py",
+      "path": "sources/test_race_pair_correctness.py",
+      "sha256": "7dd7c8cdf0b0845c9246bb158a5ee3a046a9382ae506ecdef5ff553024f67ffc"
+    }
+  ],
+  "schema_checks": [
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\http\\recode-artifacts\\job_0b4427faa65f4fb9a0e2aba3f43b2044-35qmnuwl\\external\\call-chains.json",
+      "sha256": "f7de1428697027e1b6ba1456cb41bc863a9cdbc7821615f8e2f900392bb868f8",
+      "schema": "D:\\JDProject\\REcode\\schemas\\call-chains.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\http\\recode-artifacts\\job_0b4427faa65f4fb9a0e2aba3f43b2044-35qmnuwl\\external\\resource-flow.json",
+      "sha256": "400a752941d99c0e2d97246b07eaa3ffefb0f36507a443ca8051f493e8f5ef73",
+      "schema": "D:\\JDProject\\REcode\\schemas\\resource-flow.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\http\\recode-artifacts\\job_0b4427faa65f4fb9a0e2aba3f43b2044-35qmnuwl\\external\\sync-relations.json",
+      "sha256": "ee4939948e1ec986f99247d0e7d4dd86ddaf3f65493828e5167df3dc047ad041",
+      "schema": "D:\\JDProject\\REcode\\schemas\\sync-relations.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\http\\recode-artifacts\\job_0b4427faa65f4fb9a0e2aba3f43b2044-35qmnuwl\\external\\race-analysis.json",
+      "sha256": "275e263400caeed2361bc007e78bf36489fc1f764cbe8ac2cc148d475057d6b0",
+      "schema": "D:\\JDProject\\REcode\\schemas\\race-analysis.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\concurrency\\candidate-bundle.json",
+      "sha256": "aa09ad39a3650d41ae718ae40b4d25679e3c153ffbb10b48fa20413829407ab2",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\race-candidates.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\concurrency\\lock-impact-scope.json",
+      "sha256": "e8ec294b3b37f48b5cfae208962b475749d160eea5fbce809688a2c27f78d33c",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-impact-scope.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\concurrency\\coordinator-state.json",
+      "sha256": "4a436c4d057d843d0363c015164f03910103b46bfae2d60a83a7b90806ec8041",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-coordinator-state.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\concurrency\\coordinator-result.json",
+      "sha256": "33f5279ebf6e69e39ff4c7d7f130f9671d8ea823bcd329784472a45ad0204a5d",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-coordinator-result.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\http\\recode-artifacts\\job_43b21342335748289ec1201f89f9e76f-t9eu1br5\\external\\call-chains.json",
+      "sha256": "745954a053f8de75f420dffea13b4fa457dbc7c92860f7958d637fde41166d67",
+      "schema": "D:\\JDProject\\REcode\\schemas\\call-chains.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\http\\recode-artifacts\\job_43b21342335748289ec1201f89f9e76f-t9eu1br5\\external\\resource-flow.json",
+      "sha256": "5c9683a75095bd43e0d747b474ffd4521eedb6805ddac435e885cafb330b6bb6",
+      "schema": "D:\\JDProject\\REcode\\schemas\\resource-flow.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\http\\recode-artifacts\\job_43b21342335748289ec1201f89f9e76f-t9eu1br5\\external\\sync-relations.json",
+      "sha256": "009f604a2b0d9473c467d9c040910ad56833f6b74641e4ee3d01d9bfd964270a",
+      "schema": "D:\\JDProject\\REcode\\schemas\\sync-relations.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\http\\recode-artifacts\\job_43b21342335748289ec1201f89f9e76f-t9eu1br5\\external\\race-analysis.json",
+      "sha256": "07b62c3a5d5dc01aae6bf1977f77f5598f52b13bb5e03dc09710b23e90a011cb",
+      "schema": "D:\\JDProject\\REcode\\schemas\\race-analysis.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\concurrency\\candidate-bundle.json",
+      "sha256": "908244b4e0d526a20757301eacf19bee32e6f30e0a5aeebd30237459e778a0ab",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\race-candidates.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\concurrency\\lock-impact-scope.json",
+      "sha256": "54889446f79ba94e6c31e2757c58a6f048e599085f2b3f6fbc893d685d923db9",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-impact-scope.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\concurrency\\coordinator-state.json",
+      "sha256": "e23dc7ee1f6a4dc195b3a7719d38b8e53124d25b44ba44e3aa41dafc66a96873",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-coordinator-state.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\concurrency\\coordinator-result.json",
+      "sha256": "f3f29aa2269dc41dbcdbda346db45c2500ae1ec97e810f2234ec0192be7c0432",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-coordinator-result.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\concurrency\\review-requests\\race-1a47d1b2dea759da.json",
+      "sha256": "f8584c74d8173f141f88849aa39b9c6d7792aab61082481836b7325d7a0db415",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review-request.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\missing\\concurrency\\review-results\\race-1a47d1b2dea759da.json",
+      "sha256": "0eb8718a2a6b99660f65600115dd4a78b6cb453522b9797c2ca9271c54946d95",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\http\\recode-artifacts\\job_f4615d405e90434586923739ac81d990-qxxvu3g3\\external\\call-chains.json",
+      "sha256": "5432ab17ea075483e7cd8cc250552838411b23ea3e1d0ba249c54d0a8806e815",
+      "schema": "D:\\JDProject\\REcode\\schemas\\call-chains.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\http\\recode-artifacts\\job_f4615d405e90434586923739ac81d990-qxxvu3g3\\external\\resource-flow.json",
+      "sha256": "a9acca654b0b64d6b1e8d7771c288f82645f4c2b40bb536f3be7d644adfe7832",
+      "schema": "D:\\JDProject\\REcode\\schemas\\resource-flow.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\http\\recode-artifacts\\job_f4615d405e90434586923739ac81d990-qxxvu3g3\\external\\sync-relations.json",
+      "sha256": "5462359122928298b9ca8e7d1e9e42fecd0cfeaa63a888ac6fd485e8b53bde01",
+      "schema": "D:\\JDProject\\REcode\\schemas\\sync-relations.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\http\\recode-artifacts\\job_f4615d405e90434586923739ac81d990-qxxvu3g3\\external\\race-analysis.json",
+      "sha256": "ef831a0c2ea7676e81768450a53811e399a759bcf4d54010361de8a40e389902",
+      "schema": "D:\\JDProject\\REcode\\schemas\\race-analysis.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\concurrency\\candidate-bundle.json",
+      "sha256": "7bb4e0de586da0bdaf00ce7b98191d5e30f31a6f5636bf9316aacce2fc1a06eb",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\race-candidates.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\concurrency\\lock-impact-scope.json",
+      "sha256": "b91f04007820c3f254d00a6b69e3dd7ddae9af754f99a32199ee1b5c79683c29",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-impact-scope.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\concurrency\\coordinator-state.json",
+      "sha256": "d81b9ef92906ba85c8f923844467aa8bf2befbf882f2151409f54b3158837a8e",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-coordinator-state.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\concurrency\\coordinator-result.json",
+      "sha256": "b26aef93e4a241dc948240204eabaf1e27580d660fbe4ebb519efbda680feabe",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-coordinator-result.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\concurrency\\review-requests\\race-6aedb8acec3a6472.json",
+      "sha256": "76d29c24e38803f749c273b69f604b6e11e568fc53ad8827294ab3a98f74789c",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review-request.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\concurrency\\review-results\\race-6aedb8acec3a6472.json",
+      "sha256": "9fd999b7c1f2e29a425b9bf27b40fdc707ee6bc36a8bbd1a97d93dff9d0e328f",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review.schema.json"
+    }
+  ]
+}

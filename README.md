@@ -1,5 +1,7 @@
 # 周会内容（2026-10-29）
 
+> 第三组对接（2026-11-12）：[代码修改、请求链、量化测试结果与对齐材料](docs/group3-handoff/README.md)
+
 > 沙箱与可观测性（2026-11-04）：[Docker 隔离、Dashboard、Trace、指标与告警](docs/security-observability.md)
 >
 > 生产任务系统（2026-11-04）：[运行、持久化队列、S3 与清理](docs/production-jobs.md)

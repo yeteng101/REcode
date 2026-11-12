@@ -8,6 +8,7 @@ from .compiler_facts import extract_build_profile, optimized_ir_facts
 from .knowledge_graph import build_knowledge_graph
 from .log_facts import collect_log_facts
 from .race_detector import analyze_race_source
+from .semantic_sync import analyze_semantic_sync
 from .resource_flow import analyze_resource_flow
 from .sync_flow import analyze_sync_relations
 from .visualization import write_visualization
@@ -53,6 +54,13 @@ def run_native_export(
         if compile_commands_path.exists()
         else []
     )
+    if source_root and compile_commands:
+        try:
+            semantic_sync = analyze_semantic_sync(workspace_path, source_root)
+            race_analysis["semantic_sync"] = {key: value for key, value in semantic_sync.items() if key != "evidence"}
+            race_analysis["evidence"].extend(semantic_sync["evidence"])
+        except (OSError, ValueError, KeyError, TypeError, RecursionError) as exc:
+            race_analysis["warnings"].append("semantic_sync_failed:" + type(exc).__name__ + ":" + str(exc))
     build_profile = extract_build_profile(
         compile_commands,
         source_root or request.get("repo_root") or Path.cwd(),

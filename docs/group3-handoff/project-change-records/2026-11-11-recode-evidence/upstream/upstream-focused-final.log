@@ -1,0 +1,22 @@
+test_c_unit_uses_compiler_json_ast_when_compact_api_is_unavailable (clang_pipeline.tests.test_ast_fallback.AstFallbackTests.test_c_unit_uses_compiler_json_ast_when_compact_api_is_unavailable) ... ok
+test_missing_optional_libclang_does_not_prevent_stage_import (clang_pipeline.tests.test_ast_fallback.AstFallbackTests.test_missing_optional_libclang_does_not_prevent_stage_import) ... ok
+test_snapshot_binding_rejects_mutable_commit (clang_pipeline.tests.test_snapshot_identity.SnapshotIdentityTests.test_snapshot_binding_rejects_mutable_commit) ... ok
+test_snapshot_binding_requires_safe_archive_mode (clang_pipeline.tests.test_snapshot_identity.SnapshotIdentityTests.test_snapshot_binding_requires_safe_archive_mode) ... ok
+test_configured_api_defaults_disable_local_paths (clang_pipeline.tests.test_job_http.JobHTTPTests.test_configured_api_defaults_disable_local_paths) ... ok
+test_idempotency_conflict_status_and_downloads (clang_pipeline.tests.test_job_http.JobHTTPTests.test_idempotency_conflict_status_and_downloads) ... ok
+test_missing_object_and_bad_options (clang_pipeline.tests.test_job_http.JobHTTPTests.test_missing_object_and_bad_options) ... ok
+test_archive_escape_links_and_expansion_limits (clang_pipeline.tests.test_security.SecurityTests.test_archive_escape_links_and_expansion_limits) ... ok
+test_command_cancellation_terminates_client_process (clang_pipeline.tests.test_security.SecurityTests.test_command_cancellation_terminates_client_process) ... ok
+test_container_policy_and_no_host_fallback (clang_pipeline.tests.test_security.SecurityTests.test_container_policy_and_no_host_fallback) ... ok
+test_github_only_and_ref_validation (clang_pipeline.tests.test_security.SecurityTests.test_github_only_and_ref_validation) ... ok
+test_private_endpoint_dns_is_denied (clang_pipeline.tests.test_security.SecurityTests.test_private_endpoint_dns_is_denied) ... ok
+test_repository_instruction_and_secret_files_not_imported (clang_pipeline.tests.test_security.SecurityTests.test_repository_instruction_and_secret_files_not_imported) ... ok
+test_safe_build_never_uses_repository_commands (clang_pipeline.tests.test_security.SecurityTests.test_safe_build_never_uses_repository_commands) ... ok
+test_secret_redaction (clang_pipeline.tests.test_security.SecurityTests.test_secret_redaction) ... ok
+test_skipped_entries_still_count_toward_expansion_quota (clang_pipeline.tests.test_security.SecurityTests.test_skipped_entries_still_count_toward_expansion_quota) ... ok
+test_source_tool_cannot_escape_repository (clang_pipeline.tests.test_security.SecurityTests.test_source_tool_cannot_escape_repository) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 2.055s
+
+OK

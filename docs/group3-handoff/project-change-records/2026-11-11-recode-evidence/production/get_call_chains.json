@@ -1,0 +1,2906 @@
+{
+  "schema_version": "1.0",
+  "run_id": "run_repository_1794381859:get_call_chains",
+  "task_id": "recode-service-acceptance:get_call_chains",
+  "status": "partial",
+  "analysis_context": {
+    "action": "get_call_chains",
+    "repository": {
+      "provider": "github",
+      "name": "yeteng101/REcode",
+      "commit_sha": "e6e3b4222715cea71c150f0dd824ed990e7f567d",
+      "commit_role": "head"
+    },
+    "commit_sha": "e6e3b4222715cea71c150f0dd824ed990e7f567d",
+    "graph_snapshot_id": "recode-0c29209723ea1b306c012c77aab028eb8c5c196a57597c20f1819305a6ecbf5c",
+    "build_profile": "safe-generic",
+    "analyzer": {
+      "name": "REcode-native-export-adapter",
+      "version": "1.0",
+      "formal_evidence": false
+    },
+    "recode": {
+      "run_id": "run_repository_1794381859",
+      "artifact_sha256": {
+        "manifest.json": "877fbb1b004c454d3c1c1a435792ec988fcb0893f24e59a512e6508454f9ed08",
+        "graph.json": "38bbe1ee4fe06949ea11486ed05575dc9427122daf6cd14a20d52d5b8380bc4d",
+        "external/call-chains.json": "c91fb2bd99d21a173b42a2d49a1eb7f0b141e7cb6478f9ede37861fd5739fae0",
+        "external/resource-flow.json": "d203ebf14383b72c21573a05f24023ee1453858cb2505eb898b9267425fab532",
+        "external/sync-relations.json": "de31a20f8393ebe5e542255a372960dc2d88106eeb78376aee0f4175e6ff6241",
+        "external/race-analysis.json": "9ec834542edddec9583a4736b07868a3fcbd31f79d55e47f8eeabf705652bd2f"
+      },
+      "native_provider": null,
+      "transport": "job_http"
+    }
+  },
+  "target_resolution": {
+    "requested_total": 1,
+    "resolved_total": 1,
+    "resolved_targets": [
+      {
+        "target_id": "changed-function-1",
+        "node_id": "fn:main"
+      }
+    ],
+    "unresolved_targets": []
+  },
+  "findings": [
+    {
+      "id": "recode-call-changed-function-1",
+      "kind": "call_chain",
+      "root_node_id": "fn:main",
+      "target_id": "changed-function-1",
+      "nodes": [
+        {
+          "node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "name": "__iter_less_iter",
+          "kind": "function",
+          "qualified_name": "__gnu_cxx::__ops::__iter_less_iter",
+          "signature": "__gnu_cxx::__ops::_Iter_less_iter ()",
+          "location": {
+            "file": "solution.cpp",
+            "line": 50
+          }
+        },
+        {
+          "node_id": "fn:dfs",
+          "name": "dfs",
+          "kind": "function",
+          "qualified_name": "dfs",
+          "signature": "void (int, long long)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 14
+          }
+        },
+        {
+          "node_id": "fn:main",
+          "name": "main",
+          "kind": "function",
+          "qualified_name": "main",
+          "signature": "int ()",
+          "location": {
+            "file": "solution.cpp",
+            "line": 41
+          }
+        },
+        {
+          "node_id": "fn:std::includes",
+          "name": "includes",
+          "kind": "function",
+          "qualified_name": "std::includes",
+          "signature": "bool (_InputIterator1, _InputIterator1, _InputIterator2, _InputIterator2)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 2804
+          }
+        },
+        {
+          "node_id": "fn:std::inplace_merge",
+          "name": "inplace_merge",
+          "kind": "function",
+          "qualified_name": "std::inplace_merge",
+          "signature": "void (_BidirectionalIterator, _BidirectionalIterator, _BidirectionalIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 2550
+          }
+        },
+        {
+          "node_id": "fn:std::is_sorted_until",
+          "name": "is_sorted_until",
+          "kind": "function",
+          "qualified_name": "std::is_sorted_until",
+          "signature": "_ForwardIterator (_ForwardIterator, _ForwardIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 3233
+          }
+        },
+        {
+          "node_id": "fn:std::max",
+          "name": "max",
+          "kind": "external",
+          "qualified_name": "std::max",
+          "signature": "const long long &(const long long &, const long long &)"
+        },
+        {
+          "node_id": "fn:std::max_element",
+          "name": "max_element",
+          "kind": "function",
+          "qualified_name": "std::max_element",
+          "signature": "_ForwardIterator (_ForwardIterator, _ForwardIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 5681
+          }
+        },
+        {
+          "node_id": "fn:std::merge",
+          "name": "merge",
+          "kind": "function",
+          "qualified_name": "std::merge",
+          "signature": "_OutputIterator (_InputIterator1, _InputIterator1, _InputIterator2, _InputIterator2, _OutputIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 4905
+          }
+        },
+        {
+          "node_id": "fn:std::min",
+          "name": "min",
+          "kind": "function",
+          "qualified_name": "std::min",
+          "signature": "const _Tp &(const _Tp &, const _Tp &)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 230
+          }
+        },
+        {
+          "node_id": "fn:std::min_element",
+          "name": "min_element",
+          "kind": "function",
+          "qualified_name": "std::min_element",
+          "signature": "_ForwardIterator (_ForwardIterator, _ForwardIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 5617
+          }
+        },
+        {
+          "node_id": "fn:std::minmax",
+          "name": "minmax",
+          "kind": "function",
+          "qualified_name": "std::minmax",
+          "signature": "pair<const _Tp &, const _Tp &> (const _Tp &, const _Tp &)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 3284
+          }
+        },
+        {
+          "node_id": "fn:std::minmax_element",
+          "name": "minmax_element",
+          "kind": "function",
+          "qualified_name": "std::minmax_element",
+          "signature": "pair<_ForwardIterator, _ForwardIterator> (_ForwardIterator, _ForwardIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 3385
+          }
+        },
+        {
+          "node_id": "fn:std::next_permutation",
+          "name": "next_permutation",
+          "kind": "function",
+          "qualified_name": "std::next_permutation",
+          "signature": "bool (_BidirectionalIterator, _BidirectionalIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 2935
+          }
+        },
+        {
+          "node_id": "fn:std::nth_element",
+          "name": "nth_element",
+          "kind": "function",
+          "qualified_name": "std::nth_element",
+          "signature": "void (_RandomAccessIterator, _RandomAccessIterator, _RandomAccessIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 4732
+          }
+        },
+        {
+          "node_id": "fn:std::partial_sort",
+          "name": "partial_sort",
+          "kind": "function",
+          "qualified_name": "std::partial_sort",
+          "signature": "void (_RandomAccessIterator, _RandomAccessIterator, _RandomAccessIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 4656
+          }
+        },
+        {
+          "node_id": "fn:std::partial_sort_copy",
+          "name": "partial_sort_copy",
+          "kind": "function",
+          "qualified_name": "std::partial_sort_copy",
+          "signature": "_RandomAccessIterator (_InputIterator, _InputIterator, _RandomAccessIterator, _RandomAccessIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 1696
+          }
+        },
+        {
+          "node_id": "fn:std::prev_permutation",
+          "name": "prev_permutation",
+          "kind": "function",
+          "qualified_name": "std::prev_permutation",
+          "signature": "bool (_BidirectionalIterator, _BidirectionalIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 3038
+          }
+        },
+        {
+          "node_id": "fn:std::set_difference",
+          "name": "set_difference",
+          "kind": "function",
+          "qualified_name": "std::set_difference",
+          "signature": "_OutputIterator (_InputIterator1, _InputIterator1, _InputIterator2, _InputIterator2, _OutputIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 5379
+          }
+        },
+        {
+          "node_id": "fn:std::set_intersection",
+          "name": "set_intersection",
+          "kind": "function",
+          "qualified_name": "std::set_intersection",
+          "signature": "_OutputIterator (_InputIterator1, _InputIterator1, _InputIterator2, _InputIterator2, _OutputIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 5254
+          }
+        },
+        {
+          "node_id": "fn:std::set_symmetric_difference",
+          "name": "set_symmetric_difference",
+          "kind": "function",
+          "qualified_name": "std::set_symmetric_difference",
+          "signature": "_OutputIterator (_InputIterator1, _InputIterator1, _InputIterator2, _InputIterator2, _OutputIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 5512
+          }
+        },
+        {
+          "node_id": "fn:std::set_union",
+          "name": "set_union",
+          "kind": "function",
+          "qualified_name": "std::set_union",
+          "signature": "_OutputIterator (_InputIterator1, _InputIterator1, _InputIterator2, _InputIterator2, _OutputIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 5130
+          }
+        },
+        {
+          "node_id": "fn:std::sort",
+          "name": "sort",
+          "kind": "function",
+          "qualified_name": "std::sort",
+          "signature": "void (_RandomAccessIterator, _RandomAccessIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 4810
+          }
+        },
+        {
+          "node_id": "fn:std::stable_sort",
+          "name": "stable_sort",
+          "kind": "function",
+          "qualified_name": "std::stable_sort",
+          "signature": "void (_RandomAccessIterator, _RandomAccessIterator)",
+          "location": {
+            "file": "solution.cpp",
+            "line": 5024
+          }
+        }
+      ],
+      "edges": [
+        {
+          "edge_id": "e_04ef6158056c",
+          "kind": "direct_call",
+          "source_node_id": "fn:dfs",
+          "target_node_id": "fn:dfs",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 38,
+            "snippet": "dfs(u + 1, current + add1);",
+            "snippet_sha256": "cd50a76c1dbaa859fc5b47a5146be847fae33122d567bbadddd4424d10d89f62"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_4e241a5147e9"
+          ]
+        },
+        {
+          "edge_id": "e_0df8374f1459",
+          "kind": "direct_call",
+          "source_node_id": "fn:main",
+          "target_node_id": "fn:dfs",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 52,
+            "snippet": "dfs(0, 0);",
+            "snippet_sha256": "3cad564fda4feb5e53bba1c3fadda9b4e61ac3e388570c9d9b0d9a85371afd0e"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_29564123e45d"
+          ]
+        },
+        {
+          "edge_id": "e_1601b04a7030",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::max_element",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 5691,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_8356d1d42f49"
+          ]
+        },
+        {
+          "edge_id": "e_188fb38b5c79",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::partial_sort_copy",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 1720,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_54b635d17a13"
+          ]
+        },
+        {
+          "edge_id": "e_2da021732a4f",
+          "kind": "direct_call",
+          "source_node_id": "fn:dfs",
+          "target_node_id": "fn:std::max",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 16,
+            "snippet": "best = max(best, current);",
+            "snippet_sha256": "45a5ad5931b66c8b7652ffbaa5e070cfc8787854d3d17495aab2c2847432aec2"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_77b1aaac0445"
+          ]
+        },
+        {
+          "edge_id": "e_336e8b5c5dc3",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::includes",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 2822,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_88ed6609a70a"
+          ]
+        },
+        {
+          "edge_id": "e_3672e120691f",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::min",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 5730,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_68b39a942fe8"
+          ]
+        },
+        {
+          "edge_id": "e_5173704cfaba",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::set_symmetric_difference",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 5536,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_a09cb4ed6979"
+          ]
+        },
+        {
+          "edge_id": "e_537bd4d24973",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::nth_element",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 4749,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_640b477cadfd"
+          ]
+        },
+        {
+          "edge_id": "e_566b6351e2cf",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::set_difference",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 5401,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_f7fd98f3fb0d"
+          ]
+        },
+        {
+          "edge_id": "e_56e7be5d9b43",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::inplace_merge",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 2564,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_1793522c9dd4"
+          ]
+        },
+        {
+          "edge_id": "e_5711f118f9ab",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::minmax",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 3436,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_62df970494d5"
+          ]
+        },
+        {
+          "edge_id": "e_58ce049e44a1",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::set_intersection",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 5276,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_06c309e7aef1"
+          ]
+        },
+        {
+          "edge_id": "e_669c94ea7744",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::set_union",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 5154,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_4ec65d9e2ab7"
+          ]
+        },
+        {
+          "edge_id": "e_6ca2418530ea",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::prev_permutation",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 3050,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_49a62ef8267d"
+          ]
+        },
+        {
+          "edge_id": "e_9b6607a548b5",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::stable_sort",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 5035,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_9fce1b87739e"
+          ]
+        },
+        {
+          "edge_id": "e_a0bfbe6dc730",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::partial_sort",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 4670,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_02aa6f780786"
+          ]
+        },
+        {
+          "edge_id": "e_b8c91b9f81dd",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::min_element",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 5627,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_d91a7dffa3af"
+          ]
+        },
+        {
+          "edge_id": "e_bb1880a69616",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::is_sorted_until",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 3243,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_fdbf5a32028c"
+          ]
+        },
+        {
+          "edge_id": "e_c1688b7547d9",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::next_permutation",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 57,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_f83b0d042a02"
+          ]
+        },
+        {
+          "edge_id": "e_c4e137c667ac",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::minmax_element",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 3395,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_483c9e74bec6"
+          ]
+        },
+        {
+          "edge_id": "e_d0538c00efb0",
+          "kind": "direct_call",
+          "source_node_id": "fn:dfs",
+          "target_node_id": "fn:dfs",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 28,
+            "snippet": "dfs(u + 1, current + add0);",
+            "snippet_sha256": "4b63e4522a5d4835e083b536d36addea736efa918c47b4e342dc82234beea134"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_2a8bc7735ea6"
+          ]
+        },
+        {
+          "edge_id": "e_d181000b4b0f",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::max",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 5750,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_6a6141fadc4d"
+          ]
+        },
+        {
+          "edge_id": "e_d7632dc10fce",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::merge",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 4926,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_f0565c8d9f96"
+          ]
+        },
+        {
+          "edge_id": "e_ed3659aa6775",
+          "kind": "direct_call",
+          "source_node_id": "fn:std::sort",
+          "target_node_id": "fn:__gnu_cxx::__ops::__iter_less_iter",
+          "call_site": {
+            "file": "solution.cpp",
+            "line": 57,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_f83b0d042a02"
+          ]
+        }
+      ],
+      "evidence_ids": [
+        "ev_02aa6f780786",
+        "ev_06c309e7aef1",
+        "ev_1793522c9dd4",
+        "ev_29564123e45d",
+        "ev_2a8bc7735ea6",
+        "ev_483c9e74bec6",
+        "ev_49a62ef8267d",
+        "ev_4e241a5147e9",
+        "ev_4ec65d9e2ab7",
+        "ev_54b635d17a13",
+        "ev_62df970494d5",
+        "ev_640b477cadfd",
+        "ev_68b39a942fe8",
+        "ev_6a6141fadc4d",
+        "ev_77b1aaac0445",
+        "ev_8356d1d42f49",
+        "ev_88ed6609a70a",
+        "ev_9fce1b87739e",
+        "ev_a09cb4ed6979",
+        "ev_d91a7dffa3af",
+        "ev_f0565c8d9f96",
+        "ev_f7fd98f3fb0d",
+        "ev_f83b0d042a02",
+        "ev_fdbf5a32028c"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev_0008e9db94f7",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4130,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_02900ec0360e",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_02aa6f780786",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4670,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_02fbe45bd58e",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_04608ca5ae33",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4171,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_05eff377fa59",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_0692785f3c27",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_06c309e7aef1",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 5276,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_079e29b73692",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_0afb4c58b5e9",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 245,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_0b4915d9e94c",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 111,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_0caa9a288c8a",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_0cbe8ed6c1dd",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 3572,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_0cdf554cff9e",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_0f0d497fdc16",
+      "kind": "call_site",
+      "location": {
+        "file": "demo/sample/app.cpp",
+        "line": 30,
+        "snippet": "loop_stop(&loop);",
+        "snippet_sha256": "9f7d29877eb4de80617e59d9b6f0ecfcc8a822983d2cd03e0945b3d307c98688"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_1793522c9dd4",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 2564,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_18880a148e98",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 94,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_1a7c199369f1",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4192,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_1c845afd2478",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 105,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_1d3ed5924bc7",
+      "kind": "call_site",
+      "location": {
+        "file": "demo/sample/app.cpp",
+        "line": 28,
+        "snippet": "loop_register(&loop, 2, on_once);",
+        "snippet_sha256": "8498248a6d3f40c6a716dd0aa8f37347e1d99a18b2d067d542107a5e30176466"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_1fb073eb18e0",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 255,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_1fc6a72b354d",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 2214,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_216b97238de1",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 11,
+        "snippet": "close(fd);",
+        "snippet_sha256": "9605a127205db7375a3b7703f18b7ac998125ef9b8f5a6bb0923ad3ba69d94c9"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_23a0a2a5ba60",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_241add1b4671",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_2491acc19b7d",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4475,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_2661d71ea12b",
+      "kind": "call_site",
+      "location": {
+        "file": "validation/resource-flow/fixtures/use_after_free.c",
+        "line": 7,
+        "snippet": "free(buf);",
+        "snippet_sha256": "780361e1d0f65de0471b42ae8085e146abe7fe654bcc1b23466f6c09bb0390ad"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_26d0ce6351d6",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4120,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_26e98897cecd",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4210,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_29564123e45d",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 52,
+        "snippet": "dfs(0, 0);",
+        "snippet_sha256": "3cad564fda4feb5e53bba1c3fadda9b4e61ac3e388570c9d9b0d9a85371afd0e"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_2a8bc7735ea6",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 28,
+        "snippet": "dfs(u + 1, current + add0);",
+        "snippet_sha256": "4b63e4522a5d4835e083b536d36addea736efa918c47b4e342dc82234beea134"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_2d61d90f51ca",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 1499,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_2f4826fe5a41",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 86,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_3242d88b5601",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4166,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_3276f37b5c4c",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_32e27684471f",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 109,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_3c442a35b9e4",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_3faeb4b4d652",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_4138b0779678",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 98,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_41b8bd7bd5f6",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_41e33749da34",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 1918,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_42e2ca9f3bb1",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 7,
+        "snippet": "int fd = open(path, flags);",
+        "snippet_sha256": "5b7915cc7e6a0547e4e979e576fcf95cb4d5e74bab6a519afc2e94f7cd347709"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_472aeee4ee3e",
+      "kind": "call_site",
+      "location": {
+        "file": "demo/sample/app.cpp",
+        "line": 26,
+        "snippet": "loop_register(&loop, 0, on_readable);",
+        "snippet_sha256": "7a55b0991acb95b4ccac4ca55c17df5c6cb0aaa9ff58dec9f6cda0534163b725"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_47476a4d9b93",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_47e7dd752f8f",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_483c9e74bec6",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 3395,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_49374b5a53d4",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_499bc4b98c09",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_49a62ef8267d",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 3050,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_4a4e1a85051b",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4077,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_4b0f8c7a8106",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4115,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_4b3e364396f2",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 110,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_4b5006d64b63",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+        "line": 11,
+        "snippet": "free(alias);",
+        "snippet_sha256": "5d3e82738103690c8e1cfdc631f9588fc144a9c6a8c095273401be5877b7f0ab"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_4e241a5147e9",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 38,
+        "snippet": "dfs(u + 1, current + add1);",
+        "snippet_sha256": "cd50a76c1dbaa859fc5b47a5146be847fae33122d567bbadddd4424d10d89f62"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_4ec65d9e2ab7",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 5154,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_4ee237d67b49",
+      "kind": "call_site",
+      "location": {
+        "file": "demo/sample/event_loop.cpp",
+        "line": 19,
+        "snippet": "CALL_WATCHER(watcher, events);",
+        "snippet_sha256": "9d121837c1f2311f906a13301c86829675d9724224685947d6a6e8b65788650a"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_536a1f9f66c5",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 3992,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_54b635d17a13",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 1720,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_5575ba4eadb5",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_58722d8f6941",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_5e857a0bd785",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4057,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_5f3f519c65fe",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_60627e3713a4",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_61adb80d87d7",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_61f93c13f3ad",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 385,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_625abc8cbbba",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 150,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_62df970494d5",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 3436,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_640b477cadfd",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4749,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_648eecc81602",
+      "kind": "assignment",
+      "location": {
+        "file": "demo/sample/app.cpp",
+        "line": 26,
+        "snippet": "loop_register(&loop, 0, on_readable);",
+        "snippet_sha256": "7a55b0991acb95b4ccac4ca55c17df5c6cb0aaa9ff58dec9f6cda0534163b725"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_659f50950ed1",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 23,
+        "snippet": "getaddrinfo(host, NULL, NULL, &result);",
+        "snippet_sha256": "f363f81326df11dda77b2fc114052401b2482da29360817c0d3215d21608793d"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_68b39a942fe8",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 5730,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_68b68be54737",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4177,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_695850a9751f",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4183,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_6a6141fadc4d",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 5750,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_6adbbc1a2611",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_6b54ef10f403",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 2237,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_6e641015b307",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+        "line": 9,
+        "snippet": "char *owner = allocate_buffer();",
+        "snippet_sha256": "dfeb2929e629d20875164710ed52870cf64b7fe02dae45991f569ce60e378c85"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_75a5641f566a",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_75e766d65da0",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_762dc867992e",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 50,
+        "snippet": "}",
+        "snippet_sha256": "d10b36aa74a59bcf4a88185837f658afaf3646eff2bb16c3928d0e9335e945d2"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_77793d79cef1",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_77b1aaac0445",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 16,
+        "snippet": "best = max(best, current);",
+        "snippet_sha256": "45a5ad5931b66c8b7652ffbaa5e070cfc8787854d3d17495aab2c2847432aec2"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_77c41509742f",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_791dda95e9b5",
+      "kind": "call_site",
+      "location": {
+        "file": "demo/sample/app.cpp",
+        "line": 25,
+        "snippet": "loop_init(&loop);",
+        "snippet_sha256": "3c0285907374d10c2d4a5942a16f2fd6238995172f0df8222195a852a54f775d"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_7a9d3c25c744",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_7f20b7e5f53c",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 3982,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_7fb06ea2f100",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_80bf192c2a60",
+      "kind": "call_site",
+      "location": {
+        "file": "validation/resource-flow/fixtures/leak_error_path.c",
+        "line": 4,
+        "snippet": "char *buf = malloc(256);",
+        "snippet_sha256": "90b0e1df79670f96f65d8db0d8c35e2f5fd49906df4b265e18ab1852cab02456"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_81f902e0afbd",
+      "kind": "call_site",
+      "location": {
+        "file": "validation/resource-flow/fixtures/use_after_free.c",
+        "line": 4,
+        "snippet": "char *buf = malloc(32);",
+        "snippet_sha256": "031618e76c8941289a80461c95eebf9a6272b395aa29ae3d324f8e944cee0952"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_8356d1d42f49",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 5691,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_84398275ef5c",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_851adb899f08",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 24,
+        "snippet": "freeaddrinfo(result);",
+        "snippet_sha256": "e16cbdfde4f9b418d150906035b11b5b3ca373a6f470faf3e0ee5b96172b963f"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_85b2b7a36e7d",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_85e2f12ff589",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 17,
+        "snippet": "pthread_cond_wait(cond, mutex);",
+        "snippet_sha256": "9df3f43cdc1363c8093cce30ad117f02d5baca026d09ae1ba1fbd4cf8c22fab8"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_880c097c695b",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_88ba102c9fad",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_88ed6609a70a",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 2822,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_8b8386d2361e",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 3983,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_8d90d0b6ee83",
+      "kind": "call_site",
+      "location": {
+        "file": "validation/resource-flow/fixtures/leak_error_path.c",
+        "line": 9,
+        "snippet": "free(buf);",
+        "snippet_sha256": "780361e1d0f65de0471b42ae8085e146abe7fe654bcc1b23466f6c09bb0390ad"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_8db5b598b299",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 2002,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_8e5764de7f4c",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 3977,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_8e85a7b5bc76",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4069,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_8ed5e3df2933",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 83,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_911de031a03b",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+        "line": 4,
+        "snippet": "char *buffer = malloc(32);",
+        "snippet_sha256": "6da3bbbce999aaa3043a5373dc90f44602ab04ee0af0032eb527100877c22210"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_94aa3a5c0e3f",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_99283e0068eb",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 113,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_9acf687ad978",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_9bc97286ac99",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 109,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_9d1773c0ec87",
+      "kind": "call_site",
+      "location": {
+        "file": "validation/resource-flow/fixtures/ownership_transfer.c",
+        "line": 4,
+        "snippet": "char *buf = malloc(128);",
+        "snippet_sha256": "bfd2dc377a32a6562d2e8b7fdd164fe6952af709a29ee06805985579c2e12ff3"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_9d4b08e3420e",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 2168,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_9dc4c39aa359",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4201,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_9ddfa73a863a",
+      "kind": "call_site",
+      "location": {
+        "file": "validation/resource-flow/fixtures/double_free.c",
+        "line": 4,
+        "snippet": "char *buf = malloc(64);",
+        "snippet_sha256": "cc75130b91ee8bf3f57822361ce111345a87e50d1f325843d5481dfca3649a81"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_9fc4de120620",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4160,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_9fce1b87739e",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 5035,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_a09cb4ed6979",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 5536,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_a7a98f3376f5",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_a7d51912da42",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4021,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_a8865245d5f4",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ad0a36a10db7",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/macro_builtin_flow.c",
+        "line": 7,
+        "snippet": "ZERO_BUFFER(buffer, size);",
+        "snippet_sha256": "e88951d227200ba10bacaf9f83a540a87ec6d59f21fdf41339dde9eba5906360"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_afa453e27cea",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_b07d6b09d987",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4104,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_b2353238aa8d",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_b3d1cff5d67a",
+      "kind": "call_site",
+      "location": {
+        "file": "demo/sample/event_loop.cpp",
+        "line": 48,
+        "snippet": "run_ready_watchers(loop, events);",
+        "snippet_sha256": "b41210f6a471f323f509d7205dcccedaf6d9933baf17b7836f821449ad32fc7d"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_b4e9595be167",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 942,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_b73bebedc423",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_b9617a594348",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_b9bd39e6b07d",
+      "kind": "call_site",
+      "location": {
+        "file": "validation/resource-flow/fixtures/double_free.c",
+        "line": 7,
+        "snippet": "free(buf);",
+        "snippet_sha256": "780361e1d0f65de0471b42ae8085e146abe7fe654bcc1b23466f6c09bb0390ad"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_bcf30d6af06a",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 105,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_bcf4d16e52a4",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 2060,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_beab25988beb",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_c06d990501ca",
+      "kind": "call_site",
+      "location": {
+        "file": "demo/sample/app.cpp",
+        "line": 27,
+        "snippet": "loop_register(&loop, 1, on_writable);",
+        "snippet_sha256": "d2f145fe2d06925653fd7ac50c7def52fa46f1a84f55502e06dfb87d76893201"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_c39c0ccdaefc",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_c3c10bcc1dee",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 18,
+        "snippet": "pthread_mutex_unlock(mutex);",
+        "snippet_sha256": "14dfd8ea87b5e4e556c45aac69c93c422ff2b9ae8460f7e40c728b1ff25f01c1"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_c4a7f1e6f5d3",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 3972,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_c5acbfb46322",
+      "kind": "assignment",
+      "location": {
+        "file": "demo/sample/app.cpp",
+        "line": 28,
+        "snippet": "loop_register(&loop, 2, on_once);",
+        "snippet_sha256": "8498248a6d3f40c6a716dd0aa8f37347e1d99a18b2d067d542107a5e30176466"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_c5b69a70229f",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 102,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_c5c8d285d5c9",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_c72856065c7b",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4089,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_c7ae156ab707",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 946,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_c807d0e924af",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_c928602469de",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 3987,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_c94655cb8bba",
+      "kind": "call_site",
+      "location": {
+        "file": "validation/resource-flow/fixtures/double_free.c",
+        "line": 8,
+        "snippet": "free(buf);",
+        "snippet_sha256": "780361e1d0f65de0471b42ae8085e146abe7fe654bcc1b23466f6c09bb0390ad"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_c9c117432f3c",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ca4f96b701d8",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ca690b38a374",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 108,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_cc8c573b1690",
+      "kind": "call_site",
+      "location": {
+        "file": "demo/sample/app.cpp",
+        "line": 29,
+        "snippet": "loop_run(&loop);",
+        "snippet_sha256": "e65564ac2ecc4307e92cae88cde7eed0c19b077993fdb89df12bf422a6473f4e"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_cddfb8fd486e",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_cdf4eac2d985",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_cecb3e02cad3",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_d00a0e5c6bb0",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_d0e909881d20",
+      "kind": "call_site",
+      "location": {
+        "file": "demo/sample/event_loop.cpp",
+        "line": 26,
+        "snippet": "dispatch_once(loop, watcher, events);",
+        "snippet_sha256": "f04b73286e20a988039b28dd03c753051e359cad82083553ae86ad13232c7caa"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_d44950a4195f",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4032,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_d4e6174fe7c6",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_d7d2443837e4",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4155,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_d91a7dffa3af",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 5627,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_da031ac0298b",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4107,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_db1b310ec617",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 16,
+        "snippet": "pthread_mutex_lock(mutex);",
+        "snippet_sha256": "925dd037187c24f5ca01457e0a5a89c089961ffdbe9bbcb9f964ce429ba0ac20"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_dce576c47b07",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 151,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_de2eee9fc7e1",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4125,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_e0cfcbe48001",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_e329098671a8",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_e3ba178dd17c",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4135,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_e42c7e3699c0",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 312,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_e437e8c1536a",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_e64948c48c37",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_e6b6c36565d6",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_e9abaae7211a",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_e9cda5bdd8b4",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4098,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ec45057729ee",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4046,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ee744907f9ba",
+      "kind": "call_site",
+      "location": {
+        "file": "demo/sample/event_loop.cpp",
+        "line": 47,
+        "snippet": "int events = wait_for_events(loop, 100);",
+        "snippet_sha256": "09d0af3ff960f9927f3b773478fa7b5d28548cdeaa47b66e45ce51fae0f5b373"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ef0a0f7c9a4a",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_f023aad34387",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 67,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_f0565c8d9f96",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 4926,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_f1fa4abdaac8",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_f59d395f4abc",
+      "kind": "assignment",
+      "location": {
+        "file": "demo/sample/app.cpp",
+        "line": 27,
+        "snippet": "loop_register(&loop, 1, on_writable);",
+        "snippet_sha256": "d2f145fe2d06925653fd7ac50c7def52fa46f1a84f55502e06dfb87d76893201"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_f5fc95b1a04f",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_f68ab78d2537",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 2167,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_f70c2ef1b77a",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_f7fd98f3fb0d",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 5401,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_f83b0d042a02",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_fa03930c2bc5",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_fcede8f8cea9",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 137,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_fdbf5a32028c",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 3243,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_fe4a2576592c",
+      "kind": "call_site",
+      "location": {
+        "file": "solution.cpp",
+        "line": 57,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_1b4298825d76",
+      "kind": "assignment",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+        "line": 10,
+        "snippet": "char *alias = owner;",
+        "snippet_sha256": "b7bf41c85c89a1ad00a0aa8f00d5cba19734b99132a2736f5fe6e05acb257180"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_1d3a695f3a62",
+      "kind": "assignment",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+        "line": 4,
+        "snippet": "char *buffer = malloc(32);",
+        "snippet_sha256": "6da3bbbce999aaa3043a5373dc90f44602ab04ee0af0032eb527100877c22210"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_32faa6b60e4d",
+      "kind": "assignment",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 7,
+        "snippet": "int fd = open(path, flags);",
+        "snippet_sha256": "5b7915cc7e6a0547e4e979e576fcf95cb4d5e74bab6a519afc2e94f7cd347709"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_5ea3e02c5db0",
+      "kind": "assignment",
+      "location": {
+        "file": "validation/resource-flow/fixtures/use_after_free.c",
+        "line": 4,
+        "snippet": "char *buf = malloc(32);",
+        "snippet_sha256": "031618e76c8941289a80461c95eebf9a6272b395aa29ae3d324f8e944cee0952"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_638885c2f0a2",
+      "kind": "assignment",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/resource_ownership.c",
+        "line": 9,
+        "snippet": "char *owner = allocate_buffer();",
+        "snippet_sha256": "dfeb2929e629d20875164710ed52870cf64b7fe02dae45991f569ce60e378c85"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_e2bf9a37c226",
+      "kind": "assignment",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 22,
+        "snippet": "struct addrinfo *result = NULL;",
+        "snippet_sha256": "f2da0c4359c53a43f20c3f695107125ca7b0723494f307df4c803f58893f1280"
+      },
+      "role": "supports"
+    }
+  ],
+  "coverage": {
+    "complete": false,
+    "reason": "recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated; recode_external_or_unavailable_source_records_omitted",
+    "stopped_because": [
+      "recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+      "recode_bounded_call_subgraph_paths_not_enumerated",
+      "recode_external_or_unavailable_source_records_omitted"
+    ],
+    "omitted_record_count": 55,
+    "omitted_record_ids": [
+      "external_source_record:e_055b7a0fe950",
+      "external_source_record:e_1900adc21b86",
+      "external_source_record:e_2d37905981c1",
+      "external_source_record:e_4803ebe2f43f",
+      "external_source_record:e_4a4c3b99ea61",
+      "external_source_record:e_5e39ac3ebd2c",
+      "external_source_record:e_639e8b865ea6",
+      "external_source_record:e_7e4301beb8e5",
+      "external_source_record:e_8429de08c3e5",
+      "external_source_record:e_9ec734f1da79",
+      "external_source_record:e_ba5bde6ca0c1",
+      "external_source_record:ev_242046853d9c",
+      "external_source_record:ev_44383c18c99f",
+      "external_source_record:ev_515f6d896d72",
+      "external_source_record:ev_5c6f41193f70",
+      "external_source_record:ev_60d7cf5709ed",
+      "external_source_record:ev_6e9c55b1e54e",
+      "external_source_record:ev_851e16285ec5",
+      "external_source_record:ev_960e62989020",
+      "external_source_record:ev_a71812d663ef",
+      "external_source_record:ev_d18780749c06",
+      "external_source_record:ev_d2bad5e19a5d",
+      "external_source_record:fn:pthread_cond_broadcast",
+      "external_source_record:fn:pthread_cond_destroy",
+      "external_source_record:fn:pthread_cond_signal",
+      "external_source_record:fn:pthread_cond_timedwait",
+      "external_source_record:fn:pthread_cond_wait",
+      "external_source_record:fn:pthread_detach",
+      "external_source_record:fn:pthread_equal",
+      "external_source_record:fn:pthread_getspecific",
+      "external_source_record:fn:pthread_join",
+      "external_source_record:fn:pthread_key_create",
+      "external_source_record:fn:pthread_key_delete",
+      "external_source_record:fn:pthread_mutex_destroy",
+      "external_source_record:fn:pthread_mutex_init",
+      "external_source_record:fn:pthread_mutex_lock",
+      "external_source_record:fn:pthread_mutex_timedlock",
+      "external_source_record:fn:pthread_mutex_trylock",
+      "external_source_record:fn:pthread_mutex_unlock",
+      "external_source_record:fn:pthread_once",
+      "external_source_record:fn:pthread_self",
+      "external_source_record:fn:pthread_setspecific",
+      "external_source_record:fn:sched_yield",
+      "external_source_record:fn:std::max",
+      "unavailable_call_fact:e_055b7a0fe950",
+      "unavailable_call_fact:e_1900adc21b86",
+      "unavailable_call_fact:e_2d37905981c1",
+      "unavailable_call_fact:e_4803ebe2f43f",
+      "unavailable_call_fact:e_4a4c3b99ea61",
+      "unavailable_call_fact:e_5e39ac3ebd2c",
+      "unavailable_call_fact:e_639e8b865ea6",
+      "unavailable_call_fact:e_7e4301beb8e5",
+      "unavailable_call_fact:e_8429de08c3e5",
+      "unavailable_call_fact:e_9ec734f1da79",
+      "unavailable_call_fact:e_ba5bde6ca0c1"
+    ]
+  },
+  "warnings": [],
+  "errors": []
+}

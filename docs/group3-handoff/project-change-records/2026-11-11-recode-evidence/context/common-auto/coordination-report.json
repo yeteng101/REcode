@@ -1,0 +1,68 @@
+{
+  "schema_version": "specialty-coordination.v1",
+  "status": "prepared",
+  "review_target": {
+    "id": "github-pr-recode-context-integration",
+    "kind": "integration_snapshot",
+    "base_revision": "b5094bbec6e159905302d5c3f97841371f1467cf",
+    "head_revision": "e6e3b4222715cea71c150f0dd824ed990e7f567d",
+    "url": "https://github.com/yeteng101/REcode/commit/e6e3b4222715cea71c150f0dd824ed990e7f567d",
+    "diff_base_revision": "b5094bbec6e159905302d5c3f97841371f1467cf"
+  },
+  "routing": {
+    "routes": [
+      "memory",
+      "concurrency"
+    ],
+    "confidence": 0.5,
+    "reason": "structured first-group resource and synchronization facts",
+    "run_both": true,
+    "signals": {
+      "memory": [
+        "resource_flow"
+      ],
+      "concurrency": [
+        "sync_flow"
+      ]
+    }
+  },
+  "first_group": {
+    "call_chain": {
+      "run_id": "run_repository_1794381859:get_call_chains",
+      "status": "partial"
+    },
+    "specialty_facts": {
+      "memory": {
+        "action": "get_resource_flows",
+        "run_id": "run_repository_1794381859:get_resource_flows",
+        "status": "partial"
+      },
+      "concurrency": {
+        "action": "get_sync_flows",
+        "run_id": "run_repository_1794381859:get_sync_flows",
+        "status": "partial"
+      }
+    }
+  },
+  "route_errors": [],
+  "bundle_paths": {
+    "memory": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\common-auto\\memory-context-bundle.json",
+    "concurrency": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\common-auto\\concurrency-context-bundle.json"
+  },
+  "handoffs": [
+    {
+      "domain": "memory",
+      "status": "prepared",
+      "context_bundle": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\common-auto\\memory-context-bundle.json",
+      "entrypoint": "D:\\JDProject\\C-BUG-Patch\\v2-memory\\memory_subagent.py",
+      "invocation": "python v2-memory/memory_subagent.py --context-bundle <bundle> --prepare-dir <run-dir>"
+    },
+    {
+      "domain": "concurrency",
+      "status": "prepared",
+      "context_bundle": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\common-auto\\concurrency-context-bundle.json",
+      "entrypoint": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\concurrency_subagent.py",
+      "invocation": "py -3.12 v2-concurrency/concurrency_subagent.py --context-bundle <bundle> --prepare-dir <run-dir>"
+    }
+  ]
+}

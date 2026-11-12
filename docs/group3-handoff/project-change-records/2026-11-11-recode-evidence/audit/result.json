@@ -1,0 +1,61 @@
+{
+  "status": "passed",
+  "schema_objects": 10,
+  "checked": [
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\artifacts\\job_9f41e74d3b4a45e8a0813d59740b8433-hzzbid8f\\external\\call-chains.json",
+      "schema": "D:\\JDProject\\REcode\\schemas\\call-chains.schema.json",
+      "sha256": "c91fb2bd99d21a173b42a2d49a1eb7f0b141e7cb6478f9ede37861fd5739fae0"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\artifacts\\job_9f41e74d3b4a45e8a0813d59740b8433-hzzbid8f\\external\\resource-flow.json",
+      "schema": "D:\\JDProject\\REcode\\schemas\\resource-flow.schema.json",
+      "sha256": "d203ebf14383b72c21573a05f24023ee1453858cb2505eb898b9267425fab532"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\artifacts\\job_9f41e74d3b4a45e8a0813d59740b8433-hzzbid8f\\external\\sync-relations.json",
+      "schema": "D:\\JDProject\\REcode\\schemas\\sync-relations.schema.json",
+      "sha256": "de31a20f8393ebe5e542255a372960dc2d88106eeb78376aee0f4175e6ff6241"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\candidate-bundle.json",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\race-candidates.schema.json",
+      "sha256": "49bc3e23b710fa3b0c74df33863ed4ba9c441364b6eae075eb931a3c978fbc8c"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\coordinator-state.json",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-coordinator-state.schema.json",
+      "sha256": "5c3c7579564b73c4a77aa6f688c9099af073f29de8ef0d2d86f20de558a76cbf"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\review-requests\\race-16f81e7c92533f87.json",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review-request.schema.json",
+      "sha256": "115ff38791ff3c7b91c9c1d6098b811512ba1076807381e4bcc69c56e742068b"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\review-requests\\race-8c5086f4ef4cab2f.json",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review-request.schema.json",
+      "sha256": "bfa2977d42a3b2a039e9f549b5b9927115ee50319007f6c75376a230c86ddcb1"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\review-requests\\race-9a2d4994d45c68a8.json",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review-request.schema.json",
+      "sha256": "9bce4d320c92c81a896a3e0c6275f183b2680ba67cf67aa63dd8d03f0970217f"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\concurrency-acceptance\\candidate-bundle.json",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\race-candidates.schema.json",
+      "sha256": "9db0c7125414f46ffc38b4e148f8804bcc87c3626f1e910b0c6d39387eec2948"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\concurrency-acceptance\\coordinator-state.json",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-coordinator-state.schema.json",
+      "sha256": "003d1a8e140223c439467a4c3fec4f5603ac92add5ae0e3186f14054986ec646"
+    }
+  ],
+  "small_candidates": 3,
+  "small_candidate_status": "needs_more_context",
+  "framework_tests": 287,
+  "recode_snapshot": "recode-0c29209723ea1b306c012c77aab028eb8c5c196a57597c20f1819305a6ecbf5c",
+  "remote_schema_retrieval": "disabled"
+}

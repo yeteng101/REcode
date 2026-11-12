@@ -1,0 +1,776 @@
+{
+  "schema_version": "1.0",
+  "run_id": "recode-cbug-integration-ddcebbae970d",
+  "result_type": "call_chain",
+  "status": "partial",
+  "source": {
+    "repository": "cbug-integration/recode-contract",
+    "commit": "ddcebbae970df496335ab4d5900dce351824893b",
+    "build_profile": "recode-linux-clang",
+    "analyzer": "clang++ -Xclang -ast-dump=json",
+    "generated_at": "2026-11-11T12:13:48Z",
+    "origin": "01-index/ast/*.ast.json"
+  },
+  "origin": "analyzer",
+  "items": [
+    {
+      "id": "e_0c4a5d907507",
+      "entry": "fn:allocate_temporary",
+      "direction": "caller_to_callee",
+      "nodes": [
+        {
+          "id": "fn:allocate_temporary",
+          "kind": "function",
+          "name": "allocate_temporary",
+          "file": "resource.c",
+          "line": 2,
+          "signature": "void (void)",
+          "module": ""
+        },
+        {
+          "id": "fn:free",
+          "kind": "function",
+          "name": "free",
+          "file": "resource.c",
+          "line": 568,
+          "signature": "void (void *)",
+          "module": ""
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_0c4a5d907507",
+          "source": "fn:allocate_temporary",
+          "target": "fn:free",
+          "kind": "direct_call",
+          "call_site": {
+            "file": "resource.c",
+            "line": 4,
+            "column": 5,
+            "snippet": "free(buffer);"
+          },
+          "condition": null,
+          "execution_context": null,
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_13d17277c23e"
+          ],
+          "status": "unconfirmed"
+        }
+      ],
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_13d17277c23e"
+      ],
+      "status": "unconfirmed"
+    },
+    {
+      "id": "e_20b2bcf2d2c8",
+      "entry": "fn:main",
+      "direction": "caller_to_callee",
+      "nodes": [
+        {
+          "id": "fn:main",
+          "kind": "function",
+          "name": "main",
+          "file": "workers.c",
+          "line": 20,
+          "signature": "int (void)",
+          "module": ""
+        },
+        {
+          "id": "fn:observe",
+          "kind": "function",
+          "name": "observe",
+          "file": "observe.c",
+          "line": 2,
+          "signature": "int (int)",
+          "module": ""
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_20b2bcf2d2c8",
+          "source": "fn:main",
+          "target": "fn:observe",
+          "kind": "direct_call",
+          "call_site": {
+            "file": "workers.c",
+            "line": 28,
+            "column": 12,
+            "snippet": ""
+          },
+          "condition": null,
+          "execution_context": null,
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_2d49537f88a5"
+          ],
+          "status": "unconfirmed"
+        }
+      ],
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_2d49537f88a5"
+      ],
+      "status": "unconfirmed"
+    },
+    {
+      "id": "e_496d07ded551",
+      "entry": "fn:writer_a",
+      "direction": "caller_to_callee",
+      "nodes": [
+        {
+          "id": "fn:writer_a",
+          "kind": "function",
+          "name": "writer_a",
+          "file": "workers.c",
+          "line": 6,
+          "signature": "void *(void *)",
+          "module": ""
+        },
+        {
+          "id": "fn:pthread_mutex_unlock",
+          "kind": "function",
+          "name": "pthread_mutex_unlock",
+          "file": "workers.c",
+          "line": 835,
+          "signature": "int (pthread_mutex_t *)",
+          "module": ""
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_496d07ded551",
+          "source": "fn:writer_a",
+          "target": "fn:pthread_mutex_unlock",
+          "kind": "direct_call",
+          "call_site": {
+            "file": "workers.c",
+            "line": 10,
+            "column": 5,
+            "snippet": "pthread_mutex_unlock(&mutex);"
+          },
+          "condition": null,
+          "execution_context": null,
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_7ba8304725fa"
+          ],
+          "status": "unconfirmed"
+        }
+      ],
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_7ba8304725fa"
+      ],
+      "status": "unconfirmed"
+    },
+    {
+      "id": "e_5fa4635c0814",
+      "entry": "fn:writer_b",
+      "direction": "caller_to_callee",
+      "nodes": [
+        {
+          "id": "fn:writer_b",
+          "kind": "function",
+          "name": "writer_b",
+          "file": "workers.c",
+          "line": 13,
+          "signature": "void *(void *)",
+          "module": ""
+        },
+        {
+          "id": "fn:pthread_mutex_lock",
+          "kind": "function",
+          "name": "pthread_mutex_lock",
+          "file": "workers.c",
+          "line": 794,
+          "signature": "int (pthread_mutex_t *)",
+          "module": ""
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_5fa4635c0814",
+          "source": "fn:writer_b",
+          "target": "fn:pthread_mutex_lock",
+          "kind": "direct_call",
+          "call_site": {
+            "file": "workers.c",
+            "line": 15,
+            "column": 5,
+            "snippet": "pthread_mutex_lock(&second_mutex);"
+          },
+          "condition": null,
+          "execution_context": null,
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_f22e697c9d13"
+          ],
+          "status": "unconfirmed"
+        }
+      ],
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_f22e697c9d13"
+      ],
+      "status": "unconfirmed"
+    },
+    {
+      "id": "e_63198db62ad8",
+      "entry": "fn:main",
+      "direction": "caller_to_callee",
+      "nodes": [
+        {
+          "id": "fn:main",
+          "kind": "function",
+          "name": "main",
+          "file": "workers.c",
+          "line": 20,
+          "signature": "int (void)",
+          "module": ""
+        },
+        {
+          "id": "fn:pthread_create",
+          "kind": "function",
+          "name": "pthread_create",
+          "file": "workers.c",
+          "line": 202,
+          "signature": "int (pthread_t *restrict, const pthread_attr_t *restrict, void *(*)(void *), void *restrict)",
+          "module": ""
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_63198db62ad8",
+          "source": "fn:main",
+          "target": "fn:pthread_create",
+          "kind": "direct_call",
+          "call_site": {
+            "file": "workers.c",
+            "line": 23,
+            "column": 9,
+            "snippet": "if (pthread_create(&b, 0, writer_b, 0) != 0) return 1;"
+          },
+          "condition": null,
+          "execution_context": null,
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_d8ab83107821"
+          ],
+          "status": "unconfirmed"
+        }
+      ],
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_d8ab83107821"
+      ],
+      "status": "unconfirmed"
+    },
+    {
+      "id": "e_6b114b19edda",
+      "entry": "fn:writer_a",
+      "direction": "caller_to_callee",
+      "nodes": [
+        {
+          "id": "fn:writer_a",
+          "kind": "function",
+          "name": "writer_a",
+          "file": "workers.c",
+          "line": 6,
+          "signature": "void *(void *)",
+          "module": ""
+        },
+        {
+          "id": "fn:pthread_mutex_lock",
+          "kind": "function",
+          "name": "pthread_mutex_lock",
+          "file": "workers.c",
+          "line": 794,
+          "signature": "int (pthread_mutex_t *)",
+          "module": ""
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_6b114b19edda",
+          "source": "fn:writer_a",
+          "target": "fn:pthread_mutex_lock",
+          "kind": "direct_call",
+          "call_site": {
+            "file": "workers.c",
+            "line": 8,
+            "column": 5,
+            "snippet": "pthread_mutex_lock(&mutex);"
+          },
+          "condition": null,
+          "execution_context": null,
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_6a59caf35c62"
+          ],
+          "status": "unconfirmed"
+        }
+      ],
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_6a59caf35c62"
+      ],
+      "status": "unconfirmed"
+    },
+    {
+      "id": "e_76606278fdd9",
+      "entry": "fn:main",
+      "direction": "caller_to_callee",
+      "nodes": [
+        {
+          "id": "fn:main",
+          "kind": "function",
+          "name": "main",
+          "file": "workers.c",
+          "line": 20,
+          "signature": "int (void)",
+          "module": ""
+        },
+        {
+          "id": "fn:pthread_create",
+          "kind": "function",
+          "name": "pthread_create",
+          "file": "workers.c",
+          "line": 202,
+          "signature": "int (pthread_t *restrict, const pthread_attr_t *restrict, void *(*)(void *), void *restrict)",
+          "module": ""
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_76606278fdd9",
+          "source": "fn:main",
+          "target": "fn:pthread_create",
+          "kind": "direct_call",
+          "call_site": {
+            "file": "workers.c",
+            "line": 22,
+            "column": 9,
+            "snippet": "if (pthread_create(&a, 0, writer_a, 0) != 0) return 1;"
+          },
+          "condition": null,
+          "execution_context": null,
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_cf0813d2c179"
+          ],
+          "status": "unconfirmed"
+        }
+      ],
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_cf0813d2c179"
+      ],
+      "status": "unconfirmed"
+    },
+    {
+      "id": "e_8d78a68d2cdf",
+      "entry": "fn:writer_b",
+      "direction": "caller_to_callee",
+      "nodes": [
+        {
+          "id": "fn:writer_b",
+          "kind": "function",
+          "name": "writer_b",
+          "file": "workers.c",
+          "line": 13,
+          "signature": "void *(void *)",
+          "module": ""
+        },
+        {
+          "id": "fn:pthread_mutex_unlock",
+          "kind": "function",
+          "name": "pthread_mutex_unlock",
+          "file": "workers.c",
+          "line": 835,
+          "signature": "int (pthread_mutex_t *)",
+          "module": ""
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_8d78a68d2cdf",
+          "source": "fn:writer_b",
+          "target": "fn:pthread_mutex_unlock",
+          "kind": "direct_call",
+          "call_site": {
+            "file": "workers.c",
+            "line": 17,
+            "column": 5,
+            "snippet": "pthread_mutex_unlock(&second_mutex);"
+          },
+          "condition": null,
+          "execution_context": null,
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_f2a3cf71c04e"
+          ],
+          "status": "unconfirmed"
+        }
+      ],
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_f2a3cf71c04e"
+      ],
+      "status": "unconfirmed"
+    },
+    {
+      "id": "e_98fd3a9711fb",
+      "entry": "fn:allocate_temporary",
+      "direction": "caller_to_callee",
+      "nodes": [
+        {
+          "id": "fn:allocate_temporary",
+          "kind": "function",
+          "name": "allocate_temporary",
+          "file": "resource.c",
+          "line": 2,
+          "signature": "void (void)",
+          "module": ""
+        },
+        {
+          "id": "fn:malloc",
+          "kind": "function",
+          "name": "malloc",
+          "file": "resource.c",
+          "line": 553,
+          "signature": "void *(unsigned long)",
+          "module": ""
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_98fd3a9711fb",
+          "source": "fn:allocate_temporary",
+          "target": "fn:malloc",
+          "kind": "direct_call",
+          "call_site": {
+            "file": "resource.c",
+            "line": 3,
+            "column": 20,
+            "snippet": "char *buffer = malloc(32);"
+          },
+          "condition": null,
+          "execution_context": null,
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_acd4417b6310"
+          ],
+          "status": "unconfirmed"
+        }
+      ],
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_acd4417b6310"
+      ],
+      "status": "unconfirmed"
+    },
+    {
+      "id": "e_9ec6ea3e1b0d",
+      "entry": "fn:main",
+      "direction": "caller_to_callee",
+      "nodes": [
+        {
+          "id": "fn:main",
+          "kind": "function",
+          "name": "main",
+          "file": "workers.c",
+          "line": 20,
+          "signature": "int (void)",
+          "module": ""
+        },
+        {
+          "id": "fn:pthread_join",
+          "kind": "function",
+          "name": "pthread_join",
+          "file": "workers.c",
+          "line": 219,
+          "signature": "int (pthread_t, void **)",
+          "module": ""
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_9ec6ea3e1b0d",
+          "source": "fn:main",
+          "target": "fn:pthread_join",
+          "kind": "direct_call",
+          "call_site": {
+            "file": "workers.c",
+            "line": 25,
+            "column": 9,
+            "snippet": "if (pthread_join(b, 0) != 0) return 1;"
+          },
+          "condition": null,
+          "execution_context": null,
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_4d4f8c32aa32"
+          ],
+          "status": "unconfirmed"
+        }
+      ],
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_4d4f8c32aa32"
+      ],
+      "status": "unconfirmed"
+    },
+    {
+      "id": "e_a434042bfa27",
+      "entry": "fn:observe",
+      "direction": "caller_to_callee",
+      "nodes": [
+        {
+          "id": "fn:observe",
+          "kind": "function",
+          "name": "observe",
+          "file": "observe.c",
+          "line": 2,
+          "signature": "int (int)",
+          "module": ""
+        },
+        {
+          "id": "fn:allocate_temporary",
+          "kind": "function",
+          "name": "allocate_temporary",
+          "file": "resource.c",
+          "line": 2,
+          "signature": "void (void)",
+          "module": ""
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_a434042bfa27",
+          "source": "fn:observe",
+          "target": "fn:allocate_temporary",
+          "kind": "direct_call",
+          "call_site": {
+            "file": "observe.c",
+            "line": 3,
+            "column": 5,
+            "snippet": "allocate_temporary();"
+          },
+          "condition": null,
+          "execution_context": null,
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_d80acc32dae9"
+          ],
+          "status": "unconfirmed"
+        }
+      ],
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_d80acc32dae9"
+      ],
+      "status": "unconfirmed"
+    },
+    {
+      "id": "e_cef428cc9114",
+      "entry": "fn:main",
+      "direction": "caller_to_callee",
+      "nodes": [
+        {
+          "id": "fn:main",
+          "kind": "function",
+          "name": "main",
+          "file": "workers.c",
+          "line": 20,
+          "signature": "int (void)",
+          "module": ""
+        },
+        {
+          "id": "fn:pthread_join",
+          "kind": "function",
+          "name": "pthread_join",
+          "file": "workers.c",
+          "line": 219,
+          "signature": "int (pthread_t, void **)",
+          "module": ""
+        }
+      ],
+      "edges": [
+        {
+          "id": "e_cef428cc9114",
+          "source": "fn:main",
+          "target": "fn:pthread_join",
+          "kind": "direct_call",
+          "call_site": {
+            "file": "workers.c",
+            "line": 24,
+            "column": 9,
+            "snippet": "if (pthread_join(a, 0) != 0) return 1;"
+          },
+          "condition": null,
+          "execution_context": null,
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_be4d26e242c3"
+          ],
+          "status": "unconfirmed"
+        }
+      ],
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_be4d26e242c3"
+      ],
+      "status": "unconfirmed"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev_13d17277c23e",
+      "kind": "call_site",
+      "location": {
+        "file": "resource.c",
+        "line": 4,
+        "column": 5,
+        "snippet": "free(buffer);"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_2d49537f88a5",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 28,
+        "column": 12,
+        "snippet": ""
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_4d4f8c32aa32",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 25,
+        "column": 9,
+        "snippet": "if (pthread_join(b, 0) != 0) return 1;"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_6a59caf35c62",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 8,
+        "column": 5,
+        "snippet": "pthread_mutex_lock(&mutex);"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_7ba8304725fa",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 10,
+        "column": 5,
+        "snippet": "pthread_mutex_unlock(&mutex);"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_acd4417b6310",
+      "kind": "call_site",
+      "location": {
+        "file": "resource.c",
+        "line": 3,
+        "column": 20,
+        "snippet": "char *buffer = malloc(32);"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_be4d26e242c3",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 24,
+        "column": 9,
+        "snippet": "if (pthread_join(a, 0) != 0) return 1;"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_cf0813d2c179",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 22,
+        "column": 9,
+        "snippet": "if (pthread_create(&a, 0, writer_a, 0) != 0) return 1;"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_d80acc32dae9",
+      "kind": "call_site",
+      "location": {
+        "file": "observe.c",
+        "line": 3,
+        "column": 5,
+        "snippet": "allocate_temporary();"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_d8ab83107821",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 23,
+        "column": 9,
+        "snippet": "if (pthread_create(&b, 0, writer_b, 0) != 0) return 1;"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_f22e697c9d13",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 15,
+        "column": 5,
+        "snippet": "pthread_mutex_lock(&second_mutex);"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_f2a3cf71c04e",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 17,
+        "column": 5,
+        "snippet": "pthread_mutex_unlock(&second_mutex);"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    }
+  ],
+  "warnings": []
+}

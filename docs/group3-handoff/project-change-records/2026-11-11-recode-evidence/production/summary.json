@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "mode": "configured_production_docker_runner",
+  "repository": "yeteng101/REcode",
+  "commit": "e6e3b4222715cea71c150f0dd824ed990e7f567d",
+  "image": "cbug/recode-integration@sha256:9b1dcd6519a72c2717f9e37a506a2594c7dd1b7568bff177106212444f13f320",
+  "responses": {
+    "get_call_chains": {
+      "status": "partial",
+      "findings": 1,
+      "evidence": 190,
+      "resolved_targets": 1
+    },
+    "get_resource_flows": {
+      "status": "partial",
+      "findings": 4,
+      "evidence": 190,
+      "resolved_targets": 1
+    },
+    "get_sync_flows": {
+      "status": "partial",
+      "findings": 1,
+      "evidence": 190,
+      "resolved_targets": 1
+    }
+  },
+  "seconds": 20.884,
+  "fact_snapshots": 1
+}

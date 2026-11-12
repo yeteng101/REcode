@@ -1,0 +1,60 @@
+{
+  "status": "passed",
+  "test_count": 315,
+  "suites": [
+    {
+      "name": "common",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 0.616,
+      "test_count": 48,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\framework-final\\common.log"
+    },
+    {
+      "name": "memory",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 0.074,
+      "test_count": 4,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\framework-final\\memory.log"
+    },
+    {
+      "name": "concurrency",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 58.231,
+      "test_count": 103,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\framework-final\\concurrency.log"
+    },
+    {
+      "name": "pr-adapter-routing",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 6.217,
+      "test_count": 14,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\framework-final\\pr-adapter-routing.log"
+    },
+    {
+      "name": "concurrency-scripts",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 10.824,
+      "test_count": 146,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\framework-final\\concurrency-scripts.log"
+    },
+    {
+      "name": "smoke",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 4.233,
+      "test_count": 0,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\framework-final\\smoke.log"
+    }
+  ],
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "docker_checks": "not_run",
+  "offline": {
+    "enabled": true,
+    "blocked_python_network_events": 0
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "schema_version": "lock-race-test-worker-report/0.1",
+  "candidate_id": "race-1a47d1b2dea759da",
+  "status": "refused",
+  "changed_files": [],
+  "summary": "Verified source HEAD 0b8ed7453594d01d189ca691a910625ad64d35df. The request selects execution_template.name=c_source. This agent's loaded developer role permits only redis_bio_c and requires template=redis_bio_c in test-case.json. The repository profile now supports c_source, but it conflicts with the loaded role. No files were changed.",
+  "verification_status": "not_run"
+}

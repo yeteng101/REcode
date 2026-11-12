@@ -1,0 +1,106 @@
+{
+  "failures": [],
+  "python": "3.12.10",
+  "results": {
+    "HEALTHY-001-common-lock": {
+      "candidate_count": 0,
+      "candidate_statuses": [],
+      "kinds": [],
+      "may_concurrent": []
+    },
+    "HEALTHY-002-event-loop": {
+      "candidate_count": 0,
+      "candidate_statuses": [],
+      "kinds": [],
+      "may_concurrent": []
+    },
+    "LK-001-race": {
+      "candidate_count": 1,
+      "candidate_statuses": [
+        "ready_for_review"
+      ],
+      "kinds": [
+        "data_race"
+      ],
+      "may_concurrent": [
+        true
+      ]
+    },
+    "PARTIAL-001-unknown-context": {
+      "candidate_count": 1,
+      "candidate_statuses": [
+        "needs_more_context"
+      ],
+      "kinds": [
+        "data_race"
+      ],
+      "may_concurrent": [
+        null
+      ]
+    },
+    "adapters": "ok",
+    "coordinator": {
+      "cross_version_review": "rejected",
+      "healthy_without_candidate": "completed",
+      "incomplete_source_defect": "rejected",
+      "missing_review_state": "partial",
+      "prepared_candidates": 1,
+      "reviewer_patch_claim": "rejected",
+      "validated_reviews": 1
+    },
+    "github_acquisition": {
+      "detached_head": "verified",
+      "head_movement": "rejected",
+      "lock_only_request": "verified",
+      "metadata_binding": "verified",
+      "mirror_fetch": "verified",
+      "url_validation": "verified"
+    },
+    "impact_scope": {
+      "call_edges": 1,
+      "coverage": "complete",
+      "cross_version_calls": "rejected",
+      "functions": 3,
+      "partial_calls": "needs_more_context",
+      "shared_objects": 1
+    },
+    "negative_invariants": {
+      "candidate_id": "stable_across_access_order",
+      "explicit_must_held_locks": "protective",
+      "invalid_snippet_hash": "rejected",
+      "legacy_held_locks": "may_only",
+      "missing_evidence": "rejected",
+      "unsafe_evidence_path": "rejected",
+      "unsafe_path": "rejected"
+    },
+    "patch_pipeline": {
+      "allowed_files": [
+        "src/shared.c"
+      ],
+      "argv_verification": "passed",
+      "diff_unchanged": true,
+      "final_result_aggregation": "completed",
+      "isolated_head": "verified",
+      "out_of_scope_edit": "rejected",
+      "patch_capture": "verified",
+      "remaining_checks_after_failure": "not_run",
+      "single_revision_feedback": "verified",
+      "staged_edit": "rejected",
+      "worker_report_binding": "verified"
+    },
+    "repository_snapshot": {
+      "changed_files": 3,
+      "coordinator_diff_binding": "verified",
+      "cross_version_sync_flow": "rejected",
+      "deleted_hunk_side": "left",
+      "diff_evidence": 3,
+      "unknown_sha": "rejected"
+    },
+    "schemas": "ok",
+    "special_candidate_kinds": {
+      "condition_if_guard": "candidate_generated",
+      "self_deadlock": "candidate_generated"
+    }
+  },
+  "status": "passed"
+}

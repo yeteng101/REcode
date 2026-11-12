@@ -1,0 +1,801 @@
+{
+  "behavior_test": {
+    "artifact_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-artifact.json",
+    "artifact_sha256": "d4264c7571017e4aae21b4ad042a24d534e58060043c4c8d75cde1d7d56de7fd",
+    "candidate_id": "race-1a47d1b2dea759da",
+    "host_review_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\host-behavior-review.json",
+    "host_review_sha256": "9188a4ce7280d8b1527c095c3fb6a42c81b5284d8ad515d343c4257eea4191e6",
+    "image_id": "sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec",
+    "repetitions": 3,
+    "repository": {
+      "base_sha": "22fe56b6fb5ad703ee0a10a4b1009983a8c505b3",
+      "build_profile": "recode-linux-clang",
+      "graph_snapshot_id": "recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85",
+      "head_sha": "c8710b6236113b9b65c4f13bfa2a6f1b11ff6005",
+      "name": "cbug-integration/recode-contract"
+    },
+    "validation_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-validation.json",
+    "validation_sha256": "22f077460aa2ef167eb003aa5930f4c02d9adba365c91b7234cd380c575abac6"
+  },
+  "candidate_id": "race-1a47d1b2dea759da",
+  "constraints": {
+    "allowed_files": [
+      "workers.c"
+    ],
+    "commit_allowed": false,
+    "minimal_patch": true,
+    "network_allowed": false,
+    "verification_allowed": false
+  },
+  "evidence": [
+    {
+      "id": "ev_ast_68e2add3ceebe723",
+      "kind": "ast_object_declaration",
+      "location": {
+        "file": "workers.c",
+        "line": 3,
+        "snippet": "int counter = 0;",
+        "snippet_sha256": "14e1aa13fb4a9fe2e2ff0a78610db4357c68c92a83c0fbf3dd937475f9f6da12"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ast_3953321a0436c80a",
+      "kind": "ast_thread_event",
+      "location": {
+        "file": "workers.c",
+        "line": 20,
+        "snippet": "if (pthread_create(&b, 0, writer_b, 0) != 0) return 1;",
+        "snippet_sha256": "b103b70c3075b276928fea89b15859dcab54ae5c86330a454063fbad829bbea8"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ast_7c33faf9b6d1a5ef",
+      "kind": "ast_shared_access",
+      "location": {
+        "file": "workers.c",
+        "line": 14,
+        "snippet": "counter++;",
+        "snippet_sha256": "87fab714d442dfbe7b9c86da7d4231598a17afbcdcddf22d94e5d966f096e67f"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ast_5525e55220b96c21",
+      "kind": "ast_object_declaration",
+      "location": {
+        "file": "workers.c",
+        "line": 4,
+        "snippet": "pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;",
+        "snippet_sha256": "984d982a6c4e1c7e7b57ee344dd8c6b74f27eab6803d1f6982db5c831a18d323"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ast_78be14100d1d1842",
+      "kind": "ast_lock_operation",
+      "location": {
+        "file": "workers.c",
+        "line": 7,
+        "snippet": "pthread_mutex_lock(&mutex);",
+        "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ast_d86ebeb1d913eb54",
+      "kind": "ast_thread_event",
+      "location": {
+        "file": "workers.c",
+        "line": 19,
+        "snippet": "if (pthread_create(&a, 0, writer_a, 0) != 0) return 1;",
+        "snippet_sha256": "5da35bb66a02091ed4cbfaf3b4ba91f4a009794dc2b081b8f8d8fd61ec5def68"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ast_f9573c3d4a60c9b4",
+      "kind": "ast_shared_access",
+      "location": {
+        "file": "workers.c",
+        "line": 8,
+        "snippet": "counter += 2;",
+        "snippet_sha256": "6ca04fb8a3e411a964ff8825a4779e7d123a32710cc6ff341b2b97bd4a9b2e0e"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "diff-2f5a76031d98ede7904f",
+      "kind": "git_diff_hunk",
+      "location": {
+        "file": "workers.c",
+        "line": 5,
+        "side": "right"
+      },
+      "role": "pr_change",
+      "snippet": "@@ -5,22 +5,20 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;\n void *writer_a(void *unused) {\n     (void)unused;\n     pthread_mutex_lock(&mutex);\n-    counter++;\n+    counter += 2;\n     pthread_mutex_unlock(&mutex);\n     return 0;\n }\n void *writer_b(void *unused) {\n     (void)unused;\n-    pthread_mutex_lock(&mutex);\n     counter++;\n-    pthread_mutex_unlock(&mutex);\n     return 0;\n }\n int main(void) {\n     pthread_t a, b;\n-    pthread_create(&a, 0, writer_a, 0);\n-    pthread_create(&b, 0, writer_b, 0);\n-    pthread_join(a, 0);\n-    pthread_join(b, 0);\n+    if (pthread_create(&a, 0, writer_a, 0) != 0) return 1;\n+    if (pthread_create(&b, 0, writer_b, 0) != 0) return 1;\n+    if (pthread_join(a, 0) != 0) return 1;\n+    if (pthread_join(b, 0) != 0) return 1;\n     return observe(counter);\n }\n",
+      "snippet_sha256": "b04fe9c18a1c81fa3d4800df285fec57afc44b958f91fc6f717d446a42a935de"
+    },
+    {
+      "id": "ev_ast_15b359588cae4e64",
+      "kind": "ast_call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 19,
+        "snippet": "if (pthread_create(&a, 0, writer_a, 0) != 0) return 1;",
+        "snippet_sha256": "5da35bb66a02091ed4cbfaf3b4ba91f4a009794dc2b081b8f8d8fd61ec5def68"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ast_1a700afc957e6edb",
+      "kind": "ast_shared_access",
+      "location": {
+        "file": "workers.c",
+        "line": 23,
+        "snippet": "return observe(counter);",
+        "snippet_sha256": "8d163a762c9ad837964964e7a4266c541df4da3bba57db34e72d748c55bd0b8f"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ast_3e9a2fa02f3d1e46",
+      "kind": "ast_lock_operation",
+      "location": {
+        "file": "workers.c",
+        "line": 9,
+        "snippet": "pthread_mutex_unlock(&mutex);",
+        "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ast_657271673936cd6a",
+      "kind": "ast_call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 22,
+        "snippet": "if (pthread_join(b, 0) != 0) return 1;",
+        "snippet_sha256": "611d0b979eff85d98dff963c7255459be31cfd6d14864f5e3ad08a196c9af82a"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ast_6edbd6c7efd53c58",
+      "kind": "ast_call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 21,
+        "snippet": "if (pthread_join(a, 0) != 0) return 1;",
+        "snippet_sha256": "deb155844d73662de83438db057789e58203fdb77af1bca529c2c8ddf061fcd4"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ast_96b469f5bce80b06",
+      "kind": "ast_call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 23,
+        "snippet": "return observe(counter);",
+        "snippet_sha256": "8d163a762c9ad837964964e7a4266c541df4da3bba57db34e72d748c55bd0b8f"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ast_b2361a415c297168",
+      "kind": "ast_call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 20,
+        "snippet": "if (pthread_create(&b, 0, writer_b, 0) != 0) return 1;",
+        "snippet_sha256": "b103b70c3075b276928fea89b15859dcab54ae5c86330a454063fbad829bbea8"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ast_cfb10c1d14d1478c",
+      "kind": "ast_call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 7,
+        "snippet": "pthread_mutex_lock(&mutex);",
+        "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ast_ee7d22f30df10641",
+      "kind": "ast_call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 9,
+        "snippet": "pthread_mutex_unlock(&mutex);",
+        "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "diff-1d5a4b4c8fb1a8d657c1",
+      "kind": "git_diff_hunk",
+      "location": {
+        "file": "observe.c",
+        "line": 1,
+        "side": "right"
+      },
+      "role": "pr_change",
+      "snippet": "@@ -1,5 +1,5 @@\n #include \"state.h\"\n int observe(int value) {\n     allocate_temporary();\n-    return value;\n+    return value + 1;\n }\n",
+      "snippet_sha256": "c9321fa442e6577a01eb5c753426f8bea2c38f9ed3bb231ae0ac4a98b3208629"
+    },
+    {
+      "id": "ev_ast_63c75d9b7c730323",
+      "kind": "ast_call_site",
+      "location": {
+        "file": "observe.c",
+        "line": 3,
+        "snippet": "allocate_temporary();",
+        "snippet_sha256": "3aa05981a039d6e0c4b9c81cf162ce6ea076b3520b546731d7bf637695e94f32"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ast_2b2b0d9b73e3a94a",
+      "kind": "ast_call_site",
+      "location": {
+        "file": "resource.c",
+        "line": 3,
+        "snippet": "char *buffer = malloc(32);",
+        "snippet_sha256": "6da3bbbce999aaa3043a5373dc90f44602ab04ee0af0032eb527100877c22210"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_ast_4d69d23e246bb030",
+      "kind": "ast_call_site",
+      "location": {
+        "file": "resource.c",
+        "line": 4,
+        "snippet": "free(buffer);",
+        "snippet_sha256": "bc2b3942f9ba1c6cb7a42e7c9a24ca0b2a732e7d6b212ea16ad0cae40db24e71"
+      },
+      "role": "supports"
+    }
+  ],
+  "provenance": {
+    "analyzer": {
+      "formal_evidence": true,
+      "name": "REcode-bounded-AST-sync",
+      "version": "1.0"
+    },
+    "context_delivery": {
+      "archive_sha256": "386b42d54d15beb11b6bfc6b092dbf172efb77dc3fcc815c1dcc82fe56cfd836",
+      "lookup": "read_lock_race_candidate_context",
+      "max_inline_chars": 64000,
+      "omissions": [],
+      "revision": 0
+    },
+    "first_group_run_id": "recode-cbug-integration-c8710b623611:get_sync_flows",
+    "first_group_schema_version": "1.0",
+    "formal_evidence": true,
+    "graph_snapshot_id": "recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85",
+    "review_confidence_cap": 1.0,
+    "source_kind": "first_group",
+    "source_response_sha256": "19ffaee4f8fb5275e45fb7dacfd58530210cfd9eff43eed9ed5c2ef4d88396a8"
+  },
+  "repair_context": {
+    "coverage": {
+      "complete": true,
+      "scanned_files": 4,
+      "skipped_files": [],
+      "truncated": false
+    },
+    "discovered_callers": [],
+    "interpretation": "Textual occurrences are inspection leads, not proven call-graph edges.",
+    "schema_version": "lock-race-repair-context/0.1",
+    "seed_symbols": [
+      "main",
+      "writer_a",
+      "writer_b"
+    ],
+    "symbol_occurrences": [
+      {
+        "line": 5,
+        "path": "workers.c",
+        "snippet": "int counter = 0;\npthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;\nvoid *writer_a(void *unused) {\n    (void)unused;\n    pthread_mutex_lock(&mutex);",
+        "snippet_start_line": 3,
+        "symbol": "writer_a"
+      },
+      {
+        "line": 12,
+        "path": "workers.c",
+        "snippet": "    return 0;\n}\nvoid *writer_b(void *unused) {\n    (void)unused;\n    counter++;",
+        "snippet_start_line": 10,
+        "symbol": "writer_b"
+      },
+      {
+        "line": 17,
+        "path": "workers.c",
+        "snippet": "    return 0;\n}\nint main(void) {\n    pthread_t a, b;\n    if (pthread_create(&a, 0, writer_a, 0) != 0) return 1;",
+        "snippet_start_line": 15,
+        "symbol": "main"
+      }
+    ]
+  },
+  "repository": {
+    "base_sha": "22fe56b6fb5ad703ee0a10a4b1009983a8c505b3",
+    "build_profile": "recode-linux-clang",
+    "graph_snapshot_id": "recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85",
+    "head_sha": "c8710b6236113b9b65c4f13bfa2a6f1b11ff6005",
+    "name": "cbug-integration/recode-contract"
+  },
+  "review": {
+    "access_a": {
+      "access_id": "ast_access_389aaf54c909bbccddb7",
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_ast_3953321a0436c80a",
+        "ev_ast_68e2add3ceebe723",
+        "ev_ast_7c33faf9b6d1a5ef"
+      ],
+      "execution_context": {
+        "cannot_run_concurrently_with": [
+          "main:d3d5f7516774"
+        ],
+        "context_id": "thread:ast_thread_9aba0e369f233445",
+        "creation_site": {
+          "column": 9,
+          "file": "workers.c",
+          "line": 20,
+          "snippet": "if (pthread_create(&b, 0, writer_b, 0) != 0) return 1;"
+        },
+        "may_run_concurrently_with": [
+          "thread:ast_thread_c3c084bbc2743b8e"
+        ],
+        "reentrant": false
+      },
+      "function": "writer_b",
+      "kind": "write",
+      "location": {
+        "end_line": 14,
+        "file": "workers.c",
+        "start_line": 14
+      },
+      "may_lockset": [],
+      "must_lockset": [],
+      "other_synchronization": [],
+      "source_finding_ids": [
+        "recode-ast-sync"
+      ]
+    },
+    "access_b": {
+      "access_id": "ast_access_76097af1d56d91dda18c",
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_ast_5525e55220b96c21",
+        "ev_ast_68e2add3ceebe723",
+        "ev_ast_78be14100d1d1842",
+        "ev_ast_d86ebeb1d913eb54",
+        "ev_ast_f9573c3d4a60c9b4"
+      ],
+      "execution_context": {
+        "cannot_run_concurrently_with": [
+          "main:d3d5f7516774"
+        ],
+        "context_id": "thread:ast_thread_c3c084bbc2743b8e",
+        "creation_site": {
+          "column": 9,
+          "file": "workers.c",
+          "line": 19,
+          "snippet": "if (pthread_create(&a, 0, writer_a, 0) != 0) return 1;"
+        },
+        "may_run_concurrently_with": [
+          "thread:ast_thread_9aba0e369f233445"
+        ],
+        "reentrant": false
+      },
+      "function": "writer_a",
+      "kind": "write",
+      "location": {
+        "end_line": 8,
+        "file": "workers.c",
+        "start_line": 8
+      },
+      "may_lockset": [
+        {
+          "lock_id": "object_ast_22e0661fea5bc641e24c",
+          "mode": "exclusive"
+        }
+      ],
+      "must_lockset": [
+        {
+          "lock_id": "object_ast_22e0661fea5bc641e24c",
+          "mode": "exclusive"
+        }
+      ],
+      "other_synchronization": [],
+      "source_finding_ids": [
+        "recode-ast-sync"
+      ]
+    },
+    "at_least_one_write": true,
+    "candidate_id": "race-1a47d1b2dea759da",
+    "change_relationship": "introduced",
+    "common_protection": {
+      "common_must_lockset": [],
+      "effective": false,
+      "explanation": "Both worker bodies directly update the single file-scope ordinary int counter. writer_a holds mutex across its update. writer_b executes its entire update without synchronization. main creates both workers before joining either, permitting overlapping worker execution. The subsequent joins order worker completion before the final main-thread read. They supply no happens-before ordering between the two worker updates.",
+      "other_synchronization": []
+    },
+    "confidence": 0.99,
+    "coverage": {
+      "candidate_decision": {
+        "blocking_gaps": [],
+        "checks": {
+          "call_facts": true,
+          "conflict": true,
+          "evidence": true,
+          "identity": true,
+          "overlap": true,
+          "pr_connection": true,
+          "protocol": true,
+          "required_source": true,
+          "source_integrity": true,
+          "source_sites": true,
+          "sync_facts": true,
+          "version": true
+        },
+        "complete": true,
+        "invalid_source_files": [],
+        "max_status": "probable",
+        "missing_source_ranges": [],
+        "nonblocking_gaps": [],
+        "policy": "candidate-local-proof/1",
+        "required_source_ranges": [
+          {
+            "end_line": 3,
+            "file": "workers.c",
+            "role": "object_declaration",
+            "start_line": 3
+          },
+          {
+            "end_line": 4,
+            "file": "workers.c",
+            "role": "lock_declaration",
+            "start_line": 4
+          },
+          {
+            "end_line": 7,
+            "file": "workers.c",
+            "role": "lock_operation",
+            "start_line": 7
+          },
+          {
+            "end_line": 8,
+            "file": "workers.c",
+            "role": "access_b",
+            "start_line": 8
+          },
+          {
+            "end_line": 9,
+            "file": "workers.c",
+            "role": "lock_operation",
+            "start_line": 9
+          },
+          {
+            "end_line": 14,
+            "file": "workers.c",
+            "role": "access_a",
+            "start_line": 14
+          }
+        ]
+      },
+      "complete": true,
+      "reason": null,
+      "source_context": {
+        "complete": true,
+        "included_files": [
+          "observe.c",
+          "resource.c",
+          "workers.c"
+        ],
+        "missing_related_files": [],
+        "missing_required_files": [],
+        "missing_required_ranges": [],
+        "required_files": [
+          "workers.c"
+        ]
+      },
+      "unresolved": []
+    },
+    "defect_type": "data_race",
+    "evidence_ids": [
+      "ev_ast_68e2add3ceebe723",
+      "ev_ast_3953321a0436c80a",
+      "ev_ast_d86ebeb1d913eb54",
+      "ev_ast_7c33faf9b6d1a5ef",
+      "ev_ast_f9573c3d4a60c9b4",
+      "ev_ast_5525e55220b96c21",
+      "ev_ast_78be14100d1d1842",
+      "ev_ast_3e9a2fa02f3d1e46",
+      "ev_ast_6edbd6c7efd53c58",
+      "ev_ast_657271673936cd6a",
+      "diff-2f5a76031d98ede7904f"
+    ],
+    "lock_order": {
+      "applicable": false,
+      "blocking": null,
+      "may_overlap": null,
+      "reachable_cycle": null
+    },
+    "may_concurrent": true,
+    "missing_facts": [],
+    "patch": {
+      "diff": null,
+      "reason": "This bounded review is read-only. Patch generation belongs to the host-controlled patch stage.",
+      "status": "not_generated"
+    },
+    "provenance": {
+      "analyzer": {
+        "formal_evidence": true,
+        "name": "REcode-bounded-AST-sync",
+        "version": "1.0"
+      },
+      "context_delivery": {
+        "archive_sha256": "386b42d54d15beb11b6bfc6b092dbf172efb77dc3fcc815c1dcc82fe56cfd836",
+        "lookup": "read_lock_race_candidate_context",
+        "max_inline_chars": 64000,
+        "omissions": [],
+        "revision": 0
+      },
+      "first_group_run_id": "recode-cbug-integration-c8710b623611:get_sync_flows",
+      "first_group_schema_version": "1.0",
+      "formal_evidence": true,
+      "graph_snapshot_id": "recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85",
+      "review_confidence_cap": 1.0,
+      "source_kind": "first_group",
+      "source_response_sha256": "19ffaee4f8fb5275e45fb7dacfd58530210cfd9eff43eed9ed5c2ef4d88396a8"
+    },
+    "recommended_action": "Restore acquisition and release of the existing mutex around writer_b's complete counter++ operation so both worker updates follow the same exclusive-lock protocol.",
+    "repository": {
+      "base_sha": "22fe56b6fb5ad703ee0a10a4b1009983a8c505b3",
+      "build_profile": "recode-linux-clang",
+      "graph_snapshot_id": "recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85",
+      "head_sha": "c8710b6236113b9b65c4f13bfa2a6f1b11ff6005",
+      "name": "cbug-integration/recode-contract"
+    },
+    "same_object": true,
+    "schema_version": "lock-race-review/0.1",
+    "severity": "medium",
+    "shared_object": {
+      "declaration": {
+        "end_line": 3,
+        "file": "workers.c",
+        "start_line": 3
+      },
+      "identity_confidence": 1.0,
+      "name": "counter",
+      "object_id": "object_ast_a228610e317ce63329f7",
+      "source_finding_ids": [
+        "recode-ast-sync"
+      ],
+      "type": "int"
+    },
+    "status": "probable",
+    "summary": "The PR removes writer_b's mutex acquisition and release around counter++ at workers.c line 14. writer_a concurrently performs counter += 2 at workers.c line 8. Both accesses resolve directly to the same ordinary int declared at workers.c line 3. The supplied complete worker bodies and thread-creation sequence establish conflicting updates without common synchronization, introducing a C data race and undefined behavior. The diff and impact scope directly connect the removed locking to this access pair. Status respects the supplied coverage.candidate_decision.max_status value of probable.",
+    "verdict": "defect",
+    "verification": {
+      "checks": [],
+      "status": "not_run"
+    },
+    "verification_recommendations": [
+      "Have the host verify that both worker updates hold the same mutex throughout each read-modify-write operation.",
+      "Under the host-approved verification plan, exercise successful creation and completion of both workers with overlapping execution and check that the final counter is 3 and observe returns 4."
+    ]
+  },
+  "schema_version": "lock-race-patch-request/0.1",
+  "test_strategy": "behavior_before_patch",
+  "verification_mode": "strict",
+  "verification_plan": {
+    "checks": [
+      {
+        "argv": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "name": "format",
+        "timeout_seconds": 30
+      },
+      {
+        "argv": [
+          "D:\\JDProject\\.runtime\\python-3.12.10\\python.exe",
+          "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_c_docker_verification.py",
+          "--image",
+          "sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec",
+          "--source",
+          "workers.c",
+          "--source",
+          "observe.c",
+          "--source",
+          "resource.c",
+          "--mode",
+          "build",
+          "--expected-exit",
+          "4",
+          "--output",
+          "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\project-build.json"
+        ],
+        "name": "project-build",
+        "timeout_seconds": 120
+      },
+      {
+        "argv": [
+          "D:\\JDProject\\.runtime\\python-3.12.10\\python.exe",
+          "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_c_docker_verification.py",
+          "--image",
+          "sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec",
+          "--source",
+          "workers.c",
+          "--source",
+          "observe.c",
+          "--source",
+          "resource.c",
+          "--mode",
+          "smoke",
+          "--expected-exit",
+          "4",
+          "--output",
+          "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\project-smoke.json"
+        ],
+        "name": "project-smoke",
+        "timeout_seconds": 120
+      },
+      {
+        "argv": [
+          "D:\\JDProject\\.runtime\\python-3.12.10\\python.exe",
+          "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_generated_redis_test.py",
+          "--repository",
+          ".",
+          "--image",
+          "sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec",
+          "--test-artifact",
+          "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-artifact.json",
+          "--output",
+          "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\fixed\\fixed.json"
+        ],
+        "name": "generated-defect-regression",
+        "timeout_seconds": 360
+      }
+    ],
+    "schema_version": "lock-race-verification-plan/0.1"
+  },
+  "verification_plan_sha256": "fb86f362ff34e8c05ccae36735b82210bf98e9a2a23c64450635cf2b335d8823",
+  "verification_scope": {
+    "candidate_id": "race-1a47d1b2dea759da",
+    "checks": [
+      {
+        "artifacts": [],
+        "covers": [],
+        "failure_codes": {},
+        "limitations": [
+          "Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim."
+        ],
+        "name": "format",
+        "purpose": "format",
+        "supported_protocols": [
+          "any"
+        ]
+      },
+      {
+        "artifacts": [
+          {
+            "path": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_c_docker_verification.py",
+            "sha256": "cde6dcf2b7d5ac5756ab1f5e8a0c24e4651065bc024ed00466b59d90a609b074"
+          }
+        ],
+        "covers": [],
+        "failure_codes": {
+          "20": "compile_failed",
+          "21": "behavior_assertion_failed",
+          "90": "test_harness_error"
+        },
+        "limitations": [
+          "Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim."
+        ],
+        "name": "project-build",
+        "purpose": "build",
+        "supported_protocols": [
+          "any"
+        ]
+      },
+      {
+        "artifacts": [
+          {
+            "path": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_c_docker_verification.py",
+            "sha256": "cde6dcf2b7d5ac5756ab1f5e8a0c24e4651065bc024ed00466b59d90a609b074"
+          }
+        ],
+        "covers": [],
+        "failure_codes": {
+          "20": "compile_failed",
+          "21": "behavior_assertion_failed",
+          "90": "test_harness_error"
+        },
+        "limitations": [
+          "Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim."
+        ],
+        "name": "project-smoke",
+        "purpose": "official_regression",
+        "supported_protocols": [
+          "any"
+        ]
+      },
+      {
+        "artifacts": [
+          {
+            "path": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_generated_redis_test.py",
+            "sha256": "1ab808323c5f33a656cf3acbb55d1f42453b5e661a19d9a4c2bbda0da31accf5"
+          },
+          {
+            "path": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_redis_protocol_regression.py",
+            "sha256": "8a10a5bb104a81a9371f1f0f358dea3d02ed35c489e4b89b3883741a134f0e8f"
+          },
+          {
+            "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-artifact.json",
+            "sha256": "c947dd27a18a8ddf031945ae3ae008a2c798402071ecd6c11fa23b6536d1e485"
+          },
+          {
+            "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\captured-1\\driver.c",
+            "sha256": "70dd9339a1ca04932746c835a1096aa7f9df7d50a33025eaff5132dd5a8367a0"
+          },
+          {
+            "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\captured-1\\test-case.json",
+            "sha256": "d61f9a03ddc5a2a324ecf183202930007fe86a7d51377cd43a62864829336312"
+          },
+          {
+            "path": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\patching\\test_tasks.py",
+            "sha256": "2200b831f6c4fa4ce426bead7e814f98407c663ce49f5a2535c1eca69834d281"
+          },
+          {
+            "path": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\patching\\behavior.py",
+            "sha256": "f3d2024ca8c6a11ee6d936c155463397619648df5ce7107530449654c514c9fa"
+          }
+        ],
+        "covers": [
+          "no_lost_updates"
+        ],
+        "failure_codes": {},
+        "limitations": [
+          "The test requires two available Linux logical CPUs and working thread affinity. Missing scheduling facilities, synchronization errors, or the eight-second internal deadline yield harness status 90.",
+          "The batch barriers force concurrent callback workloads on distinct logical CPUs, but the individual unsynchronized machine-level read-modify-write overlap is stress-driven. Reproduction stability remains unverified until the host performs its required repeated runs.",
+          "The bounded workload invokes each original callback repeatedly without same-callback reentrancy. It covers preservation of their additive arithmetic result and observe's result, without proving every possible race or synchronization property."
+        ],
+        "name": "generated-defect-regression",
+        "purpose": "defect_regression",
+        "supported_protocols": [
+          "behavior"
+        ]
+      }
+    ],
+    "repository": {
+      "base_sha": "22fe56b6fb5ad703ee0a10a4b1009983a8c505b3",
+      "build_profile": "recode-linux-clang",
+      "graph_snapshot_id": "recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85",
+      "head_sha": "c8710b6236113b9b65c4f13bfa2a6f1b11ff6005",
+      "name": "cbug-integration/recode-contract"
+    },
+    "required_coverage": [
+      "no_lost_updates"
+    ],
+    "schema_version": "lock-race-verification-scope/0.1",
+    "selected_protocol": "behavior",
+    "verification_plan_sha256": "fb86f362ff34e8c05ccae36735b82210bf98e9a2a23c64450635cf2b335d8823"
+  },
+  "verification_scope_sha256": "d33ad538a533e2d47835b497c96201da44b305aab95fa9e5f266e198a2415386",
+  "workspace": {
+    "expected_head_sha": "c8710b6236113b9b65c4f13bfa2a6f1b11ff6005",
+    "kind": "isolated_git_worktree",
+    "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\patches\\race-1a47d1b2dea759da"
+  }
+}

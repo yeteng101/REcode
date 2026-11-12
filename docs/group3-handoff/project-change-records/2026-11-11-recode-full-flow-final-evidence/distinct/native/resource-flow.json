@@ -1,0 +1,167 @@
+{
+  "schema_version": "1.0",
+  "run_id": "recode-cbug-integration-ddcebbae970d",
+  "result_type": "resource_flow",
+  "status": "succeeded",
+  "generated_at": "2026-11-11T12:13:48Z",
+  "source": {
+    "repository": "cbug-integration/recode-contract",
+    "commit": "ddcebbae970df496335ab4d5900dce351824893b",
+    "build_profile": "recode-linux-clang",
+    "analyzer": "clang++ -Xclang -ast-dump=json",
+    "generated_at": "2026-11-11T12:13:48Z",
+    "origin": "analyzer",
+    "provider": "native_resource_flow_v1"
+  },
+  "items": [
+    {
+      "id": "rf_b193529f8390",
+      "status": "unconfirmed",
+      "resource": "buffer",
+      "resource_expression": "buffer",
+      "resource_type": "memory",
+      "operations": [
+        {
+          "operation_id": "op_fd3a9711fb",
+          "kind": "acquire",
+          "api": "malloc",
+          "function": "allocate_temporary",
+          "file": "resource.c",
+          "line": 3,
+          "snippet": "char *buffer = malloc(32);",
+          "evidence_ids": [
+            "ev_acd4417b6310"
+          ],
+          "status": "unconfirmed",
+          "confidence": 0.75,
+          "assignment_chain": [
+            {
+              "file": "resource.c",
+              "line": 3,
+              "lhs": "buffer",
+              "rhs": "malloc(32)",
+              "evidence_id": "ev_bbda2423881a"
+            }
+          ]
+        },
+        {
+          "operation_id": "op_4a5d907507",
+          "kind": "release",
+          "api": "free",
+          "function": "allocate_temporary",
+          "file": "resource.c",
+          "line": 4,
+          "snippet": "free(buffer);",
+          "evidence_ids": [
+            "ev_13d17277c23e"
+          ],
+          "status": "unconfirmed",
+          "confidence": 0.75,
+          "assignment_chain": [
+            {
+              "file": "resource.c",
+              "line": 3,
+              "lhs": "buffer",
+              "rhs": "malloc(32)",
+              "evidence_id": "ev_bbda2423881a"
+            }
+          ]
+        }
+      ],
+      "owner": "allocate_temporary",
+      "thread": null,
+      "ownership_model": "visible_acquire_release",
+      "data_flow": [
+        {
+          "file": "resource.c",
+          "line": 3,
+          "lhs": "buffer",
+          "rhs": "malloc(32)",
+          "evidence_id": "ev_bbda2423881a"
+        },
+        {
+          "file": "resource.c",
+          "line": 3,
+          "lhs": "buffer",
+          "rhs": "malloc(32)",
+          "evidence_id": "ev_bbda2423881a"
+        }
+      ],
+      "assignment_chain": [
+        {
+          "file": "resource.c",
+          "line": 3,
+          "lhs": "buffer",
+          "rhs": "malloc(32)",
+          "evidence_id": "ev_bbda2423881a"
+        },
+        {
+          "file": "resource.c",
+          "line": 3,
+          "lhs": "buffer",
+          "rhs": "malloc(32)",
+          "evidence_id": "ev_bbda2423881a"
+        }
+      ],
+      "paths": [
+        {
+          "path_id": "rf_b193529f8390_path",
+          "condition": "visible_graph_path",
+          "operations": [
+            "op_fd3a9711fb",
+            "op_4a5d907507"
+          ],
+          "complete": true,
+          "termination_reason": "release_found",
+          "evidence_ids": [
+            "ev_acd4417b6310",
+            "ev_13d17277c23e"
+          ]
+        }
+      ],
+      "confidence": 0.8,
+      "evidence_ids": [
+        "ev_acd4417b6310",
+        "ev_13d17277c23e"
+      ],
+      "origin": "analyzer"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev_13d17277c23e",
+      "kind": "call_site",
+      "location": {
+        "file": "resource.c",
+        "line": 4,
+        "column": 5,
+        "snippet": "free(buffer);"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_acd4417b6310",
+      "kind": "call_site",
+      "location": {
+        "file": "resource.c",
+        "line": 3,
+        "column": 20,
+        "snippet": "char *buffer = malloc(32);"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_bbda2423881a",
+      "kind": "assignment",
+      "location": {
+        "file": "resource.c",
+        "line": 3,
+        "snippet": "char *buffer = malloc(32);"
+      },
+      "role": "supports"
+    }
+  ],
+  "warnings": []
+}

@@ -1,0 +1,76 @@
+{
+  "job_id": "job_9f41e74d3b4a45e8a0813d59740b8433",
+  "base_url": "http://127.0.0.1:62062",
+  "archive_sha256": "f0beed747669dd9b6e761d2673e399b03cd1af42df14471bb34b4d2df0a61638",
+  "result": {
+    "status": "succeeded",
+    "repository_url": "https://github.com/yeteng101/REcode.git",
+    "repository": "yeteng101/REcode",
+    "repository_label": "repository",
+    "commit": "e6e3b4222715cea71c150f0dd824ed990e7f567d",
+    "run_id": "run_repository_1794381859",
+    "build_profile": "safe-generic",
+    "source_dir": "/work/checkout/repository_1794381859",
+    "workspace": "/work/output/workspace",
+    "output_dir": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\jobs\\job_9f41e74d3b4a45e8a0813d59740b8433\\attempt-1-74af2a2753dd4caca22e9dea81409e2a\\analysis",
+    "archive": "",
+    "outputs": {
+      "visualization": "visualization.html",
+      "call_chains": "external/call-chains.json",
+      "resource_flow": "external/resource-flow.json",
+      "sync_relations": "external/sync-relations.json",
+      "race_analysis": "external/race-analysis.json",
+      "knowledge_graph": "external/knowledge-graph.json",
+      "logs": "logs",
+      "graph": "graph.json",
+      "report": "report.md",
+      "tool_trace": "trace/tool-trace.jsonl",
+      "tool_trace_summary": "trace/tool-trace-summary.json"
+    },
+    "pipeline_status": {
+      "01-index": "succeeded",
+      "02-macro": "succeeded",
+      "03-callgraph": "succeeded",
+      "04-fptr": "partial",
+      "05-async": "succeeded",
+      "06-verify": "partial",
+      "07-report": "succeeded"
+    },
+    "tool_trace_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\jobs\\job_9f41e74d3b4a45e8a0813d59740b8433\\attempt-1-74af2a2753dd4caca22e9dea81409e2a\\trace\\tool-trace.jsonl",
+    "tool_trace_summary_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\jobs\\job_9f41e74d3b4a45e8a0813d59740b8433\\attempt-1-74af2a2753dd4caca22e9dea81409e2a\\trace\\tool-trace-summary.json",
+    "tool_trace": {
+      "schema_version": "tool-trace-v1",
+      "trace_id": "trace_fafacff03ba34a75",
+      "run_id": "job_9f41e74d3b4a45e8a0813d59740b8433",
+      "status": "succeeded",
+      "trace_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\jobs\\job_9f41e74d3b4a45e8a0813d59740b8433\\attempt-1-74af2a2753dd4caca22e9dea81409e2a\\trace\\tool-trace.jsonl",
+      "summary_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\jobs\\job_9f41e74d3b4a45e8a0813d59740b8433\\attempt-1-74af2a2753dd4caca22e9dea81409e2a\\trace\\tool-trace-summary.json",
+      "event_count": 4,
+      "status_counts": {
+        "ok": 4
+      },
+      "metadata": {
+        "attempt": 1,
+        "repository_url": "https://github.com/yeteng101/REcode.git"
+      },
+      "updated_at": "2026-11-11T07:24:34Z"
+    },
+    "resources": {
+      "cpus_limit": 2.0,
+      "memory_limit_mb": 2048,
+      "disk_limit_mb": 1024,
+      "pids_limit": 128,
+      "cpu_percent": "0.00%",
+      "memory": "339.9MiB / 2GiB",
+      "pids": "1",
+      "block_io": "131MB / 0B",
+      "memory_percent": 16.6,
+      "sample": "post-analysis"
+    },
+    "sandbox": {
+      "image": "cbug/recode-integration@sha256:9b1dcd6519a72c2717f9e37a506a2594c7dd1b7568bff177106212444f13f320",
+      "network": "none",
+      "mode": "safe-generic"
+    }
+  }
+}

@@ -1,0 +1,742 @@
+{
+  "schema_version": "lock-race-impact-scope/0.1",
+  "repository": {
+    "name": "cbug-integration/recode-contract",
+    "base_sha": "dff7b968116af00071ce76ebdb5419fe87babf6b",
+    "head_sha": "926ed8a5ddf406e50c3dcf5ee955b13c8c3f6751",
+    "build_profile": "recode-linux-clang",
+    "graph_snapshot_id": "recode-3ebb2b38fc7c9b6ee15ba800466e1991939789ef57da5812379a2c54c297653f"
+  },
+  "source_runs": {
+    "call_chains": {
+      "run_id": "recode-cbug-integration-926ed8a5ddf4:get_call_chains",
+      "response_sha256": "5a8b25a6d6348478cd25856af10282a427dcdbadec67f9f4a305466cee5f426b"
+    },
+    "sync_flows": {
+      "run_id": "recode-cbug-integration-926ed8a5ddf4:get_sync_flows",
+      "response_sha256": "09ae553cce22d7d9cd4b226e5d85cc59f6b2df93311160f4f305ec58aec49ca5"
+    }
+  },
+  "change_context": {
+    "status": "complete",
+    "base_sha": "dff7b968116af00071ce76ebdb5419fe87babf6b",
+    "head_sha": "926ed8a5ddf406e50c3dcf5ee955b13c8c3f6751",
+    "merge_base_sha": "dff7b968116af00071ce76ebdb5419fe87babf6b",
+    "base_is_ancestor_of_head": null,
+    "changed_files": [
+      {
+        "path": "observe.c",
+        "status": "M"
+      },
+      {
+        "path": "workers.c",
+        "status": "M"
+      }
+    ],
+    "changed_locations": [
+      {
+        "file": "observe.c",
+        "start_line": 1,
+        "end_line": 5,
+        "old_start_line": 1,
+        "old_line_count": 5,
+        "new_line_count": 5,
+        "side": "right",
+        "evidence_ids": [
+          "diff-1d5a4b4c8fb1a8d657c1"
+        ]
+      },
+      {
+        "file": "workers.c",
+        "start_line": 5,
+        "end_line": 11,
+        "old_start_line": 5,
+        "old_line_count": 7,
+        "new_line_count": 7,
+        "side": "right",
+        "evidence_ids": [
+          "diff-9d453c0a57c266acff43"
+        ]
+      },
+      {
+        "file": "workers.c",
+        "start_line": 18,
+        "end_line": 26,
+        "old_start_line": 18,
+        "old_line_count": 9,
+        "new_line_count": 9,
+        "side": "right",
+        "evidence_ids": [
+          "diff-c9403decaa62224db407"
+        ]
+      }
+    ],
+    "diff_evidence_ids": [
+      "diff-1d5a4b4c8fb1a8d657c1",
+      "diff-9d453c0a57c266acff43",
+      "diff-c9403decaa62224db407"
+    ],
+    "diff_sha256": "a82f765d0861abe757801dc22613ef6035e7d5a9340a5cb942a7baa190b53e8f",
+    "reason": null
+  },
+  "roots": [
+    "fn_ast_56cb486e73171aa03ca2",
+    "fn_ast_7f302d32b00bdd8cfde8",
+    "fn_ast_f1f42ccb2b5b7effef5e"
+  ],
+  "functions": [
+    {
+      "node_id": "fn_ast_56cb486e73171aa03ca2",
+      "name": "observe",
+      "qualified_name": "fn_ast_56cb486e73171aa03ca2",
+      "location": {
+        "file": "observe.c",
+        "line": 2,
+        "snippet": "int observe(int value) {",
+        "snippet_sha256": "9983c528113141b0ac16941d5f23e04e010c4754c66216e77f9ba4189901521e"
+      },
+      "distance": 0,
+      "reasons": [
+        "first_group_query_root",
+        "overlaps_pr_change"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "node_id": "fn_ast_7f302d32b00bdd8cfde8",
+      "name": "writer_a",
+      "qualified_name": "fn_ast_7f302d32b00bdd8cfde8",
+      "location": {
+        "file": "workers.c",
+        "line": 5,
+        "snippet": "void *writer_a(void *unused) {",
+        "snippet_sha256": "fa964dbdfbcf25aa3952e8d19049d8cdff8077640f692cbcdd621dc32d1fb211"
+      },
+      "distance": 0,
+      "reasons": [
+        "first_group_query_root",
+        "overlaps_pr_change"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "node_id": "fn_ast_f1f42ccb2b5b7effef5e",
+      "name": "main",
+      "qualified_name": "fn_ast_f1f42ccb2b5b7effef5e",
+      "location": {
+        "file": "workers.c",
+        "line": 19,
+        "snippet": "int main(void) {",
+        "snippet_sha256": "65dbda96d1562ee5fada6112f438aa29f493e6913fcfe725cbf04ee11491e500"
+      },
+      "distance": 0,
+      "reasons": [
+        "first_group_query_root",
+        "overlaps_pr_change"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "node_id": "fn_ast_04805a91e262f284c7a8",
+      "name": "allocate_temporary",
+      "qualified_name": "fn_ast_04805a91e262f284c7a8",
+      "location": {
+        "file": "resource.c",
+        "line": 2,
+        "snippet": "void allocate_temporary(void) {",
+        "snippet_sha256": "a4543955972f625875069536e914173bb84bd25ea6b114217dae3c0572690864"
+      },
+      "distance": 1,
+      "reasons": [
+        "connected_call_path"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "node_id": "fn_ast_184d03f457c0bad79bb5",
+      "name": "pthread_mutex_lock",
+      "qualified_name": "fn_ast_184d03f457c0bad79bb5",
+      "location": null,
+      "distance": 1,
+      "reasons": [
+        "connected_call_path"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "node_id": "fn_ast_4ff01cf1f61c492853a5",
+      "name": "pthread_mutex_unlock",
+      "qualified_name": "fn_ast_4ff01cf1f61c492853a5",
+      "location": null,
+      "distance": 1,
+      "reasons": [
+        "connected_call_path"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "node_id": "fn_ast_502d8c44c0224c077167",
+      "name": "pthread_join",
+      "qualified_name": "fn_ast_502d8c44c0224c077167",
+      "location": null,
+      "distance": 1,
+      "reasons": [
+        "connected_call_path"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "node_id": "fn_ast_a2ec8f8e321c467e3e4a",
+      "name": "pthread_create",
+      "qualified_name": "fn_ast_a2ec8f8e321c467e3e4a",
+      "location": null,
+      "distance": 1,
+      "reasons": [
+        "connected_call_path"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "node_id": "fn_ast_5d9dd669f6c48089ec1d",
+      "name": "writer_b",
+      "qualified_name": "fn_ast_5d9dd669f6c48089ec1d",
+      "location": {
+        "file": "workers.c",
+        "line": 12,
+        "snippet": "void *writer_b(void *unused) {",
+        "snippet_sha256": "879250d0225a438ecf24b810d7699bbe4f7a54c738e2818e6cdd5ff170700925"
+      },
+      "distance": 2,
+      "reasons": [
+        "connected_call_path"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "node_id": "fn_ast_6f4a13a3d8b8246a5b34",
+      "name": "malloc",
+      "qualified_name": "fn_ast_6f4a13a3d8b8246a5b34",
+      "location": null,
+      "distance": 2,
+      "reasons": [
+        "connected_call_path"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "node_id": "fn_ast_7919506b04f56b80ee36",
+      "name": "free",
+      "qualified_name": "fn_ast_7919506b04f56b80ee36",
+      "location": null,
+      "distance": 2,
+      "reasons": [
+        "connected_call_path"
+      ],
+      "evidence_ids": []
+    }
+  ],
+  "call_edges": [
+    {
+      "edge_id": "ast_call_28cd3f19d19129b5",
+      "kind": "direct_call",
+      "source_node_id": "fn_ast_56cb486e73171aa03ca2",
+      "target_node_id": "fn_ast_04805a91e262f284c7a8",
+      "call_site": {
+        "file": "observe.c",
+        "line": 3,
+        "snippet": "allocate_temporary();",
+        "snippet_sha256": "3aa05981a039d6e0c4b9c81cf162ce6ea076b3520b546731d7bf637695e94f32"
+      },
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_ast_63c75d9b7c730323"
+      ]
+    },
+    {
+      "edge_id": "ast_call_03ee0f83e00bd579",
+      "kind": "direct_call",
+      "source_node_id": "fn_ast_04805a91e262f284c7a8",
+      "target_node_id": "fn_ast_6f4a13a3d8b8246a5b34",
+      "call_site": {
+        "file": "resource.c",
+        "line": 3,
+        "snippet": "char *buffer = malloc(32);",
+        "snippet_sha256": "6da3bbbce999aaa3043a5373dc90f44602ab04ee0af0032eb527100877c22210"
+      },
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_ast_2b2b0d9b73e3a94a"
+      ]
+    },
+    {
+      "edge_id": "ast_call_340d5e34a97e9732",
+      "kind": "direct_call",
+      "source_node_id": "fn_ast_04805a91e262f284c7a8",
+      "target_node_id": "fn_ast_7919506b04f56b80ee36",
+      "call_site": {
+        "file": "resource.c",
+        "line": 4,
+        "snippet": "free(buffer);",
+        "snippet_sha256": "bc2b3942f9ba1c6cb7a42e7c9a24ca0b2a732e7d6b212ea16ad0cae40db24e71"
+      },
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_ast_4d69d23e246bb030"
+      ]
+    },
+    {
+      "edge_id": "ast_call_02e64de0b63b4d33",
+      "kind": "direct_call",
+      "source_node_id": "fn_ast_f1f42ccb2b5b7effef5e",
+      "target_node_id": "fn_ast_a2ec8f8e321c467e3e4a",
+      "call_site": {
+        "file": "workers.c",
+        "line": 21,
+        "snippet": "if (pthread_create(&a, 0, writer_a, 0) != 0) return 1;",
+        "snippet_sha256": "5da35bb66a02091ed4cbfaf3b4ba91f4a009794dc2b081b8f8d8fd61ec5def68"
+      },
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_ast_f9908aeba12f2100"
+      ]
+    },
+    {
+      "edge_id": "ast_call_22b796b13459f660",
+      "kind": "direct_call",
+      "source_node_id": "fn_ast_f1f42ccb2b5b7effef5e",
+      "target_node_id": "fn_ast_a2ec8f8e321c467e3e4a",
+      "call_site": {
+        "file": "workers.c",
+        "line": 22,
+        "snippet": "if (pthread_create(&b, 0, writer_b, 0) != 0) return 1;",
+        "snippet_sha256": "b103b70c3075b276928fea89b15859dcab54ae5c86330a454063fbad829bbea8"
+      },
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_ast_307c8ac0e73cbd01"
+      ]
+    },
+    {
+      "edge_id": "ast_call_ac31a3db723f56f5",
+      "kind": "direct_call",
+      "source_node_id": "fn_ast_f1f42ccb2b5b7effef5e",
+      "target_node_id": "fn_ast_502d8c44c0224c077167",
+      "call_site": {
+        "file": "workers.c",
+        "line": 23,
+        "snippet": "if (pthread_join(a, 0) != 0) return 1;",
+        "snippet_sha256": "deb155844d73662de83438db057789e58203fdb77af1bca529c2c8ddf061fcd4"
+      },
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_ast_d93e12b543a8611b"
+      ]
+    },
+    {
+      "edge_id": "ast_call_ae84a00f32cad46a",
+      "kind": "direct_call",
+      "source_node_id": "fn_ast_f1f42ccb2b5b7effef5e",
+      "target_node_id": "fn_ast_502d8c44c0224c077167",
+      "call_site": {
+        "file": "workers.c",
+        "line": 24,
+        "snippet": "if (pthread_join(b, 0) != 0) return 1;",
+        "snippet_sha256": "611d0b979eff85d98dff963c7255459be31cfd6d14864f5e3ad08a196c9af82a"
+      },
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_ast_34782e6890e5c6f5"
+      ]
+    },
+    {
+      "edge_id": "ast_call_1ffcad99a81b8335",
+      "kind": "direct_call",
+      "source_node_id": "fn_ast_f1f42ccb2b5b7effef5e",
+      "target_node_id": "fn_ast_56cb486e73171aa03ca2",
+      "call_site": {
+        "file": "workers.c",
+        "line": 25,
+        "snippet": "return observe(counter);",
+        "snippet_sha256": "8d163a762c9ad837964964e7a4266c541df4da3bba57db34e72d748c55bd0b8f"
+      },
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_ast_e6f4b7c493856ca1"
+      ]
+    },
+    {
+      "edge_id": "ast_call_ded7e63b0861ac7d",
+      "kind": "direct_call",
+      "source_node_id": "fn_ast_7f302d32b00bdd8cfde8",
+      "target_node_id": "fn_ast_184d03f457c0bad79bb5",
+      "call_site": {
+        "file": "workers.c",
+        "line": 7,
+        "snippet": "pthread_mutex_lock(&mutex);",
+        "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+      },
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_ast_cfb10c1d14d1478c"
+      ]
+    },
+    {
+      "edge_id": "ast_call_0517d8283f5cb022",
+      "kind": "direct_call",
+      "source_node_id": "fn_ast_7f302d32b00bdd8cfde8",
+      "target_node_id": "fn_ast_4ff01cf1f61c492853a5",
+      "call_site": {
+        "file": "workers.c",
+        "line": 9,
+        "snippet": "pthread_mutex_unlock(&mutex);",
+        "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+      },
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_ast_ee7d22f30df10641"
+      ]
+    },
+    {
+      "edge_id": "ast_call_9767a3ebb0d8b570",
+      "kind": "direct_call",
+      "source_node_id": "fn_ast_5d9dd669f6c48089ec1d",
+      "target_node_id": "fn_ast_184d03f457c0bad79bb5",
+      "call_site": {
+        "file": "workers.c",
+        "line": 14,
+        "snippet": "pthread_mutex_lock(&mutex);",
+        "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+      },
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_ast_d83136d1c740e99e"
+      ]
+    },
+    {
+      "edge_id": "ast_call_a2ad248c7b235b51",
+      "kind": "direct_call",
+      "source_node_id": "fn_ast_5d9dd669f6c48089ec1d",
+      "target_node_id": "fn_ast_4ff01cf1f61c492853a5",
+      "call_site": {
+        "file": "workers.c",
+        "line": 16,
+        "snippet": "pthread_mutex_unlock(&mutex);",
+        "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+      },
+      "confidence": 1.0,
+      "evidence_ids": [
+        "ev_ast_595b520ba03f79bd"
+      ]
+    }
+  ],
+  "shared_objects": [
+    {
+      "object_id": "object_ast_a228610e317ce63329f7",
+      "name": "counter",
+      "type": "int",
+      "canonical_type": "int",
+      "declaration": {
+        "file": "workers.c",
+        "start_line": 3,
+        "end_line": 3
+      },
+      "identity_confidence": 1.0,
+      "evidence_ids": [
+        "ev_ast_68e2add3ceebe723"
+      ],
+      "accesses": [
+        {
+          "access_id": "ast_access_35ae254d710b48d96184",
+          "object_id": "object_ast_a228610e317ce63329f7",
+          "kind": "read",
+          "function": "main",
+          "location": {
+            "file": "workers.c",
+            "start_line": 25,
+            "end_line": 25
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_ast_68e2add3ceebe723",
+            "ev_ast_b6b09728b3b9840a"
+          ],
+          "execution_context": {
+            "context_id": "main:70b3a70ba5f4",
+            "reentrant": false,
+            "may_run_concurrently_with": [],
+            "cannot_run_concurrently_with": [
+              "thread:ast_thread_8cec754c59bb4d35",
+              "thread:ast_thread_f4830c9b124ea5c4"
+            ]
+          },
+          "must_lockset": [],
+          "may_lockset": [],
+          "other_synchronization": [],
+          "source_finding_ids": [
+            "recode-ast-sync"
+          ]
+        },
+        {
+          "access_id": "ast_access_58c39c62bc75a70ce69f",
+          "object_id": "object_ast_a228610e317ce63329f7",
+          "kind": "write",
+          "function": "writer_a",
+          "location": {
+            "file": "workers.c",
+            "start_line": 8,
+            "end_line": 8
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_ast_5525e55220b96c21",
+            "ev_ast_68e2add3ceebe723",
+            "ev_ast_78be14100d1d1842",
+            "ev_ast_a134ed85231ec6e8",
+            "ev_ast_ce635e75142e781b"
+          ],
+          "execution_context": {
+            "context_id": "thread:ast_thread_8cec754c59bb4d35",
+            "reentrant": false,
+            "may_run_concurrently_with": [
+              "thread:ast_thread_f4830c9b124ea5c4"
+            ],
+            "cannot_run_concurrently_with": [
+              "main:70b3a70ba5f4"
+            ],
+            "creation_site": {
+              "file": "workers.c",
+              "line": 21,
+              "column": 9,
+              "snippet": "if (pthread_create(&a, 0, writer_a, 0) != 0) return 1;"
+            }
+          },
+          "must_lockset": [
+            {
+              "lock_id": "object_ast_22e0661fea5bc641e24c",
+              "mode": "exclusive"
+            }
+          ],
+          "may_lockset": [
+            {
+              "lock_id": "object_ast_22e0661fea5bc641e24c",
+              "mode": "exclusive"
+            }
+          ],
+          "other_synchronization": [],
+          "source_finding_ids": [
+            "recode-ast-sync"
+          ]
+        },
+        {
+          "access_id": "ast_access_c30eade1df746d3579de",
+          "object_id": "object_ast_a228610e317ce63329f7",
+          "kind": "write",
+          "function": "writer_b",
+          "location": {
+            "file": "workers.c",
+            "start_line": 15,
+            "end_line": 15
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_ast_3e9a2fa02f3d1e46",
+            "ev_ast_5525e55220b96c21",
+            "ev_ast_68e2add3ceebe723",
+            "ev_ast_78be14100d1d1842",
+            "ev_ast_b129f58c249f244b",
+            "ev_ast_b70d8b58fe40e159",
+            "ev_ast_fbc80fdcf8b6ebe3"
+          ],
+          "execution_context": {
+            "context_id": "thread:ast_thread_f4830c9b124ea5c4",
+            "reentrant": false,
+            "may_run_concurrently_with": [
+              "thread:ast_thread_8cec754c59bb4d35"
+            ],
+            "cannot_run_concurrently_with": [
+              "main:70b3a70ba5f4"
+            ],
+            "creation_site": {
+              "file": "workers.c",
+              "line": 22,
+              "column": 9,
+              "snippet": "if (pthread_create(&b, 0, writer_b, 0) != 0) return 1;"
+            }
+          },
+          "must_lockset": [
+            {
+              "lock_id": "object_ast_22e0661fea5bc641e24c",
+              "mode": "exclusive"
+            }
+          ],
+          "may_lockset": [
+            {
+              "lock_id": "object_ast_22e0661fea5bc641e24c",
+              "mode": "exclusive"
+            }
+          ],
+          "other_synchronization": [],
+          "source_finding_ids": [
+            "recode-ast-sync"
+          ]
+        }
+      ],
+      "source_finding_ids": [
+        "recode-ast-sync"
+      ]
+    }
+  ],
+  "locks": [
+    {
+      "lock_id": "object_ast_22e0661fea5bc641e24c",
+      "name": "mutex",
+      "kind": "mutex",
+      "declaration": {
+        "file": "workers.c",
+        "line": 4,
+        "snippet": "pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;",
+        "snippet_sha256": "984d982a6c4e1c7e7b57ee344dd8c6b74f27eab6803d1f6982db5c831a18d323"
+      },
+      "statically_initialized": true,
+      "operations": [
+        {
+          "operation_id": "ast_lock_op_1137f9467a62e890",
+          "kind": "acquire",
+          "api": "pthread_mutex_lock",
+          "function": "writer_a",
+          "location": {
+            "file": "workers.c",
+            "line": 7,
+            "snippet": "pthread_mutex_lock(&mutex);",
+            "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+          },
+          "evidence_ids": [
+            "ev_ast_78be14100d1d1842"
+          ]
+        },
+        {
+          "operation_id": "ast_lock_op_dfecccaf00b1d77d",
+          "kind": "release",
+          "api": "pthread_mutex_unlock",
+          "function": "writer_a",
+          "location": {
+            "file": "workers.c",
+            "line": 9,
+            "snippet": "pthread_mutex_unlock(&mutex);",
+            "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+          },
+          "evidence_ids": [
+            "ev_ast_3e9a2fa02f3d1e46"
+          ]
+        },
+        {
+          "operation_id": "ast_lock_op_afaa509b583b354f",
+          "kind": "acquire",
+          "api": "pthread_mutex_lock",
+          "function": "writer_b",
+          "location": {
+            "file": "workers.c",
+            "line": 14,
+            "snippet": "pthread_mutex_lock(&mutex);",
+            "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+          },
+          "evidence_ids": [
+            "ev_ast_b129f58c249f244b"
+          ]
+        },
+        {
+          "operation_id": "ast_lock_op_8c38009b63c9864f",
+          "kind": "release",
+          "api": "pthread_mutex_unlock",
+          "function": "writer_b",
+          "location": {
+            "file": "workers.c",
+            "line": 16,
+            "snippet": "pthread_mutex_unlock(&mutex);",
+            "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+          },
+          "evidence_ids": [
+            "ev_ast_6c587cfdea9a16aa"
+          ]
+        }
+      ],
+      "evidence_ids": [
+        "ev_ast_3e9a2fa02f3d1e46",
+        "ev_ast_5525e55220b96c21",
+        "ev_ast_6c587cfdea9a16aa",
+        "ev_ast_78be14100d1d1842",
+        "ev_ast_b129f58c249f244b"
+      ]
+    }
+  ],
+  "async_boundaries": [],
+  "condition_variables": [],
+  "lock_order_edges": [],
+  "context_ids": [
+    "main:70b3a70ba5f4",
+    "thread:ast_thread_8cec754c59bb4d35",
+    "thread:ast_thread_f4830c9b124ea5c4"
+  ],
+  "evidence_ids": [
+    "ev_ast_63c75d9b7c730323",
+    "ev_ast_2b2b0d9b73e3a94a",
+    "ev_ast_4d69d23e246bb030",
+    "ev_ast_f9908aeba12f2100",
+    "ev_ast_307c8ac0e73cbd01",
+    "ev_ast_d93e12b543a8611b",
+    "ev_ast_34782e6890e5c6f5",
+    "ev_ast_e6f4b7c493856ca1",
+    "ev_ast_cfb10c1d14d1478c",
+    "ev_ast_ee7d22f30df10641",
+    "ev_ast_d83136d1c740e99e",
+    "ev_ast_595b520ba03f79bd",
+    "ev_ast_68e2add3ceebe723",
+    "ev_ast_b6b09728b3b9840a",
+    "ev_ast_5525e55220b96c21",
+    "ev_ast_78be14100d1d1842",
+    "ev_ast_a134ed85231ec6e8",
+    "ev_ast_ce635e75142e781b",
+    "ev_ast_3e9a2fa02f3d1e46",
+    "ev_ast_b129f58c249f244b",
+    "ev_ast_b70d8b58fe40e159",
+    "ev_ast_fbc80fdcf8b6ebe3",
+    "ev_ast_6c587cfdea9a16aa",
+    "diff-1d5a4b4c8fb1a8d657c1",
+    "diff-9d453c0a57c266acff43",
+    "diff-c9403decaa62224db407"
+  ],
+  "coverage": {
+    "complete": true,
+    "reason": null,
+    "unresolved": [],
+    "local_limits": {
+      "max_depth": 12,
+      "cut_call_edge_count": 0,
+      "cut_call_edge_ids": [],
+      "cut_edge_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "components": {
+      "call_chains": {
+        "complete": true,
+        "status": "succeeded",
+        "unresolved": []
+      },
+      "sync_flows": {
+        "complete": true,
+        "status": "succeeded",
+        "unresolved": []
+      }
+    }
+  },
+  "stats": {
+    "root_count": 3,
+    "function_count": 11,
+    "call_edge_count": 12,
+    "shared_object_count": 1,
+    "shared_access_count": 3,
+    "lock_count": 1,
+    "async_boundary_count": 0,
+    "condition_variable_count": 0,
+    "lock_order_edge_count": 0
+  }
+}

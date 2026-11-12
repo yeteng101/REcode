@@ -1,0 +1,51 @@
+{
+  "status": "passed",
+  "recode_commit": "e6e3b4222715cea71c150f0dd824ed990e7f567d",
+  "image_id": "sha256:ecbd38ee8dcada16fcebc2aba0cd0b8e1ff92839dd75605d8e995e747af19af3",
+  "repository": {
+    "run_id": "recode-cbug-integration-b95a58bf6837",
+    "repository": "cbug-integration/recode-contract",
+    "repository_url": "https://github.com/cbug-integration/recode-contract.git",
+    "head_sha": "b95a58bf6837eaa5c471991811c39130e7880603",
+    "profile": "recode-linux-clang"
+  },
+  "base_sha": "d345641d8634ee1af0ee679b7c924ac7078e9b54",
+  "head_sha": "b95a58bf6837eaa5c471991811c39130e7880603",
+  "source_files": 4,
+  "changed_files": [
+    "observe.c",
+    "workers.c"
+  ],
+  "analysis_invocations": 1,
+  "http": {
+    "exit_code": 0,
+    "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\http.log"
+  },
+  "artifact": {
+    "exit_code": 0,
+    "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\artifact.log"
+  },
+  "specialty": {
+    "exit_code": 0,
+    "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency.log"
+  },
+  "candidate_count": 3,
+  "candidate_status": "needs_more_context",
+  "coverage": {
+    "complete": false,
+    "reason": "context_bundle:first-group status is partial; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+    "unresolved": [
+      "context_bundle:first-group status is partial; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+      "call_chains:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated",
+      "call_chains:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+      "call_chains:recode_bounded_call_subgraph_paths_not_enumerated",
+      "sync_flows:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+      "sync_flows:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+      "sync_flows:recode_object_declarations_and_aliases_unresolved",
+      "sync_flows:recode_execution_contexts_unresolved",
+      "sync_flows:recode_must_locksets_and_lock_order_unavailable"
+    ]
+  },
+  "scope": "Actual upstream HTTP handler/SQLite queue/object store with a local integration runner executing real REcode Clang/native analysis in Docker. Production GitHub-download sandbox runner is not exercised. Synthetic source is explicitly supplied; facts are analyzer-generated, with no hand-authored first-group responses.",
+  "seconds": 9.803
+}

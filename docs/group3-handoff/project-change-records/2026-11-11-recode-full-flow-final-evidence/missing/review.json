@@ -1,0 +1,264 @@
+{
+  "schema_version": "lock-race-review/0.1",
+  "candidate_id": "race-1a47d1b2dea759da",
+  "repository": {
+    "name": "cbug-integration/recode-contract",
+    "base_sha": "22fe56b6fb5ad703ee0a10a4b1009983a8c505b3",
+    "head_sha": "c8710b6236113b9b65c4f13bfa2a6f1b11ff6005",
+    "build_profile": "recode-linux-clang",
+    "graph_snapshot_id": "recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85"
+  },
+  "provenance": {
+    "source_kind": "first_group",
+    "first_group_schema_version": "1.0",
+    "first_group_run_id": "recode-cbug-integration-c8710b623611:get_sync_flows",
+    "source_response_sha256": "19ffaee4f8fb5275e45fb7dacfd58530210cfd9eff43eed9ed5c2ef4d88396a8",
+    "graph_snapshot_id": "recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85",
+    "analyzer": {
+      "name": "REcode-bounded-AST-sync",
+      "version": "1.0",
+      "formal_evidence": true
+    },
+    "formal_evidence": true,
+    "review_confidence_cap": 1.0,
+    "context_delivery": {
+      "archive_sha256": "386b42d54d15beb11b6bfc6b092dbf172efb77dc3fcc815c1dcc82fe56cfd836",
+      "max_inline_chars": 64000,
+      "lookup": "read_lock_race_candidate_context",
+      "revision": 0,
+      "omissions": []
+    }
+  },
+  "verdict": "defect",
+  "status": "probable",
+  "defect_type": "data_race",
+  "severity": "medium",
+  "confidence": 0.99,
+  "change_relationship": "introduced",
+  "shared_object": {
+    "object_id": "object_ast_a228610e317ce63329f7",
+    "name": "counter",
+    "type": "int",
+    "identity_confidence": 1.0,
+    "declaration": {
+      "file": "workers.c",
+      "start_line": 3,
+      "end_line": 3
+    },
+    "source_finding_ids": [
+      "recode-ast-sync"
+    ]
+  },
+  "access_a": {
+    "access_id": "ast_access_389aaf54c909bbccddb7",
+    "kind": "write",
+    "function": "writer_b",
+    "location": {
+      "file": "workers.c",
+      "start_line": 14,
+      "end_line": 14
+    },
+    "execution_context": {
+      "context_id": "thread:ast_thread_9aba0e369f233445",
+      "reentrant": false,
+      "may_run_concurrently_with": [
+        "thread:ast_thread_c3c084bbc2743b8e"
+      ],
+      "cannot_run_concurrently_with": [
+        "main:d3d5f7516774"
+      ],
+      "creation_site": {
+        "file": "workers.c",
+        "line": 20,
+        "column": 9,
+        "snippet": "if (pthread_create(&b, 0, writer_b, 0) != 0) return 1;"
+      }
+    },
+    "must_lockset": [],
+    "may_lockset": [],
+    "other_synchronization": [],
+    "confidence": 1.0,
+    "evidence_ids": [
+      "ev_ast_3953321a0436c80a",
+      "ev_ast_68e2add3ceebe723",
+      "ev_ast_7c33faf9b6d1a5ef"
+    ],
+    "source_finding_ids": [
+      "recode-ast-sync"
+    ]
+  },
+  "access_b": {
+    "access_id": "ast_access_76097af1d56d91dda18c",
+    "kind": "write",
+    "function": "writer_a",
+    "location": {
+      "file": "workers.c",
+      "start_line": 8,
+      "end_line": 8
+    },
+    "execution_context": {
+      "context_id": "thread:ast_thread_c3c084bbc2743b8e",
+      "reentrant": false,
+      "may_run_concurrently_with": [
+        "thread:ast_thread_9aba0e369f233445"
+      ],
+      "cannot_run_concurrently_with": [
+        "main:d3d5f7516774"
+      ],
+      "creation_site": {
+        "file": "workers.c",
+        "line": 19,
+        "column": 9,
+        "snippet": "if (pthread_create(&a, 0, writer_a, 0) != 0) return 1;"
+      }
+    },
+    "must_lockset": [
+      {
+        "lock_id": "object_ast_22e0661fea5bc641e24c",
+        "mode": "exclusive"
+      }
+    ],
+    "may_lockset": [
+      {
+        "lock_id": "object_ast_22e0661fea5bc641e24c",
+        "mode": "exclusive"
+      }
+    ],
+    "other_synchronization": [],
+    "confidence": 1.0,
+    "evidence_ids": [
+      "ev_ast_5525e55220b96c21",
+      "ev_ast_68e2add3ceebe723",
+      "ev_ast_78be14100d1d1842",
+      "ev_ast_d86ebeb1d913eb54",
+      "ev_ast_f9573c3d4a60c9b4"
+    ],
+    "source_finding_ids": [
+      "recode-ast-sync"
+    ]
+  },
+  "same_object": true,
+  "at_least_one_write": true,
+  "may_concurrent": true,
+  "common_protection": {
+    "effective": false,
+    "common_must_lockset": [],
+    "other_synchronization": [],
+    "explanation": "Both worker bodies directly update the single file-scope ordinary int counter. writer_a holds mutex across its update. writer_b executes its entire update without synchronization. main creates both workers before joining either, permitting overlapping worker execution. The subsequent joins order worker completion before the final main-thread read. They supply no happens-before ordering between the two worker updates."
+  },
+  "lock_order": {
+    "applicable": false,
+    "reachable_cycle": null,
+    "blocking": null,
+    "may_overlap": null
+  },
+  "evidence_ids": [
+    "ev_ast_68e2add3ceebe723",
+    "ev_ast_3953321a0436c80a",
+    "ev_ast_d86ebeb1d913eb54",
+    "ev_ast_7c33faf9b6d1a5ef",
+    "ev_ast_f9573c3d4a60c9b4",
+    "ev_ast_5525e55220b96c21",
+    "ev_ast_78be14100d1d1842",
+    "ev_ast_3e9a2fa02f3d1e46",
+    "ev_ast_6edbd6c7efd53c58",
+    "ev_ast_657271673936cd6a",
+    "diff-2f5a76031d98ede7904f"
+  ],
+  "summary": "The PR removes writer_b's mutex acquisition and release around counter++ at workers.c line 14. writer_a concurrently performs counter += 2 at workers.c line 8. Both accesses resolve directly to the same ordinary int declared at workers.c line 3. The supplied complete worker bodies and thread-creation sequence establish conflicting updates without common synchronization, introducing a C data race and undefined behavior. The diff and impact scope directly connect the removed locking to this access pair. Status respects the supplied coverage.candidate_decision.max_status value of probable.",
+  "missing_facts": [],
+  "recommended_action": "Restore acquisition and release of the existing mutex around writer_b's complete counter++ operation so both worker updates follow the same exclusive-lock protocol.",
+  "patch": {
+    "status": "not_generated",
+    "diff": null,
+    "reason": "This bounded review is read-only. Patch generation belongs to the host-controlled patch stage."
+  },
+  "verification": {
+    "status": "not_run",
+    "checks": []
+  },
+  "verification_recommendations": [
+    "Have the host verify that both worker updates hold the same mutex throughout each read-modify-write operation.",
+    "Under the host-approved verification plan, exercise successful creation and completion of both workers with overlapping execution and check that the final counter is 3 and observe returns 4."
+  ],
+  "coverage": {
+    "complete": true,
+    "reason": null,
+    "unresolved": [],
+    "source_context": {
+      "complete": true,
+      "required_files": [
+        "workers.c"
+      ],
+      "included_files": [
+        "observe.c",
+        "resource.c",
+        "workers.c"
+      ],
+      "missing_required_files": [],
+      "missing_related_files": [],
+      "missing_required_ranges": []
+    },
+    "candidate_decision": {
+      "policy": "candidate-local-proof/1",
+      "complete": true,
+      "checks": {
+        "version": true,
+        "sync_facts": true,
+        "call_facts": true,
+        "identity": true,
+        "conflict": true,
+        "overlap": true,
+        "protocol": true,
+        "source_sites": true,
+        "source_integrity": true,
+        "required_source": true,
+        "evidence": true,
+        "pr_connection": true
+      },
+      "blocking_gaps": [],
+      "nonblocking_gaps": [],
+      "required_source_ranges": [
+        {
+          "file": "workers.c",
+          "start_line": 3,
+          "end_line": 3,
+          "role": "object_declaration"
+        },
+        {
+          "file": "workers.c",
+          "start_line": 4,
+          "end_line": 4,
+          "role": "lock_declaration"
+        },
+        {
+          "file": "workers.c",
+          "start_line": 7,
+          "end_line": 7,
+          "role": "lock_operation"
+        },
+        {
+          "file": "workers.c",
+          "start_line": 8,
+          "end_line": 8,
+          "role": "access_b"
+        },
+        {
+          "file": "workers.c",
+          "start_line": 9,
+          "end_line": 9,
+          "role": "lock_operation"
+        },
+        {
+          "file": "workers.c",
+          "start_line": 14,
+          "end_line": 14,
+          "role": "access_a"
+        }
+      ],
+      "missing_source_ranges": [],
+      "invalid_source_files": [],
+      "max_status": "probable"
+    }
+  }
+}

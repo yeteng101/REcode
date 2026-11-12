@@ -1,0 +1,11 @@
+{
+  "schema_version": "lock-race-test-worker-report/0.1",
+  "candidate_id": "race-1a47d1b2dea759da",
+  "status": "authored",
+  "changed_files": [
+    "driver.c",
+    "test-case.json"
+  ],
+  "summary": "Verified the expected source HEAD and runner hash. Authored bounded concurrent workloads invoking actual source callbacks, with quiescent assertions checking counter=3*k and observe(counter)=3*k+1. Uses harness-owned barriers and two-CPU affinity. Individual update overlap is stress-driven and reproduction stability awaits host verification. Product files were preserved.",
+  "verification_status": "not_run"
+}

@@ -1,0 +1,53 @@
+{
+  "status": "passed",
+  "recode_commit": "f14e4da3f872e0d24bb24389e3e8fc88c49b8a28",
+  "image_id": "sha256:72e94d1851afe57935cefc3a56e817e990fa51ff10b5b90ea92b76c65a6eeb0c",
+  "repository": {
+    "run_id": "recode-cbug-integration-926ed8a5ddf4",
+    "repository": "cbug-integration/recode-contract",
+    "repository_url": "https://github.com/cbug-integration/recode-contract.git",
+    "head_sha": "926ed8a5ddf406e50c3dcf5ee955b13c8c3f6751",
+    "profile": "recode-linux-clang"
+  },
+  "base_sha": "dff7b968116af00071ce76ebdb5419fe87babf6b",
+  "head_sha": "926ed8a5ddf406e50c3dcf5ee955b13c8c3f6751",
+  "source_files": 4,
+  "changed_files": [
+    "observe.c",
+    "workers.c"
+  ],
+  "analysis_invocations": 1,
+  "http": {
+    "exit_code": 0,
+    "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\http.log"
+  },
+  "artifact": {
+    "exit_code": 0,
+    "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\artifact.log"
+  },
+  "specialty": {
+    "exit_code": 0,
+    "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\common\\concurrency.log"
+  },
+  "candidate_count": 0,
+  "candidate_statuses": [],
+  "coverage": {
+    "complete": true,
+    "reason": null,
+    "unresolved": []
+  },
+  "source_observations": {
+    "shared_objects": 1,
+    "thread_events": 4,
+    "lock_operations": 4
+  },
+  "lock_variant": "common",
+  "checked_thread_results": true,
+  "analyzer_code": "built_image",
+  "semantic_coverage": {
+    "complete": true,
+    "gaps": []
+  },
+  "scope": "Actual upstream HTTP handler/SQLite queue/object store with a local integration runner executing real REcode Clang/native analysis in Docker. Production GitHub-download sandbox runner is not exercised. Synthetic source is explicitly supplied; facts are analyzer-generated, with no hand-authored first-group responses.",
+  "seconds": 5.41
+}

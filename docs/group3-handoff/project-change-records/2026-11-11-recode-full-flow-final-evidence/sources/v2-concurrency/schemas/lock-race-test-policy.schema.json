@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/v2-concurrency/lock-race-test-policy.schema.json",
+  "type": "object", "required": ["schema_version", "image_id"],
+  "properties": {"schema_version": {"enum": ["lock-race-test-policy/0.1", "lock-race-test-policy/0.2"]},
+    "normal_repository": {"type": "string", "minLength": 1}, "normal_head_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "normal_basis": {"type": "string", "minLength": 1}, "repetitions": {"type": "integer", "minimum": 3, "maximum": 5},
+    "template": {"enum": ["redis_bio_c", "c_source"]},
+    "image_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}},
+  "allOf": [
+    {"if": {"properties": {"schema_version": {"const": "lock-race-test-policy/0.1"}}},
+     "then": {"required": ["normal_repository", "normal_head_sha"], "not": {"anyOf": [{"required": ["repetitions"]}, {"required": ["normal_basis"]}, {"required": ["template"]}]}},
+     "else": {"required": ["repetitions"], "dependentRequired": {"normal_repository": ["normal_head_sha", "normal_basis"], "normal_head_sha": ["normal_repository", "normal_basis"], "normal_basis": ["normal_repository", "normal_head_sha"]}}}
+  ], "additionalProperties": false
+}

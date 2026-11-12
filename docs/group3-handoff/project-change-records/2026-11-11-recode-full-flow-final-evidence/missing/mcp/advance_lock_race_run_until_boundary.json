@@ -1,0 +1,618 @@
+{
+  "requests": [
+    {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "initialize",
+      "params": {}
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "notifications/initialized"
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "method": "tools/list"
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "method": "tools/call",
+      "params": {
+        "name": "advance_lock_race_run_until_boundary",
+        "arguments": {
+          "state_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\workflow-state.json"
+        }
+      }
+    }
+  ],
+  "responses": [
+    {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "protocolVersion": "2025-06-18",
+        "capabilities": {
+          "tools": {
+            "listChanged": false
+          }
+        },
+        "serverInfo": {
+          "name": "c-bug-lock-race",
+          "version": "0.2.0"
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "result": {
+        "tools": [
+          {
+            "name": "submit_lock_race_test_worker_result",
+            "description": "Validate one bounded test-author report and actual isolated artifacts; never executes model-selected commands.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path",
+                "result"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                },
+                "result": {
+                  "type": "object"
+                },
+                "host_findings": {
+                  "type": "array",
+                  "maxItems": 8,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4000
+                  }
+                },
+                "host_review": {
+                  "type": "object"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "prepare_lock_race_reviewer_batch",
+            "description": "Optionally group two or three similar pending candidates under the shared input budget; defaults remain individual review.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "cancel_lock_race_reviewer_batch",
+            "description": "Return to individual review for candidate-specific context reads or supplementation.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "submit_lock_race_reviewer_batch",
+            "description": "Validate a complete batch and each candidate result independently before accepting any of them.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path",
+                "result"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                },
+                "result": {
+                  "type": "object"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "read_lock_race_candidate_context",
+            "description": "Read a bounded page of hash-bound candidate facts/evidence from the host archive; no arbitrary file or shell access.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path",
+                "section"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                },
+                "section": {
+                  "enum": [
+                    "evidence",
+                    "functions",
+                    "call_edges",
+                    "locks",
+                    "async_boundaries",
+                    "lock_order_edges"
+                  ]
+                },
+                "offset": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "limit": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 20
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "supplement_lock_race_reviewer_source",
+            "description": "Host-controlled bounded head-source supplementation; refreshes request provenance, preserves fact gaps, and requires reloading the request. At most four supplements per candidate.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path",
+                "path",
+                "start_line",
+                "end_line"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "start_line": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "end_line": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "create_lock_race_run",
+            "description": "Create a resumable run; verification scopes are required by default. Unscoped compatibility must be explicitly enabled.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "run_id",
+                "coordinator_workspace",
+                "source_repository",
+                "patch_root",
+                "verification_plan_path",
+                "workflow_directory"
+              ],
+              "properties": {
+                "run_id": {
+                  "type": "string"
+                },
+                "coordinator_workspace": {
+                  "type": "string"
+                },
+                "source_repository": {
+                  "type": "string"
+                },
+                "patch_root": {
+                  "type": "string"
+                },
+                "verification_plan_path": {
+                  "type": "string"
+                },
+                "workflow_directory": {
+                  "type": "string"
+                },
+                "verification_scopes_directory": {
+                  "type": "string"
+                },
+                "test_policy_path": {
+                  "type": "string"
+                },
+                "test_strategy": {
+                  "enum": [
+                    "behavior_before_patch",
+                    "legacy_optional"
+                  ]
+                },
+                "allow_legacy_unscoped": {
+                  "type": "boolean",
+                  "default": false
+                }
+              },
+              "allOf": [
+                {
+                  "if": {
+                    "required": [
+                      "allow_legacy_unscoped"
+                    ],
+                    "properties": {
+                      "allow_legacy_unscoped": {
+                        "const": true
+                      }
+                    }
+                  },
+                  "then": {
+                    "not": {
+                      "required": [
+                        "verification_scopes_directory"
+                      ]
+                    }
+                  },
+                  "else": {
+                    "required": [
+                      "verification_scopes_directory"
+                    ]
+                  }
+                }
+              ],
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "get_lock_race_run",
+            "description": "Read the persisted workflow state and its next_action without advancing it.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "read_lock_race_reviewer_source",
+            "description": "Read at most 120 lines of candidate-related source from the pinned PR head while awaiting one reviewer; never reads an arbitrary repository path.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path",
+                "path",
+                "start_line",
+                "end_line"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "start_line": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "end_line": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "submit_lock_race_reviewer_result",
+            "description": "Validate and persist one bounded read-only reviewer JSON result.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path",
+                "result"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                },
+                "result": {
+                  "type": "object"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "submit_lock_race_patch_worker_result",
+            "description": "Validate one patch-worker report; edited reports proceed to Git capture, refusals are persisted and routed as failed.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path",
+                "result"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                },
+                "result": {
+                  "type": "object"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "advance_lock_race_run",
+            "description": "Run exactly one advertised deterministic step, such as Git capture, verification, revision preparation, or finalization.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "advance_lock_race_run_until_boundary",
+            "description": "Run deterministic steps until the next host-owned agent invocation or terminal state; never creates or invokes a subagent.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"agent_task\": null, \"artifacts\": {\"race-1a47d1b2dea759da\": {\"behavior_test\": {\"artifact_path\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\test-1\\\\test-artifact.json\", \"artifact_sha256\": \"d4264c7571017e4aae21b4ad042a24d534e58060043c4c8d75cde1d7d56de7fd\", \"candidate_id\": \"race-1a47d1b2dea759da\", \"host_review_path\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\test-1\\\\host-behavior-review.json\", \"host_review_sha256\": \"9188a4ce7280d8b1527c095c3fb6a42c81b5284d8ad515d343c4257eea4191e6\", \"image_id\": \"sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec\", \"repetitions\": 3, \"repository\": {\"base_sha\": \"22fe56b6fb5ad703ee0a10a4b1009983a8c505b3\", \"build_profile\": \"recode-linux-clang\", \"graph_snapshot_id\": \"recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85\", \"head_sha\": \"c8710b6236113b9b65c4f13bfa2a6f1b11ff6005\", \"name\": \"cbug-integration/recode-contract\"}, \"validation_path\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\test-1\\\\test-validation.json\", \"validation_sha256\": \"22f077460aa2ef167eb003aa5930f4c02d9adba365c91b7234cd380c575abac6\"}, \"current_behavior_review\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\test-1\\\\host-behavior-review.json\", \"current_patch_request\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\attempt-1\\\\patch-request.json\", \"current_patch_result\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\attempt-1\\\\patch-result.json\", \"current_test_artifact\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\test-1\\\\test-artifact.json\", \"current_test_request\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\test-1\\\\test-request.json\", \"current_test_review\": {\"findings\": [], \"test_artifact_sha256\": \"d4264c7571017e4aae21b4ad042a24d534e58060043c4c8d75cde1d7d56de7fd\"}, \"current_verification_result\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\attempt-1\\\\verification-result.json\", \"current_worker_report\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\attempt-1\\\\patch-worker-report.json\", \"latest_patch_result\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\attempt-1\\\\patch-result.json\", \"latest_verification_result\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\attempt-1\\\\verification-result.json\", \"scope_assessment\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\attempt-1\\\\scope-assessment-c59e29c4d128.json\", \"test_reports\": [\"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\test-1\\\\test-worker-report.json\"], \"test_validations\": [\"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\test-1\\\\test-validation.json\"], \"verification_plan_history\": [{\"new_plan_sha256\": \"fb86f362ff34e8c05ccae36735b82210bf98e9a2a23c64450635cf2b335d8823\", \"prior_plan_sha256\": \"660e83a71d67b24fd9acd081bd22895599be2aa5b8c1bbbe73140a19d2b43cec\", \"test_artifact\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\test-1\\\\test-artifact.json\", \"test_validation\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\test-1\\\\test-validation.json\"}]}}, \"candidate_ids\": [\"race-1a47d1b2dea759da\"], \"candidate_verification_plans\": {\"race-1a47d1b2dea759da\": {\"plan_path\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\test-1\\\\replacement-plan.json\", \"scope_path\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\test-1\\\\replacement-scope.json\"}}, \"completed_patch_candidate_ids\": [\"race-1a47d1b2dea759da\"], \"current_candidate_id\": null, \"defect_candidate_ids\": [\"race-1a47d1b2dea759da\"], \"failed_patch_candidate_ids\": [], \"max_patch_attempts\": 2, \"measurement\": {\"elapsed_seconds\": 1008.487, \"finished_unix_seconds\": 1794400424.9139574, \"reviewer_results_accepted\": 1, \"scope\": \"workflow_wall_clock_including_host_wait\", \"source_supplements\": 0, \"started_unix_seconds\": 1794399416.4272604, \"status\": \"measured\", \"test_worker_attempts\": 1, \"token_usage\": null, \"token_usage_status\": \"not_run\", \"worker_attempts\": 1}, \"next_action\": null, \"patch_attempts_used\": {\"race-1a47d1b2dea759da\": 1}, \"paths\": {\"coordinator_workspace\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\concurrency\", \"patch_root\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\patches\", \"source_repository\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\repository\", \"verification_plan\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\verification-plan.json\", \"workflow_directory\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\"}, \"phase\": \"completed\", \"repository\": {\"base_sha\": \"22fe56b6fb5ad703ee0a10a4b1009983a8c505b3\", \"build_profile\": \"recode-linux-clang\", \"graph_snapshot_id\": \"recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85\", \"head_sha\": \"c8710b6236113b9b65c4f13bfa2a6f1b11ff6005\", \"name\": \"cbug-integration/recode-contract\"}, \"result_path\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\run-result.json\", \"reviewed_candidate_ids\": [\"race-1a47d1b2dea759da\"], \"run_id\": \"recode-full-final-missing-20261111\", \"schema_version\": \"lock-race-workflow-state/0.1\", \"state_path\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\workflow-state.json\", \"test_attempts_used\": {\"race-1a47d1b2dea759da\": 1}, \"test_policy\": {\"image_id\": \"sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec\", \"normal_basis\": \"For the counter increment property, this independently pinned head has the same +2/+1 operations and both participate in the same initialized mutex. Its first-group analysis is complete for this property and produced zero candidates.\", \"normal_head_sha\": \"645a6fa72a0221f7b4a0437ae54fbfc60a549385\", \"normal_repository\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-semantic-bounded-common-20261111\\\\repository\", \"repetitions\": 3, \"schema_version\": \"lock-race-test-policy/0.2\", \"template\": \"c_source\"}, \"test_strategy\": \"behavior_before_patch\", \"verification_mode\": \"strict\", \"verification_scopes\": {\"race-1a47d1b2dea759da\": {\"candidate_id\": \"race-1a47d1b2dea759da\", \"checks\": [{\"artifacts\": [], \"covers\": [], \"failure_codes\": {}, \"limitations\": [\"Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim.\"], \"name\": \"format\", \"purpose\": \"format\", \"supported_protocols\": [\"any\"]}, {\"artifacts\": [{\"path\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\v2-concurrency\\\\scripts\\\\run_c_docker_verification.py\", \"sha256\": \"cde6dcf2b7d5ac5756ab1f5e8a0c24e4651065bc024ed00466b59d90a609b074\"}], \"covers\": [], \"failure_codes\": {\"20\": \"compile_failed\", \"21\": \"behavior_assertion_failed\", \"90\": \"test_harness_error\"}, \"limitations\": [\"Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim.\"], \"name\": \"project-build\", \"purpose\": \"build\", \"supported_protocols\": [\"any\"]}, {\"artifacts\": [{\"path\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\v2-concurrency\\\\scripts\\\\run_c_docker_verification.py\", \"sha256\": \"cde6dcf2b7d5ac5756ab1f5e8a0c24e4651065bc024ed00466b59d90a609b074\"}], \"covers\": [], \"failure_codes\": {\"20\": \"compile_failed\", \"21\": \"behavior_assertion_failed\", \"90\": \"test_harness_error\"}, \"limitations\": [\"Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim.\"], \"name\": \"project-smoke\", \"purpose\": \"official_regression\", \"supported_protocols\": [\"any\"]}], \"repository\": {\"base_sha\": \"22fe56b6fb5ad703ee0a10a4b1009983a8c505b3\", \"build_profile\": \"recode-linux-clang\", \"graph_snapshot_id\": \"recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85\", \"head_sha\": \"c8710b6236113b9b65c4f13bfa2a6f1b11ff6005\", \"name\": \"cbug-integration/recode-contract\"}, \"required_coverage\": [\"no_lost_updates\"], \"schema_version\": \"lock-race-verification-scope/0.1\", \"selected_protocol\": \"behavior\", \"verification_plan_sha256\": \"660e83a71d67b24fd9acd081bd22895599be2aa5b8c1bbbe73140a19d2b43cec\"}}}"
+          }
+        ],
+        "structuredContent": {
+          "agent_task": null,
+          "artifacts": {
+            "race-1a47d1b2dea759da": {
+              "behavior_test": {
+                "artifact_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-artifact.json",
+                "artifact_sha256": "d4264c7571017e4aae21b4ad042a24d534e58060043c4c8d75cde1d7d56de7fd",
+                "candidate_id": "race-1a47d1b2dea759da",
+                "host_review_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\host-behavior-review.json",
+                "host_review_sha256": "9188a4ce7280d8b1527c095c3fb6a42c81b5284d8ad515d343c4257eea4191e6",
+                "image_id": "sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec",
+                "repetitions": 3,
+                "repository": {
+                  "base_sha": "22fe56b6fb5ad703ee0a10a4b1009983a8c505b3",
+                  "build_profile": "recode-linux-clang",
+                  "graph_snapshot_id": "recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85",
+                  "head_sha": "c8710b6236113b9b65c4f13bfa2a6f1b11ff6005",
+                  "name": "cbug-integration/recode-contract"
+                },
+                "validation_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-validation.json",
+                "validation_sha256": "22f077460aa2ef167eb003aa5930f4c02d9adba365c91b7234cd380c575abac6"
+              },
+              "current_behavior_review": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\host-behavior-review.json",
+              "current_patch_request": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\attempt-1\\patch-request.json",
+              "current_patch_result": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\attempt-1\\patch-result.json",
+              "current_test_artifact": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-artifact.json",
+              "current_test_request": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-request.json",
+              "current_test_review": {
+                "findings": [],
+                "test_artifact_sha256": "d4264c7571017e4aae21b4ad042a24d534e58060043c4c8d75cde1d7d56de7fd"
+              },
+              "current_verification_result": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\attempt-1\\verification-result.json",
+              "current_worker_report": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\attempt-1\\patch-worker-report.json",
+              "latest_patch_result": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\attempt-1\\patch-result.json",
+              "latest_verification_result": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\attempt-1\\verification-result.json",
+              "scope_assessment": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\attempt-1\\scope-assessment-c59e29c4d128.json",
+              "test_reports": [
+                "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-worker-report.json"
+              ],
+              "test_validations": [
+                "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-validation.json"
+              ],
+              "verification_plan_history": [
+                {
+                  "new_plan_sha256": "fb86f362ff34e8c05ccae36735b82210bf98e9a2a23c64450635cf2b335d8823",
+                  "prior_plan_sha256": "660e83a71d67b24fd9acd081bd22895599be2aa5b8c1bbbe73140a19d2b43cec",
+                  "test_artifact": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-artifact.json",
+                  "test_validation": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-validation.json"
+                }
+              ]
+            }
+          },
+          "candidate_ids": [
+            "race-1a47d1b2dea759da"
+          ],
+          "candidate_verification_plans": {
+            "race-1a47d1b2dea759da": {
+              "plan_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\replacement-plan.json",
+              "scope_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\replacement-scope.json"
+            }
+          },
+          "completed_patch_candidate_ids": [
+            "race-1a47d1b2dea759da"
+          ],
+          "current_candidate_id": null,
+          "defect_candidate_ids": [
+            "race-1a47d1b2dea759da"
+          ],
+          "failed_patch_candidate_ids": [],
+          "max_patch_attempts": 2,
+          "measurement": {
+            "elapsed_seconds": 1008.487,
+            "finished_unix_seconds": 1794400424.9139574,
+            "reviewer_results_accepted": 1,
+            "scope": "workflow_wall_clock_including_host_wait",
+            "source_supplements": 0,
+            "started_unix_seconds": 1794399416.4272604,
+            "status": "measured",
+            "test_worker_attempts": 1,
+            "token_usage": null,
+            "token_usage_status": "not_run",
+            "worker_attempts": 1
+          },
+          "next_action": null,
+          "patch_attempts_used": {
+            "race-1a47d1b2dea759da": 1
+          },
+          "paths": {
+            "coordinator_workspace": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\concurrency",
+            "patch_root": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\patches",
+            "source_repository": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\repository",
+            "verification_plan": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\verification-plan.json",
+            "workflow_directory": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow"
+          },
+          "phase": "completed",
+          "repository": {
+            "base_sha": "22fe56b6fb5ad703ee0a10a4b1009983a8c505b3",
+            "build_profile": "recode-linux-clang",
+            "graph_snapshot_id": "recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85",
+            "head_sha": "c8710b6236113b9b65c4f13bfa2a6f1b11ff6005",
+            "name": "cbug-integration/recode-contract"
+          },
+          "result_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\run-result.json",
+          "reviewed_candidate_ids": [
+            "race-1a47d1b2dea759da"
+          ],
+          "run_id": "recode-full-final-missing-20261111",
+          "schema_version": "lock-race-workflow-state/0.1",
+          "state_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\workflow-state.json",
+          "test_attempts_used": {
+            "race-1a47d1b2dea759da": 1
+          },
+          "test_policy": {
+            "image_id": "sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec",
+            "normal_basis": "For the counter increment property, this independently pinned head has the same +2/+1 operations and both participate in the same initialized mutex. Its first-group analysis is complete for this property and produced zero candidates.",
+            "normal_head_sha": "645a6fa72a0221f7b4a0437ae54fbfc60a549385",
+            "normal_repository": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-common-20261111\\repository",
+            "repetitions": 3,
+            "schema_version": "lock-race-test-policy/0.2",
+            "template": "c_source"
+          },
+          "test_strategy": "behavior_before_patch",
+          "verification_mode": "strict",
+          "verification_scopes": {
+            "race-1a47d1b2dea759da": {
+              "candidate_id": "race-1a47d1b2dea759da",
+              "checks": [
+                {
+                  "artifacts": [],
+                  "covers": [],
+                  "failure_codes": {},
+                  "limitations": [
+                    "Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim."
+                  ],
+                  "name": "format",
+                  "purpose": "format",
+                  "supported_protocols": [
+                    "any"
+                  ]
+                },
+                {
+                  "artifacts": [
+                    {
+                      "path": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_c_docker_verification.py",
+                      "sha256": "cde6dcf2b7d5ac5756ab1f5e8a0c24e4651065bc024ed00466b59d90a609b074"
+                    }
+                  ],
+                  "covers": [],
+                  "failure_codes": {
+                    "20": "compile_failed",
+                    "21": "behavior_assertion_failed",
+                    "90": "test_harness_error"
+                  },
+                  "limitations": [
+                    "Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim."
+                  ],
+                  "name": "project-build",
+                  "purpose": "build",
+                  "supported_protocols": [
+                    "any"
+                  ]
+                },
+                {
+                  "artifacts": [
+                    {
+                      "path": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_c_docker_verification.py",
+                      "sha256": "cde6dcf2b7d5ac5756ab1f5e8a0c24e4651065bc024ed00466b59d90a609b074"
+                    }
+                  ],
+                  "covers": [],
+                  "failure_codes": {
+                    "20": "compile_failed",
+                    "21": "behavior_assertion_failed",
+                    "90": "test_harness_error"
+                  },
+                  "limitations": [
+                    "Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim."
+                  ],
+                  "name": "project-smoke",
+                  "purpose": "official_regression",
+                  "supported_protocols": [
+                    "any"
+                  ]
+                }
+              ],
+              "repository": {
+                "base_sha": "22fe56b6fb5ad703ee0a10a4b1009983a8c505b3",
+                "build_profile": "recode-linux-clang",
+                "graph_snapshot_id": "recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85",
+                "head_sha": "c8710b6236113b9b65c4f13bfa2a6f1b11ff6005",
+                "name": "cbug-integration/recode-contract"
+              },
+              "required_coverage": [
+                "no_lost_updates"
+              ],
+              "schema_version": "lock-race-verification-scope/0.1",
+              "selected_protocol": "behavior",
+              "verification_plan_sha256": "660e83a71d67b24fd9acd081bd22895599be2aa5b8c1bbbe73140a19d2b43cec"
+            }
+          }
+        },
+        "isError": false
+      }
+    }
+  ],
+  "exit_code": 0,
+  "stderr": ""
+}

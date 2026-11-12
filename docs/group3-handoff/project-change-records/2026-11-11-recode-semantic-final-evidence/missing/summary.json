@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "recode_commit": "e6e3b4222715cea71c150f0dd824ed990e7f567d",
+  "image_id": "sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec",
+  "repository": {
+    "run_id": "recode-cbug-integration-3d4d321fb7d9",
+    "repository": "cbug-integration/recode-contract",
+    "repository_url": "https://github.com/cbug-integration/recode-contract.git",
+    "head_sha": "3d4d321fb7d9460afd7ef1f11ebe7a3120d51378",
+    "profile": "recode-linux-clang"
+  },
+  "base_sha": "ce25c1f249cf59d1f7739c111f6a1e9c54d89df3",
+  "head_sha": "3d4d321fb7d9460afd7ef1f11ebe7a3120d51378",
+  "source_files": 4,
+  "changed_files": [
+    "observe.c",
+    "workers.c"
+  ],
+  "analysis_invocations": 1,
+  "http": {
+    "exit_code": 0,
+    "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-missing-20261111\\http.log"
+  },
+  "artifact": {
+    "exit_code": 0,
+    "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-missing-20261111\\artifact.log"
+  },
+  "specialty": {
+    "exit_code": 0,
+    "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-missing-20261111\\concurrency.log"
+  },
+  "candidate_count": 1,
+  "candidate_statuses": [
+    "ready_for_review"
+  ],
+  "coverage": {
+    "complete": true,
+    "reason": null,
+    "unresolved": []
+  },
+  "source_observations": {
+    "shared_objects": 1,
+    "thread_events": 4,
+    "lock_operations": 2
+  },
+  "lock_variant": "missing",
+  "checked_thread_results": true,
+  "analyzer_code": "built_image",
+  "semantic_coverage": {
+    "complete": true,
+    "gaps": []
+  },
+  "scope": "Actual upstream HTTP handler/SQLite queue/object store with a local integration runner executing real REcode Clang/native analysis in Docker. Production GitHub-download sandbox runner is not exercised. Synthetic source is explicitly supplied; facts are analyzer-generated, with no hand-authored first-group responses.",
+  "seconds": 8.669
+}

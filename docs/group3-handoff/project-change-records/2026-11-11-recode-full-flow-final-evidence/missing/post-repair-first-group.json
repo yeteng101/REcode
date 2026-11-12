@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "original_head": "c8710b6236113b9b65c4f13bfa2a6f1b11ff6005",
+  "repaired_snapshot_head": "4de4ffd6ca47c3f541876a1d481399c9df785aad",
+  "patch_sha256": "ffab7e0948f73644cd2cfc08a9caf978637525303448da176689396203614d1c",
+  "tree_matches_verified_worktree": true,
+  "candidate_count": 0,
+  "coverage": {
+    "complete": true,
+    "reason": null,
+    "unresolved": []
+  },
+  "image_id": "sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec",
+  "analysis_invocations": 1,
+  "common": {
+    "exit_code": 0,
+    "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\post-repair-first-group\\common.log"
+  },
+  "specialty": {
+    "exit_code": 0,
+    "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\post-repair-first-group\\concurrency.log"
+  },
+  "scope": "Actual repaired bytes in a separate verification-only Git snapshot, real local HTTP/native Docker runner; original source/worktree and records preserved."
+}

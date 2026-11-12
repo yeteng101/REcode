@@ -1,0 +1,115 @@
+[
+  {
+    "argv": [
+      "docker",
+      "create",
+      "--pull=never",
+      "--name",
+      "recode-8d488a4d8b9d40ef842b129bacf3d4a7",
+      "--network=none",
+      "--read-only",
+      "--user=65534:65534",
+      "--cap-drop=ALL",
+      "--security-opt=no-new-privileges:true",
+      "--cpus",
+      "2.0",
+      "--memory",
+      "2048m",
+      "--memory-swap",
+      "2048m",
+      "--pids-limit",
+      "128",
+      "--ulimit",
+      "nofile=256:256",
+      "--ulimit",
+      "core=0:0",
+      "--tmpfs",
+      "/work:rw,noexec,nosuid,nodev,size=1024m,mode=1777",
+      "--tmpfs",
+      "/tmp:rw,noexec,nosuid,nodev,size=64m,mode=1777",
+      "--env",
+      "HOME=/tmp",
+      "--env",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "--label",
+      "recode.sandbox=true",
+      "cbug/recode-integration@sha256:9b1dcd6519a72c2717f9e37a506a2594c7dd1b7568bff177106212444f13f320",
+      "python3",
+      "-c",
+      "import time; time.sleep(630)"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 65,
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "start",
+      "recode-8d488a4d8b9d40ef842b129bacf3d4a7"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 40,
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "exec",
+      "-i",
+      "recode-8d488a4d8b9d40ef842b129bacf3d4a7",
+      "python3",
+      "-m",
+      "clang_pipeline.sandbox_entry",
+      "import",
+      "20000",
+      "1073741824"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 0,
+    "stderr": "",
+    "work_entries": "['/work/repository']\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "exec",
+      "-i",
+      "recode-8d488a4d8b9d40ef842b129bacf3d4a7",
+      "python3",
+      "-m",
+      "clang_pipeline.sandbox_entry",
+      "analyze"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 0,
+    "stderr": "",
+    "work_entries": "['/work/checkout', '/work/output', '/work/repository']\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "exec",
+      "recode-8d488a4d8b9d40ef842b129bacf3d4a7",
+      "python3",
+      "-c",
+      "import sys, tarfile\nfrom pathlib import Path\nwith tarfile.open(fileobj=sys.stdout.buffer, mode='w|') as archive:\n    for path in sorted(Path('/work/output').iterdir()):\n        if path.name not in {'workspace', 'checkout', '.git'}:\n            archive.add(path, arcname=path.name)"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 0,
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "stats",
+      "--no-stream",
+      "--format",
+      "{{json .}}",
+      "recode-8d488a4d8b9d40ef842b129bacf3d4a7"
+    ],
+    "exit_code": 0,
+    "stdout_bytes": 243,
+    "stderr": ""
+  }
+]

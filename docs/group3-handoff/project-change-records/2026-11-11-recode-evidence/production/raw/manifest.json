@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "run_id": "run_repository_1794381859",
+  "repository": "yeteng101/REcode",
+  "repository_url": "https://github.com/yeteng101/REcode.git",
+  "commit": "e6e3b4222715cea71c150f0dd824ed990e7f567d",
+  "build_profile": "safe-generic",
+  "generated_at": "2026-11-11T07:24:30Z",
+  "status": "succeeded",
+  "summary": {
+    "nodes": 211,
+    "edges": 207,
+    "evidence": 195,
+    "resource_items": 4,
+    "sync_items": 5,
+    "race_items": 0,
+    "race_label": "unknown",
+    "call_items": 207,
+    "knowledge_entities": 231,
+    "knowledge_relations": 396
+  },
+  "outputs": {
+    "visualization": "visualization.html",
+    "call_chains": "external/call-chains.json",
+    "resource_flow": "external/resource-flow.json",
+    "sync_relations": "external/sync-relations.json",
+    "race_analysis": "external/race-analysis.json",
+    "knowledge_graph": "external/knowledge-graph.json",
+    "logs": "logs",
+    "graph": "graph.json",
+    "report": "report.md",
+    "tool_trace": "trace/tool-trace.jsonl",
+    "tool_trace_summary": "trace/tool-trace-summary.json"
+  },
+  "tool_trace": {
+    "schema_version": "tool-trace-v1",
+    "trace_id": "trace_755d814c77604608",
+    "run_id": "run_repository_1794381859",
+    "status": "succeeded",
+    "trace_path": "/work/output/trace/tool-trace.jsonl",
+    "summary_path": "/work/output/trace/tool-trace-summary.json",
+    "event_count": 14,
+    "status_counts": {
+      "ok": 14
+    },
+    "metadata": {
+      "repository_url": "/work/repository",
+      "branch": null,
+      "commit": null,
+      "build_profile": "safe-generic"
+    },
+    "updated_at": "2026-11-11T07:24:32Z"
+  }
+}

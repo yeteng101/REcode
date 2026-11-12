@@ -1,0 +1,7 @@
+f14e4da Audit external benchmark failure cases
+ README.md                                      |    2 +
+ scripts/audit_external_failures.py             |  639 +++++
+ validation/external/README.md                  |   20 +
+ validation/external/results/failure-audit.json | 3271 ++++++++++++++++++++++++
+ validation/external/results/failure-audit.md   |  929 +++++++
+ 5 files changed, 4861 insertions(+)

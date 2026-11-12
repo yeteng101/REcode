@@ -1,0 +1,848 @@
+{
+  "requests": [
+    {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "initialize",
+      "params": {}
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "notifications/initialized"
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "method": "tools/list"
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "method": "tools/call",
+      "params": {
+        "name": "submit_lock_race_reviewer_result",
+        "arguments": {
+          "state_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\workflow-state.json",
+          "result": {
+            "schema_version": "lock-race-review/0.1",
+            "candidate_id": "race-6aedb8acec3a6472",
+            "repository": {
+              "name": "cbug-integration/recode-contract",
+              "base_sha": "22fe56b6fb5ad703ee0a10a4b1009983a8c505b3",
+              "head_sha": "ddcebbae970df496335ab4d5900dce351824893b",
+              "build_profile": "recode-linux-clang",
+              "graph_snapshot_id": "recode-a9c774b2b93ddf6857f3f26f32a498990f839e228cbdf4a008005a951b6c11d8"
+            },
+            "provenance": {
+              "source_kind": "first_group",
+              "first_group_schema_version": "1.0",
+              "first_group_run_id": "recode-cbug-integration-ddcebbae970d:get_sync_flows",
+              "source_response_sha256": "951efe0e225b642e949873e43e8395830bbf89b12afac02a6702ba5ae7de7ab3",
+              "graph_snapshot_id": "recode-a9c774b2b93ddf6857f3f26f32a498990f839e228cbdf4a008005a951b6c11d8",
+              "analyzer": {
+                "name": "REcode-bounded-AST-sync",
+                "version": "1.0",
+                "formal_evidence": true
+              },
+              "formal_evidence": true,
+              "review_confidence_cap": 1.0,
+              "context_delivery": {
+                "archive_sha256": "6696dc25b818d7a426b796e0d23b363c6dba8a3e915d200d052ac1329f123605",
+                "max_inline_chars": 64000,
+                "lookup": "read_lock_race_candidate_context",
+                "revision": 0,
+                "omissions": []
+              }
+            },
+            "verdict": "defect",
+            "status": "probable",
+            "defect_type": "data_race",
+            "severity": "medium",
+            "confidence": 0.99,
+            "change_relationship": "introduced",
+            "shared_object": {
+              "object_id": "object_ast_a228610e317ce63329f7",
+              "name": "counter",
+              "type": "int",
+              "identity_confidence": 1.0,
+              "declaration": {
+                "file": "workers.c",
+                "start_line": 3,
+                "end_line": 3
+              },
+              "source_finding_ids": [
+                "recode-ast-sync"
+              ]
+            },
+            "access_a": {
+              "access_id": "ast_access_0eeb7f61d37026aafd6d",
+              "kind": "write",
+              "function": "writer_b",
+              "location": {
+                "file": "workers.c",
+                "start_line": 16,
+                "end_line": 16
+              },
+              "execution_context": {
+                "context_id": "thread:ast_thread_7ad56adbb1c65229",
+                "reentrant": false,
+                "may_run_concurrently_with": [
+                  "thread:ast_thread_342066b2cef9cd62"
+                ],
+                "cannot_run_concurrently_with": [
+                  "main:789ca006ba12"
+                ],
+                "creation_site": {
+                  "file": "workers.c",
+                  "line": 23,
+                  "column": 9,
+                  "snippet": "if (pthread_create(&b, 0, writer_b, 0) != 0) return 1;"
+                }
+              },
+              "must_lockset": [
+                {
+                  "lock_id": "object_ast_9b6220c3adfa95f09604",
+                  "mode": "exclusive"
+                }
+              ],
+              "may_lockset": [
+                {
+                  "lock_id": "object_ast_9b6220c3adfa95f09604",
+                  "mode": "exclusive"
+                }
+              ],
+              "other_synchronization": [],
+              "confidence": 1.0,
+              "evidence_ids": [
+                "ev_ast_0e6d42dc74f38990",
+                "ev_ast_32205de183e5ed08",
+                "ev_ast_68e2add3ceebe723",
+                "ev_ast_6ba3e66a3f5be643",
+                "ev_ast_af3bd7dc19f805f8"
+              ],
+              "source_finding_ids": [
+                "recode-ast-sync"
+              ]
+            },
+            "access_b": {
+              "access_id": "ast_access_1795165db1b9f61ed40d",
+              "kind": "write",
+              "function": "writer_a",
+              "location": {
+                "file": "workers.c",
+                "start_line": 9,
+                "end_line": 9
+              },
+              "execution_context": {
+                "context_id": "thread:ast_thread_342066b2cef9cd62",
+                "reentrant": false,
+                "may_run_concurrently_with": [
+                  "thread:ast_thread_7ad56adbb1c65229"
+                ],
+                "cannot_run_concurrently_with": [
+                  "main:789ca006ba12"
+                ],
+                "creation_site": {
+                  "file": "workers.c",
+                  "line": 22,
+                  "column": 9,
+                  "snippet": "if (pthread_create(&a, 0, writer_a, 0) != 0) return 1;"
+                }
+              },
+              "must_lockset": [
+                {
+                  "lock_id": "object_ast_22e0661fea5bc641e24c",
+                  "mode": "exclusive"
+                }
+              ],
+              "may_lockset": [
+                {
+                  "lock_id": "object_ast_22e0661fea5bc641e24c",
+                  "mode": "exclusive"
+                }
+              ],
+              "other_synchronization": [],
+              "confidence": 1.0,
+              "evidence_ids": [
+                "ev_ast_1a6cbde5c0c7086c",
+                "ev_ast_2b97a99e36151d21",
+                "ev_ast_5525e55220b96c21",
+                "ev_ast_68e2add3ceebe723",
+                "ev_ast_ad8213636a37f657"
+              ],
+              "source_finding_ids": [
+                "recode-ast-sync"
+              ]
+            },
+            "same_object": true,
+            "at_least_one_write": true,
+            "may_concurrent": true,
+            "common_protection": {
+              "effective": false,
+              "common_must_lockset": [],
+              "other_synchronization": [],
+              "explanation": "Both read-modify-write operations target the global non-atomic int counter. writer_a holds mutex and writer_b holds the separately declared second_mutex. Both threads are created before either join, permitting overlapping accesses. The subsequent joins establish completion before main reads counter and provide no ordering between the two worker updates."
+            },
+            "lock_order": {
+              "applicable": false,
+              "reachable_cycle": null,
+              "blocking": null,
+              "may_overlap": null
+            },
+            "evidence_ids": [
+              "ev_ast_68e2add3ceebe723",
+              "ev_ast_32205de183e5ed08",
+              "ev_ast_ad8213636a37f657",
+              "ev_ast_5525e55220b96c21",
+              "ev_ast_af3bd7dc19f805f8",
+              "ev_ast_2b97a99e36151d21",
+              "ev_ast_30550322f3f90d09",
+              "ev_ast_6ba3e66a3f5be643",
+              "ev_ast_b11c24fb54fe02db",
+              "ev_ast_1a6cbde5c0c7086c",
+              "ev_ast_0e6d42dc74f38990",
+              "ev_ast_d48d337d3487f0f5",
+              "ev_ast_37d2aa710e91a27d",
+              "diff-19c2e8a7fec99006a1b9"
+            ],
+            "summary": "The PR introduces a data race by changing writer_b to acquire second_mutex while writer_a continues acquiring mutex. Their non-atomic updates to the same global counter at workers.c lines 16 and 9 can overlap, causing undefined behavior and lost updates. The supplied diff directly establishes the synchronization change from the base revision. Supplied source hashes match their contents. Status is capped at probable by coverage.candidate_decision.max_status.",
+            "missing_facts": [],
+            "recommended_action": "Protect both counter updates with the existing mutex by restoring writer_b's acquisition and release of mutex.",
+            "patch": {
+              "status": "not_generated",
+              "diff": null,
+              "reason": "This bounded read-only review supplies a repair direction. The host owns patch generation."
+            },
+            "verification": {
+              "status": "not_run",
+              "checks": []
+            },
+            "verification_recommendations": [
+              "Inspect the repair to establish that both counter updates execute while holding the same mutex.",
+              "Within the host-approved verification stage, exercise concurrent worker execution and verify counter equals 3 after both successful joins.",
+              "Check that the normal program entry point retains the intended observed result of 4 after the synchronization repair."
+            ],
+            "coverage": {
+              "complete": true,
+              "reason": null,
+              "unresolved": [],
+              "source_context": {
+                "complete": true,
+                "required_files": [
+                  "workers.c"
+                ],
+                "included_files": [
+                  "observe.c",
+                  "resource.c",
+                  "workers.c"
+                ],
+                "missing_required_files": [],
+                "missing_related_files": [],
+                "missing_required_ranges": []
+              },
+              "candidate_decision": {
+                "policy": "candidate-local-proof/1",
+                "complete": true,
+                "checks": {
+                  "version": true,
+                  "sync_facts": true,
+                  "call_facts": true,
+                  "identity": true,
+                  "conflict": true,
+                  "overlap": true,
+                  "protocol": true,
+                  "source_sites": true,
+                  "source_integrity": true,
+                  "required_source": true,
+                  "evidence": true,
+                  "pr_connection": true
+                },
+                "blocking_gaps": [],
+                "nonblocking_gaps": [],
+                "required_source_ranges": [
+                  {
+                    "file": "workers.c",
+                    "start_line": 3,
+                    "end_line": 3,
+                    "role": "object_declaration"
+                  },
+                  {
+                    "file": "workers.c",
+                    "start_line": 4,
+                    "end_line": 4,
+                    "role": "lock_declaration"
+                  },
+                  {
+                    "file": "workers.c",
+                    "start_line": 5,
+                    "end_line": 5,
+                    "role": "lock_declaration"
+                  },
+                  {
+                    "file": "workers.c",
+                    "start_line": 8,
+                    "end_line": 8,
+                    "role": "lock_operation"
+                  },
+                  {
+                    "file": "workers.c",
+                    "start_line": 9,
+                    "end_line": 9,
+                    "role": "access_b"
+                  },
+                  {
+                    "file": "workers.c",
+                    "start_line": 10,
+                    "end_line": 10,
+                    "role": "lock_operation"
+                  },
+                  {
+                    "file": "workers.c",
+                    "start_line": 15,
+                    "end_line": 15,
+                    "role": "lock_operation"
+                  },
+                  {
+                    "file": "workers.c",
+                    "start_line": 16,
+                    "end_line": 16,
+                    "role": "access_a"
+                  },
+                  {
+                    "file": "workers.c",
+                    "start_line": 17,
+                    "end_line": 17,
+                    "role": "lock_operation"
+                  }
+                ],
+                "missing_source_ranges": [],
+                "invalid_source_files": [],
+                "max_status": "probable"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "responses": [
+    {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "protocolVersion": "2025-06-18",
+        "capabilities": {
+          "tools": {
+            "listChanged": false
+          }
+        },
+        "serverInfo": {
+          "name": "c-bug-lock-race",
+          "version": "0.2.0"
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "result": {
+        "tools": [
+          {
+            "name": "submit_lock_race_test_worker_result",
+            "description": "Validate one bounded test-author report and actual isolated artifacts; never executes model-selected commands.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path",
+                "result"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                },
+                "result": {
+                  "type": "object"
+                },
+                "host_findings": {
+                  "type": "array",
+                  "maxItems": 8,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4000
+                  }
+                },
+                "host_review": {
+                  "type": "object"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "prepare_lock_race_reviewer_batch",
+            "description": "Optionally group two or three similar pending candidates under the shared input budget; defaults remain individual review.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "cancel_lock_race_reviewer_batch",
+            "description": "Return to individual review for candidate-specific context reads or supplementation.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "submit_lock_race_reviewer_batch",
+            "description": "Validate a complete batch and each candidate result independently before accepting any of them.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path",
+                "result"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                },
+                "result": {
+                  "type": "object"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "read_lock_race_candidate_context",
+            "description": "Read a bounded page of hash-bound candidate facts/evidence from the host archive; no arbitrary file or shell access.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path",
+                "section"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                },
+                "section": {
+                  "enum": [
+                    "evidence",
+                    "functions",
+                    "call_edges",
+                    "locks",
+                    "async_boundaries",
+                    "lock_order_edges"
+                  ]
+                },
+                "offset": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "limit": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 20
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "supplement_lock_race_reviewer_source",
+            "description": "Host-controlled bounded head-source supplementation; refreshes request provenance, preserves fact gaps, and requires reloading the request. At most four supplements per candidate.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path",
+                "path",
+                "start_line",
+                "end_line"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "start_line": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "end_line": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "create_lock_race_run",
+            "description": "Create a resumable run; verification scopes are required by default. Unscoped compatibility must be explicitly enabled.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "run_id",
+                "coordinator_workspace",
+                "source_repository",
+                "patch_root",
+                "verification_plan_path",
+                "workflow_directory"
+              ],
+              "properties": {
+                "run_id": {
+                  "type": "string"
+                },
+                "coordinator_workspace": {
+                  "type": "string"
+                },
+                "source_repository": {
+                  "type": "string"
+                },
+                "patch_root": {
+                  "type": "string"
+                },
+                "verification_plan_path": {
+                  "type": "string"
+                },
+                "workflow_directory": {
+                  "type": "string"
+                },
+                "verification_scopes_directory": {
+                  "type": "string"
+                },
+                "test_policy_path": {
+                  "type": "string"
+                },
+                "test_strategy": {
+                  "enum": [
+                    "behavior_before_patch",
+                    "legacy_optional"
+                  ]
+                },
+                "allow_legacy_unscoped": {
+                  "type": "boolean",
+                  "default": false
+                }
+              },
+              "allOf": [
+                {
+                  "if": {
+                    "required": [
+                      "allow_legacy_unscoped"
+                    ],
+                    "properties": {
+                      "allow_legacy_unscoped": {
+                        "const": true
+                      }
+                    }
+                  },
+                  "then": {
+                    "not": {
+                      "required": [
+                        "verification_scopes_directory"
+                      ]
+                    }
+                  },
+                  "else": {
+                    "required": [
+                      "verification_scopes_directory"
+                    ]
+                  }
+                }
+              ],
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "get_lock_race_run",
+            "description": "Read the persisted workflow state and its next_action without advancing it.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "read_lock_race_reviewer_source",
+            "description": "Read at most 120 lines of candidate-related source from the pinned PR head while awaiting one reviewer; never reads an arbitrary repository path.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path",
+                "path",
+                "start_line",
+                "end_line"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "start_line": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "end_line": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "submit_lock_race_reviewer_result",
+            "description": "Validate and persist one bounded read-only reviewer JSON result.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path",
+                "result"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                },
+                "result": {
+                  "type": "object"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "submit_lock_race_patch_worker_result",
+            "description": "Validate one patch-worker report; edited reports proceed to Git capture, refusals are persisted and routed as failed.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path",
+                "result"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                },
+                "result": {
+                  "type": "object"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "advance_lock_race_run",
+            "description": "Run exactly one advertised deterministic step, such as Git capture, verification, revision preparation, or finalization.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "advance_lock_race_run_until_boundary",
+            "description": "Run deterministic steps until the next host-owned agent invocation or terminal state; never creates or invokes a subagent.",
+            "inputSchema": {
+              "type": "object",
+              "required": [
+                "state_path"
+              ],
+              "properties": {
+                "state_path": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"agent_task\": null, \"artifacts\": {}, \"candidate_ids\": [\"race-6aedb8acec3a6472\"], \"completed_patch_candidate_ids\": [], \"current_candidate_id\": \"race-6aedb8acec3a6472\", \"defect_candidate_ids\": [\"race-6aedb8acec3a6472\"], \"failed_patch_candidate_ids\": [], \"max_patch_attempts\": 2, \"measurement\": {\"elapsed_seconds\": null, \"scope\": \"workflow_wall_clock_including_host_wait\", \"started_unix_seconds\": 1794399417.4433646, \"status\": \"running\"}, \"next_action\": \"prepare_patch_task\", \"patch_attempts_used\": {}, \"paths\": {\"coordinator_workspace\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-distinct-20261111\\\\concurrency\", \"patch_root\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-distinct-20261111\\\\patches\", \"source_repository\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-distinct-20261111\\\\repository\", \"verification_plan\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-distinct-20261111\\\\verification-plan.json\", \"workflow_directory\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-distinct-20261111\\\\workflow\"}, \"phase\": \"ready_prepare_patch\", \"repository\": {\"base_sha\": \"22fe56b6fb5ad703ee0a10a4b1009983a8c505b3\", \"build_profile\": \"recode-linux-clang\", \"graph_snapshot_id\": \"recode-a9c774b2b93ddf6857f3f26f32a498990f839e228cbdf4a008005a951b6c11d8\", \"head_sha\": \"ddcebbae970df496335ab4d5900dce351824893b\", \"name\": \"cbug-integration/recode-contract\"}, \"result_path\": null, \"reviewed_candidate_ids\": [\"race-6aedb8acec3a6472\"], \"run_id\": \"recode-full-final-distinct-20261111\", \"schema_version\": \"lock-race-workflow-state/0.1\", \"state_path\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-distinct-20261111\\\\workflow\\\\workflow-state.json\", \"test_attempts_used\": {}, \"test_policy\": {\"image_id\": \"sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec\", \"normal_basis\": \"For the counter increment property, this independently pinned head has the same +2/+1 operations and both participate in the same initialized mutex. Its first-group analysis is complete for this property and produced zero candidates.\", \"normal_head_sha\": \"645a6fa72a0221f7b4a0437ae54fbfc60a549385\", \"normal_repository\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-semantic-bounded-common-20261111\\\\repository\", \"repetitions\": 3, \"schema_version\": \"lock-race-test-policy/0.2\", \"template\": \"c_source\"}, \"test_strategy\": \"behavior_before_patch\", \"verification_mode\": \"strict\", \"verification_scopes\": {\"race-6aedb8acec3a6472\": {\"candidate_id\": \"race-6aedb8acec3a6472\", \"checks\": [{\"artifacts\": [], \"covers\": [], \"failure_codes\": {}, \"limitations\": [\"Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim.\"], \"name\": \"format\", \"purpose\": \"format\", \"supported_protocols\": [\"any\"]}, {\"artifacts\": [{\"path\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\v2-concurrency\\\\scripts\\\\run_c_docker_verification.py\", \"sha256\": \"cde6dcf2b7d5ac5756ab1f5e8a0c24e4651065bc024ed00466b59d90a609b074\"}], \"covers\": [], \"failure_codes\": {\"20\": \"compile_failed\", \"21\": \"behavior_assertion_failed\", \"90\": \"test_harness_error\"}, \"limitations\": [\"Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim.\"], \"name\": \"project-build\", \"purpose\": \"build\", \"supported_protocols\": [\"any\"]}, {\"artifacts\": [{\"path\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\v2-concurrency\\\\scripts\\\\run_c_docker_verification.py\", \"sha256\": \"cde6dcf2b7d5ac5756ab1f5e8a0c24e4651065bc024ed00466b59d90a609b074\"}], \"covers\": [], \"failure_codes\": {\"20\": \"compile_failed\", \"21\": \"behavior_assertion_failed\", \"90\": \"test_harness_error\"}, \"limitations\": [\"Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim.\"], \"name\": \"project-smoke\", \"purpose\": \"official_regression\", \"supported_protocols\": [\"any\"]}], \"repository\": {\"base_sha\": \"22fe56b6fb5ad703ee0a10a4b1009983a8c505b3\", \"build_profile\": \"recode-linux-clang\", \"graph_snapshot_id\": \"recode-a9c774b2b93ddf6857f3f26f32a498990f839e228cbdf4a008005a951b6c11d8\", \"head_sha\": \"ddcebbae970df496335ab4d5900dce351824893b\", \"name\": \"cbug-integration/recode-contract\"}, \"required_coverage\": [\"no_lost_updates\"], \"schema_version\": \"lock-race-verification-scope/0.1\", \"selected_protocol\": \"behavior\", \"verification_plan_sha256\": \"2049f2e414df8a206fc8b7d7983e419eb12547c1d5dcb7f5da0f4101734ad7fa\"}}}"
+          }
+        ],
+        "structuredContent": {
+          "agent_task": null,
+          "artifacts": {},
+          "candidate_ids": [
+            "race-6aedb8acec3a6472"
+          ],
+          "completed_patch_candidate_ids": [],
+          "current_candidate_id": "race-6aedb8acec3a6472",
+          "defect_candidate_ids": [
+            "race-6aedb8acec3a6472"
+          ],
+          "failed_patch_candidate_ids": [],
+          "max_patch_attempts": 2,
+          "measurement": {
+            "elapsed_seconds": null,
+            "scope": "workflow_wall_clock_including_host_wait",
+            "started_unix_seconds": 1794399417.4433646,
+            "status": "running"
+          },
+          "next_action": "prepare_patch_task",
+          "patch_attempts_used": {},
+          "paths": {
+            "coordinator_workspace": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\concurrency",
+            "patch_root": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\patches",
+            "source_repository": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\repository",
+            "verification_plan": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\verification-plan.json",
+            "workflow_directory": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow"
+          },
+          "phase": "ready_prepare_patch",
+          "repository": {
+            "base_sha": "22fe56b6fb5ad703ee0a10a4b1009983a8c505b3",
+            "build_profile": "recode-linux-clang",
+            "graph_snapshot_id": "recode-a9c774b2b93ddf6857f3f26f32a498990f839e228cbdf4a008005a951b6c11d8",
+            "head_sha": "ddcebbae970df496335ab4d5900dce351824893b",
+            "name": "cbug-integration/recode-contract"
+          },
+          "result_path": null,
+          "reviewed_candidate_ids": [
+            "race-6aedb8acec3a6472"
+          ],
+          "run_id": "recode-full-final-distinct-20261111",
+          "schema_version": "lock-race-workflow-state/0.1",
+          "state_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\workflow-state.json",
+          "test_attempts_used": {},
+          "test_policy": {
+            "image_id": "sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec",
+            "normal_basis": "For the counter increment property, this independently pinned head has the same +2/+1 operations and both participate in the same initialized mutex. Its first-group analysis is complete for this property and produced zero candidates.",
+            "normal_head_sha": "645a6fa72a0221f7b4a0437ae54fbfc60a549385",
+            "normal_repository": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-common-20261111\\repository",
+            "repetitions": 3,
+            "schema_version": "lock-race-test-policy/0.2",
+            "template": "c_source"
+          },
+          "test_strategy": "behavior_before_patch",
+          "verification_mode": "strict",
+          "verification_scopes": {
+            "race-6aedb8acec3a6472": {
+              "candidate_id": "race-6aedb8acec3a6472",
+              "checks": [
+                {
+                  "artifacts": [],
+                  "covers": [],
+                  "failure_codes": {},
+                  "limitations": [
+                    "Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim."
+                  ],
+                  "name": "format",
+                  "purpose": "format",
+                  "supported_protocols": [
+                    "any"
+                  ]
+                },
+                {
+                  "artifacts": [
+                    {
+                      "path": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_c_docker_verification.py",
+                      "sha256": "cde6dcf2b7d5ac5756ab1f5e8a0c24e4651065bc024ed00466b59d90a609b074"
+                    }
+                  ],
+                  "covers": [],
+                  "failure_codes": {
+                    "20": "compile_failed",
+                    "21": "behavior_assertion_failed",
+                    "90": "test_harness_error"
+                  },
+                  "limitations": [
+                    "Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim."
+                  ],
+                  "name": "project-build",
+                  "purpose": "build",
+                  "supported_protocols": [
+                    "any"
+                  ]
+                },
+                {
+                  "artifacts": [
+                    {
+                      "path": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_c_docker_verification.py",
+                      "sha256": "cde6dcf2b7d5ac5756ab1f5e8a0c24e4651065bc024ed00466b59d90a609b074"
+                    }
+                  ],
+                  "covers": [],
+                  "failure_codes": {
+                    "20": "compile_failed",
+                    "21": "behavior_assertion_failed",
+                    "90": "test_harness_error"
+                  },
+                  "limitations": [
+                    "Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim."
+                  ],
+                  "name": "project-smoke",
+                  "purpose": "official_regression",
+                  "supported_protocols": [
+                    "any"
+                  ]
+                }
+              ],
+              "repository": {
+                "base_sha": "22fe56b6fb5ad703ee0a10a4b1009983a8c505b3",
+                "build_profile": "recode-linux-clang",
+                "graph_snapshot_id": "recode-a9c774b2b93ddf6857f3f26f32a498990f839e228cbdf4a008005a951b6c11d8",
+                "head_sha": "ddcebbae970df496335ab4d5900dce351824893b",
+                "name": "cbug-integration/recode-contract"
+              },
+              "required_coverage": [
+                "no_lost_updates"
+              ],
+              "schema_version": "lock-race-verification-scope/0.1",
+              "selected_protocol": "behavior",
+              "verification_plan_sha256": "2049f2e414df8a206fc8b7d7983e419eb12547c1d5dcb7f5da0f4101734ad7fa"
+            }
+          }
+        },
+        "isError": false
+      }
+    }
+  ],
+  "exit_code": 0,
+  "stderr": ""
+}

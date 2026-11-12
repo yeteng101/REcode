@@ -1,0 +1,60 @@
+{
+  "old_head": "e6e3b4222715cea71c150f0dd824ed990e7f567d",
+  "upstream_head": "f14e4da3f872e0d24bb24389e3e8fc88c49b8a28",
+  "local_files": [
+    {
+      "path": "clang_pipeline/concurrency_facts.py",
+      "sha256": "1ce90d1abef4a8e88e0f2ddf1f23a08c217d60f788e3bb72e52f9f58c3c47aeb"
+    },
+    {
+      "path": "clang_pipeline/native_export.py",
+      "sha256": "bce11a323d15cccfd810a07e9f1939c4af44f26dcd1d781d9aa5027fbf76e92c"
+    },
+    {
+      "path": "clang_pipeline/race_detector.py",
+      "sha256": "1cfa02bd604a3393234b4641991064da6b0c5a854c37d5461dc89c14dc07fcaf"
+    },
+    {
+      "path": "clang_pipeline/repo_agent.py",
+      "sha256": "c6bd40cf39fdf5ae590d35293fb266662e0b1c3d171626b6b6c9b8f1367da223"
+    },
+    {
+      "path": "clang_pipeline/sandbox.py",
+      "sha256": "4a7493285fe7e095778d8fe92fe898b47ba3fedbeb81c4a6d6069c3f2c663f52"
+    },
+    {
+      "path": "clang_pipeline/sandbox_entry.py",
+      "sha256": "c20db70cfb09f182020d4898ce3528fe9eb31472a96b195b9a9bf8a2858e6f1d"
+    },
+    {
+      "path": "clang_pipeline/semantic_sync.py",
+      "sha256": "764dccb60e5357f460263e21f4fd7565950670972edd79fe1bdcf3eaa6c9ab8c"
+    },
+    {
+      "path": "clang_pipeline/stages.py",
+      "sha256": "50f312b312e448b47c7a11578ab86a700c6fc3b4e22d9785ddddd0aab161c9f2"
+    },
+    {
+      "path": "clang_pipeline/tests/test_ast_fallback.py",
+      "sha256": "cbbf63b8bd421f3c8cce8584ce53ea5ea4cf86a21bd8e11e5c8cfce5c884e718"
+    },
+    {
+      "path": "clang_pipeline/tests/test_concurrency_facts.py",
+      "sha256": "e137fbfb10a71e1275abfe10888e96ada6ab2a8ffaf275fbc8ecfeb5aebbfd9d"
+    },
+    {
+      "path": "clang_pipeline/tests/test_semantic_sync.py",
+      "sha256": "11a49bdc7172b52e43fd9b38ac8d126bc7a06cb876f5b7aa0d8c8fdf6ba77647"
+    },
+    {
+      "path": "clang_pipeline/tests/test_snapshot_identity.py",
+      "sha256": "5576f6a3e1da0583cfc522c6f6bc13211324350610f4ccea570dc3242176e6fd"
+    },
+    {
+      "path": "docs/c-bug-integration.md",
+      "sha256": "35c84c334cc6b19c497925e1d5f1a05b6562ef379deb60d1262a38798fb1aceb"
+    }
+  ],
+  "merged_head": "f14e4da3f872e0d24bb24389e3e8fc88c49b8a28",
+  "local_bytes_preserved": true
+}

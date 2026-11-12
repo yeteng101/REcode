@@ -1,0 +1,10 @@
+{
+  "agent_task": "/root/final_distinct_test",
+  "actual_agent_type": "worker",
+  "status": "interrupted_after_artifact_write",
+  "message": "Agent errored: This content was flagged for possible cybersecurity risk.",
+  "operation": "Authoring behavior regression driver and metadata in assigned isolated test workspace",
+  "execution_performed_by_worker": false,
+  "product_modified_by_worker": false,
+  "recovery": "Host will independently inspect and validate persisted actual files. No replacement model output is claimed."
+}

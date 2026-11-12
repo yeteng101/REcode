@@ -1,0 +1,198 @@
+{
+  "files": [
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-common-lock-20261111\\summary.json",
+      "path": "common/summary.json",
+      "sha256": "2d8b033a42c7790cdff806e312d57f16277cd64490e45018c74bfb7273aa7452"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-common-lock-20261111\\concurrency\\candidate-bundle.json",
+      "path": "common/candidate-bundle.json",
+      "sha256": "fe93ef13215dcf442febcca634d94ed2b5d82739cdcdba60107e3816a6e28715"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-common-lock-20261111\\http\\concurrency-context-bundle.json",
+      "path": "common/context-bundle.json",
+      "sha256": "7ca2842e0524f125edeebb5b1de0bff18d0f6654b96c240df8f220f4332c3152"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-common-lock-20261111\\http\\recode-artifacts\\job_739355b5694241e9884e91690c6c93e4-0rfk3rlv\\external\\race-analysis.json",
+      "path": "common/race-analysis.json",
+      "sha256": "12ff93113a600f7cd482da981885750bc3f08cb962540db3f85d1fa6303709d7"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-distinct-locks-20261111\\summary.json",
+      "path": "distinct/summary.json",
+      "sha256": "65a20227d9f72f8f125b185095531dc20ce39d6f3a0110b09e0f71807a097351"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-distinct-locks-20261111\\concurrency\\candidate-bundle.json",
+      "path": "distinct/candidate-bundle.json",
+      "sha256": "e7e2174d2a82a6bf21673371e462ae519a1dd39d34e4a8020f94482bb6740661"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-distinct-locks-20261111\\http\\concurrency-context-bundle.json",
+      "path": "distinct/context-bundle.json",
+      "sha256": "28e79e7bdb87e158903828405ba2af30f0f61f73a272da25ff3666432dc35761"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-distinct-locks-20261111\\http\\recode-artifacts\\job_69cdb790a10548e2b1f93ec1ce0459b4-_gu42m6h\\external\\race-analysis.json",
+      "path": "distinct/race-analysis.json",
+      "sha256": "7125eafb9760472402fe0f409060d9432f21baf67b29b094829a31eb3fd1c652"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-missing-lock-20261111\\summary.json",
+      "path": "missing/summary.json",
+      "sha256": "515f860cc6a1e6af2070cbc448e8879f038bff9c31dc1afcbcccbf9d41845c14"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-missing-lock-20261111\\concurrency\\candidate-bundle.json",
+      "path": "missing/candidate-bundle.json",
+      "sha256": "b60cb8bd0883c7d81953c08d92da76e8e61dfc76a34b739a8013f8d1552c288b"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-missing-lock-20261111\\http\\concurrency-context-bundle.json",
+      "path": "missing/context-bundle.json",
+      "sha256": "19cbbf72ea71f52346b92271e85688a26c5e32a36bb6d3619adb675fb2ea33b6"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-missing-lock-20261111\\http\\recode-artifacts\\job_7c2ddf43229b4edb9b38d9f6343a36ba-5z30ahwl\\external\\race-analysis.json",
+      "path": "missing/race-analysis.json",
+      "sha256": "94f9a8ce22e1858f0a002de6dffec89c1546ae0e56db98296626b2cd2095c067"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-regression-20261111\\result.json",
+      "path": "tests/result.json",
+      "sha256": "8f6268f11c76a60a965eb32a130cf764ba6bb34ac3d9bd09c2ea65cc42db5b48"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-regression-20261111\\producer-windows.log",
+      "path": "tests/producer-windows.log",
+      "sha256": "2d4b146e0a4426a8b20b88ed4835156f3932e0bffe1f42eb4e1115dbdd0c61c1"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-regression-20261111\\producer-docker.log",
+      "path": "tests/producer-docker.log",
+      "sha256": "b7b363319d2fbc49d85616e98a6620bc471e154b91f614269e9bcbfa53a30cec"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-regression-20261111\\common.log",
+      "path": "tests/common.log",
+      "sha256": "8f4db87a821a2eb5afbff3d0a991daef4a0790388288f41da624206eff8cb38b"
+    },
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\concurrency_facts.py",
+      "path": "sources/REcode/clang_pipeline/concurrency_facts.py",
+      "sha256": "1ce90d1abef4a8e88e0f2ddf1f23a08c217d60f788e3bb72e52f9f58c3c47aeb"
+    },
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\race_detector.py",
+      "path": "sources/REcode/clang_pipeline/race_detector.py",
+      "sha256": "1cfa02bd604a3393234b4641991064da6b0c5a854c37d5461dc89c14dc07fcaf"
+    },
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\tests\\test_concurrency_facts.py",
+      "path": "sources/REcode/clang_pipeline/tests/test_concurrency_facts.py",
+      "sha256": "e137fbfb10a71e1275abfe10888e96ada6ab2a8ffaf275fbc8ecfeb5aebbfd9d"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-common\\recode_artifacts.py",
+      "path": "sources/C-BUG-Patch/v2-common/recode_artifacts.py",
+      "sha256": "dad1c8b33d583c76d9d2b93a607c714c4738a58386ce35c77344238fde4a1f5a"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-common\\verify_recode_integration.py",
+      "path": "sources/C-BUG-Patch/v2-common/verify_recode_integration.py",
+      "sha256": "7be0b3025838d542adc532d2807b28baf67df146e323759f48f0c1e4f70b3b52"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\tests\\common\\test_recode_integration.py",
+      "path": "sources/C-BUG-Patch/tests/common/test_recode_integration.py",
+      "sha256": "f747b3325152c98c2e402c2d98d5bee8cda924b9545329d515ad42fe18c1be32"
+    }
+  ],
+  "audit": {
+    "status": "passed",
+    "schema_objects": 18,
+    "checked": [
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-common-lock-20261111\\http\\recode-artifacts\\job_739355b5694241e9884e91690c6c93e4-0rfk3rlv\\external\\race-analysis.json",
+        "schema": "D:\\JDProject\\REcode\\schemas\\race-analysis.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-common-lock-20261111\\concurrency\\candidate-bundle.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\race-candidates.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-common-lock-20261111\\concurrency\\coordinator-state.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-coordinator-state.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-common-lock-20261111\\concurrency\\review-requests\\race-16f81e7c92533f87.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review-request.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-common-lock-20261111\\concurrency\\review-requests\\race-8c5086f4ef4cab2f.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review-request.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-common-lock-20261111\\concurrency\\review-requests\\race-9a2d4994d45c68a8.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review-request.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-distinct-locks-20261111\\http\\recode-artifacts\\job_69cdb790a10548e2b1f93ec1ce0459b4-_gu42m6h\\external\\race-analysis.json",
+        "schema": "D:\\JDProject\\REcode\\schemas\\race-analysis.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-distinct-locks-20261111\\concurrency\\candidate-bundle.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\race-candidates.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-distinct-locks-20261111\\concurrency\\coordinator-state.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-coordinator-state.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-distinct-locks-20261111\\concurrency\\review-requests\\race-15857485208f1cb9.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review-request.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-distinct-locks-20261111\\concurrency\\review-requests\\race-b33417bf9a3b5a7c.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review-request.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-distinct-locks-20261111\\concurrency\\review-requests\\race-feb7803301f7975c.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review-request.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-missing-lock-20261111\\http\\recode-artifacts\\job_7c2ddf43229b4edb9b38d9f6343a36ba-5z30ahwl\\external\\race-analysis.json",
+        "schema": "D:\\JDProject\\REcode\\schemas\\race-analysis.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-missing-lock-20261111\\concurrency\\candidate-bundle.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\race-candidates.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-missing-lock-20261111\\concurrency\\coordinator-state.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-coordinator-state.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-missing-lock-20261111\\concurrency\\review-requests\\race-5387016f48d57347.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review-request.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-missing-lock-20261111\\concurrency\\review-requests\\race-57c160dd4227c253.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review-request.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-facts-missing-lock-20261111\\concurrency\\review-requests\\race-64d8c2d191e75448.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review-request.schema.json"
+      }
+    ],
+    "variants": 3,
+    "candidate_total": 9,
+    "candidate_status": "needs_more_context",
+    "framework_tests": 293,
+    "remote_schema_retrieval": "disabled",
+    "evidence_files": 22
+  }
+}

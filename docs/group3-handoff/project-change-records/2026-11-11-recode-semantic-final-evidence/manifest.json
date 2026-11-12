@@ -1,0 +1,243 @@
+{
+  "files": [
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-common-20261111\\summary.json",
+      "path": "common/summary.json",
+      "sha256": "e03c877fbd2045c832e5ad708b48aa95967ff49ebd1da6a56e74d5fa40c4e13a"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-common-20261111\\concurrency\\candidate-bundle.json",
+      "path": "common/candidate-bundle.json",
+      "sha256": "e1200edacddc4d6bec9230b2452834d10f9ecd3babe047b83b4f07e0ab5aa6d0"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-common-20261111\\http\\concurrency-context-bundle.json",
+      "path": "common/context-bundle.json",
+      "sha256": "b3b604c37f0c9b6daa12225a8155b3e65f9134ffabec36bc3bfd068650bbe74b"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-common-20261111\\http\\recode-artifacts\\job_81f51ea2f5dd4afa8ceaf597d84b705e-d28xkrhk\\external\\race-analysis.json",
+      "path": "common/race-analysis.json",
+      "sha256": "ac486b01f2ccc553a5a92f336f6f87b2cbfb3930342e5ddb7636c7b5430fbaa4"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-distinct-20261111\\summary.json",
+      "path": "distinct/summary.json",
+      "sha256": "4acc96b08a0bd5f0511658b1af8974e95cc80738a94fc4bac5fafe1ecdb6170d"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-distinct-20261111\\concurrency\\candidate-bundle.json",
+      "path": "distinct/candidate-bundle.json",
+      "sha256": "f93de175eabec1714c5c0fb6f20217be6cadc7cdeb0ba3861308ce2cf5082f56"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-distinct-20261111\\http\\concurrency-context-bundle.json",
+      "path": "distinct/context-bundle.json",
+      "sha256": "83286757663d3f8b048f3e8c85dd4d9f192f5e3c1f8e19a0f34e7cb161c6cd1a"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-distinct-20261111\\http\\recode-artifacts\\job_9212a690d6e7428b81c14c96c5072ce8-ei0w9ond\\external\\race-analysis.json",
+      "path": "distinct/race-analysis.json",
+      "sha256": "11db49eb1a450a5fa6e37d0cdd09663350bc488aae78664e7f4a34fed44598dc"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-missing-20261111\\summary.json",
+      "path": "missing/summary.json",
+      "sha256": "4ad741c8181bfa2ff1e7022ec97c4797db98d42ecc186453282324342b38578b"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-missing-20261111\\concurrency\\candidate-bundle.json",
+      "path": "missing/candidate-bundle.json",
+      "sha256": "c6b8c2442278ce97ef50c2795b06b7502ea9235b7f549f0024ab1f4c3464889c"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-missing-20261111\\http\\concurrency-context-bundle.json",
+      "path": "missing/context-bundle.json",
+      "sha256": "ee1ef91bd5729e3b8ce42775cb267ecc91c6ac76db3a8fcea2bbfdc210700e2d"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-missing-20261111\\http\\recode-artifacts\\job_5dd81e5b65fb4d22b29fe12280cb04ab-dmaxug40\\external\\race-analysis.json",
+      "path": "missing/race-analysis.json",
+      "sha256": "eadcf69b972de2b54fcbe8e899b970fb1eea06b01ee49bb1982409f6bb0f2c05"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-acceptance-missing-20261111\\concurrency\\coordinator-result.json",
+      "path": "reviewed/coordinator-result.json",
+      "sha256": "413d407fc7935e2ccc6c853ec9cc29f3a49bffbe50c1b34e9e0f010f58c75e55"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-acceptance-missing-20261111\\concurrency\\review-requests\\race-1a47d1b2dea759da.json",
+      "path": "reviewed/review-request.json",
+      "sha256": "e272c62e1665c917c986b1c4a2d6ab602c97626300188f0e1322f469a52b5f41"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-regression-final-20261111\\result.json",
+      "path": "tests/framework-result.json",
+      "sha256": "87f34f05403156dd9efdf97cdf3dd2c4f739b293aa47e3234c8b193ed652b863"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-regression-20261111\\upstream-full-04.log",
+      "path": "tests/upstream-full.log",
+      "sha256": "50497fdc9054815cd0b707538291a20612c23f77ae2ced7c3704be291425e5a1"
+    },
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\semantic_sync.py",
+      "path": "sources/REcode/clang_pipeline/semantic_sync.py",
+      "sha256": "764dccb60e5357f460263e21f4fd7565950670972edd79fe1bdcf3eaa6c9ab8c"
+    },
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\native_export.py",
+      "path": "sources/REcode/clang_pipeline/native_export.py",
+      "sha256": "bce11a323d15cccfd810a07e9f1939c4af44f26dcd1d781d9aa5027fbf76e92c"
+    },
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\tests\\test_semantic_sync.py",
+      "path": "sources/REcode/clang_pipeline/tests/test_semantic_sync.py",
+      "sha256": "11a49bdc7172b52e43fd9b38ac8d126bc7a06cb876f5b7aa0d8c8fdf6ba77647"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-common\\recode_artifacts.py",
+      "path": "sources/C-BUG-Patch/v2-common/recode_artifacts.py",
+      "sha256": "73504e28e756424f0325eeb8fedb2cc0b380a6ebaadcc811eee05d0d28cf44d2"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-common\\verify_recode_integration.py",
+      "path": "sources/C-BUG-Patch/v2-common/verify_recode_integration.py",
+      "sha256": "50cf8b9d7b89dc0bc992ebc22c20df86ef37673d088d92c2137d16d3f24e1552"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\prototype\\analyze_sync_flow.py",
+      "path": "sources/C-BUG-Patch/v2-concurrency/prototype/analyze_sync_flow.py",
+      "sha256": "3734830fe2d030c53e94a1425e4be85c9ff830a65f42c639414c85c7d417c861"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\tests\\common\\test_recode_integration.py",
+      "path": "sources/C-BUG-Patch/tests/common/test_recode_integration.py",
+      "sha256": "0418314424688338ee6fa4fb9fe78c779740b891bd1299c9133eaf38fa62b948"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\tests\\concurrency\\test_recode_fact_gaps.py",
+      "path": "sources/C-BUG-Patch/tests/concurrency/test_recode_fact_gaps.py",
+      "sha256": "870157f488146920f3344117cfeeac6237c3673897b6a7b8e7fbbd8a60e5ceab"
+    }
+  ],
+  "audit": {
+    "status": "passed",
+    "schema_objects": 22,
+    "variants": [
+      {
+        "variant": "common",
+        "candidates": 0,
+        "head_sha": "645a6fa72a0221f7b4a0437ae54fbfc60a549385"
+      },
+      {
+        "variant": "distinct",
+        "candidates": 1,
+        "head_sha": "d4a3e6ad99329c47bd83a9a5caf8b312338a9dfc"
+      },
+      {
+        "variant": "missing",
+        "candidates": 1,
+        "head_sha": "3d4d321fb7d9460afd7ef1f11ebe7a3120d51378"
+      }
+    ],
+    "framework_tests": 305,
+    "image_source_sha256": {
+      "semantic_sync.py": "764dccb60e5357f460263e21f4fd7565950670972edd79fe1bdcf3eaa6c9ab8c",
+      "native_export.py": "bce11a323d15cccfd810a07e9f1939c4af44f26dcd1d781d9aa5027fbf76e92c",
+      "race_detector.py": "1cfa02bd604a3393234b4641991064da6b0c5a854c37d5461dc89c14dc07fcaf"
+    },
+    "evidence_files": 24,
+    "remote_schema_retrieval": "disabled",
+    "checked": [
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-common-20261111\\http\\recode-artifacts\\job_81f51ea2f5dd4afa8ceaf597d84b705e-d28xkrhk\\external\\call-chains.json",
+        "schema": "D:\\JDProject\\REcode\\schemas\\call-chains.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-common-20261111\\http\\recode-artifacts\\job_81f51ea2f5dd4afa8ceaf597d84b705e-d28xkrhk\\external\\resource-flow.json",
+        "schema": "D:\\JDProject\\REcode\\schemas\\resource-flow.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-common-20261111\\http\\recode-artifacts\\job_81f51ea2f5dd4afa8ceaf597d84b705e-d28xkrhk\\external\\sync-relations.json",
+        "schema": "D:\\JDProject\\REcode\\schemas\\sync-relations.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-common-20261111\\http\\recode-artifacts\\job_81f51ea2f5dd4afa8ceaf597d84b705e-d28xkrhk\\external\\race-analysis.json",
+        "schema": "D:\\JDProject\\REcode\\schemas\\race-analysis.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-common-20261111\\concurrency\\candidate-bundle.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\race-candidates.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-common-20261111\\concurrency\\coordinator-state.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-coordinator-state.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-distinct-20261111\\http\\recode-artifacts\\job_9212a690d6e7428b81c14c96c5072ce8-ei0w9ond\\external\\call-chains.json",
+        "schema": "D:\\JDProject\\REcode\\schemas\\call-chains.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-distinct-20261111\\http\\recode-artifacts\\job_9212a690d6e7428b81c14c96c5072ce8-ei0w9ond\\external\\resource-flow.json",
+        "schema": "D:\\JDProject\\REcode\\schemas\\resource-flow.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-distinct-20261111\\http\\recode-artifacts\\job_9212a690d6e7428b81c14c96c5072ce8-ei0w9ond\\external\\sync-relations.json",
+        "schema": "D:\\JDProject\\REcode\\schemas\\sync-relations.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-distinct-20261111\\http\\recode-artifacts\\job_9212a690d6e7428b81c14c96c5072ce8-ei0w9ond\\external\\race-analysis.json",
+        "schema": "D:\\JDProject\\REcode\\schemas\\race-analysis.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-distinct-20261111\\concurrency\\candidate-bundle.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\race-candidates.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-distinct-20261111\\concurrency\\coordinator-state.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-coordinator-state.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-distinct-20261111\\concurrency\\review-requests\\race-6aedb8acec3a6472.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review-request.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-missing-20261111\\http\\recode-artifacts\\job_5dd81e5b65fb4d22b29fe12280cb04ab-dmaxug40\\external\\call-chains.json",
+        "schema": "D:\\JDProject\\REcode\\schemas\\call-chains.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-missing-20261111\\http\\recode-artifacts\\job_5dd81e5b65fb4d22b29fe12280cb04ab-dmaxug40\\external\\resource-flow.json",
+        "schema": "D:\\JDProject\\REcode\\schemas\\resource-flow.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-missing-20261111\\http\\recode-artifacts\\job_5dd81e5b65fb4d22b29fe12280cb04ab-dmaxug40\\external\\sync-relations.json",
+        "schema": "D:\\JDProject\\REcode\\schemas\\sync-relations.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-missing-20261111\\http\\recode-artifacts\\job_5dd81e5b65fb4d22b29fe12280cb04ab-dmaxug40\\external\\race-analysis.json",
+        "schema": "D:\\JDProject\\REcode\\schemas\\race-analysis.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-missing-20261111\\concurrency\\candidate-bundle.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\race-candidates.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-missing-20261111\\concurrency\\coordinator-state.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-coordinator-state.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-bounded-missing-20261111\\concurrency\\review-requests\\race-1a47d1b2dea759da.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review-request.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-acceptance-missing-20261111\\concurrency\\review-results\\race-1a47d1b2dea759da.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review.schema.json"
+      },
+      {
+        "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-acceptance-missing-20261111\\concurrency\\coordinator-result.json",
+        "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-coordinator-result.schema.json"
+      }
+    ]
+  }
+}

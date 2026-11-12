@@ -1,0 +1,14 @@
+{
+  "script_syntax": "passed",
+  "script_sha256": "450097fd5a5afc2d6b8b0aafbe6fa2b7faece4fd3be3d35b32a8c898548ef3b4",
+  "upstream_report_summary": {
+    "unknown_units": 47,
+    "cgbench_unknown_callsites": 41,
+    "datarace_unknown_cases": 6,
+    "callgraph_missing_edges": 13,
+    "memsafety_false_positives": 8,
+    "skipped_cases": 0
+  },
+  "execution": "not_run",
+  "reason": "This regression exercises merged code analysis and review. The newly added benchmark audit requires benchmark inputs and is recorded as upstream diagnostic data."
+}

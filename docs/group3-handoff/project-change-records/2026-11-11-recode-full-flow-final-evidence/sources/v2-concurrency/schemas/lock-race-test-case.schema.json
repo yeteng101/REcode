@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/v2-concurrency/lock-race-test-case.schema.json",
+  "type": "object", "required": ["schema_version", "candidate_id", "template", "supported_protocols", "covers", "limitations", "rationale"],
+  "properties": {
+    "schema_version": {"const": "lock-race-test-case/0.1"}, "candidate_id": {"type": "string", "minLength": 1},
+    "template": {"enum": ["redis_bio_c", "c_source"]},
+    "supported_protocols": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$"}},
+    "covers": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$"}},
+    "limitations": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "rationale": {"type": "string", "minLength": 1}
+  }, "additionalProperties": false
+}

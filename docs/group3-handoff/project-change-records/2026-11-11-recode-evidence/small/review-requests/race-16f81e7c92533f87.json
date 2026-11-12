@@ -1,0 +1,1105 @@
+{
+  "schema_version": "lock-race-review-request/0.1",
+  "task_id": "github-pr-local-integration:get_sync_flows",
+  "candidate_id": "race-16f81e7c92533f87",
+  "repository": {
+    "name": "cbug-integration/recode-contract",
+    "base_sha": null,
+    "head_sha": "b95a58bf6837eaa5c471991811c39130e7880603",
+    "build_profile": "recode-linux-clang",
+    "graph_snapshot_id": "recode-3f49a253627020f558d55a3f8041dd380162dcd9923f9663d31f9620262315b7"
+  },
+  "provenance": {
+    "source_kind": "first_group",
+    "first_group_schema_version": "1.0",
+    "first_group_run_id": "recode-cbug-integration-b95a58bf6837:get_sync_flows",
+    "source_response_sha256": "dac767669a641a4b2bf353d7d3433c475b89732164ed4c766c570f69e6857ec8",
+    "graph_snapshot_id": "recode-3f49a253627020f558d55a3f8041dd380162dcd9923f9663d31f9620262315b7",
+    "analyzer": {
+      "name": "REcode-native-export-adapter",
+      "version": "1.0",
+      "formal_evidence": false
+    },
+    "formal_evidence": false,
+    "review_confidence_cap": 0.6,
+    "context_delivery": {
+      "archive_sha256": "9e2abf209b73901a5ff1bc0528a571efca619088a0225bd790e18333071ea2bf",
+      "max_inline_chars": 64000,
+      "lookup": "read_lock_race_candidate_context",
+      "revision": 0,
+      "omissions": []
+    }
+  },
+  "change_context": {
+    "status": "complete",
+    "base_sha": "d345641d8634ee1af0ee679b7c924ac7078e9b54",
+    "head_sha": "b95a58bf6837eaa5c471991811c39130e7880603",
+    "changed_locations": [
+      {
+        "file": "observe.c",
+        "start_line": 1,
+        "end_line": 5,
+        "old_start_line": 1,
+        "old_line_count": 5,
+        "new_line_count": 5,
+        "side": "right",
+        "evidence_ids": [
+          "diff-1d5a4b4c8fb1a8d657c1"
+        ]
+      },
+      {
+        "file": "workers.c",
+        "start_line": 5,
+        "end_line": 11,
+        "old_start_line": 5,
+        "old_line_count": 7,
+        "new_line_count": 7,
+        "side": "right",
+        "evidence_ids": [
+          "diff-9d453c0a57c266acff43"
+        ]
+      }
+    ],
+    "diff_evidence_ids": [
+      "diff-1d5a4b4c8fb1a8d657c1",
+      "diff-9d453c0a57c266acff43"
+    ],
+    "reason": null,
+    "merge_base_sha": "d345641d8634ee1af0ee679b7c924ac7078e9b54",
+    "base_is_ancestor_of_head": null,
+    "changed_files": [
+      {
+        "path": "observe.c",
+        "status": "M"
+      },
+      {
+        "path": "workers.c",
+        "status": "M"
+      }
+    ],
+    "diff_sha256": "be0a5ee97338b637f891a79fa17bdb71dad54a13cacef5ff9ad4f3e1ecf5b03f",
+    "pr_summary": {
+      "changed_file_count": 2,
+      "changed_hunk_count": 2,
+      "full_change_context_sha256": "6c76255da588e9dbd5610a02c3ee1d48bff527b98e1439991f8c2815a817ca05"
+    }
+  },
+  "candidate": {
+    "candidate_id": "race-16f81e7c92533f87",
+    "candidate_status": "needs_more_context",
+    "domain": "lock",
+    "kind": "data_race",
+    "shared_object": {
+      "object_id": "recode-object-72d940a4686a9d780114",
+      "name": "counter",
+      "type": "",
+      "identity_confidence": 0.35,
+      "declaration": null,
+      "source_finding_ids": [
+        "recode-native-sync"
+      ]
+    },
+    "access_a": {
+      "access_id": "access_0217db841429",
+      "kind": "read",
+      "function": "main",
+      "location": {
+        "file": "workers.c",
+        "start_line": 25,
+        "end_line": 25
+      },
+      "execution_context": {},
+      "must_lockset": [],
+      "may_lockset": [],
+      "other_synchronization": [],
+      "confidence": 0.35,
+      "evidence_ids": [
+        "ev_3e9479853ff5"
+      ],
+      "source_finding_ids": [
+        "recode-native-sync"
+      ]
+    },
+    "access_b": {
+      "access_id": "access_196ca7298819",
+      "kind": "write",
+      "function": "writer_b",
+      "location": {
+        "file": "workers.c",
+        "start_line": 15,
+        "end_line": 15
+      },
+      "execution_context": {},
+      "must_lockset": [],
+      "may_lockset": [],
+      "other_synchronization": [
+        {
+          "kind": "unresolved_native_protection",
+          "evidence_ids": [
+            "ev_2a94a9a8ec9d"
+          ]
+        }
+      ],
+      "confidence": 0.35,
+      "evidence_ids": [
+        "ev_2a94a9a8ec9d"
+      ],
+      "source_finding_ids": [
+        "recode-native-sync"
+      ]
+    },
+    "same_object": true,
+    "at_least_one_write": true,
+    "may_concurrent": null,
+    "common_must_lockset": [],
+    "other_synchronization": [],
+    "confidence": 0.35,
+    "evidence_ids": [
+      "ev_2a94a9a8ec9d",
+      "ev_3e9479853ff5",
+      "ev_6df8407b7b2f",
+      "diff-9d453c0a57c266acff43",
+      "ev_0f0bb2762d50",
+      "ev_1ca2de11e4d5",
+      "ev_202484a78c82",
+      "ev_2b0dc09ffd7f",
+      "ev_341b2038164f",
+      "ev_94cc65002a4d",
+      "ev_be4d26e242c3",
+      "ev_c9724a5ccbe1",
+      "ev_cf0813d2c179"
+    ],
+    "coverage": {
+      "complete": false,
+      "reason": "context_bundle:first-group status is partial; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+      "unresolved": [
+        "call_chains:recode_bounded_call_subgraph_paths_not_enumerated",
+        "call_chains:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+        "call_chains:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated",
+        "concurrency_relation_unknown",
+        "context_bundle:first-group status is partial; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+        "low_object_identity_confidence",
+        "object_declaration_unavailable",
+        "sync_flows:recode_execution_contexts_unresolved",
+        "sync_flows:recode_must_locksets_and_lock_order_unavailable",
+        "sync_flows:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+        "sync_flows:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+        "sync_flows:recode_object_declarations_and_aliases_unresolved",
+        "unproven_other_synchronization"
+      ]
+    },
+    "impact_scope": {
+      "schema_version": "lock-race-impact-scope/0.1",
+      "repository": {
+        "name": "cbug-integration/recode-contract",
+        "base_sha": "d345641d8634ee1af0ee679b7c924ac7078e9b54",
+        "head_sha": "b95a58bf6837eaa5c471991811c39130e7880603",
+        "build_profile": "recode-linux-clang",
+        "graph_snapshot_id": "recode-3f49a253627020f558d55a3f8041dd380162dcd9923f9663d31f9620262315b7"
+      },
+      "source_runs": {
+        "call_chains": {
+          "run_id": "recode-cbug-integration-b95a58bf6837:get_call_chains",
+          "response_sha256": "7a8f9370f5ce127a150ac079a317c76fd843cb795d41506fa33578491a977920"
+        },
+        "sync_flows": {
+          "run_id": "recode-cbug-integration-b95a58bf6837:get_sync_flows",
+          "response_sha256": "b18fc5eaece31fd9fa00f2479ba228464da51cc3e2deeead56d415bd2c3164c7"
+        }
+      },
+      "change_context": {
+        "status": "complete",
+        "base_sha": "d345641d8634ee1af0ee679b7c924ac7078e9b54",
+        "head_sha": "b95a58bf6837eaa5c471991811c39130e7880603",
+        "merge_base_sha": "d345641d8634ee1af0ee679b7c924ac7078e9b54",
+        "base_is_ancestor_of_head": null,
+        "changed_files": [
+          {
+            "path": "observe.c",
+            "status": "M"
+          },
+          {
+            "path": "workers.c",
+            "status": "M"
+          }
+        ],
+        "changed_locations": [
+          {
+            "file": "observe.c",
+            "start_line": 1,
+            "end_line": 5,
+            "old_start_line": 1,
+            "old_line_count": 5,
+            "new_line_count": 5,
+            "side": "right",
+            "evidence_ids": [
+              "diff-1d5a4b4c8fb1a8d657c1"
+            ]
+          },
+          {
+            "file": "workers.c",
+            "start_line": 5,
+            "end_line": 11,
+            "old_start_line": 5,
+            "old_line_count": 7,
+            "new_line_count": 7,
+            "side": "right",
+            "evidence_ids": [
+              "diff-9d453c0a57c266acff43"
+            ]
+          }
+        ],
+        "diff_evidence_ids": [
+          "diff-1d5a4b4c8fb1a8d657c1",
+          "diff-9d453c0a57c266acff43"
+        ],
+        "diff_sha256": "be0a5ee97338b637f891a79fa17bdb71dad54a13cacef5ff9ad4f3e1ecf5b03f",
+        "reason": null
+      },
+      "roots": [
+        "fn:observe"
+      ],
+      "functions": [
+        {
+          "node_id": "fn:observe",
+          "name": "observe",
+          "qualified_name": "observe",
+          "location": {
+            "file": "observe.c",
+            "line": 2
+          },
+          "distance": 0,
+          "reasons": [
+            "first_group_query_root",
+            "overlaps_pr_change"
+          ],
+          "evidence_ids": []
+        },
+        {
+          "node_id": "fn:main",
+          "name": "main",
+          "qualified_name": "main",
+          "location": {
+            "file": "workers.c",
+            "line": 19
+          },
+          "distance": 1,
+          "reasons": [
+            "connected_call_path"
+          ],
+          "evidence_ids": []
+        },
+        {
+          "node_id": "fn:pthread_create",
+          "name": "pthread_create",
+          "qualified_name": "pthread_create",
+          "location": {
+            "file": "workers.c",
+            "line": 202
+          },
+          "distance": 2,
+          "reasons": [
+            "connected_call_path"
+          ],
+          "evidence_ids": []
+        },
+        {
+          "node_id": "fn:pthread_join",
+          "name": "pthread_join",
+          "qualified_name": "pthread_join",
+          "location": {
+            "file": "workers.c",
+            "line": 219
+          },
+          "distance": 2,
+          "reasons": [
+            "connected_call_path"
+          ],
+          "evidence_ids": []
+        },
+        {
+          "node_id": null,
+          "name": "writer_b",
+          "qualified_name": null,
+          "location": null,
+          "distance": null,
+          "reasons": [
+            "accesses_selected_shared_object"
+          ],
+          "evidence_ids": []
+        }
+      ],
+      "call_edges": [
+        {
+          "edge_id": "e_3fb370f338e8",
+          "kind": "direct_call",
+          "source_node_id": "fn:main",
+          "target_node_id": "fn:observe",
+          "call_site": {
+            "file": "workers.c",
+            "line": 27,
+            "snippet": "",
+            "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_94cc65002a4d"
+          ]
+        },
+        {
+          "edge_id": "e_76606278fdd9",
+          "kind": "direct_call",
+          "source_node_id": "fn:main",
+          "target_node_id": "fn:pthread_create",
+          "call_site": {
+            "file": "workers.c",
+            "line": 22,
+            "snippet": "pthread_create(&b, 0, writer_b, 0);",
+            "snippet_sha256": "6969499d9f4ceefdb3b5d02f654293e58a5aff3d543c652480c1377357c06e9a"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_cf0813d2c179"
+          ]
+        },
+        {
+          "edge_id": "e_a56e424e0406",
+          "kind": "direct_call",
+          "source_node_id": "fn:main",
+          "target_node_id": "fn:pthread_create",
+          "call_site": {
+            "file": "workers.c",
+            "line": 21,
+            "snippet": "pthread_create(&a, 0, writer_a, 0);",
+            "snippet_sha256": "4637ffa18b236d4c1acb041efc926647702aaf52966181ce5152bfb694128012"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_c9724a5ccbe1"
+          ]
+        },
+        {
+          "edge_id": "e_ad6075441ac1",
+          "kind": "direct_call",
+          "source_node_id": "fn:main",
+          "target_node_id": "fn:pthread_join",
+          "call_site": {
+            "file": "workers.c",
+            "line": 23,
+            "snippet": "pthread_join(a, 0);",
+            "snippet_sha256": "a91f7bb6b98fae9253c183d33b6f116309db09e567e353e1021815d47f6befa3"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_202484a78c82"
+          ]
+        },
+        {
+          "edge_id": "e_cef428cc9114",
+          "kind": "direct_call",
+          "source_node_id": "fn:main",
+          "target_node_id": "fn:pthread_join",
+          "call_site": {
+            "file": "workers.c",
+            "line": 24,
+            "snippet": "pthread_join(b, 0);",
+            "snippet_sha256": "2eb157de5051816ecc652687b0be64d070745c556e54a07a3b20496b2f3030b4"
+          },
+          "confidence": 1.0,
+          "evidence_ids": [
+            "ev_be4d26e242c3"
+          ]
+        }
+      ],
+      "shared_objects": [
+        {
+          "object_id": "recode-object-4d5fadc01b76affe0bda",
+          "name": "mutex",
+          "type": "",
+          "identity_confidence": 0.35,
+          "declaration": null,
+          "evidence_ids": [
+            "ev_0f0bb2762d50",
+            "ev_1ca2de11e4d5",
+            "ev_2b0dc09ffd7f",
+            "ev_341b2038164f"
+          ],
+          "accesses": [
+            {
+              "access_id": "access_070dc13d0923",
+              "kind": "read",
+              "function": "writer_b",
+              "location": {
+                "file": "workers.c",
+                "start_line": 14,
+                "end_line": 14
+              },
+              "execution_context": {},
+              "must_lockset": [],
+              "may_lockset": [],
+              "other_synchronization": [
+                {
+                  "kind": "unresolved_native_protection",
+                  "evidence_ids": [
+                    "ev_2b0dc09ffd7f"
+                  ]
+                }
+              ],
+              "confidence": 0.35,
+              "evidence_ids": [
+                "ev_2b0dc09ffd7f"
+              ],
+              "source_finding_ids": [
+                "recode-native-sync"
+              ]
+            },
+            {
+              "access_id": "access_123638fdde02",
+              "kind": "read",
+              "function": "writer_a",
+              "location": {
+                "file": "workers.c",
+                "start_line": 7,
+                "end_line": 7
+              },
+              "execution_context": {},
+              "must_lockset": [],
+              "may_lockset": [],
+              "other_synchronization": [
+                {
+                  "kind": "unresolved_native_protection",
+                  "evidence_ids": [
+                    "ev_0f0bb2762d50"
+                  ]
+                }
+              ],
+              "confidence": 0.35,
+              "evidence_ids": [
+                "ev_0f0bb2762d50"
+              ],
+              "source_finding_ids": [
+                "recode-native-sync"
+              ]
+            },
+            {
+              "access_id": "access_8952ecacd006",
+              "kind": "read",
+              "function": "writer_a",
+              "location": {
+                "file": "workers.c",
+                "start_line": 9,
+                "end_line": 9
+              },
+              "execution_context": {},
+              "must_lockset": [],
+              "may_lockset": [],
+              "other_synchronization": [
+                {
+                  "kind": "unresolved_native_protection",
+                  "evidence_ids": [
+                    "ev_341b2038164f"
+                  ]
+                }
+              ],
+              "confidence": 0.35,
+              "evidence_ids": [
+                "ev_341b2038164f"
+              ],
+              "source_finding_ids": [
+                "recode-native-sync"
+              ]
+            },
+            {
+              "access_id": "access_f836e1ecbf4c",
+              "kind": "read",
+              "function": "writer_b",
+              "location": {
+                "file": "workers.c",
+                "start_line": 16,
+                "end_line": 16
+              },
+              "execution_context": {},
+              "must_lockset": [],
+              "may_lockset": [],
+              "other_synchronization": [
+                {
+                  "kind": "unresolved_native_protection",
+                  "evidence_ids": [
+                    "ev_1ca2de11e4d5"
+                  ]
+                }
+              ],
+              "confidence": 0.35,
+              "evidence_ids": [
+                "ev_1ca2de11e4d5"
+              ],
+              "source_finding_ids": [
+                "recode-native-sync"
+              ]
+            }
+          ],
+          "source_finding_ids": [
+            "recode-native-sync"
+          ]
+        },
+        {
+          "object_id": "recode-object-72d940a4686a9d780114",
+          "name": "counter",
+          "type": "",
+          "identity_confidence": 0.35,
+          "declaration": null,
+          "evidence_ids": [
+            "ev_2a94a9a8ec9d",
+            "ev_3e9479853ff5",
+            "ev_6df8407b7b2f"
+          ],
+          "accesses": [
+            {
+              "access_id": "access_0217db841429",
+              "kind": "read",
+              "function": "main",
+              "location": {
+                "file": "workers.c",
+                "start_line": 25,
+                "end_line": 25
+              },
+              "execution_context": {},
+              "must_lockset": [],
+              "may_lockset": [],
+              "other_synchronization": [],
+              "confidence": 0.35,
+              "evidence_ids": [
+                "ev_3e9479853ff5"
+              ],
+              "source_finding_ids": [
+                "recode-native-sync"
+              ]
+            },
+            {
+              "access_id": "access_196ca7298819",
+              "kind": "write",
+              "function": "writer_b",
+              "location": {
+                "file": "workers.c",
+                "start_line": 15,
+                "end_line": 15
+              },
+              "execution_context": {},
+              "must_lockset": [],
+              "may_lockset": [],
+              "other_synchronization": [
+                {
+                  "kind": "unresolved_native_protection",
+                  "evidence_ids": [
+                    "ev_2a94a9a8ec9d"
+                  ]
+                }
+              ],
+              "confidence": 0.35,
+              "evidence_ids": [
+                "ev_2a94a9a8ec9d"
+              ],
+              "source_finding_ids": [
+                "recode-native-sync"
+              ]
+            },
+            {
+              "access_id": "access_860d5b80dc68",
+              "kind": "write",
+              "function": "writer_a",
+              "location": {
+                "file": "workers.c",
+                "start_line": 8,
+                "end_line": 8
+              },
+              "execution_context": {},
+              "must_lockset": [],
+              "may_lockset": [],
+              "other_synchronization": [
+                {
+                  "kind": "unresolved_native_protection",
+                  "evidence_ids": [
+                    "ev_6df8407b7b2f"
+                  ]
+                }
+              ],
+              "confidence": 0.35,
+              "evidence_ids": [
+                "ev_6df8407b7b2f"
+              ],
+              "source_finding_ids": [
+                "recode-native-sync"
+              ]
+            }
+          ],
+          "source_finding_ids": [
+            "recode-native-sync"
+          ]
+        }
+      ],
+      "locks": [],
+      "async_boundaries": [],
+      "condition_variables": [],
+      "lock_order_edges": [],
+      "context_ids": [],
+      "evidence_ids": [
+        "ev_13d17277c23e",
+        "ev_94cc65002a4d",
+        "ev_cf0813d2c179",
+        "ev_acd4417b6310",
+        "ev_d80acc32dae9",
+        "ev_c9724a5ccbe1",
+        "ev_202484a78c82",
+        "ev_be4d26e242c3",
+        "ev_0f0bb2762d50",
+        "ev_1ca2de11e4d5",
+        "ev_2b0dc09ffd7f",
+        "ev_341b2038164f",
+        "ev_2a94a9a8ec9d",
+        "ev_3e9479853ff5",
+        "ev_6df8407b7b2f",
+        "diff-1d5a4b4c8fb1a8d657c1",
+        "diff-9d453c0a57c266acff43"
+      ],
+      "coverage": {
+        "complete": false,
+        "reason": "context_bundle:first-group status is partial; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+        "unresolved": [
+          "call_chains:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated",
+          "call_chains:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+          "call_chains:recode_bounded_call_subgraph_paths_not_enumerated",
+          "sync_flows:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+          "sync_flows:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+          "sync_flows:recode_object_declarations_and_aliases_unresolved",
+          "sync_flows:recode_execution_contexts_unresolved",
+          "sync_flows:recode_must_locksets_and_lock_order_unavailable",
+          "context_bundle:first-group status is partial; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable"
+        ],
+        "local_limits": {
+          "max_depth": 12,
+          "cut_call_edge_count": 0,
+          "cut_call_edge_ids": [],
+          "cut_edge_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "components": {
+          "call_chains": {
+            "complete": false,
+            "status": "partial",
+            "unresolved": [
+              "call_chains:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated",
+              "call_chains:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+              "call_chains:recode_bounded_call_subgraph_paths_not_enumerated"
+            ]
+          },
+          "sync_flows": {
+            "complete": false,
+            "status": "partial",
+            "unresolved": [
+              "sync_flows:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+              "sync_flows:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+              "sync_flows:recode_object_declarations_and_aliases_unresolved",
+              "sync_flows:recode_execution_contexts_unresolved",
+              "sync_flows:recode_must_locksets_and_lock_order_unavailable"
+            ]
+          }
+        }
+      },
+      "stats": {
+        "root_count": 1,
+        "function_count": 9,
+        "call_edge_count": 8,
+        "shared_object_count": 2,
+        "shared_access_count": 7,
+        "lock_count": 0,
+        "async_boundary_count": 0,
+        "condition_variable_count": 0,
+        "lock_order_edge_count": 0
+      },
+      "context_index": {
+        "full_scope_sha256": "9af307b16950fe49dccf8c6022ff37d5ee24449de57870c2223ba517f8eb1749",
+        "full_function_count": 9,
+        "full_call_edge_count": 8,
+        "lookup": "read_lock_race_candidate_context"
+      }
+    }
+  },
+  "evidence": [
+    {
+      "id": "ev_2a94a9a8ec9d",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 15,
+        "snippet": "counter++;",
+        "snippet_sha256": "87fab714d442dfbe7b9c86da7d4231598a17afbcdcddf22d94e5d966f096e67f"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_3e9479853ff5",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 25,
+        "snippet": "return observe(counter);",
+        "snippet_sha256": "8d163a762c9ad837964964e7a4266c541df4da3bba57db34e72d748c55bd0b8f"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_6df8407b7b2f",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 8,
+        "snippet": "counter += 2;",
+        "snippet_sha256": "6ca04fb8a3e411a964ff8825a4779e7d123a32710cc6ff341b2b97bd4a9b2e0e"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "diff-9d453c0a57c266acff43",
+      "kind": "git_diff_hunk",
+      "location": {
+        "file": "workers.c",
+        "line": 5,
+        "side": "right"
+      },
+      "snippet": "@@ -5,7 +5,7 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;\n void *writer_a(void *unused) {\n     (void)unused;\n     pthread_mutex_lock(&mutex);\n-    counter++;\n+    counter += 2;\n     pthread_mutex_unlock(&mutex);\n     return 0;\n }\n",
+      "snippet_sha256": "7b106f5dcd7e7a557867bfd651719e008ccc623e7ebf7869abd2f93ae5a527c1",
+      "role": "pr_change"
+    },
+    {
+      "id": "ev_0f0bb2762d50",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 7,
+        "snippet": "pthread_mutex_lock(&mutex);",
+        "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_1ca2de11e4d5",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 16,
+        "snippet": "pthread_mutex_unlock(&mutex);",
+        "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_202484a78c82",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 23,
+        "snippet": "pthread_join(a, 0);",
+        "snippet_sha256": "a91f7bb6b98fae9253c183d33b6f116309db09e567e353e1021815d47f6befa3"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_2b0dc09ffd7f",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 14,
+        "snippet": "pthread_mutex_lock(&mutex);",
+        "snippet_sha256": "631104b00a627f0a44f9a1fd9e27aa9aa9a385547ea85a01218e3eaa4f71a62b"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_341b2038164f",
+      "kind": "memory_access",
+      "location": {
+        "file": "workers.c",
+        "line": 9,
+        "snippet": "pthread_mutex_unlock(&mutex);",
+        "snippet_sha256": "b015242fab21ae87aec66abafa391be7f5618b0c68cf78f6e60f186f1a5eb61f"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_94cc65002a4d",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 27,
+        "snippet": "",
+        "snippet_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_be4d26e242c3",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 24,
+        "snippet": "pthread_join(b, 0);",
+        "snippet_sha256": "2eb157de5051816ecc652687b0be64d070745c556e54a07a3b20496b2f3030b4"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_c9724a5ccbe1",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 21,
+        "snippet": "pthread_create(&a, 0, writer_a, 0);",
+        "snippet_sha256": "4637ffa18b236d4c1acb041efc926647702aaf52966181ce5152bfb694128012"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_cf0813d2c179",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 22,
+        "snippet": "pthread_create(&b, 0, writer_b, 0);",
+        "snippet_sha256": "6969499d9f4ceefdb3b5d02f654293e58a5aff3d543c652480c1377357c06e9a"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "diff-1d5a4b4c8fb1a8d657c1",
+      "kind": "git_diff_hunk",
+      "location": {
+        "file": "observe.c",
+        "line": 1,
+        "side": "right"
+      },
+      "snippet": "@@ -1,5 +1,5 @@\n #include \"state.h\"\n int observe(int value) {\n     allocate_temporary();\n-    return value;\n+    return value + 1;\n }\n",
+      "snippet_sha256": "c9321fa442e6577a01eb5c753426f8bea2c38f9ed3bb231ae0ac4a98b3208629",
+      "role": "pr_change"
+    },
+    {
+      "id": "ev_13d17277c23e",
+      "kind": "call_site",
+      "location": {
+        "file": "resource.c",
+        "line": 4,
+        "snippet": "free(buffer);",
+        "snippet_sha256": "bc2b3942f9ba1c6cb7a42e7c9a24ca0b2a732e7d6b212ea16ad0cae40db24e71"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_acd4417b6310",
+      "kind": "call_site",
+      "location": {
+        "file": "resource.c",
+        "line": 3,
+        "snippet": "char *buffer = malloc(32);",
+        "snippet_sha256": "6da3bbbce999aaa3043a5373dc90f44602ab04ee0af0032eb527100877c22210"
+      },
+      "role": "supports"
+    },
+    {
+      "id": "ev_d80acc32dae9",
+      "kind": "call_site",
+      "location": {
+        "file": "observe.c",
+        "line": 3,
+        "snippet": "allocate_temporary();",
+        "snippet_sha256": "3aa05981a039d6e0c4b9c81cf162ce6ea076b3520b546731d7bf637695e94f32"
+      },
+      "role": "supports"
+    }
+  ],
+  "source_units": [
+    {
+      "path": "workers.c",
+      "revision": "b95a58bf6837eaa5c471991811c39130e7880603",
+      "content": "#include <pthread.h>\n#include \"state.h\"\nint counter = 0;\npthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;\nvoid *writer_a(void *unused) {\n    (void)unused;\n    pthread_mutex_lock(&mutex);\n    counter += 2;\n    pthread_mutex_unlock(&mutex);\n    return 0;\n}\nvoid *writer_b(void *unused) {\n    (void)unused;\n    pthread_mutex_lock(&mutex);\n    counter++;\n    pthread_mutex_unlock(&mutex);\n    return 0;\n}\nint main(void) {\n    pthread_t a, b;\n    pthread_create(&a, 0, writer_a, 0);\n    pthread_create(&b, 0, writer_b, 0);\n    pthread_join(a, 0);\n    pthread_join(b, 0);\n    return observe(counter);\n}\n",
+      "sha256": "bf51c350913456c657969cc62324084940826495183c6f0aa02efb3d4aca5825",
+      "source_sha256": "bf51c350913456c657969cc62324084940826495183c6f0aa02efb3d4aca5825",
+      "content_kind": "full_file",
+      "source_ranges": [
+        {
+          "start_line": 1,
+          "end_line": 26
+        }
+      ],
+      "priority": 100,
+      "selection_reasons": [
+        "review_changed_file",
+        "call_fact_evidence",
+        "call_fact_reference",
+        "concurrency_fact_evidence",
+        "concurrency_fact_reference"
+      ],
+      "evidence_ids": [
+        "ev_202484a78c82",
+        "ev_7cb605fa3c8e",
+        "ev_94cc65002a4d",
+        "ev_9507aaad509f",
+        "ev_b6dc8142a6cd",
+        "ev_be4d26e242c3",
+        "ev_c9724a5ccbe1",
+        "ev_cf0813d2c179",
+        "ev_d551eb05c293",
+        "ev_0f0bb2762d50",
+        "ev_1ca2de11e4d5",
+        "ev_2a94a9a8ec9d",
+        "ev_2b0dc09ffd7f",
+        "ev_341b2038164f",
+        "ev_3e9479853ff5",
+        "ev_6df8407b7b2f"
+      ]
+    },
+    {
+      "path": "observe.c",
+      "revision": "b95a58bf6837eaa5c471991811c39130e7880603",
+      "content": "#include \"state.h\"\nint observe(int value) {\n    allocate_temporary();\n    return value + 1;\n}\n",
+      "sha256": "350b06c915679658e0c72a74f19346b7b203fe2513132d73c7b31f21235a44f0",
+      "source_sha256": "350b06c915679658e0c72a74f19346b7b203fe2513132d73c7b31f21235a44f0",
+      "content_kind": "full_file",
+      "source_ranges": [
+        {
+          "start_line": 1,
+          "end_line": 5
+        }
+      ],
+      "priority": 100,
+      "selection_reasons": [
+        "review_changed_file",
+        "review_changed_function",
+        "call_fact_evidence",
+        "call_fact_reference",
+        "concurrency_fact_evidence"
+      ],
+      "evidence_ids": [
+        "ev_d80acc32dae9"
+      ]
+    },
+    {
+      "path": "resource.c",
+      "revision": "b95a58bf6837eaa5c471991811c39130e7880603",
+      "content": "#include <stdlib.h>\nvoid allocate_temporary(void) {\n    char *buffer = malloc(32);\n    free(buffer);\n}\n",
+      "sha256": "8fada808b270f012ce9085ba46a2d985259cd83826e7f9a0df865698b45b54f0",
+      "source_sha256": "8fada808b270f012ce9085ba46a2d985259cd83826e7f9a0df865698b45b54f0",
+      "content_kind": "full_file",
+      "source_ranges": [
+        {
+          "start_line": 1,
+          "end_line": 5
+        }
+      ],
+      "priority": 85,
+      "selection_reasons": [
+        "call_fact_evidence",
+        "call_fact_reference",
+        "concurrency_fact_evidence"
+      ],
+      "evidence_ids": [
+        "ev_13d17277c23e",
+        "ev_acd4417b6310",
+        "ev_bbda2423881a"
+      ]
+    }
+  ],
+  "coverage": {
+    "complete": false,
+    "reason": "context_bundle:first-group status is partial; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+    "unresolved": [
+      "call_chains:recode_bounded_call_subgraph_paths_not_enumerated",
+      "call_chains:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+      "call_chains:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated",
+      "concurrency_relation_unknown",
+      "context_bundle:first-group status is partial; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+      "low_object_identity_confidence",
+      "object_declaration_unavailable",
+      "sync_flows:recode_execution_contexts_unresolved",
+      "sync_flows:recode_must_locksets_and_lock_order_unavailable",
+      "sync_flows:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+      "sync_flows:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+      "sync_flows:recode_object_declarations_and_aliases_unresolved",
+      "unproven_other_synchronization"
+    ],
+    "source_context": {
+      "complete": true,
+      "required_files": [
+        "workers.c"
+      ],
+      "included_files": [
+        "observe.c",
+        "resource.c",
+        "workers.c"
+      ],
+      "missing_required_files": [],
+      "missing_related_files": [],
+      "missing_required_ranges": []
+    },
+    "candidate_decision": {
+      "policy": "candidate-local-proof/1",
+      "complete": false,
+      "checks": {
+        "version": true,
+        "sync_facts": false,
+        "call_facts": false,
+        "identity": false,
+        "conflict": true,
+        "overlap": false,
+        "protocol": true,
+        "source_sites": false,
+        "source_integrity": true,
+        "required_source": true,
+        "evidence": true,
+        "pr_connection": false
+      },
+      "blocking_gaps": [
+        "call_chains:recode_bounded_call_subgraph_paths_not_enumerated",
+        "call_chains:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+        "call_chains:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated",
+        "concurrency_relation_unknown",
+        "context_bundle:first-group status is partial; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_bounded_call_subgraph_paths_not_enumerated; recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+        "low_object_identity_confidence",
+        "object_declaration_unavailable",
+        "required:call_facts",
+        "required:identity",
+        "required:overlap",
+        "required:pr_connection",
+        "required:source_sites",
+        "required:sync_facts",
+        "sync_flows:recode_execution_contexts_unresolved",
+        "sync_flows:recode_must_locksets_and_lock_order_unavailable",
+        "sync_flows:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage",
+        "sync_flows:recode_native_export_has_no_exhaustive_cfg_alias_or_path_coverage; recode_object_declarations_and_aliases_unresolved; recode_execution_contexts_unresolved; recode_must_locksets_and_lock_order_unavailable",
+        "sync_flows:recode_object_declarations_and_aliases_unresolved",
+        "unproven_other_synchronization"
+      ],
+      "nonblocking_gaps": [],
+      "required_source_ranges": [
+        {
+          "file": "workers.c",
+          "start_line": 15,
+          "end_line": 15,
+          "role": "access_b"
+        },
+        {
+          "file": "workers.c",
+          "start_line": 25,
+          "end_line": 25,
+          "role": "access_a"
+        }
+      ],
+      "missing_source_ranges": [],
+      "invalid_source_files": [],
+      "max_status": "probable"
+    }
+  },
+  "review_constraints": {
+    "single_bounded_candidate": true,
+    "read_only": true,
+    "patch_generation_allowed": false,
+    "verification_allowed": false
+  }
+}

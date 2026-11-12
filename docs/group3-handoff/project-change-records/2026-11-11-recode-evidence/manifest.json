@@ -1,0 +1,454 @@
+{
+  "status": "passed",
+  "date": "2026-11-11",
+  "recode_base_commit": "e6e3b4222715cea71c150f0dd824ed990e7f567d",
+  "framework_tests": 287,
+  "native_production_service": "passed",
+  "automatic_routes": [
+    "memory",
+    "concurrency"
+  ],
+  "upstream_remaining_failures": 2,
+  "upstream_real_docker_tests": 2,
+  "files": [
+    {
+      "path": "source/C-BUG-Patch/v2-common/coordinator.py",
+      "sha256": "89d9d10ddfbdbaa8bde95dfdd29ef9ed32018c55d638183cb3c1f79b961f4445",
+      "bytes": 13757,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\v2-common\\coordinator.py"
+    },
+    {
+      "path": "source/C-BUG-Patch/v2-common/recode_artifacts.py",
+      "sha256": "da2986d325ba86d0dc68588b82bbecf981256ae2fa30e04e6bbcca1cc94655c6",
+      "bytes": 21108,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\v2-common\\recode_artifacts.py"
+    },
+    {
+      "path": "source/C-BUG-Patch/v2-common/recode_client.py",
+      "sha256": "ce3f73b9b1a12451f33a92e11fddf2a1d76b4f7a75fb5c4a17cac0ac7df3e7ae",
+      "bytes": 7869,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\v2-common\\recode_client.py"
+    },
+    {
+      "path": "source/C-BUG-Patch/v2-common/review_pipeline.py",
+      "sha256": "b531344789977d3015a0afaee5b2712883a77d13a0973b59752405895460d971",
+      "bytes": 7478,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\v2-common\\review_pipeline.py"
+    },
+    {
+      "path": "source/C-BUG-Patch/v2-common/verify_recode_integration.py",
+      "sha256": "1ce862b9b7609a1ce742192d3245bf5333ac720a78eec2f66f01be4d510ea0f3",
+      "bytes": 10634,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\v2-common\\verify_recode_integration.py"
+    },
+    {
+      "path": "source/C-BUG-Patch/v2-common/verify_recode_service.py",
+      "sha256": "d65175581f75fe300bb03d24e3e511ac3e82693698c117196ddb9284cde150b1",
+      "bytes": 4142,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\v2-common\\verify_recode_service.py"
+    },
+    {
+      "path": "source/C-BUG-Patch/v2-common/README.md",
+      "sha256": "e24510af5dca50dba5b4a322aed722d0925b56ed03aacc5fd6bb774882d58af3",
+      "bytes": 5543,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\v2-common\\README.md"
+    },
+    {
+      "path": "source/C-BUG-Patch/v2-concurrency/prototype/analyze_sync_flow.py",
+      "sha256": "8d664d2c91b3d91ef7b1c3feeac26ae7fad104443f79b179e6c993dddaf52c31",
+      "bytes": 45314,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\prototype\\analyze_sync_flow.py"
+    },
+    {
+      "path": "source/C-BUG-Patch/tests/common/test_recode_integration.py",
+      "sha256": "a1c21df66d6cb6b8c5ce9e30d3787efd2e6756c32f38d5ceacf46a6f1e981e59",
+      "bytes": 12366,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\tests\\common\\test_recode_integration.py"
+    },
+    {
+      "path": "source/C-BUG-Patch/tests/concurrency/test_recode_fact_gaps.py",
+      "sha256": "499ea08b1f7839d06debe5a35e87b5dba602cc631c9e2a6c4e41bebb55e0c620",
+      "bytes": 1573,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\tests\\concurrency\\test_recode_fact_gaps.py"
+    },
+    {
+      "path": "source/C-BUG-Patch/.agents/skills/c-bug-pr-workflow/references/routing.md",
+      "sha256": "c5b48e9672c7cb92781f58a439dd4d03b3f477945b9ad8e86d534903dcd75953",
+      "bytes": 3558,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\.agents\\skills\\c-bug-pr-workflow\\references\\routing.md"
+    },
+    {
+      "path": "source/C-BUG-Patch/docs/integrations/recode.md",
+      "sha256": "620fd4dc7d6964ee7e3dcc8c371575a1a40c6e000c09e03bfd2c5cdcb1777586",
+      "bytes": 5457,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\docs\\integrations\\recode.md"
+    },
+    {
+      "path": "source/REcode/clang_pipeline/stages.py",
+      "sha256": "50f312b312e448b47c7a11578ab86a700c6fc3b4e22d9785ddddd0aab161c9f2",
+      "bytes": 80045,
+      "origin": "D:\\JDProject\\REcode\\clang_pipeline\\stages.py"
+    },
+    {
+      "path": "source/REcode/clang_pipeline/repo_agent.py",
+      "sha256": "c6bd40cf39fdf5ae590d35293fb266662e0b1c3d171626b6b6c9b8f1367da223",
+      "bytes": 29089,
+      "origin": "D:\\JDProject\\REcode\\clang_pipeline\\repo_agent.py"
+    },
+    {
+      "path": "source/REcode/clang_pipeline/sandbox.py",
+      "sha256": "4a7493285fe7e095778d8fe92fe898b47ba3fedbeb81c4a6d6069c3f2c663f52",
+      "bytes": 12699,
+      "origin": "D:\\JDProject\\REcode\\clang_pipeline\\sandbox.py"
+    },
+    {
+      "path": "source/REcode/clang_pipeline/sandbox_entry.py",
+      "sha256": "c20db70cfb09f182020d4898ce3528fe9eb31472a96b195b9a9bf8a2858e6f1d",
+      "bytes": 2034,
+      "origin": "D:\\JDProject\\REcode\\clang_pipeline\\sandbox_entry.py"
+    },
+    {
+      "path": "source/REcode/clang_pipeline/tests/test_ast_fallback.py",
+      "sha256": "cbbf63b8bd421f3c8cce8584ce53ea5ea4cf86a21bd8e11e5c8cfce5c884e718",
+      "bytes": 1568,
+      "origin": "D:\\JDProject\\REcode\\clang_pipeline\\tests\\test_ast_fallback.py"
+    },
+    {
+      "path": "source/REcode/clang_pipeline/tests/test_snapshot_identity.py",
+      "sha256": "5576f6a3e1da0583cfc522c6f6bc13211324350610f4ccea570dc3242176e6fd",
+      "bytes": 909,
+      "origin": "D:\\JDProject\\REcode\\clang_pipeline\\tests\\test_snapshot_identity.py"
+    },
+    {
+      "path": "source/REcode/docs/c-bug-integration.md",
+      "sha256": "9e2cf89ae6e4385ec5fa42bc30ccd4a2e55ad35c728e911944b964161f223950",
+      "bytes": 1956,
+      "origin": "D:\\JDProject\\REcode\\docs\\c-bug-integration.md"
+    },
+    {
+      "path": "framework/result.json",
+      "sha256": "290e632df3a6392fc7c08ad9ece2db19b04a9ce07231b472ee72158d82b73134",
+      "bytes": 1864,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-framework-routing-final-20261111\\result.json"
+    },
+    {
+      "path": "framework/common.log",
+      "sha256": "7fd5f654537d5e7a56bbe2d8f94b9d52b7b78344d8be957d1f04c15e6d6b663c",
+      "bytes": 5249,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-framework-routing-final-20261111\\common.log"
+    },
+    {
+      "path": "framework/memory.log",
+      "sha256": "bcf51d001bb5fb457c8e138fcf79d3524a9034dce001b82e7ba384a709d10862",
+      "bytes": 687,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-framework-routing-final-20261111\\memory.log"
+    },
+    {
+      "path": "framework/concurrency.log",
+      "sha256": "7119bcbf2309c4655f201081f56448c26b9c1031613049645cd821973ad5dc63",
+      "bytes": 16037,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-framework-routing-final-20261111\\concurrency.log"
+    },
+    {
+      "path": "framework/pr-adapter-routing.log",
+      "sha256": "ab55017dd663128a4611a6e52707f3d896916006d55a3f4e4846fe0fb9b9ff8e",
+      "bytes": 1488,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-framework-routing-final-20261111\\pr-adapter-routing.log"
+    },
+    {
+      "path": "framework/concurrency-scripts.log",
+      "sha256": "51b39b3f6f374604de42db848138693780337f4ac9c94b0176841c60b26d0fa8",
+      "bytes": 22655,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-framework-routing-final-20261111\\concurrency-scripts.log"
+    },
+    {
+      "path": "framework/smoke.log",
+      "sha256": "0921af9a6fff7a7802a6c499c4df44da14093434aef7fcadbe6373e1032e5b17",
+      "bytes": 2942,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-framework-routing-final-20261111\\smoke.log"
+    },
+    {
+      "path": "upstream/upstream-tests-final.log",
+      "sha256": "7be0c0bedaa96160ae050bd6d5baed1332533cf36a5ce1a3145140353476f113",
+      "bytes": 14337,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-image-20261111\\upstream-tests-final.log"
+    },
+    {
+      "path": "upstream/upstream-focused-final.log",
+      "sha256": "6a4d337a592d2bde1cfa5c6cef117ec1441ede99a01959ac50130746170efd27",
+      "bytes": 2738,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-image-20261111\\upstream-focused-final.log"
+    },
+    {
+      "path": "upstream/sandbox-tests-final.log",
+      "sha256": "a89764c040233c3100093fcdea00e22a3600a1d0ef504a17c060ec9bbc567b77",
+      "bytes": 485,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-image-20261111\\sandbox-tests-final.log"
+    },
+    {
+      "path": "upstream/source-inventory.json",
+      "sha256": "00767dadaad9d0b331f1090745c76f4c7f706ee895c0edab838a5284b203fb5d",
+      "bytes": 13305,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-image-20261111\\source-inventory.json"
+    },
+    {
+      "path": "upstream/Dockerfile",
+      "sha256": "f356d8828f6f01709f8f910356d43624a1e35d7c61e9134ea11e4ce0541dc012",
+      "bytes": 178,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-image-20261111\\Dockerfile"
+    },
+    {
+      "path": "audit/audit.py",
+      "sha256": "6ed401fa56dcbbfa8bc1cc50267d25cfa159ac34a679b737264850e43a9b3a36",
+      "bytes": 4647,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-audit-20261111\\audit.py"
+    },
+    {
+      "path": "audit/result.json",
+      "sha256": "a1455ebfcd177359c65e2ac239b454bbadaffca9412701d67b9823390e942005",
+      "bytes": 3772,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-audit-20261111\\result.json"
+    },
+    {
+      "path": "small/summary.json",
+      "sha256": "cf3dc9be632cf00ede1e6aedb263d810d264eca11300be3023c491c081c284ad",
+      "bytes": 3214,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\summary.json"
+    },
+    {
+      "path": "small/review-input.json",
+      "sha256": "d0a4abb268f21452b7b343b0a54fc56b376cf35adedfc46bef162ca18bdfa7da",
+      "bytes": 1887,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\review-input.json"
+    },
+    {
+      "path": "small/http.log",
+      "sha256": "5f6f602cc22dcb0872f03f4ddc29ffb7dad6bfa6ae00d5a298fa2927b8c0fb82",
+      "bytes": 2444,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\http.log"
+    },
+    {
+      "path": "small/artifact.log",
+      "sha256": "11862f2f2cc969012d3cdb2e2420cb9c7dadf21b2ac93dab4ff5f268d2ccdc87",
+      "bytes": 2460,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\artifact.log"
+    },
+    {
+      "path": "small/concurrency.log",
+      "sha256": "b9090710592ad8a67cf700f77670208fd9912f569c1a845f1994d4435e2d2e28",
+      "bytes": 3048,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency.log"
+    },
+    {
+      "path": "small/native-analysis.log",
+      "sha256": "cf9b7a3b893e15bc1caabc1cbe65f781bcde4f0b5c157de9c0334a924a7b3895",
+      "bytes": 1537,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\native-analysis.log"
+    },
+    {
+      "path": "small/concurrency-result.json",
+      "sha256": "b9090710592ad8a67cf700f77670208fd9912f569c1a845f1994d4435e2d2e28",
+      "bytes": 3048,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency-result.json"
+    },
+    {
+      "path": "small/concurrency/candidate-bundle.json",
+      "sha256": "49bc3e23b710fa3b0c74df33863ed4ba9c441364b6eae075eb931a3c978fbc8c",
+      "bytes": 55950,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\candidate-bundle.json"
+    },
+    {
+      "path": "small/concurrency/coordinator-state.json",
+      "sha256": "5c3c7579564b73c4a77aa6f688c9099af073f29de8ef0d2d86f20de558a76cbf",
+      "bytes": 328020,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\coordinator-state.json"
+    },
+    {
+      "path": "small/http/concurrency-context-bundle.json",
+      "sha256": "e9973731aedbc19dfdc0f1e1284368a38b33800fd9c1e571c03d0b17504446c2",
+      "bytes": 53581,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\http\\concurrency-context-bundle.json"
+    },
+    {
+      "path": "small/http/memory-context-bundle.json",
+      "sha256": "61e28ba6332b5bccf1622271d178f4ec056866a96601c75c63bdefe28da4f9bb",
+      "bytes": 41592,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\http\\memory-context-bundle.json"
+    },
+    {
+      "path": "production/summary.json",
+      "sha256": "52442c306a37aff77ade7bb402a22f2d05a8d1e17634ef5d93b2d3bf6cd56fb4",
+      "bytes": 765,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\summary.json"
+    },
+    {
+      "path": "production/docker-commands.json",
+      "sha256": "f99f9b4eefc688651282a2349077a650158f60db0b107ba7fb7e8711dbfe7c35",
+      "bytes": 2713,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\docker-commands.json"
+    },
+    {
+      "path": "production/get_call_chains.json",
+      "sha256": "5cc93b525195045825073dd3d2c77e44577024c2a3819e971770190278dcb066",
+      "bytes": 88712,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\get_call_chains.json"
+    },
+    {
+      "path": "production/get_resource_flows.json",
+      "sha256": "9e4b5cf4d840132bdef574c92907f3b3e5bf51f22c2b4099c3dad5ecde146172",
+      "bytes": 72213,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\get_resource_flows.json"
+    },
+    {
+      "path": "production/get_sync_flows.json",
+      "sha256": "5f8f092608765a191bde497c291d1d5ca48f3ef0fa8107de8869f6628d1fb265",
+      "bytes": 70417,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\get_sync_flows.json"
+    },
+    {
+      "path": "context/review-input-auto.json",
+      "sha256": "dc3f9581f780b34226c176da917e9636b665b4da6b8d5d584a5910a596b7db79",
+      "bytes": 43577,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\review-input-auto.json"
+    },
+    {
+      "path": "context/common-auto/coordination-report.json",
+      "sha256": "08292d85d08aec360c07d61b3a4cab18807a9f1260850d93b5d6ee32823f5a36",
+      "bytes": 2512,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\common-auto\\coordination-report.json"
+    },
+    {
+      "path": "context/common-auto/memory-context-bundle.json",
+      "sha256": "5ab5b7e21b4921fc58672f6b6fec7382f54187580c53b4783fcec6664f90f0b6",
+      "bytes": 348661,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\common-auto\\memory-context-bundle.json"
+    },
+    {
+      "path": "context/common-auto/concurrency-context-bundle.json",
+      "sha256": "9d200c6acde341948c8e6bebc5de7b694f881f24f884ab84f0dcf5119ca618ae",
+      "bytes": 380404,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\common-auto\\concurrency-context-bundle.json"
+    },
+    {
+      "path": "context/concurrency-acceptance-result.json",
+      "sha256": "b51c151596cd8157671b80674b682db85fe867bdcb2412ce3e790b6d8225cfd5",
+      "bytes": 3184,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\concurrency-acceptance-result.json"
+    },
+    {
+      "path": "context/memory-acceptance/blast-radius-request.json",
+      "sha256": "824ae8552eef781118dbd001510021d5c1c8c592e1201a10241f8e46ae99d007",
+      "bytes": 370923,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\memory-acceptance\\blast-radius-request.json"
+    },
+    {
+      "path": "context/memory-acceptance/blast-radius-context.json",
+      "sha256": "33d8a27726f1193dc9d33560c0ea70aed6617c96e40d556eba523e8ae0d04992",
+      "bytes": 347993,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-context-20261111\\memory-acceptance\\blast-radius-context.json"
+    },
+    {
+      "path": "small/review-requests/race-16f81e7c92533f87.json",
+      "sha256": "115ff38791ff3c7b91c9c1d6098b811512ba1076807381e4bcc69c56e742068b",
+      "bytes": 39469,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\review-requests\\race-16f81e7c92533f87.json"
+    },
+    {
+      "path": "small/review-requests/race-8c5086f4ef4cab2f.json",
+      "sha256": "bfa2977d42a3b2a039e9f549b5b9927115ee50319007f6c75376a230c86ddcb1",
+      "bytes": 39878,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\review-requests\\race-8c5086f4ef4cab2f.json"
+    },
+    {
+      "path": "small/review-requests/race-9a2d4994d45c68a8.json",
+      "sha256": "9bce4d320c92c81a896a3e0c6275f183b2680ba67cf67aa63dd8d03f0970217f",
+      "bytes": 39429,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\concurrency\\review-requests\\race-9a2d4994d45c68a8.json"
+    },
+    {
+      "path": "small/source/observe.c",
+      "sha256": "e6983810bcc6f510a501d5eaedf4f66216a7273d374d8b50192b428bf28ff5a7",
+      "bytes": 99,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\repository\\observe.c"
+    },
+    {
+      "path": "small/source/resource.c",
+      "sha256": "874d82532044a3bf1acc14a7db508a4ec817f595f36fc5605f64dbf748ec99af",
+      "bytes": 108,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\repository\\resource.c"
+    },
+    {
+      "path": "small/source/state.h",
+      "sha256": "c669a9bb017b3ba1372c88d760da361494db30079846521ac8fc5755ea3b0887",
+      "bytes": 99,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\repository\\state.h"
+    },
+    {
+      "path": "small/source/workers.c",
+      "sha256": "986eb22a32a597dd9daf36c8de67243418851383e8cbf7da8afdcefcb753bb90",
+      "bytes": 625,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-auto-20261111\\repository\\workers.c"
+    },
+    {
+      "path": "production/raw/manifest.json",
+      "sha256": "877fbb1b004c454d3c1c1a435792ec988fcb0893f24e59a512e6508454f9ed08",
+      "bytes": 1644,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\artifacts\\job_9f41e74d3b4a45e8a0813d59740b8433-hzzbid8f\\manifest.json"
+    },
+    {
+      "path": "production/raw/graph.json",
+      "sha256": "38bbe1ee4fe06949ea11486ed05575dc9427122daf6cd14a20d52d5b8380bc4d",
+      "bytes": 200655,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\artifacts\\job_9f41e74d3b4a45e8a0813d59740b8433-hzzbid8f\\graph.json"
+    },
+    {
+      "path": "production/raw/transport.json",
+      "sha256": "9a4a5aaa3f825fa1acaa66999a7dbc82cbb431a9d63852d5fc8253ccd79db4f6",
+      "bytes": 3471,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\artifacts\\job_9f41e74d3b4a45e8a0813d59740b8433-hzzbid8f\\transport.json"
+    },
+    {
+      "path": "production/raw/external/call-chains.json",
+      "sha256": "c91fb2bd99d21a173b42a2d49a1eb7f0b141e7cb6478f9ede37861fd5739fae0",
+      "bytes": 350454,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\artifacts\\job_9f41e74d3b4a45e8a0813d59740b8433-hzzbid8f\\external\\call-chains.json"
+    },
+    {
+      "path": "production/raw/external/resource-flow.json",
+      "sha256": "d203ebf14383b72c21573a05f24023ee1453858cb2505eb898b9267425fab532",
+      "bytes": 16275,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\artifacts\\job_9f41e74d3b4a45e8a0813d59740b8433-hzzbid8f\\external\\resource-flow.json"
+    },
+    {
+      "path": "production/raw/external/sync-relations.json",
+      "sha256": "de31a20f8393ebe5e542255a372960dc2d88106eeb78376aee0f4175e6ff6241",
+      "bytes": 8204,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\artifacts\\job_9f41e74d3b4a45e8a0813d59740b8433-hzzbid8f\\external\\sync-relations.json"
+    },
+    {
+      "path": "production/raw/external/race-analysis.json",
+      "sha256": "9ec834542edddec9583a4736b07868a3fcbd31f79d55e47f8eeabf705652bd2f",
+      "bytes": 1147,
+      "origin": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-production-service-20261111-08\\artifacts\\job_9f41e74d3b4a45e8a0813d59740b8433-hzzbid8f\\external\\race-analysis.json"
+    },
+    {
+      "path": "C-BUG-Patch-tracked.patch",
+      "sha256": "001cba70dacb9e594a56238191f92f9e958101ce4941dd64ddf467b0d633e6b8",
+      "bytes": 10618,
+      "origin": "tracked Git diff; new files are included separately as source copies"
+    },
+    {
+      "path": "REcode-tracked.patch",
+      "sha256": "77f66e1a1d3550bc87a8d7178c781abad196fcd9860ca112afcca3ad248c676e",
+      "bytes": 8075,
+      "origin": "tracked Git diff; new files are included separately as source copies"
+    },
+    {
+      "path": ".gitattributes",
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "bytes": 8,
+      "origin": "byte-preserving evidence attributes"
+    }
+  ],
+  "note": "Native producer data and controlled integration source are retained for audit. Source copies preserve local modifications in both repositories. Absolute paths are provenance. Earlier pre-routing draft is retained in runs/recode-integration-audit-20261111/evidence-before-auto-routing."
+}

@@ -1,0 +1,604 @@
+[
+  {
+    "path": "clang_pipeline/__init__.py",
+    "lines": 3,
+    "classes": [],
+    "functions": []
+  },
+  {
+    "path": "clang_pipeline/agent.py",
+    "lines": 744,
+    "classes": [
+      "AgentToolError",
+      "AgentContext"
+    ],
+    "functions": [
+      "_tool_get_call_graph",
+      "_tool_get_key_chains",
+      "_tool_get_architecture",
+      "_tool_get_knowledge_graph",
+      "_tool_get_resource_flow",
+      "_tool_get_sync_relations",
+      "_tool_get_races",
+      "_tool_get_visualization",
+      "_tool_get_evidence",
+      "_tool_get_source_snippet",
+      "_tool_get_macro_analysis",
+      "_tool_read_analysis_report",
+      "_tool_analyze_repo",
+      "_reachable_subgraph",
+      "execute_tool",
+      "chat_completion",
+      "run_agent",
+      "_finish_agent_result",
+      "_final_result",
+      "fallback_answer"
+    ]
+  },
+  {
+    "path": "clang_pipeline/agent_cli.py",
+    "lines": 83,
+    "classes": [],
+    "functions": [
+      "main"
+    ]
+  },
+  {
+    "path": "clang_pipeline/agent_context.py",
+    "lines": 153,
+    "classes": [],
+    "functions": [
+      "build_agent_context",
+      "_select_evidence",
+      "_artifact_path",
+      "write_agent_context"
+    ]
+  },
+  {
+    "path": "clang_pipeline/agent_jobs.py",
+    "lines": 332,
+    "classes": [
+      "AnalysisJobManager"
+    ],
+    "functions": []
+  },
+  {
+    "path": "clang_pipeline/agent_runner.py",
+    "lines": 165,
+    "classes": [],
+    "functions": [
+      "resolve_backend",
+      "ask_question",
+      "_ask_openai",
+      "_ask_claude_code",
+      "_evidence_chain"
+    ]
+  },
+  {
+    "path": "clang_pipeline/agent_server.py",
+    "lines": 344,
+    "classes": [
+      "AgentHandler"
+    ],
+    "functions": [
+      "configured_job_manager",
+      "job_manager",
+      "default_workspace",
+      "main"
+    ]
+  },
+  {
+    "path": "clang_pipeline/clang_ast.py",
+    "lines": 224,
+    "classes": [
+      "ClangPipelineError"
+    ],
+    "functions": [
+      "utc_now",
+      "stable_digest",
+      "read_json",
+      "write_json",
+      "relpath",
+      "snippet_for",
+      "evidence_id",
+      "make_source_location",
+      "range_begin",
+      "_offset_to_line",
+      "_loc_with_file",
+      "node_location",
+      "spelling_location",
+      "iter_nodes",
+      "unwrap_expr",
+      "has_body",
+      "is_fptr_qual_type",
+      "run_clang_ast",
+      "run_preprocessor_macros",
+      "_syntax_only_arguments"
+    ]
+  },
+  {
+    "path": "clang_pipeline/claude_code_bridge.py",
+    "lines": 78,
+    "classes": [],
+    "functions": [
+      "claude_code_command",
+      "claude_code_available",
+      "run_claude_code",
+      "_parse_json_output"
+    ]
+  },
+  {
+    "path": "clang_pipeline/cli.py",
+    "lines": 340,
+    "classes": [],
+    "functions": [
+      "command_analyze",
+      "command_ask",
+      "command_context",
+      "command_server",
+      "command_tools",
+      "command_native",
+      "command_graphdb",
+      "command_repo",
+      "main"
+    ]
+  },
+  {
+    "path": "clang_pipeline/compiler_facts.py",
+    "lines": 319,
+    "classes": [],
+    "functions": [
+      "_arguments",
+      "_value_after",
+      "_joined_values",
+      "extract_build_profile",
+      "_ir_arguments",
+      "extract_llvm_calls",
+      "_demangle_names",
+      "_canonical_ir_name",
+      "optimized_ir_facts"
+    ]
+  },
+  {
+    "path": "clang_pipeline/evaluation_protocol.py",
+    "lines": 172,
+    "classes": [],
+    "functions": [
+      "read_json",
+      "write_json",
+      "prediction_envelope",
+      "validate_prediction_document",
+      "status_set_for_dataset"
+    ]
+  },
+  {
+    "path": "clang_pipeline/execution.py",
+    "lines": 100,
+    "classes": [
+      "AnalysisError",
+      "RepositoryNotFoundError",
+      "RepositoryCheckoutError",
+      "RepositoryTooLargeError",
+      "BuildConfigurationError",
+      "PipelineStageError",
+      "ClangStageError",
+      "AnalysisCancelled",
+      "AnalysisTimedOut",
+      "CancellationToken"
+    ],
+    "functions": []
+  },
+  {
+    "path": "clang_pipeline/graph_store.py",
+    "lines": 406,
+    "classes": [
+      "GraphStoreError",
+      "Neo4jGraphStore"
+    ],
+    "functions": [
+      "store_graph_json",
+      "verify_graph_json",
+      "store_knowledge_graph_json",
+      "verify_knowledge_graph_json"
+    ]
+  },
+  {
+    "path": "clang_pipeline/job_queue.py",
+    "lines": 222,
+    "classes": [
+      "JobError",
+      "IdempotencyConflict",
+      "JobQueue"
+    ],
+    "functions": [
+      "event"
+    ]
+  },
+  {
+    "path": "clang_pipeline/job_worker.py",
+    "lines": 32,
+    "classes": [],
+    "functions": [
+      "main"
+    ]
+  },
+  {
+    "path": "clang_pipeline/knowledge_graph.py",
+    "lines": 309,
+    "classes": [],
+    "functions": [
+      "_entity",
+      "_relation",
+      "_nearest_function",
+      "build_knowledge_graph"
+    ]
+  },
+  {
+    "path": "clang_pipeline/libclang_extract.py",
+    "lines": 370,
+    "classes": [
+      "CXString",
+      "CXCursor",
+      "CXSourceLocation",
+      "CXSourceRange",
+      "CXType",
+      "CXFile"
+    ],
+    "functions": [
+      "_load_library",
+      "_string",
+      "_cursor_id",
+      "_location_dict",
+      "_type_dict",
+      "_cursor_type_dict",
+      "_referenced_info",
+      "_node_dict",
+      "_should_include",
+      "_build_subtree",
+      "_parse_args",
+      "extract_compact_ast"
+    ]
+  },
+  {
+    "path": "clang_pipeline/llm_bridge.py",
+    "lines": 94,
+    "classes": [
+      "LLMNotConfigured"
+    ],
+    "functions": [
+      "api_key",
+      "llm_enabled",
+      "complete_json",
+      "_extract_output_text",
+      "_parse_json_object"
+    ]
+  },
+  {
+    "path": "clang_pipeline/log_facts.py",
+    "lines": 218,
+    "classes": [
+      "RealtimeLogExtractor"
+    ],
+    "functions": [
+      "_relative_file",
+      "parse_log_line",
+      "parse_log_file",
+      "collect_log_facts"
+    ]
+  },
+  {
+    "path": "clang_pipeline/mcp_server.py",
+    "lines": 100,
+    "classes": [],
+    "functions": [
+      "_env_path",
+      "_context",
+      "_mcp_tools",
+      "_respond",
+      "main"
+    ]
+  },
+  {
+    "path": "clang_pipeline/native_export.py",
+    "lines": 146,
+    "classes": [],
+    "functions": [
+      "run_native_export"
+    ]
+  },
+  {
+    "path": "clang_pipeline/nl_repo.py",
+    "lines": 236,
+    "classes": [],
+    "functions": [
+      "_is_repository",
+      "_raw_path_candidates",
+      "_path_candidates",
+      "extract_repo_path",
+      "discover_compile_commands",
+      "slugify_repository",
+      "default_workspace",
+      "default_run_id",
+      "analyze_repository",
+      "analyze_from_question",
+      "prepare_question_context"
+    ]
+  },
+  {
+    "path": "clang_pipeline/object_store.py",
+    "lines": 102,
+    "classes": [
+      "ObjectStore",
+      "FileObjectStore",
+      "S3ObjectStore"
+    ],
+    "functions": [
+      "validate_key"
+    ]
+  },
+  {
+    "path": "clang_pipeline/observability.py",
+    "lines": 213,
+    "classes": [
+      "Observability"
+    ],
+    "functions": [
+      "record_usage"
+    ]
+  },
+  {
+    "path": "clang_pipeline/pipeline.py",
+    "lines": 427,
+    "classes": [],
+    "functions": [
+      "build_request",
+      "build_compile_commands",
+      "build_pipeline_config",
+      "_terminate_process",
+      "_run_stage_process",
+      "run_pipeline",
+      "main"
+    ]
+  },
+  {
+    "path": "clang_pipeline/race_detector.py",
+    "lines": 914,
+    "classes": [
+      "Access",
+      "RegionResult"
+    ],
+    "functions": [
+      "_strip_comments_and_literals",
+      "_balanced_region",
+      "_line_number",
+      "_function_ranges",
+      "_function_for_offset",
+      "_clauses",
+      "_find_parallel_region",
+      "_loop_variables",
+      "_is_private",
+      "_write_ranges",
+      "_accesses",
+      "_index_is_iteration_unique",
+      "_analyze_openmp_region",
+      "_analyze_openmp",
+      "_global_declarations",
+      "_thread_lifecycle",
+      "_split_top_level",
+      "_analyze_pthread",
+      "_access_record",
+      "_evidence",
+      "analyze_race_source",
+      "analyze_race_file"
+    ]
+  },
+  {
+    "path": "clang_pipeline/repo_agent.py",
+    "lines": 779,
+    "classes": [],
+    "functions": [
+      "repository_label",
+      "repository_identity",
+      "_git",
+      "checkout_repository",
+      "generic_compile_commands",
+      "inspect_repository_limits",
+      "_write_call_chains",
+      "_run_cmake_command",
+      "build_compile_commands",
+      "_relativize_json_paths",
+      "relativize_artifact_paths",
+      "bundle_artifacts",
+      "_attach_trace_outputs",
+      "_write_analysis_error",
+      "run_repo_analysis"
+    ]
+  },
+  {
+    "path": "clang_pipeline/resource_flow.py",
+    "lines": 812,
+    "classes": [],
+    "functions": [
+      "_tail",
+      "_node_name",
+      "_classify",
+      "_resource_type",
+      "_resource_key",
+      "_resource_identity",
+      "_operation",
+      "_pair_key",
+      "_simple_expression",
+      "_resolve_source_path",
+      "_function_ranges",
+      "_scan_source_facts",
+      "_alias_sets",
+      "_canonical_expression",
+      "_assignment_chain",
+      "_returning_resource_summaries",
+      "_cross_function_transfers",
+      "_public_operation",
+      "_evidence_map",
+      "analyze_resource_flow"
+    ]
+  },
+  {
+    "path": "clang_pipeline/sandbox.py",
+    "lines": 216,
+    "classes": [
+      "SandboxUnavailable",
+      "SandboxConfig",
+      "NoRedirect",
+      "DockerSandboxRunner"
+    ],
+    "functions": []
+  },
+  {
+    "path": "clang_pipeline/sandbox_entry.py",
+    "lines": 45,
+    "classes": [],
+    "functions": [
+      "main"
+    ]
+  },
+  {
+    "path": "clang_pipeline/security.py",
+    "lines": 82,
+    "classes": [
+      "SecurityError"
+    ],
+    "functions": [
+      "github_archive_url",
+      "public_host",
+      "extract_regular_tar"
+    ]
+  },
+  {
+    "path": "clang_pipeline/stage_runner.py",
+    "lines": 42,
+    "classes": [],
+    "functions": [
+      "main"
+    ]
+  },
+  {
+    "path": "clang_pipeline/stages.py",
+    "lines": 2174,
+    "classes": [],
+    "functions": [
+      "_load_request",
+      "_repo_root",
+      "_source_dir",
+      "_load_compile_units",
+      "_stage_dir",
+      "_symbols",
+      "_asts",
+      "_function_index",
+      "_resolve_function",
+      "_qualified_name",
+      "_source_files",
+      "stage01_index",
+      "_collect_symbols",
+      "_better_symbol",
+      "stage02_macro",
+      "_find_macro_definition",
+      "_macro_call_sites",
+      "_condition_holds",
+      "_conditional_regions",
+      "_close_branch",
+      "stage03_callgraph",
+      "_macro_location_map",
+      "_platform_condition_map",
+      "_graph_node",
+      "_collect_fptr_field_ids",
+      "_collect_call_edges",
+      "_handle_call_expr",
+      "_canonical_function_name",
+      "_unwrap",
+      "_ensure_callback_node",
+      "_ensure_external_function",
+      "_macro_at_call",
+      "_add_edge",
+      "stage04_fptr",
+      "_collect_function_params",
+      "_collect_fptr_assignments",
+      "_collect_fptr_call_flows",
+      "_collect_call_flow",
+      "stage05_async",
+      "_find_event_source_node",
+      "_registration_site",
+      "stage06_verify",
+      "_check",
+      "stage07_report",
+      "_component_id_for_file",
+      "_component_id_for_node",
+      "_component_label",
+      "_responsibility_for_name",
+      "_architecture",
+      "_key_chains",
+      "_path_payload",
+      "_natural_language_analysis",
+      "_preferred_key_summary",
+      "_path_to_name",
+      "_final_graph",
+      "_run_result",
+      "_mermaid",
+      "_report_markdown"
+    ]
+  },
+  {
+    "path": "clang_pipeline/sync_flow.py",
+    "lines": 860,
+    "classes": [],
+    "functions": [
+      "_tail",
+      "_node_name",
+      "_resource_key",
+      "_thread_hint",
+      "_identifiers",
+      "_sequence_operation",
+      "_atomic_operation",
+      "_classify_atomic_snippet",
+      "_atomic_access",
+      "_sync_operation",
+      "_location",
+      "_make_relation",
+      "_public_operation",
+      "_evidence_map",
+      "_resolve_source_path",
+      "_scan_source_atomic_operations",
+      "analyze_sync_relations"
+    ]
+  },
+  {
+    "path": "clang_pipeline/tool_trace.py",
+    "lines": 223,
+    "classes": [
+      "TraceSpan",
+      "ToolTraceRecorder"
+    ],
+    "functions": [
+      "_sanitize",
+      "summarize_result"
+    ]
+  },
+  {
+    "path": "clang_pipeline/visualization.py",
+    "lines": 1500,
+    "classes": [],
+    "functions": [
+      "_optional_json",
+      "_artifact",
+      "_component_for_file",
+      "_component_for_node",
+      "_component_names",
+      "_build_component_index",
+      "_prepare_calls",
+      "_module_graph",
+      "_stable_number",
+      "_full_graph",
+      "_prepare_data",
+      "_render_html",
+      "write_visualization"
+    ]
+  }
+]

@@ -1,0 +1,38 @@
+{
+  "artifact_sha256": "d4264c7571017e4aae21b4ad042a24d534e58060043c4c8d75cde1d7d56de7fd",
+  "author_workspace": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\workspace",
+  "candidate_id": "race-1a47d1b2dea759da",
+  "files": {
+    "driver.c": "70dd9339a1ca04932746c835a1096aa7f9df7d50a33025eaff5132dd5a8367a0",
+    "test-case.json": "d61f9a03ddc5a2a324ecf183202930007fe86a7d51377cd43a62864829336312"
+  },
+  "repetitions": 3,
+  "repository": {
+    "base_sha": "22fe56b6fb5ad703ee0a10a4b1009983a8c505b3",
+    "build_profile": "recode-linux-clang",
+    "graph_snapshot_id": "recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85",
+    "head_sha": "c8710b6236113b9b65c4f13bfa2a6f1b11ff6005",
+    "name": "cbug-integration/recode-contract"
+  },
+  "schema_version": "lock-race-test-artifact/0.1",
+  "status": "captured",
+  "test_case": {
+    "candidate_id": "race-1a47d1b2dea759da",
+    "covers": [
+      "no_lost_updates"
+    ],
+    "limitations": [
+      "The test requires two available Linux logical CPUs and working thread affinity. Missing scheduling facilities, synchronization errors, or the eight-second internal deadline yield harness status 90.",
+      "The batch barriers force concurrent callback workloads on distinct logical CPUs, but the individual unsynchronized machine-level read-modify-write overlap is stress-driven. Reproduction stability remains unverified until the host performs its required repeated runs.",
+      "The bounded workload invokes each original callback repeatedly without same-callback reentrancy. It covers preservation of their additive arithmetic result and observe's result, without proving every possible race or synchronization property."
+    ],
+    "rationale": "Source evidence ev_ast_68e2add3ceebe723 initializes counter to zero, ev_ast_f9573c3d4a60c9b4 supplies writer_a's +2, and ev_ast_7c33faf9b6d1a5ef supplies writer_b's +1. The source observe.c and diff-1d5a4b4c8fb1a8d657c1 supply observe(value) = value + 1. Therefore, after k completed pairs of callback invocations, counter must equal 3*k and observe(counter) must equal 3*k+1. The actual source files are included, and volatile callback pointers invoke their unchanged implementations on two persistent worker threads. Each of 1024 batches releases both workers from a harness-owned start barrier, then each worker makes 4096 actual callback calls on its assigned logical CPU. There is one thread per callback, so no same-callback reentrancy is introduced. The main thread passes the completion barrier before reading the arithmetic result. Workers cannot start their next batch until the main thread reaches the next start barrier. Thus assertions have quiescent access and do not introduce a concurrent main-thread read. Evidence ev_ast_d86ebeb1d913eb54 and ev_ast_3953321a0436c80a support concurrent execution of these callbacks, and ev_ast_6edbd6c7efd53c58 plus ev_ast_657271673936cd6a support completion before observation. The harness owns only its barriers and leaves product synchronization lifecycle and actual locking semantics intact. An arithmetic mismatch alone exits 42. Harness errors and deadline expiry exit 90, while completion of all arithmetic checks exits 0. There are no lock-count, type, spelling, version, or implementation-technique assertions.",
+    "schema_version": "lock-race-test-case/0.1",
+    "supported_protocols": [
+      "behavior"
+    ],
+    "template": "c_source"
+  },
+  "test_strategy": "behavior_before_patch",
+  "workspace": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\captured-1"
+}

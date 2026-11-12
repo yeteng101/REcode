@@ -1,0 +1,11 @@
+{
+  "schema_version": "lock-race-test-worker-report/0.1",
+  "candidate_id": "race-6aedb8acec3a6472",
+  "status": "authored",
+  "changed_files": [
+    "driver.c",
+    "test-case.json"
+  ],
+  "summary": "Host-recovered report for actual driver.c and test-case.json authored by /root/final_distinct_test before its turn was interrupted by the tool safety filter. No final JSON was received from that worker. The host independently inspects and accepts the saved behavior test before execution.",
+  "verification_status": "not_run"
+}

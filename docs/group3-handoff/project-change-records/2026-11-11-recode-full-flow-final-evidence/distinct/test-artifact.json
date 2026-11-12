@@ -1,0 +1,38 @@
+{
+  "artifact_sha256": "181c27e58b5f5bf6d79e6d98116f6ca435bae163aff2d971c8ad30fcdc7efa59",
+  "author_workspace": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\workspace",
+  "candidate_id": "race-6aedb8acec3a6472",
+  "files": {
+    "driver.c": "d1dfcb7b1ab10b06a59098c0384ef5ffeaa80487798d49628754b8181e4ad4b3",
+    "test-case.json": "8030ad1973b46621410105c64b6ed33682e9bf9be487e50bf1bf276995c0277b"
+  },
+  "repetitions": 3,
+  "repository": {
+    "base_sha": "22fe56b6fb5ad703ee0a10a4b1009983a8c505b3",
+    "build_profile": "recode-linux-clang",
+    "graph_snapshot_id": "recode-a9c774b2b93ddf6857f3f26f32a498990f839e228cbdf4a008005a951b6c11d8",
+    "head_sha": "ddcebbae970df496335ab4d5900dce351824893b",
+    "name": "cbug-integration/recode-contract"
+  },
+  "schema_version": "lock-race-test-artifact/0.1",
+  "status": "captured",
+  "test_case": {
+    "candidate_id": "race-6aedb8acec3a6472",
+    "covers": [
+      "no_lost_updates"
+    ],
+    "limitations": [
+      "This bounded concurrent stress scenario depends on runtime overlap of actual read-modify-write operations. A finite successful run cannot establish absence of all races, and a specific lost update is not forced by an interior source hook.",
+      "The scenario exercises actual writer_a, writer_b, observe and allocate_temporary code through repeated callbacks. It does not exercise the product main function's thread-creation error paths.",
+      "The eight-second watchdog classifies stalled or excessively slow execution as harness error 90. Such an outcome is not target reproduction."
+    ],
+    "rationale": "The supplied source establishes counter initially zero (ev_ast_68e2add3ceebe723), writer_a adding two (ev_ast_ad8213636a37f657), and writer_b adding one (ev_ast_32205de183e5ed08). The source's creation and join events permit these writers to overlap and require completed updates before observation (ev_ast_1a6cbde5c0c7086c, ev_ast_0e6d42dc74f38990, ev_ast_d48d337d3487f0f5, ev_ast_37d2aa710e91a27d). The actual source observe adds one, as shown by diff-1d5a4b4c8fb1a8d657c1 and observe.c's supplied full-file source. Each writer is invoked 2097152 times, so the observable assertion requires actual observe(counter) == 6291457 after both successful joins. Only a completed arithmetic mismatch returns 42. Source files are included directly using the c_source include root, with main renamed solely to allow the harness entry point. No product arithmetic or locking is rewritten. A harness-owned two-party barrier starts and ends each of 128 finite batches, each containing 16384 actual callback invocations. Only one thread invokes each callback, preserving the supplied non-reentrant execution contexts. The barrier constrains callback scheduling at batch boundaries while preserving every product access and synchronization operation inside each callback. It introduces no wait inside a product critical section and neither initializes nor destroys product synchronization objects. The arithmetic assertion accepts any implementation preserving all increments, independently of lock identity, synchronization call count, atomic API, type or repair spelling. Missing product hooks cannot fail the assertion because no such hooks are used. Watchdog and harness API failures return 90, and satisfied arithmetic returns 0.",
+    "schema_version": "lock-race-test-case/0.1",
+    "supported_protocols": [
+      "behavior"
+    ],
+    "template": "c_source"
+  },
+  "test_strategy": "behavior_before_patch",
+  "workspace": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\captured-1"
+}

@@ -1,0 +1,10 @@
+{
+  "actual_agent_type": "worker",
+  "role_contract": "D:\\JDProject\\C-BUG-Patch\\.codex\\agents\\lock-race-test-worker.toml",
+  "role_contract_sha256": "9a5c9c157acaacd5fce0eeb9285b613e8ecb416f7f375214b88a28898c2caefc",
+  "reason": "Previous registered-role invocation returned a cached Redis-only profile. Host explicitly selected the current project test-author contract for this fresh task.",
+  "registered_role_refusal": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-e2e-20261111\\registered-test-role-refusal.json",
+  "registered_role_validation": "not_run",
+  "artifact_sha256": "d4264c7571017e4aae21b4ad042a24d534e58060043c4c8d75cde1d7d56de7fd",
+  "report_origin": "actual_worker_final"
+}

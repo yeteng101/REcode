@@ -1,0 +1,10 @@
+{
+  "schema_version": "lock-race-patch-worker-report/0.1",
+  "candidate_id": "race-1a47d1b2dea759da",
+  "summary": "Restored the existing mutex acquisition and release around writer_b's complete counter increment, preserving arithmetic behavior and source line endings.",
+  "status": "edited",
+  "changed_files": [
+    "workers.c"
+  ],
+  "verification_status": "not_run"
+}

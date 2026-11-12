@@ -1,0 +1,30 @@
+{
+  "candidate_id": "race-6aedb8acec3a6472",
+  "interpretation": "Same frozen test reproduced the target on the defective head; an optional normal control was checked when supplied. Fixed version still requires independent verification.",
+  "retry_test_allowed": true,
+  "schema_version": "lock-race-test-discrimination/0.1",
+  "status": "passed",
+  "test_artifact_sha256": "181c27e58b5f5bf6d79e6d98116f6ca435bae163aff2d971c8ad30fcdc7efa59",
+  "versions": [
+    {
+      "actual_exit_code": 0,
+      "category": "none",
+      "expected_exit_code": 0,
+      "matched": true,
+      "result_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\discrimination\\normal.json",
+      "result_sha256": "77207e2ab6e05bebe4ab665f65308d3d0dec1f7fe8a9a4ff0ad69ce373a946fb",
+      "runner_exit_code": 0,
+      "version": "normal"
+    },
+    {
+      "actual_exit_code": 42,
+      "category": "none",
+      "expected_exit_code": 42,
+      "matched": true,
+      "result_path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\discrimination\\defective.json",
+      "result_sha256": "7f564cd8994b4629d5a5b46d4d72b8b0fd1e4f56e63f6a0acc60548451df77fc",
+      "runner_exit_code": 1,
+      "version": "defective"
+    }
+  ]
+}

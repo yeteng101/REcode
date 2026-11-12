@@ -1,0 +1,172 @@
+{
+  "candidate_id": "race-1a47d1b2dea759da",
+  "checks": [
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "name": "format",
+      "output_truncated": false,
+      "status": "passed",
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false,
+      "timeout_seconds": 30
+    },
+    {
+      "argv": [
+        "D:\\JDProject\\.runtime\\python-3.12.10\\python.exe",
+        "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_c_docker_verification.py",
+        "--image",
+        "sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec",
+        "--source",
+        "workers.c",
+        "--source",
+        "observe.c",
+        "--source",
+        "resource.c",
+        "--mode",
+        "build",
+        "--expected-exit",
+        "4",
+        "--output",
+        "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\project-build.json"
+      ],
+      "exit_code": 0,
+      "name": "project-build",
+      "output_truncated": false,
+      "status": "passed",
+      "stderr": "",
+      "stdout": "{\"schema_version\": \"c-source-docker-verification/0.1\", \"status\": \"passed\", \"repository\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\patches\\\\race-1a47d1b2dea759da\", \"head_sha\": \"c8710b6236113b9b65c4f13bfa2a6f1b11ff6005\", \"head_sha_after\": \"c8710b6236113b9b65c4f13bfa2a6f1b11ff6005\", \"diff_unchanged\": true, \"image_id\": \"sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec\", \"sources\": [\"workers.c\", \"observe.c\", \"resource.c\"], \"mode\": \"build\", \"expected_smoke_exit\": 4, \"exit_code\": 0, \"argv\": [\"docker\", \"run\", \"--rm\", \"--name\", \"cbug-c-build-669db3e269b04ec0b57e5ce1b72742b9\", \"--pull=never\", \"--network\", \"none\", \"--read-only\", \"--cap-drop=ALL\", \"--security-opt=no-new-privileges\", \"--memory\", \"1g\", \"--cpus\", \"2\", \"--tmpfs\", \"/tmp:rw,size=128m,mode=1777\", \"--tmpfs\", \"/work:rw,exec,size=128m,mode=1777\", \"--mount\", \"type=bind,source=D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\patches\\\\race-1a47d1b2dea759da,target=/source,readonly\", \"sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec\", \"python3\", \"-c\", \"import json, subprocess, sys\\nsettings=json.loads(sys.argv[1])\\ncommand=['gcc','-std=gnu11','-O1','-pthread','-I/source',*['/source/'+p for p in settings['sources']],'-o','/work/application']\\nbuild=subprocess.run(command,capture_output=True,text=True,timeout=60)\\nresult={'build_exit':build.returncode,'build_stdout':build.stdout,'build_stderr':build.stderr,'smoke_exit':None}\\nif build.returncode == 0 and settings['mode'] == 'smoke':\\n    smoke=subprocess.run(['/work/application'],capture_output=True,text=True,timeout=10)\\n    result.update(smoke_exit=smoke.returncode,smoke_stdout=smoke.stdout,smoke_stderr=smoke.stderr)\\nprint(json.dumps(result))\\n\", \"{\\\"sources\\\": [\\\"workers.c\\\", \\\"observe.c\\\", \\\"resource.c\\\"], \\\"mode\\\": \\\"build\\\"}\"], \"build_exit\": 0, \"build_stdout\": \"\", \"build_stderr\": \"\", \"smoke_exit\": null}\n",
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "D:\\JDProject\\.runtime\\python-3.12.10\\python.exe",
+        "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_c_docker_verification.py",
+        "--image",
+        "sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec",
+        "--source",
+        "workers.c",
+        "--source",
+        "observe.c",
+        "--source",
+        "resource.c",
+        "--mode",
+        "smoke",
+        "--expected-exit",
+        "4",
+        "--output",
+        "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\project-smoke.json"
+      ],
+      "exit_code": 0,
+      "name": "project-smoke",
+      "output_truncated": false,
+      "status": "passed",
+      "stderr": "",
+      "stdout": "{\"schema_version\": \"c-source-docker-verification/0.1\", \"status\": \"passed\", \"repository\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\patches\\\\race-1a47d1b2dea759da\", \"head_sha\": \"c8710b6236113b9b65c4f13bfa2a6f1b11ff6005\", \"head_sha_after\": \"c8710b6236113b9b65c4f13bfa2a6f1b11ff6005\", \"diff_unchanged\": true, \"image_id\": \"sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec\", \"sources\": [\"workers.c\", \"observe.c\", \"resource.c\"], \"mode\": \"smoke\", \"expected_smoke_exit\": 4, \"exit_code\": 0, \"argv\": [\"docker\", \"run\", \"--rm\", \"--name\", \"cbug-c-build-9e8ab8ca40a34f549454a097d5316093\", \"--pull=never\", \"--network\", \"none\", \"--read-only\", \"--cap-drop=ALL\", \"--security-opt=no-new-privileges\", \"--memory\", \"1g\", \"--cpus\", \"2\", \"--tmpfs\", \"/tmp:rw,size=128m,mode=1777\", \"--tmpfs\", \"/work:rw,exec,size=128m,mode=1777\", \"--mount\", \"type=bind,source=D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\patches\\\\race-1a47d1b2dea759da,target=/source,readonly\", \"sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec\", \"python3\", \"-c\", \"import json, subprocess, sys\\nsettings=json.loads(sys.argv[1])\\ncommand=['gcc','-std=gnu11','-O1','-pthread','-I/source',*['/source/'+p for p in settings['sources']],'-o','/work/application']\\nbuild=subprocess.run(command,capture_output=True,text=True,timeout=60)\\nresult={'build_exit':build.returncode,'build_stdout':build.stdout,'build_stderr':build.stderr,'smoke_exit':None}\\nif build.returncode == 0 and settings['mode'] == 'smoke':\\n    smoke=subprocess.run(['/work/application'],capture_output=True,text=True,timeout=10)\\n    result.update(smoke_exit=smoke.returncode,smoke_stdout=smoke.stdout,smoke_stderr=smoke.stderr)\\nprint(json.dumps(result))\\n\", \"{\\\"sources\\\": [\\\"workers.c\\\", \\\"observe.c\\\", \\\"resource.c\\\"], \\\"mode\\\": \\\"smoke\\\"}\"], \"build_exit\": 0, \"build_stdout\": \"\", \"build_stderr\": \"\", \"smoke_exit\": 4, \"smoke_stdout\": \"\", \"smoke_stderr\": \"\"}\n",
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "D:\\JDProject\\.runtime\\python-3.12.10\\python.exe",
+        "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_generated_redis_test.py",
+        "--repository",
+        ".",
+        "--image",
+        "sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec",
+        "--test-artifact",
+        "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-artifact.json",
+        "--output",
+        "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\fixed\\fixed.json"
+      ],
+      "exit_code": 0,
+      "name": "generated-defect-regression",
+      "output_truncated": false,
+      "status": "passed",
+      "stderr": "",
+      "stdout": "{\n  \"schema_version\": \"lock-race-generated-test-execution/0.1\",\n  \"scenario\": \"generated\",\n  \"scope\": [\n    \"The test requires two available Linux logical CPUs and working thread affinity. Missing scheduling facilities, synchronization errors, or the eight-second internal deadline yield harness status 90.\",\n    \"The batch barriers force concurrent callback workloads on distinct logical CPUs, but the individual unsynchronized machine-level read-modify-write overlap is stress-driven. Reproduction stability remains unverified until the host performs its required repeated runs.\",\n    \"The bounded workload invokes each original callback repeatedly without same-callback reentrancy. It covers preservation of their additive arithmetic result and observe's result, without proving every possible race or synchronization property.\"\n  ],\n  \"repository\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\patches\\\\race-1a47d1b2dea759da\",\n  \"head_sha\": \"c8710b6236113b9b65c4f13bfa2a6f1b11ff6005\",\n  \"head_sha_after\": \"c8710b6236113b9b65c4f13bfa2a6f1b11ff6005\",\n  \"image_id\": \"sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec\",\n  \"argv\": [\n    \"docker\",\n    \"run\",\n    \"--name\",\n    \"cbug-protocol-6a4d1ea7488444cfae5ce0115485318f\",\n    \"--rm\",\n    \"--network\",\n    \"none\",\n    \"--read-only\",\n    \"--tmpfs\",\n    \"/tmp:rw,size=64m,mode=1777\",\n    \"--tmpfs\",\n    \"/work:rw,exec,size=64m,mode=1777\",\n    \"--mount\",\n    \"type=bind,source=D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\patches\\\\race-1a47d1b2dea759da,target=/source,readonly\",\n    \"--mount\",\n    \"type=bind,source=D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\test-1\\\\captured-1,target=/regressions,readonly\",\n    \"sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec\",\n    \"bash\",\n    \"-lc\",\n    \"gcc -std=gnu11 -O1 -pthread -ffunction-sections -fdata-sections -I/source /regressions/driver.c -Wl,--gc-sections -o /work/protocol && timeout 10s /work/protocol\"\n  ],\n  \"exit_code\": 0,\n  \"timed_out\": false,\n  \"driver_sha256\": \"70dd9339a1ca04932746c835a1096aa7f9df7d50a33025eaff5132dd5a8367a0\",\n  \"driver_unchanged\": true,\n  \"status\": \"passed\",\n  \"diff_before_sha256\": \"ffab7e0948f73644cd2cfc08a9caf978637525303448da176689396203614d1c\",\n  \"diff_after_sha256\": \"ffab7e0948f73644cd2cfc08a9caf978637525303448da176689396203614d1c\",\n  \"diff_unchanged\": true,\n  \"seconds\": 1.243,\n  \"stdout\": \"\",\n  \"stderr\": \"\",\n  \"executions\": [\n    {\n      \"schema_version\": \"redis-protocol-regression/0.1\",\n      \"scenario\": \"generated\",\n      \"scope\": \"actual_C_source_behavior_under_generated_driver\",\n      \"repository\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\patches\\\\race-1a47d1b2dea759da\",\n      \"head_sha\": \"c8710b6236113b9b65c4f13bfa2a6f1b11ff6005\",\n      \"head_sha_after\": \"c8710b6236113b9b65c4f13bfa2a6f1b11ff6005\",\n      \"image_id\": \"sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec\",\n      \"argv\": [\n        \"docker\",\n        \"run\",\n        \"--name\",\n        \"cbug-protocol-6a4d1ea7488444cfae5ce0115485318f\",\n        \"--rm\",\n        \"--network\",\n        \"none\",\n        \"--read-only\",\n        \"--tmpfs\",\n        \"/tmp:rw,size=64m,mode=1777\",\n        \"--tmpfs\",\n        \"/work:rw,exec,size=64m,mode=1777\",\n        \"--mount\",\n        \"type=bind,source=D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\patches\\\\race-1a47d1b2dea759da,target=/source,readonly\",\n        \"--mount\",\n        \"type=bind,source=D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\test-1\\\\captured-1,target=/regressions,readonly\",\n        \"sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec\",\n        \"bash\",\n        \"-lc\",\n        \"gcc -std=gnu11 -O1 -pthread -ffunction-sections -fdata-sections -I/source /regressions/driver.c -Wl,--gc-sections -o /work/protocol && timeout 10s /work/protocol\"\n      ],\n      \"exit_code\": 0,\n      \"timed_out\": false,\n      \"driver_sha256\": \"70dd9339a1ca04932746c835a1096aa7f9df7d50a33025eaff5132dd5a8367a0\",\n      \"driver_unchanged\": true,\n      \"status\": \"passed\",\n      \"diff_before_sha256\": \"ffab7e0948f73644cd2cfc08a9caf978637525303448da176689396203614d1c\",\n      \"diff_after_sha256\": \"ffab7e0948f73644cd2cfc08a9caf978637525303448da176689396203614d1c\",\n      \"diff_unchanged\": true,\n      \"seconds\": 1.243,\n      \"stdout\": \"\",\n      \"stderr\": \"\"\n    },\n    {\n      \"schema_version\": \"redis-protocol-regression/0.1\",\n      \"scenario\": \"generated\",\n      \"scope\": \"actual_C_source_behavior_under_generated_driver\",\n      \"repository\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\patches\\\\race-1a47d1b2dea759da\",\n      \"head_sha\": \"c8710b6236113b9b65c4f13bfa2a6f1b11ff6005\",\n      \"head_sha_after\": \"c8710b6236113b9b65c4f13bfa2a6f1b11ff6005\",\n      \"image_id\": \"sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec\",\n      \"argv\": [\n        \"docker\",\n        \"run\",\n        \"--name\",\n        \"cbug-protocol-d126f66ccf684eeba8b6b2a9c3b999e7\",\n        \"--rm\",\n        \"--network\",\n        \"none\",\n        \"--read-only\",\n        \"--tmpfs\",\n        \"/tmp:rw,size=64m,mode=1777\",\n        \"--tmpfs\",\n        \"/work:rw,exec,size=64m,mode=1777\",\n        \"--mount\",\n        \"type=bind,source=D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\patches\\\\race-1a47d1b2dea759da,target=/source,readonly\",\n        \"--mount\",\n        \"type=bind,source=D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\test-1\\\\captured-1,target=/regressions,readonly\",\n        \"sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec\",\n        \"bash\",\n        \"-lc\",\n        \"gcc -std=gnu11 -O1 -pthread -ffunction-sections -fdata-sections -I/source /regressions/driver.c -Wl,--gc-sections -o /work/protocol && timeout 10s /work/protocol\"\n      ],\n      \"exit_code\": 0,\n      \"timed_out\": false,\n      \"driver_sha256\": \"70dd9339a1ca04932746c835a1096aa7f9df7d50a33025eaff5132dd5a8367a0\",\n      \"driver_unchanged\": true,\n      \"status\": \"passed\",\n      \"diff_before_sha256\": \"ffab7e0948f73644cd2cfc08a9caf978637525303448da176689396203614d1c\",\n      \"diff_after_sha256\": \"ffab7e0948f73644cd2cfc08a9caf978637525303448da176689396203614d1c\",\n      \"diff_unchanged\": true,\n      \"seconds\": 1.233,\n      \"stdout\": \"\",\n      \"stderr\": \"\"\n    },\n    {\n      \"schema_version\": \"redis-protocol-regression/0.1\",\n      \"scenario\": \"generated\",\n      \"scope\": \"actual_C_source_behavior_under_generated_driver\",\n      \"repository\": \"D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\patches\\\\race-1a47d1b2dea759da\",\n      \"head_sha\": \"c8710b6236113b9b65c4f13bfa2a6f1b11ff6005\",\n      \"head_sha_after\": \"c8710b6236113b9b65c4f13bfa2a6f1b11ff6005\",\n      \"image_id\": \"sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec\",\n      \"argv\": [\n        \"docker\",\n        \"run\",\n        \"--name\",\n        \"cbug-protocol-215a1bc791cd41f6a294ed72e9ca1f77\",\n        \"--rm\",\n        \"--network\",\n        \"none\",\n        \"--read-only\",\n        \"--tmpfs\",\n        \"/tmp:rw,size=64m,mode=1777\",\n        \"--tmpfs\",\n        \"/work:rw,exec,size=64m,mode=1777\",\n        \"--mount\",\n        \"type=bind,source=D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\patches\\\\race-1a47d1b2dea759da,target=/source,readonly\",\n        \"--mount\",\n        \"type=bind,source=D:\\\\JDProject\\\\C-BUG-Patch\\\\runs\\\\recode-full-final-missing-20261111\\\\workflow\\\\artifacts\\\\race-1a47d1b2dea759da\\\\test-1\\\\captured-1,target=/regressions,readonly\",\n        \"sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec\",\n        \"bash\",\n        \"-lc\",\n        \"gcc -std=gnu11 -O1 -pthread -ffunction-sections -fdata-sections -I/source /regressions/driver.c -Wl,--gc-sections -o /work/protocol && timeout 10s /work/protocol\"\n      ],\n      \"exit_code\": 0,\n      \"timed_out\": false,\n      \"driver_sha256\": \"70dd9339a1ca04932746c835a1096aa7f9df7d50a33025eaff5132dd5a8367a0\",\n      \"driver_unchanged\": true,\n      \"status\": \"passed\",\n      \"diff_before_sha256\": \"ffab7e0948f73644cd2cfc08a9caf978637525303448da176689396203614d1c\",\n      \"diff_after_sha256\": \"ffab7e0948f73644cd2cfc08a9caf978637525303448da176689396203614d1c\",\n      \"diff_unchanged\": true,\n      \"seconds\": 1.271,\n      \"stdout\": \"\",\n      \"stderr\": \"\"\n    }\n  ],\n  \"repetitions\": 3,\n  \"stable\": true,\n  \"test_artifact_sha256\": \"d4264c7571017e4aae21b4ad042a24d534e58060043c4c8d75cde1d7d56de7fd\",\n  \"candidate_id\": \"race-1a47d1b2dea759da\"\n}\n",
+      "timed_out": false,
+      "timeout_seconds": 360
+    }
+  ],
+  "diagnostics": {
+    "failures": [],
+    "limitations": [],
+    "mode": "host_scoped",
+    "next_action": "none",
+    "patch_revision_allowed": false
+  },
+  "diff_unchanged": true,
+  "errors": [],
+  "patch_diff_sha256": "ffab7e0948f73644cd2cfc08a9caf978637525303448da176689396203614d1c",
+  "repository": {
+    "base_sha": "22fe56b6fb5ad703ee0a10a4b1009983a8c505b3",
+    "build_profile": "recode-linux-clang",
+    "graph_snapshot_id": "recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85",
+    "head_sha": "c8710b6236113b9b65c4f13bfa2a6f1b11ff6005",
+    "name": "cbug-integration/recode-contract"
+  },
+  "schema_version": "lock-race-patch-verification/0.1",
+  "scope_assessment": {
+    "candidate_id": "race-1a47d1b2dea759da",
+    "checks": [
+      {
+        "applicable": true,
+        "limitations": [
+          "Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim."
+        ],
+        "name": "format",
+        "purpose": "format"
+      },
+      {
+        "applicable": true,
+        "limitations": [
+          "Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim."
+        ],
+        "name": "project-build",
+        "purpose": "build"
+      },
+      {
+        "applicable": true,
+        "limitations": [
+          "Constructed repository smoke checks all three linked C translation units; no upstream Redis/libuv regression claim."
+        ],
+        "name": "project-smoke",
+        "purpose": "official_regression"
+      },
+      {
+        "applicable": true,
+        "limitations": [
+          "The test requires two available Linux logical CPUs and working thread affinity. Missing scheduling facilities, synchronization errors, or the eight-second internal deadline yield harness status 90.",
+          "The batch barriers force concurrent callback workloads on distinct logical CPUs, but the individual unsynchronized machine-level read-modify-write overlap is stress-driven. Reproduction stability remains unverified until the host performs its required repeated runs.",
+          "The bounded workload invokes each original callback repeatedly without same-callback reentrancy. It covers preservation of their additive arithmetic result and observe's result, without proving every possible race or synchronization property."
+        ],
+        "name": "generated-defect-regression",
+        "purpose": "defect_regression"
+      }
+    ],
+    "interpretation": "Host declarations and artifact integrity only; not proof of protocol semantics or test discrimination.",
+    "issues": [],
+    "missing_coverage": [],
+    "repository": {
+      "base_sha": "22fe56b6fb5ad703ee0a10a4b1009983a8c505b3",
+      "build_profile": "recode-linux-clang",
+      "graph_snapshot_id": "recode-5bdbe5d8acec4d975f02d408ebdb2c2a7dfffe2aee6926e51599e45e36f9fa85",
+      "head_sha": "c8710b6236113b9b65c4f13bfa2a6f1b11ff6005",
+      "name": "cbug-integration/recode-contract"
+    },
+    "schema_version": "lock-race-verification-scope-assessment/0.1",
+    "selected_protocol": "behavior",
+    "status": "applicable",
+    "verification_plan_sha256": "fb86f362ff34e8c05ccae36735b82210bf98e9a2a23c64450635cf2b335d8823",
+    "verification_scope_sha256": "d33ad538a533e2d47835b497c96201da44b305aab95fa9e5f266e198a2415386"
+  },
+  "status": "passed",
+  "verification_plan_sha256": "fb86f362ff34e8c05ccae36735b82210bf98e9a2a23c64450635cf2b335d8823"
+}

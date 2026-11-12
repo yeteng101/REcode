@@ -1,0 +1,17 @@
+test_acquisition_emits_common_input (test_pr_adapter.PRAdapterTests.test_acquisition_emits_common_input) ... ok
+test_concurrency_pr (test_pr_adapter.PRAdapterTests.test_concurrency_pr) ... ok
+test_field_only_change_accepts_explicit_shared_object_target (test_pr_adapter.PRAdapterTests.test_field_only_change_accepts_explicit_shared_object_target) ... ok
+test_memory_pr (test_pr_adapter.PRAdapterTests.test_memory_pr) ... ok
+test_mixed_pr (test_pr_adapter.PRAdapterTests.test_mixed_pr) ... ok
+test_moved_head_rejected (test_pr_adapter.PRAdapterTests.test_moved_head_rejected) ... ok
+test_unlocated_change_requires_verified_target (test_pr_adapter.PRAdapterTests.test_unlocated_change_requires_verified_target) ... ok
+test_cross_context_release_keeps_both (test_structured_routing.StructuredRoutingTests.test_cross_context_release_keeps_both) ... ok
+test_different_context_shared_access_is_concurrency (test_structured_routing.StructuredRoutingTests.test_different_context_shared_access_is_concurrency) ... ok
+test_missing_facts_keeps_both (test_structured_routing.StructuredRoutingTests.test_missing_facts_keeps_both) ... ok
+test_mixed_facts_keeps_both (test_structured_routing.StructuredRoutingTests.test_mixed_facts_keeps_both) ... ok
+test_same_context_release_use_is_memory (test_structured_routing.StructuredRoutingTests.test_same_context_release_use_is_memory) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 7.201s
+
+OK

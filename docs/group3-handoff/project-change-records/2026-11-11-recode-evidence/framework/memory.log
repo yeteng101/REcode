@@ -1,0 +1,9 @@
+test_blast_radius_cannot_reference_files_outside_bundle (test_memory_stages.MemoryStageTests.test_blast_radius_cannot_reference_files_outside_bundle) ... ok
+test_blast_radius_cannot_upgrade_input_coverage (test_memory_stages.MemoryStageTests.test_blast_radius_cannot_upgrade_input_coverage) ... ok
+test_no_defect_is_rejected_for_incomplete_bundle (test_memory_stages.MemoryStageTests.test_no_defect_is_rejected_for_incomplete_bundle) ... ok
+test_repair_diff_must_stay_inside_blast_radius (test_memory_stages.MemoryStageTests.test_repair_diff_must_stay_inside_blast_radius) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+OK

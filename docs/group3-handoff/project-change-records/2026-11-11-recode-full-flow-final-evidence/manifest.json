@@ -1,0 +1,775 @@
+{
+  "files": [
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\discrimination\\normal.json",
+      "path": "missing/normal-executions.json",
+      "sha256": "d2cd636c2cb07031ef394f1659542748a350babd54cc0ccd40cfd974db621b97"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\discrimination\\defective.json",
+      "path": "missing/defective-executions.json",
+      "sha256": "eabfbc9a16499edb098c075f5a90ff6d2f42a252c6235e776531b29ced0a2fc5"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\http\\recode-artifacts\\job_2de08eb7ef844d98907334d9a7c46383-y6666uy7\\external\\call-chains.json",
+      "path": "missing/native/call-chains.json",
+      "sha256": "98b0d0e93d1e64ad4da06af8fe24d119abd3c5530965c2e462fa3925d3639fed"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\http\\recode-artifacts\\job_2de08eb7ef844d98907334d9a7c46383-y6666uy7\\external\\resource-flow.json",
+      "path": "missing/native/resource-flow.json",
+      "sha256": "516171255d3d2780325f15a743acbf3a014ae944709c63a3c9b8645512e50d91"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\http\\recode-artifacts\\job_2de08eb7ef844d98907334d9a7c46383-y6666uy7\\external\\sync-relations.json",
+      "path": "missing/native/sync-relations.json",
+      "sha256": "028ce9723ce89bc9afedc13eda8fd331c53f430c93b33602dfc746778e3e2075"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\http\\recode-artifacts\\job_2de08eb7ef844d98907334d9a7c46383-y6666uy7\\external\\race-analysis.json",
+      "path": "missing/native/race-analysis.json",
+      "sha256": "0aca8c3a02b7ee48f6e3b21637d662e8992e8e1592f6b7531a7a535b003000c7"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\workflow-state.json",
+      "path": "missing/workflow-state.json",
+      "sha256": "4671173373ae38c887388024cfe89ad797b2830afca4c99b36dcba308ac6392b"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\run-result.json",
+      "path": "missing/run-result.json",
+      "sha256": "f82cf546f8ebd11882065df268733a703fe387d1803a6346d32888e498583d4c"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\summary.json",
+      "path": "missing/first-group-summary.json",
+      "sha256": "daca6e0d2e1436e5370ef14362a1f2ab1bc01ba5508e437fb962c73548ed0da9"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\review-input.json",
+      "path": "missing/review-input.json",
+      "sha256": "424c5c61f2330d5fb7b9fbcb92d7e6c59df20f58a53eb42a7272439a69d1113b"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\review.json",
+      "path": "missing/review.json",
+      "sha256": "7530acced1d3299bd56e2cb1ea75819ba8582de96e4a8ca9d24b5f16d59acfd6"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\attempt-1\\verification-result.json",
+      "path": "missing/verification-result.json",
+      "sha256": "51cc8ec841e9fc34b2784ec62b6aa816a73cbb98e843781394435ca8d84c2293"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\attempt-1\\patch-request.json",
+      "path": "missing/patch-request.json",
+      "sha256": "9230c618ff6d537e41be86e576dd4981fbf67bf64641f9a96255401f9ddaa6da"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-artifact.json",
+      "path": "missing/test-artifact.json",
+      "sha256": "c947dd27a18a8ddf031945ae3ae008a2c798402071ecd6c11fa23b6536d1e485"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-validation.json",
+      "path": "missing/test-validation.json",
+      "sha256": "22f077460aa2ef167eb003aa5930f4c02d9adba365c91b7234cd380c575abac6"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\fixed\\fixed.json",
+      "path": "missing/fixed-executions.json",
+      "sha256": "152eb9cba001861a2050ae249b4dc7c4dc706e2afcc1bc7b8264c6a863c868dc"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\host-behavior-review.json",
+      "path": "missing/host-review.json",
+      "sha256": "9188a4ce7280d8b1527c095c3fb6a42c81b5284d8ad515d343c4257eea4191e6"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\test-role-adapter.json",
+      "path": "missing/test-role-adapter.json",
+      "sha256": "d285c2e2d927826a9e4569d31054a89060e2bc0ef58cfa4130b59d7230a7eb2c"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\captured-1\\driver.c",
+      "path": "missing/driver.c",
+      "sha256": "70dd9339a1ca04932746c835a1096aa7f9df7d50a33025eaff5132dd5a8367a0"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\captured-1\\test-case.json",
+      "path": "missing/test-case.json",
+      "sha256": "d61f9a03ddc5a2a324ecf183202930007fe86a7d51377cd43a62864829336312"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\attempt-1\\repair.patch",
+      "path": "missing/repair.patch",
+      "sha256": "ffab7e0948f73644cd2cfc08a9caf978637525303448da176689396203614d1c"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\post-repair-first-group\\summary.json",
+      "path": "missing/post-repair-first-group.json",
+      "sha256": "ff1f1079fb0a4db48eddf66ec8b4665b5ebb58fd8b0f9c97ec275411e1205d56"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\http\\recode-artifacts\\job_2de08eb7ef844d98907334d9a7c46383-y6666uy7\\external\\race-analysis.json",
+      "path": "missing/native-race-analysis.json",
+      "sha256": "0aca8c3a02b7ee48f6e3b21637d662e8992e8e1592f6b7531a7a535b003000c7"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\http\\concurrency-context-bundle.json",
+      "path": "missing/context-bundle.json",
+      "sha256": "ab2715e81eb907e837636c0c639607e53ccedd2ef62593b9008f779f0c3be2ac"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\test-worker-report.json",
+      "path": "missing/test-worker-report.json",
+      "sha256": "366507288a9af31869a81dca5188ed2cd5a5cb37045b5f17237785cf2ed9f13a"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\patch-worker-report.json",
+      "path": "missing/patch-worker-report.json",
+      "sha256": "7e4a3bf5477bf360d64079463f16b3cdb9c19f1e56062128816ec129227a0b4c"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-request.json",
+      "path": "missing/test-request.json",
+      "sha256": "09b2e192317e7b50b8bffcb94d67856fe3091e89da1ab4e4c6547e0314fd3334"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\mcp\\1794399416434697100-create_lock_race_run.json",
+      "path": "missing/mcp/1794399416434697100-create_lock_race_run.json",
+      "sha256": "52a8c023428b2f7a09dd76086b2bbc884246878654ea6fe16a26a1be87f4acdd"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\mcp\\1794399833621472100-submit_lock_race_reviewer_result.json",
+      "path": "missing/mcp/1794399833621472100-submit_lock_race_reviewer_result.json",
+      "sha256": "c80737d239d8b274e158951d115ca3a30e9dc4c84ffbc0b49e2d82850162eab7"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\mcp\\1794399834949404900-advance_lock_race_run_until_boundary.json",
+      "path": "missing/mcp/1794399834949404900-advance_lock_race_run_until_boundary.json",
+      "sha256": "40d935ddb64edd39ffe86f95f09d964b0b74b106be5f0b68928e0557e8c9ad30"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\mcp\\1794400251356386100-submit_lock_race_test_worker_result.json",
+      "path": "missing/mcp/1794400251356386100-submit_lock_race_test_worker_result.json",
+      "sha256": "2ff8cfc6e285bd5cd6a68ec9878b2a0eebc09fe404f4b9d73b521aae32553798"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\mcp\\1794400266680122700-advance_lock_race_run_until_boundary.json",
+      "path": "missing/mcp/1794400266680122700-advance_lock_race_run_until_boundary.json",
+      "sha256": "5dbe5366891ad0909bc8b3b6d9957e6c1dca35ac5a5ca2e816d99d7d9c730cc0"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\mcp\\1794400416306943700-submit_lock_race_patch_worker_result.json",
+      "path": "missing/mcp/1794400416306943700-submit_lock_race_patch_worker_result.json",
+      "sha256": "39440803725cf37da3f976e1d6e8694696210076deb2abad53ef131e72f9d486"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\mcp\\1794400424937145100-advance_lock_race_run_until_boundary.json",
+      "path": "missing/mcp/1794400424937145100-advance_lock_race_run_until_boundary.json",
+      "sha256": "0f41358f1c7a1c706f2c625a09401864b58cf3d59fedbffbfcc99b93650e7e64"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\mcp\\advance_lock_race_run_until_boundary.json",
+      "path": "missing/mcp/advance_lock_race_run_until_boundary.json",
+      "sha256": "0f41358f1c7a1c706f2c625a09401864b58cf3d59fedbffbfcc99b93650e7e64"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\mcp\\create_lock_race_run.json",
+      "path": "missing/mcp/create_lock_race_run.json",
+      "sha256": "52a8c023428b2f7a09dd76086b2bbc884246878654ea6fe16a26a1be87f4acdd"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\mcp\\submit_lock_race_patch_worker_result.json",
+      "path": "missing/mcp/submit_lock_race_patch_worker_result.json",
+      "sha256": "39440803725cf37da3f976e1d6e8694696210076deb2abad53ef131e72f9d486"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\mcp\\submit_lock_race_reviewer_result.json",
+      "path": "missing/mcp/submit_lock_race_reviewer_result.json",
+      "sha256": "c80737d239d8b274e158951d115ca3a30e9dc4c84ffbc0b49e2d82850162eab7"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\mcp\\submit_lock_race_test_worker_result.json",
+      "path": "missing/mcp/submit_lock_race_test_worker_result.json",
+      "sha256": "2ff8cfc6e285bd5cd6a68ec9878b2a0eebc09fe404f4b9d73b521aae32553798"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\repository",
+      "path": "missing/repository.bundle",
+      "sha256": "9db5912ee58442621d44c5a5658ec11670a6e098ad9e2aba560296890f9d6f1c"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\discrimination\\normal.json",
+      "path": "distinct/normal-executions.json",
+      "sha256": "77207e2ab6e05bebe4ab665f65308d3d0dec1f7fe8a9a4ff0ad69ce373a946fb"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\discrimination\\defective.json",
+      "path": "distinct/defective-executions.json",
+      "sha256": "7f564cd8994b4629d5a5b46d4d72b8b0fd1e4f56e63f6a0acc60548451df77fc"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\http\\recode-artifacts\\job_47e1d097956c465cbb48f77b924cb8b7-6jk2gql2\\external\\call-chains.json",
+      "path": "distinct/native/call-chains.json",
+      "sha256": "537fce58efcd67405d4bb837d3d1c7cc12b7f0133af929b78c617f519d3cc7ed"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\http\\recode-artifacts\\job_47e1d097956c465cbb48f77b924cb8b7-6jk2gql2\\external\\resource-flow.json",
+      "path": "distinct/native/resource-flow.json",
+      "sha256": "c2b8a7073b2efea5153930971a8a4c58e8e6e3e515cb03504c682dc0305fcd2b"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\http\\recode-artifacts\\job_47e1d097956c465cbb48f77b924cb8b7-6jk2gql2\\external\\sync-relations.json",
+      "path": "distinct/native/sync-relations.json",
+      "sha256": "5db0dd403ae5a3d5ce9015a1131f65e95f2c815c656b7cd075f35cf22a441acf"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\http\\recode-artifacts\\job_47e1d097956c465cbb48f77b924cb8b7-6jk2gql2\\external\\race-analysis.json",
+      "path": "distinct/native/race-analysis.json",
+      "sha256": "f3bdf31c44cb1dab93fd25ab4ca2e3e9f4e4848d0e78249a21e5efc703841114"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\workflow-state.json",
+      "path": "distinct/workflow-state.json",
+      "sha256": "f97e643ce554f35f203bf7562c38810a82b9f4ca832ece83d97ab63e9eccdd4e"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\run-result.json",
+      "path": "distinct/run-result.json",
+      "sha256": "21a7f659a4d38335ad4872acd37d2ac8682137833dc53432b9fbd91600e2a240"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\summary.json",
+      "path": "distinct/first-group-summary.json",
+      "sha256": "75771cffda3f3d7615fe18d3c9ccb535a338e00702a2473044f78ea5ceee9b94"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\review-input.json",
+      "path": "distinct/review-input.json",
+      "sha256": "21dbf945f675b10354206f72be7f6a68c7acda3e01deb385763c304862924c01"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\review.json",
+      "path": "distinct/review.json",
+      "sha256": "1fb3fab66900e236d92b92ad5778a1cf3507d40fe0a4a0c7dc5c815fa14a3181"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\attempt-1\\verification-result.json",
+      "path": "distinct/verification-result.json",
+      "sha256": "ff0be25846846c447c7875524ff9425c4468b085a443981f8edf2efee3848b6b"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\attempt-1\\patch-request.json",
+      "path": "distinct/patch-request.json",
+      "sha256": "58767de13792b9ab26d282cf844aae1aeca0d330ba874ed8aa6fd8b9bff95dc9"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\test-artifact.json",
+      "path": "distinct/test-artifact.json",
+      "sha256": "b3dc650af88aae392a0b05fec6fa4684bf8a002a56fd246e32c6ef54b78c020c"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\test-validation.json",
+      "path": "distinct/test-validation.json",
+      "sha256": "ee599ee8a96f1a5ea560e39a3aca1d3086bb0beaf5edafeec6d1409ad24df85a"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\fixed\\fixed.json",
+      "path": "distinct/fixed-executions.json",
+      "sha256": "5de12e45a5d2ca1e283d58bca69aebefc401c8e4fc0f9b687a9f983a3b04044b"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\host-behavior-review.json",
+      "path": "distinct/host-review.json",
+      "sha256": "92676c1199a73e51f6dc37859cf9e36ca0f1b3801802f879c60f0110f507e906"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\test-role-adapter.json",
+      "path": "distinct/test-role-adapter.json",
+      "sha256": "a2998328b5a6f290a137ea4728bf4f1868a74b29e27a2e55234d791bcf156866"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\captured-1\\driver.c",
+      "path": "distinct/driver.c",
+      "sha256": "d1dfcb7b1ab10b06a59098c0384ef5ffeaa80487798d49628754b8181e4ad4b3"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\captured-1\\test-case.json",
+      "path": "distinct/test-case.json",
+      "sha256": "8030ad1973b46621410105c64b6ed33682e9bf9be487e50bf1bf276995c0277b"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\attempt-1\\repair.patch",
+      "path": "distinct/repair.patch",
+      "sha256": "866e01fc2a4cedc33764d205c13f9d0c63846021ebed6b7d50f9b1382535f833"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\post-repair-first-group\\summary.json",
+      "path": "distinct/post-repair-first-group.json",
+      "sha256": "c2fea7b9aca2bb7051a955502fdbd897595811ac89ffbbcbf3a3064aa6594a66"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\http\\recode-artifacts\\job_47e1d097956c465cbb48f77b924cb8b7-6jk2gql2\\external\\race-analysis.json",
+      "path": "distinct/native-race-analysis.json",
+      "sha256": "f3bdf31c44cb1dab93fd25ab4ca2e3e9f4e4848d0e78249a21e5efc703841114"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\http\\concurrency-context-bundle.json",
+      "path": "distinct/context-bundle.json",
+      "sha256": "b3d9fd0ba2f9cd1178775be6d1587a1c9743a7943e0d67aea008165f74d401cd"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\test-worker-report.json",
+      "path": "distinct/test-worker-report.json",
+      "sha256": "4aa4455db71f451978c75aa3664002e57862392c531103ef51eada7aa21197aa"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\patch-worker-report.json",
+      "path": "distinct/patch-worker-report.json",
+      "sha256": "f0dea29738635e171a0ec803971f8ea954dbeb5dcd5d799d40b5dce7e3771e11"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\test-request.json",
+      "path": "distinct/test-request.json",
+      "sha256": "aebe04aa51e6cacdbadca70184aa93f279fb84b6963852bb06003ff1d2a20961"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\test-worker-interruption.json",
+      "path": "distinct/test-worker-interruption.json",
+      "sha256": "c340394eb69cec62355af23bfc6a19448eec35b4637da1e7cdc94910fd79ba0a"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\mcp\\1794399417459083000-create_lock_race_run.json",
+      "path": "distinct/mcp/1794399417459083000-create_lock_race_run.json",
+      "sha256": "9ea0c74ba8312333a952ecb5c7992013ddbc4cbcb84f83cb85fd475e1dedf5bb"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\mcp\\1794399835683986500-submit_lock_race_reviewer_result.json",
+      "path": "distinct/mcp/1794399835683986500-submit_lock_race_reviewer_result.json",
+      "sha256": "6e29000cb78e4fea4ea31c63ebaba40bbc50036e8351b0f135560487d215d3e7"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\mcp\\1794399837021412100-advance_lock_race_run_until_boundary.json",
+      "path": "distinct/mcp/1794399837021412100-advance_lock_race_run_until_boundary.json",
+      "sha256": "11009182e22ecfac6913afb346e3f0e0dc8ea10e6fa90547395d75e454f659c1"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\mcp\\1794400262552541200-submit_lock_race_test_worker_result.json",
+      "path": "distinct/mcp/1794400262552541200-submit_lock_race_test_worker_result.json",
+      "sha256": "fcb95a50e19dc4b7e52558b9b7c4895d0380692ec2472848f101274f286e1349"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\mcp\\1794400272146278800-advance_lock_race_run_until_boundary.json",
+      "path": "distinct/mcp/1794400272146278800-advance_lock_race_run_until_boundary.json",
+      "sha256": "789bdd0d126da57ffa46164c3e6aa4f43a55f41a2facdf1056784a4d3fafc5f0"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\mcp\\1794400425711628300-submit_lock_race_patch_worker_result.json",
+      "path": "distinct/mcp/1794400425711628300-submit_lock_race_patch_worker_result.json",
+      "sha256": "05236fba10b28460a9da6ebbc61e6c61738db1781880b1dbee08669a232722b2"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\mcp\\1794400433804412000-advance_lock_race_run_until_boundary.json",
+      "path": "distinct/mcp/1794400433804412000-advance_lock_race_run_until_boundary.json",
+      "sha256": "9a32ba0de17ff403518bb7f08b7d5cb6c2b850f3f0dbba873a2eab2efde19fe2"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\mcp\\advance_lock_race_run_until_boundary.json",
+      "path": "distinct/mcp/advance_lock_race_run_until_boundary.json",
+      "sha256": "9a32ba0de17ff403518bb7f08b7d5cb6c2b850f3f0dbba873a2eab2efde19fe2"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\mcp\\create_lock_race_run.json",
+      "path": "distinct/mcp/create_lock_race_run.json",
+      "sha256": "9ea0c74ba8312333a952ecb5c7992013ddbc4cbcb84f83cb85fd475e1dedf5bb"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\mcp\\submit_lock_race_patch_worker_result.json",
+      "path": "distinct/mcp/submit_lock_race_patch_worker_result.json",
+      "sha256": "05236fba10b28460a9da6ebbc61e6c61738db1781880b1dbee08669a232722b2"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\mcp\\submit_lock_race_reviewer_result.json",
+      "path": "distinct/mcp/submit_lock_race_reviewer_result.json",
+      "sha256": "6e29000cb78e4fea4ea31c63ebaba40bbc50036e8351b0f135560487d215d3e7"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\mcp\\submit_lock_race_test_worker_result.json",
+      "path": "distinct/mcp/submit_lock_race_test_worker_result.json",
+      "sha256": "fcb95a50e19dc4b7e52558b9b7c4895d0380692ec2472848f101274f286e1349"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\repository",
+      "path": "distinct/repository.bundle",
+      "sha256": "85c08d3b196da4f0a8a59df466ccd5bcaeb48fe6a088801a480c41c6abcb1984"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-flow-framework-final-20261111\\result.json",
+      "path": "framework-result.json",
+      "sha256": "c84de0a5eb823a89f94ae83264d268a32ab2c9a9651322bcc4e910a638cd0132"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-e2e-20261111\\registered-test-role-refusal.json",
+      "path": "registered-test-role-refusal.json",
+      "sha256": "f4dc9652159414414efbc3a0cf543d5c0bdb01153e849a30c698443c1ceac27c"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-common\\pr_adapter.py",
+      "path": "sources/v2-common/pr_adapter.py",
+      "sha256": "e1d9c7f7f4df40f18d0897e2718fcace5a288c4bb7f4a28db2af468e7c2bec74"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-common\\test_pr_adapter.py",
+      "path": "sources/v2-common/test_pr_adapter.py",
+      "sha256": "41fa6db192891880c024c7c3d91195fd9d4c4a5d9f8df59a26f0362b15d20e61"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\patching\\test_tasks.py",
+      "path": "sources/v2-concurrency/patching/test_tasks.py",
+      "sha256": "2200b831f6c4fa4ce426bead7e814f98407c663ce49f5a2535c1eca69834d281"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\patching\\pipeline.py",
+      "path": "sources/v2-concurrency/patching/pipeline.py",
+      "sha256": "0f583e1e1cc0f6273559d0179202b4269deeabc2ed9c47430326210fe95e9ef5"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\patching\\verifier.py",
+      "path": "sources/v2-concurrency/patching/verifier.py",
+      "sha256": "94323daaafd52c9514957e837eccdf773f4e0e3bb3845ee3eb5b2facd7bc4fc1"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_generated_redis_test.py",
+      "path": "sources/v2-concurrency/scripts/run_generated_redis_test.py",
+      "sha256": "1ab808323c5f33a656cf3acbb55d1f42453b5e661a19d9a4c2bbda0da31accf5"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_redis_protocol_regression.py",
+      "path": "sources/v2-concurrency/scripts/run_redis_protocol_regression.py",
+      "sha256": "8a10a5bb104a81a9371f1f0f358dea3d02ed35c489e4b89b3883741a134f0e8f"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\run_c_docker_verification.py",
+      "path": "sources/v2-concurrency/scripts/run_c_docker_verification.py",
+      "sha256": "cde6dcf2b7d5ac5756ab1f5e8a0c24e4651065bc024ed00466b59d90a609b074"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-test-policy.schema.json",
+      "path": "sources/v2-concurrency/schemas/lock-race-test-policy.schema.json",
+      "sha256": "cdf66ea973f0cade449b4f240b0a5151c83ffa018b8df2fac814dd2e74305b3c"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-test-case.schema.json",
+      "path": "sources/v2-concurrency/schemas/lock-race-test-case.schema.json",
+      "sha256": "f08869876a6ed3fec54de5ff160cd18b212616aed2ea3373df436015de6422b8"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\.codex\\agents\\lock-race-test-worker.toml",
+      "path": "sources/.codex/agents/lock-race-test-worker.toml",
+      "sha256": "9a5c9c157acaacd5fce0eeb9285b613e8ecb416f7f375214b88a28898c2caefc"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\tests\\concurrency\\test_patch_crlf.py",
+      "path": "sources/tests/concurrency/test_patch_crlf.py",
+      "sha256": "d8d3be1b630c407c35a766769ddcd51e3799a51e88044dbd4c00300d0a66b32f"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\tests\\concurrency\\test_test_authoring.py",
+      "path": "sources/tests/concurrency/test_test_authoring.py",
+      "sha256": "5896383abc6425973521681102fc5f9e63d1ff2a83e905a59d25e5b3cfb6d8f0"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\tests\\concurrency\\test_strict_verification_defaults.py",
+      "path": "sources/tests/concurrency/test_strict_verification_defaults.py",
+      "sha256": "40dbb17a26b5f505dea88a326862ef2b9c1f1e19c83c50491a5cb8f6beee114a"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\impact\\lock_scope.py",
+      "path": "sources/v2-concurrency/impact/lock_scope.py",
+      "sha256": "ecbc7a8424747092e2786632ff136ec6c7c88bb7b461489ec22b7154fb45b088"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\scripts\\test_audit_improvements.py",
+      "path": "sources/v2-concurrency/scripts/test_audit_improvements.py",
+      "sha256": "8e66583e52fc87903156df7e339cd73ae2be4a385dceb611f359a0a08f264be7"
+    },
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\semantic_sync.py",
+      "path": "sources/REcode/clang_pipeline/semantic_sync.py",
+      "sha256": "764dccb60e5357f460263e21f4fd7565950670972edd79fe1bdcf3eaa6c9ab8c"
+    },
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\native_export.py",
+      "path": "sources/REcode/clang_pipeline/native_export.py",
+      "sha256": "bce11a323d15cccfd810a07e9f1939c4af44f26dcd1d781d9aa5027fbf76e92c"
+    },
+    {
+      "source": "D:\\JDProject\\REcode\\clang_pipeline\\race_detector.py",
+      "path": "sources/REcode/clang_pipeline/race_detector.py",
+      "sha256": "1cfa02bd604a3393234b4641991064da6b0c5a854c37d5461dc89c14dc07fcaf"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-semantic-regression-20261111\\upstream-full-04.log",
+      "path": "upstream-full-known-failures.log",
+      "sha256": "50497fdc9054815cd0b707538291a20612c23f77ae2ced7c3704be291425e5a1"
+    },
+    {
+      "source": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\audit.py",
+      "path": "audit.py",
+      "sha256": "1f8f53d9f70c5eba753d80ee38443868ccaa9a79b763410b033f82f6ac8a674d"
+    }
+  ],
+  "summary": {
+    "status": "passed",
+    "cases": [
+      {
+        "case": "missing",
+        "original_head": "c8710b6236113b9b65c4f13bfa2a6f1b11ff6005",
+        "first_group_candidates": 1,
+        "review": "probable/defect",
+        "normal_exit_codes": [
+          0,
+          0,
+          0
+        ],
+        "original_exit_codes": [
+          42,
+          42,
+          42
+        ],
+        "repaired_exit_codes": [
+          0,
+          0,
+          0
+        ],
+        "patch_status": "verified",
+        "workflow_status": "completed",
+        "post_repair_candidates": 0,
+        "diff_sha256": "ffab7e0948f73644cd2cfc08a9caf978637525303448da176689396203614d1c",
+        "test_artifact_sha256": "d4264c7571017e4aae21b4ad042a24d534e58060043c4c8d75cde1d7d56de7fd",
+        "patch_attempts": 1,
+        "test_attempts": 1,
+        "test_harness_role": "worker_with_current_project_profile",
+        "checks": {
+          "format": "passed",
+          "project-build": "passed",
+          "project-smoke": "passed",
+          "generated-defect-regression": "passed"
+        },
+        "test_report_origin": "actual_worker_final"
+      },
+      {
+        "case": "distinct",
+        "original_head": "ddcebbae970df496335ab4d5900dce351824893b",
+        "first_group_candidates": 1,
+        "review": "probable/defect",
+        "normal_exit_codes": [
+          0,
+          0,
+          0
+        ],
+        "original_exit_codes": [
+          42,
+          42,
+          42
+        ],
+        "repaired_exit_codes": [
+          0,
+          0,
+          0
+        ],
+        "patch_status": "verified",
+        "workflow_status": "completed",
+        "post_repair_candidates": 0,
+        "diff_sha256": "866e01fc2a4cedc33764d205c13f9d0c63846021ebed6b7d50f9b1382535f833",
+        "test_artifact_sha256": "181c27e58b5f5bf6d79e6d98116f6ca435bae163aff2d971c8ad30fcdc7efa59",
+        "patch_attempts": 1,
+        "test_attempts": 1,
+        "test_harness_role": "worker_with_current_project_profile",
+        "checks": {
+          "format": "passed",
+          "project-build": "passed",
+          "project-smoke": "passed",
+          "generated-defect-regression": "passed"
+        },
+        "test_report_origin": "host_recovery_after_worker_interruption"
+      }
+    ],
+    "schema_objects": 30,
+    "framework_tests": 314,
+    "evidence_files": 104,
+    "registered_generic_test_role": "not_run_cached_profile_refused",
+    "registered_reviewer_and_patch_roles": "used",
+    "upstream_large_repository_validation": "not_run",
+    "scope": "Two constructed four-file C PRs, same counter-defect family, real first-group local HTTP/native Docker extraction and stdio MCP; bounded stress and complete three-unit build/smoke.",
+    "remote_schema_retrieval": "disabled",
+    "image_id": "sha256:bc75917d21dd90e38fb15ae9e56fb026034b2556abcb1b92401e8843b2e343ec",
+    "image_source_sha256": {
+      "semantic_sync.py": "764dccb60e5357f460263e21f4fd7565950670972edd79fe1bdcf3eaa6c9ab8c",
+      "native_export.py": "bce11a323d15cccfd810a07e9f1939c4af44f26dcd1d781d9aa5027fbf76e92c",
+      "race_detector.py": "1cfa02bd604a3393234b4641991064da6b0c5a854c37d5461dc89c14dc07fcaf"
+    },
+    "upstream_regression": {
+      "tests": 127,
+      "passed": 123,
+      "failed": 2,
+      "skipped": 2,
+      "source": "prior stage run on identical analyzer code"
+    },
+    "test_worker_interruption": "distinct worker saved complete files before safety-filter interruption; host inspected and recovered report with explicit provenance"
+  },
+  "schema_checks": [
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\http\\recode-artifacts\\job_2de08eb7ef844d98907334d9a7c46383-y6666uy7\\external\\call-chains.json",
+      "sha256": "98b0d0e93d1e64ad4da06af8fe24d119abd3c5530965c2e462fa3925d3639fed",
+      "schema": "D:\\JDProject\\REcode\\schemas\\call-chains.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\http\\recode-artifacts\\job_2de08eb7ef844d98907334d9a7c46383-y6666uy7\\external\\resource-flow.json",
+      "sha256": "516171255d3d2780325f15a743acbf3a014ae944709c63a3c9b8645512e50d91",
+      "schema": "D:\\JDProject\\REcode\\schemas\\resource-flow.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\http\\recode-artifacts\\job_2de08eb7ef844d98907334d9a7c46383-y6666uy7\\external\\sync-relations.json",
+      "sha256": "028ce9723ce89bc9afedc13eda8fd331c53f430c93b33602dfc746778e3e2075",
+      "schema": "D:\\JDProject\\REcode\\schemas\\sync-relations.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\http\\recode-artifacts\\job_2de08eb7ef844d98907334d9a7c46383-y6666uy7\\external\\race-analysis.json",
+      "sha256": "0aca8c3a02b7ee48f6e3b21637d662e8992e8e1592f6b7531a7a535b003000c7",
+      "schema": "D:\\JDProject\\REcode\\schemas\\race-analysis.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\workflow-state.json",
+      "sha256": "4671173373ae38c887388024cfe89ad797b2830afca4c99b36dcba308ac6392b",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-workflow-state.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\run-result.json",
+      "sha256": "f82cf546f8ebd11882065df268733a703fe387d1803a6346d32888e498583d4c",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-run-result.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\attempt-1\\patch-request.json",
+      "sha256": "9230c618ff6d537e41be86e576dd4981fbf67bf64641f9a96255401f9ddaa6da",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-patch-request.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\attempt-1\\verification-result.json",
+      "sha256": "51cc8ec841e9fc34b2784ec62b6aa816a73cbb98e843781394435ca8d84c2293",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-patch-verification.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\review.json",
+      "sha256": "7530acced1d3299bd56e2cb1ea75819ba8582de96e4a8ca9d24b5f16d59acfd6",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-request.json",
+      "sha256": "09b2e192317e7b50b8bffcb94d67856fe3091e89da1ab4e4c6547e0314fd3334",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-test-request.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-artifact.json",
+      "sha256": "c947dd27a18a8ddf031945ae3ae008a2c798402071ecd6c11fa23b6536d1e485",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-test-artifact.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\test-validation.json",
+      "sha256": "22f077460aa2ef167eb003aa5930f4c02d9adba365c91b7234cd380c575abac6",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-test-discrimination.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\test-worker-report.json",
+      "sha256": "366507288a9af31869a81dca5188ed2cd5a5cb37045b5f17237785cf2ed9f13a",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-test-worker-report.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\patch-worker-report.json",
+      "sha256": "7e4a3bf5477bf360d64079463f16b3cdb9c19f1e56062128816ec129227a0b4c",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-patch-worker-report.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-missing-20261111\\workflow\\artifacts\\race-1a47d1b2dea759da\\test-1\\captured-1\\test-case.json",
+      "sha256": "d61f9a03ddc5a2a324ecf183202930007fe86a7d51377cd43a62864829336312",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-test-case.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\http\\recode-artifacts\\job_47e1d097956c465cbb48f77b924cb8b7-6jk2gql2\\external\\call-chains.json",
+      "sha256": "537fce58efcd67405d4bb837d3d1c7cc12b7f0133af929b78c617f519d3cc7ed",
+      "schema": "D:\\JDProject\\REcode\\schemas\\call-chains.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\http\\recode-artifacts\\job_47e1d097956c465cbb48f77b924cb8b7-6jk2gql2\\external\\resource-flow.json",
+      "sha256": "c2b8a7073b2efea5153930971a8a4c58e8e6e3e515cb03504c682dc0305fcd2b",
+      "schema": "D:\\JDProject\\REcode\\schemas\\resource-flow.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\http\\recode-artifacts\\job_47e1d097956c465cbb48f77b924cb8b7-6jk2gql2\\external\\sync-relations.json",
+      "sha256": "5db0dd403ae5a3d5ce9015a1131f65e95f2c815c656b7cd075f35cf22a441acf",
+      "schema": "D:\\JDProject\\REcode\\schemas\\sync-relations.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\http\\recode-artifacts\\job_47e1d097956c465cbb48f77b924cb8b7-6jk2gql2\\external\\race-analysis.json",
+      "sha256": "f3bdf31c44cb1dab93fd25ab4ca2e3e9f4e4848d0e78249a21e5efc703841114",
+      "schema": "D:\\JDProject\\REcode\\schemas\\race-analysis.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\workflow-state.json",
+      "sha256": "f97e643ce554f35f203bf7562c38810a82b9f4ca832ece83d97ab63e9eccdd4e",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-workflow-state.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\run-result.json",
+      "sha256": "21a7f659a4d38335ad4872acd37d2ac8682137833dc53432b9fbd91600e2a240",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-run-result.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\attempt-1\\patch-request.json",
+      "sha256": "58767de13792b9ab26d282cf844aae1aeca0d330ba874ed8aa6fd8b9bff95dc9",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-patch-request.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\attempt-1\\verification-result.json",
+      "sha256": "ff0be25846846c447c7875524ff9425c4468b085a443981f8edf2efee3848b6b",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-patch-verification.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\review.json",
+      "sha256": "1fb3fab66900e236d92b92ad5778a1cf3507d40fe0a4a0c7dc5c815fa14a3181",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-review.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\test-request.json",
+      "sha256": "aebe04aa51e6cacdbadca70184aa93f279fb84b6963852bb06003ff1d2a20961",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-test-request.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\test-artifact.json",
+      "sha256": "b3dc650af88aae392a0b05fec6fa4684bf8a002a56fd246e32c6ef54b78c020c",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-test-artifact.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\test-validation.json",
+      "sha256": "ee599ee8a96f1a5ea560e39a3aca1d3086bb0beaf5edafeec6d1409ad24df85a",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-test-discrimination.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\test-worker-report.json",
+      "sha256": "4aa4455db71f451978c75aa3664002e57862392c531103ef51eada7aa21197aa",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-test-worker-report.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\patch-worker-report.json",
+      "sha256": "f0dea29738635e171a0ec803971f8ea954dbeb5dcd5d799d40b5dce7e3771e11",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-patch-worker-report.schema.json"
+    },
+    {
+      "path": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-final-distinct-20261111\\workflow\\artifacts\\race-6aedb8acec3a6472\\test-1\\captured-1\\test-case.json",
+      "sha256": "8030ad1973b46621410105c64b6ed33682e9bf9be487e50bf1bf276995c0277b",
+      "schema": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\schemas\\lock-race-test-case.schema.json"
+    }
+  ]
+}

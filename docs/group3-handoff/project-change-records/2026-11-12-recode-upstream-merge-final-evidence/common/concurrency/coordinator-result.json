@@ -1,0 +1,117 @@
+{
+  "candidate_count": 0,
+  "candidate_schedule": {
+    "deferred_candidate_ids": [],
+    "groups": [],
+    "max_review_requests": 32,
+    "selected_candidate_ids": [],
+    "verdict_propagation": false
+  },
+  "change_context": {
+    "base_is_ancestor_of_head": null,
+    "base_sha": "dff7b968116af00071ce76ebdb5419fe87babf6b",
+    "changed_files": [
+      {
+        "path": "observe.c",
+        "status": "M"
+      },
+      {
+        "path": "workers.c",
+        "status": "M"
+      }
+    ],
+    "changed_locations": [
+      {
+        "end_line": 5,
+        "evidence_ids": [
+          "diff-1d5a4b4c8fb1a8d657c1"
+        ],
+        "file": "observe.c",
+        "new_line_count": 5,
+        "old_line_count": 5,
+        "old_start_line": 1,
+        "side": "right",
+        "start_line": 1
+      },
+      {
+        "end_line": 11,
+        "evidence_ids": [
+          "diff-9d453c0a57c266acff43"
+        ],
+        "file": "workers.c",
+        "new_line_count": 7,
+        "old_line_count": 7,
+        "old_start_line": 5,
+        "side": "right",
+        "start_line": 5
+      },
+      {
+        "end_line": 26,
+        "evidence_ids": [
+          "diff-c9403decaa62224db407"
+        ],
+        "file": "workers.c",
+        "new_line_count": 9,
+        "old_line_count": 9,
+        "old_start_line": 18,
+        "side": "right",
+        "start_line": 18
+      }
+    ],
+    "diff_evidence_ids": [
+      "diff-1d5a4b4c8fb1a8d657c1",
+      "diff-9d453c0a57c266acff43",
+      "diff-c9403decaa62224db407"
+    ],
+    "diff_sha256": "a82f765d0861abe757801dc22613ef6035e7d5a9340a5cb942a7baa190b53e8f",
+    "head_sha": "926ed8a5ddf406e50c3dcf5ee955b13c8c3f6751",
+    "merge_base_sha": "dff7b968116af00071ce76ebdb5419fe87babf6b",
+    "reason": null,
+    "status": "complete"
+  },
+  "coverage": {
+    "complete": true,
+    "reason": null,
+    "unresolved": []
+  },
+  "discovery_budget": {
+    "deferred_pair_ranges": [],
+    "exact_duplicates_removed": 0,
+    "examined_access_pairs": 3,
+    "max_access_pairs": 10000,
+    "max_race_candidates": 2000,
+    "shared_object_join": {
+      "duplicate_accesses_removed": 0,
+      "objects_joined": 1
+    }
+  },
+  "errors": [],
+  "missing_review_candidate_ids": [],
+  "provenance": {
+    "analyzer": {
+      "formal_evidence": true,
+      "name": "REcode-bounded-AST-sync",
+      "version": "1.0"
+    },
+    "first_group_run_id": "recode-cbug-integration-926ed8a5ddf4:get_sync_flows",
+    "first_group_schema_version": "1.0",
+    "formal_evidence": true,
+    "graph_snapshot_id": "recode-3ebb2b38fc7c9b6ee15ba800466e1991939789ef57da5812379a2c54c297653f",
+    "review_confidence_cap": 1.0,
+    "source_kind": "first_group",
+    "source_response_sha256": "225b068b197797b115f00fff285bd64a234f58f4368eefa5fa43289bfb48d5a3"
+  },
+  "repository": {
+    "base_sha": "dff7b968116af00071ce76ebdb5419fe87babf6b",
+    "build_profile": "recode-linux-clang",
+    "graph_snapshot_id": "recode-3ebb2b38fc7c9b6ee15ba800466e1991939789ef57da5812379a2c54c297653f",
+    "head_sha": "926ed8a5ddf406e50c3dcf5ee955b13c8c3f6751",
+    "name": "cbug-integration/recode-contract"
+  },
+  "reviewed_count": 0,
+  "reviews": [],
+  "schema_version": "lock-race-coordinator-result/0.1",
+  "status": "completed",
+  "task_id": "github-pr-local-integration:get_sync_flows",
+  "warnings": []
+}

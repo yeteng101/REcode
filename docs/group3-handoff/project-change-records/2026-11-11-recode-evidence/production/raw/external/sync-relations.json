@@ -1,0 +1,306 @@
+{
+  "schema_version": "1.0",
+  "run_id": "run_repository_1794381859",
+  "result_type": "sync_relation",
+  "status": "succeeded",
+  "generated_at": "2026-11-11T07:24:28Z",
+  "source": {
+    "repository": "yeteng101/REcode",
+    "commit": "e6e3b4222715cea71c150f0dd824ed990e7f567d",
+    "build_profile": "safe-generic",
+    "analyzer": "clang++ -Xclang -ast-dump=json",
+    "generated_at": "2026-11-11T07:24:28Z",
+    "origin": "analyzer",
+    "provider": "native_sync_flow_v1"
+  },
+  "items": [
+    {
+      "id": "sync_53e75e16fa9d",
+      "status": "unconfirmed",
+      "relation_type": "mutex_lock",
+      "source": {
+        "function": "lock_and_wait",
+        "thread": null,
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 16,
+        "snippet": "pthread_mutex_lock(mutex);",
+        "held_locks": [
+          "mutex"
+        ],
+        "evidence_ids": [
+          "ev_db1b310ec617"
+        ]
+      },
+      "target": {
+        "function": "lock_and_wait",
+        "thread": null,
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 17,
+        "snippet": "pthread_cond_wait(cond, mutex);",
+        "held_locks": [],
+        "evidence_ids": [
+          "ev_85e2f12ff589"
+        ]
+      },
+      "order": "happens_before",
+      "condition": "program order lock_and_wait:mutex",
+      "execution_context": {
+        "process": "target-repository",
+        "source_thread": null,
+        "target_thread": null,
+        "event_loop": null
+      },
+      "confidence": 0.55,
+      "evidence_ids": [
+        "ev_db1b310ec617",
+        "ev_85e2f12ff589"
+      ],
+      "origin": "analyzer"
+    },
+    {
+      "id": "sync_5fc7a1acc8fb",
+      "status": "unconfirmed",
+      "relation_type": "happens_before",
+      "source": {
+        "function": "Watcher::callback",
+        "thread": null,
+        "file": "demo/sample/app.cpp",
+        "line": 26,
+        "snippet": "loop_register(&loop, 0, on_readable);",
+        "held_locks": [],
+        "evidence_ids": [
+          "ev_648eecc81602"
+        ]
+      },
+      "target": {
+        "function": "Watcher::callback",
+        "thread": null,
+        "file": "demo/sample/app.cpp",
+        "line": 27,
+        "snippet": "loop_register(&loop, 1, on_writable);",
+        "held_locks": [],
+        "evidence_ids": [
+          "ev_f59d395f4abc"
+        ]
+      },
+      "order": "happens_before",
+      "condition": "program order Watcher::callback:loop,loop_register",
+      "execution_context": {
+        "process": "target-repository",
+        "source_thread": null,
+        "target_thread": null,
+        "event_loop": null
+      },
+      "confidence": 0.55,
+      "evidence_ids": [
+        "ev_648eecc81602",
+        "ev_f59d395f4abc"
+      ],
+      "origin": "analyzer"
+    },
+    {
+      "id": "sync_84e7424f9804",
+      "status": "unconfirmed",
+      "relation_type": "happens_before",
+      "source": {
+        "function": "Watcher::callback",
+        "thread": null,
+        "file": "demo/sample/app.cpp",
+        "line": 27,
+        "snippet": "loop_register(&loop, 1, on_writable);",
+        "held_locks": [],
+        "evidence_ids": [
+          "ev_f59d395f4abc"
+        ]
+      },
+      "target": {
+        "function": "Watcher::callback",
+        "thread": null,
+        "file": "demo/sample/app.cpp",
+        "line": 28,
+        "snippet": "loop_register(&loop, 2, on_once);",
+        "held_locks": [],
+        "evidence_ids": [
+          "ev_c5acbfb46322"
+        ]
+      },
+      "order": "happens_before",
+      "condition": "program order Watcher::callback:loop,loop_register",
+      "execution_context": {
+        "process": "target-repository",
+        "source_thread": null,
+        "target_thread": null,
+        "event_loop": null
+      },
+      "confidence": 0.55,
+      "evidence_ids": [
+        "ev_f59d395f4abc",
+        "ev_c5acbfb46322"
+      ],
+      "origin": "analyzer"
+    },
+    {
+      "id": "sync_87b2034aa65e",
+      "status": "unconfirmed",
+      "relation_type": "condition_variable",
+      "source": {
+        "function": "lock_and_wait",
+        "thread": null,
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 17,
+        "snippet": "pthread_cond_wait(cond, mutex);",
+        "held_locks": [],
+        "evidence_ids": [
+          "ev_85e2f12ff589"
+        ]
+      },
+      "target": {
+        "function": "lock_and_wait",
+        "thread": null,
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 18,
+        "snippet": "pthread_mutex_unlock(mutex);",
+        "held_locks": [
+          "mutex"
+        ],
+        "evidence_ids": [
+          "ev_c3c10bcc1dee"
+        ]
+      },
+      "order": "happens_before",
+      "condition": "program order lock_and_wait:mutex",
+      "execution_context": {
+        "process": "target-repository",
+        "source_thread": null,
+        "target_thread": null,
+        "event_loop": null
+      },
+      "confidence": 0.55,
+      "evidence_ids": [
+        "ev_85e2f12ff589",
+        "ev_c3c10bcc1dee"
+      ],
+      "origin": "analyzer"
+    },
+    {
+      "id": "sync_ddbe34207d1f",
+      "status": "unconfirmed",
+      "relation_type": "mutex_lock",
+      "source": {
+        "function": "lock_and_wait",
+        "thread": null,
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 16,
+        "snippet": "pthread_mutex_lock(mutex);",
+        "held_locks": [
+          "mutex"
+        ],
+        "evidence_ids": [
+          "ev_db1b310ec617"
+        ]
+      },
+      "target": {
+        "function": "lock_and_wait",
+        "thread": null,
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 18,
+        "snippet": "pthread_mutex_unlock(mutex);",
+        "held_locks": [
+          "mutex"
+        ],
+        "evidence_ids": [
+          "ev_c3c10bcc1dee"
+        ]
+      },
+      "order": "happens_before",
+      "condition": "same function/resource lock_and_wait:mutex",
+      "execution_context": {
+        "process": "target-repository",
+        "source_thread": null,
+        "target_thread": null,
+        "event_loop": null
+      },
+      "confidence": 0.85,
+      "evidence_ids": [
+        "ev_db1b310ec617",
+        "ev_c3c10bcc1dee"
+      ],
+      "origin": "analyzer"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev_648eecc81602",
+      "kind": "assignment",
+      "location": {
+        "file": "demo/sample/app.cpp",
+        "line": 26,
+        "column": 5,
+        "snippet": "loop_register(&loop, 0, on_readable);"
+      },
+      "role": "supports",
+      "build_profile": "safe-generic"
+    },
+    {
+      "id": "ev_85e2f12ff589",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 17,
+        "column": 5,
+        "snippet": "pthread_cond_wait(cond, mutex);"
+      },
+      "role": "supports",
+      "build_profile": "safe-generic"
+    },
+    {
+      "id": "ev_c3c10bcc1dee",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 18,
+        "column": 5,
+        "snippet": "pthread_mutex_unlock(mutex);"
+      },
+      "role": "supports",
+      "build_profile": "safe-generic"
+    },
+    {
+      "id": "ev_c5acbfb46322",
+      "kind": "assignment",
+      "location": {
+        "file": "demo/sample/app.cpp",
+        "line": 28,
+        "column": 5,
+        "snippet": "loop_register(&loop, 2, on_once);"
+      },
+      "role": "supports",
+      "build_profile": "safe-generic"
+    },
+    {
+      "id": "ev_db1b310ec617",
+      "kind": "call_site",
+      "location": {
+        "file": "clang_pipeline/tests/fixtures/external_flow.c",
+        "line": 16,
+        "column": 5,
+        "snippet": "pthread_mutex_lock(mutex);"
+      },
+      "role": "supports",
+      "build_profile": "safe-generic"
+    },
+    {
+      "id": "ev_f59d395f4abc",
+      "kind": "assignment",
+      "location": {
+        "file": "demo/sample/app.cpp",
+        "line": 27,
+        "column": 5,
+        "snippet": "loop_register(&loop, 1, on_writable);"
+      },
+      "role": "supports",
+      "build_profile": "safe-generic"
+    }
+  ],
+  "warnings": []
+}

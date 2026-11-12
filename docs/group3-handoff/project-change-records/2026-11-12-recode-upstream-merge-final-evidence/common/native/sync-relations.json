@@ -1,0 +1,371 @@
+{
+  "schema_version": "1.0",
+  "run_id": "recode-cbug-integration-926ed8a5ddf4",
+  "result_type": "sync_relation",
+  "status": "succeeded",
+  "generated_at": "2026-11-12T05:03:44Z",
+  "source": {
+    "repository": "cbug-integration/recode-contract",
+    "commit": "926ed8a5ddf406e50c3dcf5ee955b13c8c3f6751",
+    "build_profile": "recode-linux-clang",
+    "analyzer": "clang++ -Xclang -ast-dump=json",
+    "generated_at": "2026-11-12T05:03:44Z",
+    "origin": "analyzer",
+    "provider": "native_sync_flow_v1"
+  },
+  "items": [
+    {
+      "id": "sync_0894efd93cb6",
+      "status": "unconfirmed",
+      "relation_type": "mutex_lock",
+      "source": {
+        "function": "writer_b",
+        "thread": null,
+        "file": "workers.c",
+        "line": 14,
+        "snippet": "pthread_mutex_lock(&mutex);",
+        "held_locks": [
+          "mutex"
+        ],
+        "evidence_ids": [
+          "ev_7cb605fa3c8e"
+        ]
+      },
+      "target": {
+        "function": "writer_b",
+        "thread": null,
+        "file": "workers.c",
+        "line": 16,
+        "snippet": "pthread_mutex_unlock(&mutex);",
+        "held_locks": [
+          "mutex"
+        ],
+        "evidence_ids": [
+          "ev_b6dc8142a6cd"
+        ]
+      },
+      "order": "happens_before",
+      "condition": "same function/resource writer_b:mutex",
+      "execution_context": {
+        "process": "target-repository",
+        "source_thread": null,
+        "target_thread": null,
+        "event_loop": null
+      },
+      "confidence": 0.85,
+      "evidence_ids": [
+        "ev_7cb605fa3c8e",
+        "ev_b6dc8142a6cd"
+      ],
+      "origin": "analyzer"
+    },
+    {
+      "id": "sync_1bc2cdf7862f",
+      "status": "unconfirmed",
+      "relation_type": "thread_join",
+      "source": {
+        "function": "main",
+        "thread": "main",
+        "file": "workers.c",
+        "line": 21,
+        "snippet": "if (pthread_create(&a, 0, writer_a, 0) != 0) return 1;",
+        "held_locks": [],
+        "evidence_ids": [
+          "ev_c9724a5ccbe1"
+        ]
+      },
+      "target": {
+        "function": "main",
+        "thread": "main",
+        "file": "workers.c",
+        "line": 22,
+        "snippet": "if (pthread_create(&b, 0, writer_b, 0) != 0) return 1;",
+        "held_locks": [],
+        "evidence_ids": [
+          "ev_cf0813d2c179"
+        ]
+      },
+      "order": "happens_before",
+      "condition": "program order main:pthread_create",
+      "execution_context": {
+        "process": "target-repository",
+        "source_thread": "main",
+        "target_thread": "main",
+        "event_loop": null
+      },
+      "confidence": 0.55,
+      "evidence_ids": [
+        "ev_c9724a5ccbe1",
+        "ev_cf0813d2c179"
+      ],
+      "origin": "analyzer"
+    },
+    {
+      "id": "sync_4e0d01c71a7a",
+      "status": "unconfirmed",
+      "relation_type": "thread_join",
+      "source": {
+        "function": "main",
+        "thread": "main",
+        "file": "workers.c",
+        "line": 23,
+        "snippet": "if (pthread_join(a, 0) != 0) return 1;",
+        "held_locks": [],
+        "evidence_ids": [
+          "ev_202484a78c82"
+        ]
+      },
+      "target": {
+        "function": "main",
+        "thread": "main",
+        "file": "workers.c",
+        "line": 24,
+        "snippet": "if (pthread_join(b, 0) != 0) return 1;",
+        "held_locks": [],
+        "evidence_ids": [
+          "ev_be4d26e242c3"
+        ]
+      },
+      "order": "happens_before",
+      "condition": "program order main:pthread_join",
+      "execution_context": {
+        "process": "target-repository",
+        "source_thread": "main",
+        "target_thread": "main",
+        "event_loop": null
+      },
+      "confidence": 0.55,
+      "evidence_ids": [
+        "ev_202484a78c82",
+        "ev_be4d26e242c3"
+      ],
+      "origin": "analyzer"
+    },
+    {
+      "id": "sync_5200a0634fb2",
+      "status": "unconfirmed",
+      "relation_type": "thread_join",
+      "source": {
+        "function": "main",
+        "thread": "main",
+        "file": "workers.c",
+        "line": 21,
+        "snippet": "if (pthread_create(&a, 0, writer_a, 0) != 0) return 1;",
+        "held_locks": [],
+        "evidence_ids": [
+          "ev_c9724a5ccbe1"
+        ]
+      },
+      "target": {
+        "function": "main",
+        "thread": "main",
+        "file": "workers.c",
+        "line": 23,
+        "snippet": "if (pthread_join(a, 0) != 0) return 1;",
+        "held_locks": [],
+        "evidence_ids": [
+          "ev_202484a78c82"
+        ]
+      },
+      "order": "happens_before",
+      "condition": "thread handle a is joined",
+      "execution_context": {
+        "process": "target-repository",
+        "source_thread": "main",
+        "target_thread": "main",
+        "event_loop": null
+      },
+      "confidence": 0.75,
+      "evidence_ids": [
+        "ev_c9724a5ccbe1",
+        "ev_202484a78c82"
+      ],
+      "origin": "analyzer"
+    },
+    {
+      "id": "sync_b439ba9b5fe8",
+      "status": "unconfirmed",
+      "relation_type": "mutex_lock",
+      "source": {
+        "function": "writer_a",
+        "thread": null,
+        "file": "workers.c",
+        "line": 7,
+        "snippet": "pthread_mutex_lock(&mutex);",
+        "held_locks": [
+          "mutex"
+        ],
+        "evidence_ids": [
+          "ev_d551eb05c293"
+        ]
+      },
+      "target": {
+        "function": "writer_a",
+        "thread": null,
+        "file": "workers.c",
+        "line": 9,
+        "snippet": "pthread_mutex_unlock(&mutex);",
+        "held_locks": [
+          "mutex"
+        ],
+        "evidence_ids": [
+          "ev_9507aaad509f"
+        ]
+      },
+      "order": "happens_before",
+      "condition": "same function/resource writer_a:mutex",
+      "execution_context": {
+        "process": "target-repository",
+        "source_thread": null,
+        "target_thread": null,
+        "event_loop": null
+      },
+      "confidence": 0.85,
+      "evidence_ids": [
+        "ev_d551eb05c293",
+        "ev_9507aaad509f"
+      ],
+      "origin": "analyzer"
+    },
+    {
+      "id": "sync_e5bf71de32ef",
+      "status": "unconfirmed",
+      "relation_type": "thread_join",
+      "source": {
+        "function": "main",
+        "thread": "main",
+        "file": "workers.c",
+        "line": 22,
+        "snippet": "if (pthread_create(&b, 0, writer_b, 0) != 0) return 1;",
+        "held_locks": [],
+        "evidence_ids": [
+          "ev_cf0813d2c179"
+        ]
+      },
+      "target": {
+        "function": "main",
+        "thread": "main",
+        "file": "workers.c",
+        "line": 24,
+        "snippet": "if (pthread_join(b, 0) != 0) return 1;",
+        "held_locks": [],
+        "evidence_ids": [
+          "ev_be4d26e242c3"
+        ]
+      },
+      "order": "happens_before",
+      "condition": "thread handle b is joined",
+      "execution_context": {
+        "process": "target-repository",
+        "source_thread": "main",
+        "target_thread": "main",
+        "event_loop": null
+      },
+      "confidence": 0.75,
+      "evidence_ids": [
+        "ev_cf0813d2c179",
+        "ev_be4d26e242c3"
+      ],
+      "origin": "analyzer"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev_202484a78c82",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 23,
+        "column": 9,
+        "snippet": "if (pthread_join(a, 0) != 0) return 1;"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_7cb605fa3c8e",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 14,
+        "column": 5,
+        "snippet": "pthread_mutex_lock(&mutex);"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_9507aaad509f",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 9,
+        "column": 5,
+        "snippet": "pthread_mutex_unlock(&mutex);"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_b6dc8142a6cd",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 16,
+        "column": 5,
+        "snippet": "pthread_mutex_unlock(&mutex);"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_be4d26e242c3",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 24,
+        "column": 9,
+        "snippet": "if (pthread_join(b, 0) != 0) return 1;"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_c9724a5ccbe1",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 21,
+        "column": 9,
+        "snippet": "if (pthread_create(&a, 0, writer_a, 0) != 0) return 1;"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_cf0813d2c179",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 22,
+        "column": 9,
+        "snippet": "if (pthread_create(&b, 0, writer_b, 0) != 0) return 1;"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    },
+    {
+      "id": "ev_d551eb05c293",
+      "kind": "call_site",
+      "location": {
+        "file": "workers.c",
+        "line": 7,
+        "column": 5,
+        "snippet": "pthread_mutex_lock(&mutex);"
+      },
+      "role": "supports",
+      "build_profile": "recode-linux-clang"
+    }
+  ],
+  "warnings": []
+}

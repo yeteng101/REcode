@@ -1,0 +1,157 @@
+diff --git a/.agents/skills/c-bug-pr-workflow/references/routing.md b/.agents/skills/c-bug-pr-workflow/references/routing.md
+index 9863943..d9b126a 100644
+--- a/.agents/skills/c-bug-pr-workflow/references/routing.md
++++ b/.agents/skills/c-bug-pr-workflow/references/routing.md
+@@ -1,5 +1,14 @@
+ # Routing and common handoff
+ 
++For the first group's REcode service, select `--first-group-provider recode`
++and `--first-group-url http://127.0.0.1:8090`. Its default Docker analysis uses
++`repository.build_profile=safe-generic`. An existing result directory can be
++supplied with `--recode-artifacts`; an existing task uses `--recode-job-id`.
++The adapter handles submission, polling and downloads, checks version bindings,
++then provides the current shared fact contract. Preserve its `partial` coverage,
++unresolved declarations/contexts and explicit nonformal evidence. See
++`docs/integrations/recode.md` for setup and verified examples.
++
+ The host or PR adapter supplies `review-input.v1` to `v2-common/review_pipeline.py`. See `v2-common/review_input.py` for required fields. The current first-group client fetches call chains before `v2-common/coordinator.py` chooses domains; chosen domains receive resource flows (Memory) or synchronization flows (Concurrency). The first group supplies structured facts, not defect conclusions.
+ 
+ The router fetches call-chain, resource-flow, and synchronization-flow facts before classification. A resource flow or a same-context release/use pattern selects Memory; different-context shared accesses, lock operations, or lock-order edges select Concurrency. Both kinds select both domains. If a fact response is missing or neither signal is present, both remain enabled. The older diff/call-chain word scan remains a fallback only for callers that do not provide structured facts. `requested_routes` is an explicit override and must be either `memory`, `concurrency`, or both. Treat the reported route confidence as a heuristic value, not a measured detection probability. These facts choose a reviewer; they do not establish a defect.
+diff --git a/v2-common/README.md b/v2-common/README.md
+index 185b2db..207f9d3 100644
+--- a/v2-common/README.md
++++ b/v2-common/README.md
+@@ -1,5 +1,9 @@
+ # v2-common：第三组专项公共框架
+ 
++第一组 REcode 已提供异步任务及原生结果包适配，支持
++`--first-group-provider recode`、`--recode-artifacts` 和 `--recode-job-id`。
++运行方法和数据缺口见 [REcode 对接说明](../docs/integrations/recode.md)。
++
+ 本目录是第三组内部由 Memory、Concurrency 和后续专项共享的公共运行层。它由面向用户的宿主主 Agent 调用或集成，负责第一组 HTTP 边界、事实协议校验、PR 目标交接、组内专项路由、受控源码加载、上下文预算、ContextBundle 和独立验证 handoff；不实现宿主主 Agent，也不做内存、竞态或其他领域缺陷结论。
+ 
+ ```text
+diff --git a/v2-common/coordinator.py b/v2-common/coordinator.py
+index 56f9f97..4edcb86 100644
+--- a/v2-common/coordinator.py
++++ b/v2-common/coordinator.py
+@@ -65,7 +65,7 @@ def route_specialties(
+         for finding in syncs:
+             if not isinstance(finding, dict):
+                 continue
+-            if finding.get("lock_order_edges") or finding.get("locks"):
++            if finding.get("lock_order_edges") or finding.get("locks") or finding.get("observed_relations"):
+                 has_concurrency = True
+             for obj in finding.get("shared_objects", []):
+                 accesses = obj.get("accesses", []) if isinstance(obj, dict) else []
+@@ -76,7 +76,9 @@ def route_specialties(
+                 contexts.discard(None)
+                 kinds = {access.get("kind") for access in accesses if isinstance(access, dict)}
+                 lifetime_access = bool(kinds.intersection({"delete", "free", "release"}))
+-                if len(contexts) > 1:
++                unknown_context = any(not access.get("execution_context", {}).get("context_id")
++                                      for access in accesses if isinstance(access, dict))
++                if len(contexts) > 1 or (len(accesses) > 1 and unknown_context):
+                     has_concurrency = True
+                     if lifetime_access:
+                         has_lifetime_access = True
+diff --git a/v2-common/review_pipeline.py b/v2-common/review_pipeline.py
+index 79a3491..8d37d45 100644
+--- a/v2-common/review_pipeline.py
++++ b/v2-common/review_pipeline.py
+@@ -54,6 +54,10 @@ def main() -> int:
+     parser = argparse.ArgumentParser(description="Prepare routed specialty ContextBundles")
+     parser.add_argument("--review", type=Path, required=True)
+     parser.add_argument("--first-group-url", default="http://127.0.0.1:8765")
++    parser.add_argument("--first-group-provider", choices=["contract", "recode"], default="contract")
++    parser.add_argument("--recode-artifacts", type=Path, help="Use a fixed REcode manifest/export directory")
++    parser.add_argument("--recode-job-id", help="Download an existing REcode job instead of submitting")
++    parser.add_argument("--recode-job-timeout", type=float, default=1800)
+     parser.add_argument("--output-dir", type=Path, required=True)
+     parser.add_argument("--specialty-registry", type=Path, default=ROOT / "specialty_registry.json")
+     parser.add_argument("--timeout", type=int, default=30)
+@@ -66,8 +70,24 @@ def main() -> int:
+         review = _load_review(args.review)
+         registry_path = args.specialty_registry.resolve()
+         registry = _load_registry(registry_path)
++        if args.recode_artifacts and args.recode_job_id:
++            raise ValueError("choose REcode artifacts or an existing job")
++        if args.first_group_provider == "contract" and (args.recode_artifacts or args.recode_job_id):
++            raise ValueError("REcode options require --first-group-provider recode")
++        if args.first_group_provider == "recode":
++            from recode_artifacts import validate_source_checkout
++            validate_source_checkout(review)
++        if args.recode_artifacts:
++            from recode_artifacts import RecodeArtifactsClient
++            client = RecodeArtifactsClient(args.recode_artifacts)
++        elif args.first_group_provider == "recode":
++            from recode_client import RecodeClient
++            client = RecodeClient(args.first_group_url, cache_directory=output_dir / "recode-artifacts",
++                                  timeout=args.timeout, job_timeout=args.recode_job_timeout, job_id=args.recode_job_id)
++        else:
++            client = FirstGroupClient(args.first_group_url, timeout=args.timeout)
+         coordinator = ReviewCoordinator(
+-            FirstGroupClient(args.first_group_url, timeout=args.timeout),
++            client,
+             ContextManager(max_chars=args.max_context_chars, max_file_chars=args.max_file_chars),
+         )
+         coordination = coordinator.prepare(review)
+diff --git a/v2-concurrency/prototype/analyze_sync_flow.py b/v2-concurrency/prototype/analyze_sync_flow.py
+index bea59f4..31eb02b 100644
+--- a/v2-concurrency/prototype/analyze_sync_flow.py
++++ b/v2-concurrency/prototype/analyze_sync_flow.py
+@@ -324,6 +324,7 @@ def _provenance(response: Dict[str, Any]) -> Dict[str, Any]:
+                 "utf-8"
+             )
+         ).hexdigest()
++    formal_evidence = not is_fixture and analyzer.get("formal_evidence", True) is True
+     return {
+         "source_kind": "fixture" if is_fixture else "first_group",
+         "first_group_schema_version": str(response.get("schema_version") or ""),
+@@ -333,8 +334,8 @@ def _provenance(response: Dict[str, Any]) -> Dict[str, Any]:
+         "source_response_sha256": response_digest,
+         "graph_snapshot_id": context.get("graph_snapshot_id"),
+         "analyzer": dict(analyzer),
+-        "formal_evidence": not is_fixture,
+-        "review_confidence_cap": 0.6 if is_fixture else 1.0,
++        "formal_evidence": formal_evidence,
++        "review_confidence_cap": 1.0 if formal_evidence else 0.6,
+     }
+ 
+ 
+@@ -622,6 +623,7 @@ def build_candidates(response: Dict[str, Any], *, max_access_pairs: int = 10000,
+                     continue
+                 candidate_coverage = _coverage_with_gaps(finding_coverage,
+                     context_gaps + _protection_gaps(access_a, access_b, lock_kinds)
++                    + (['object_declaration_unavailable'] if not shared_object.get('declaration') else [])
+                     + (['low_object_identity_confidence'] if identity_confidence < 0.8 else []))
+ 
+                 evidence_ids = list(
+@@ -676,7 +678,7 @@ def build_candidates(response: Dict[str, Any], *, max_access_pairs: int = 10000,
+                         "name": str(shared_object.get("name") or ""),
+                         "type": str(shared_object.get("type") or ""),
+                         "identity_confidence": identity_confidence,
+-                        "declaration": _location(shared_object.get("declaration") or {}),
++                        "declaration": _location(shared_object["declaration"]) if shared_object.get("declaration") else None,
+                         "source_finding_ids": list(shared_object.get('source_finding_ids') or []),
+                     },
+                     "access_a": access_a,
+@@ -715,7 +717,8 @@ def build_candidates(response: Dict[str, Any], *, max_access_pairs: int = 10000,
+                 continue
+             access_a, access_b = reads[0], writes[0]
+             may_concurrent, context_gaps = _context_overlap_analysis(access_a, access_b)
+-            condition_coverage = _coverage_with_gaps(finding_coverage, context_gaps)
++            condition_coverage = _coverage_with_gaps(finding_coverage, context_gaps
++                + (['object_declaration_unavailable'] if not shared_object.get('declaration') else []))
+             common_locks = _common_effective_locks(access_a, access_b, lock_kinds)
+             evidence_ids = _candidate_evidence(
+                 evidence_index,
+@@ -759,7 +762,7 @@ def build_candidates(response: Dict[str, Any], *, max_access_pairs: int = 10000,
+                     "name": str(shared_object.get("name") or ""),
+                     "type": str(shared_object.get("type") or ""),
+                     "identity_confidence": identity_confidence,
+-                    "declaration": _location(shared_object.get("declaration") or {}),
++                    "declaration": _location(shared_object["declaration"]) if shared_object.get("declaration") else None,
+                 },
+                 "access_a": access_a,
+                 "access_b": access_b,

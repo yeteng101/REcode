@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "run_id": "run_repository_1794381859",
+  "result_type": "race_analysis",
+  "status": "not_available",
+  "generated_at": "2026-11-11T07:24:30Z",
+  "source": {
+    "repository": "yeteng101/REcode",
+    "commit": "e6e3b4222715cea71c150f0dd824ed990e7f567d",
+    "build_profile": "safe-generic",
+    "analyzer": "clang++ -Xclang -ast-dump=json",
+    "generated_at": "2026-11-11T07:24:28Z",
+    "origin": "analyzer",
+    "provider": "native_race_detector_v1"
+  },
+  "label": "unknown",
+  "reason": "no supported concurrency primitives were found",
+  "confidence": 0.0,
+  "items": [],
+  "evidence": [],
+  "files": [
+    "clang_pipeline/tests/fixtures/external_flow.c",
+    "clang_pipeline/tests/fixtures/macro_builtin_flow.c",
+    "clang_pipeline/tests/fixtures/resource_ownership.c",
+    "demo/sample/app.cpp",
+    "demo/sample/event_loop.cpp",
+    "solution.cpp",
+    "validation/resource-flow/fixtures/double_free.c",
+    "validation/resource-flow/fixtures/leak_error_path.c",
+    "validation/resource-flow/fixtures/ownership_transfer.c",
+    "validation/resource-flow/fixtures/use_after_free.c"
+  ],
+  "warnings": []
+}

@@ -1,0 +1,153 @@
+diff --git a/clang_pipeline/repo_agent.py b/clang_pipeline/repo_agent.py
+index 699c178..99e710b 100644
+--- a/clang_pipeline/repo_agent.py
++++ b/clang_pipeline/repo_agent.py
+@@ -589,7 +589,18 @@ def run_repo_analysis(
+     max_repository_bytes: int = 1024 * 1024 * 1024,
+     stage_timeout: float = 1200,
+     safe_mode: bool = False,
++    snapshot_identity: dict[str, str] | None = None,
+ ) -> dict[str, Any]:
++    identity_url = repository_url
++    if snapshot_identity is not None:
++        from .security import github_archive_url
++        if not safe_mode or set(snapshot_identity) != {"repository_url", "commit"}:
++            raise ValueError("archive snapshot identity requires safe_mode and repository_url/commit")
++        identity_url = snapshot_identity["repository_url"]
++        pinned_commit = snapshot_identity["commit"]
++        if not re.fullmatch(r"[0-9a-f]{40}", pinned_commit):
++            raise ValueError("archive snapshot identity requires a full commit SHA")
++        github_archive_url(identity_url, commit=pinned_commit)
+     target_output = Path(output_dir).expanduser().resolve()
+     target_output.mkdir(parents=True, exist_ok=True)
+     label = repository_label(repository_url)
+@@ -636,6 +647,8 @@ def run_repo_analysis(
+                     commit=commit,
+                     work_root=work_root,
+                 )
++                if snapshot_identity is not None:
++                    resolved_commit = snapshot_identity["commit"]
+                 checkout_span.set_result(
+                     {
+                         "source_dir": str(repo),
+@@ -657,7 +670,7 @@ def run_repo_analysis(
+                 )
+                 limit_span.set_result(limit_summary)
+ 
+-            repository = repository_identity(repository_url)
++            repository = repository_identity(identity_url)
+             profile = build_profile or "repository-auto"
+             logs_dir = target_workspace / "logs"
+             logs_dir.mkdir(parents=True, exist_ok=True)
+@@ -699,7 +712,7 @@ def run_repo_analysis(
+                 bundle = bundle_artifacts(
+                     target_workspace,
+                     target_output,
+-                    repository_url=repository_url,
++                    repository_url=identity_url,
+                     commit=resolved_commit,
+                     run_id=run_id,
+                     build_profile=profile,
+@@ -724,7 +737,7 @@ def run_repo_analysis(
+             cancel_token.check("finalize")
+             result = {
+                 "status": "succeeded",
+-                "repository_url": repository_url,
++                "repository_url": identity_url,
+                 "repository": repository,
+                 "repository_label": label,
+                 "commit": resolved_commit,
+diff --git a/clang_pipeline/sandbox.py b/clang_pipeline/sandbox.py
+index 56d5b30..8d63ac8 100644
+--- a/clang_pipeline/sandbox.py
++++ b/clang_pipeline/sandbox.py
+@@ -151,11 +151,22 @@ class DockerSandboxRunner:
+                 # Export only after the analysis process exits. No host path is mounted.
+                 # Stream the bounded tar transport to disk, not host RAM.
+                 with tempfile.TemporaryFile() as exported_archive:
+-                    copy_code, _, copy_error = self._command(['docker', 'cp', name + ':/work/output/.', '-'],
++                    # Read through the running container. Docker's archive API
++                    # may not expose files in runtime tmpfs mounts.
++                    export = "\n".join([
++                        "import sys, tarfile",
++                        "from pathlib import Path",
++                        "with tarfile.open(fileobj=sys.stdout.buffer, mode='w|') as archive:",
++                        "    for path in sorted(Path('/work/output').iterdir()):",
++                        "        if path.name not in {'workspace', 'checkout', '.git'}:",
++                        "            archive.add(path, arcname=path.name)",
++                    ])
++                    copy_code, _, copy_error = self._command(['docker', 'exec', name, 'python3', '-c', export],
+                         cancel_token, deadline, outgoing=exported_archive,
+                         output_limit=self.config.disk_mb * 1024 * 1024)
+                     if copy_code:
+-                        raise AnalysisError('sandbox output unavailable: ' + copy_error.decode(errors='replace')[:500])
++                        detail = error.decode(errors='replace') if code else copy_error.decode(errors='replace')
++                        raise AnalysisError('sandbox analysis/output unavailable: ' + detail[-2000:])
+                     # Keep host transport Trace separate from the inner analysis Trace.
+                     exported = output_dir / 'analysis'
+                     extract_regular_tar(exported_archive, exported,
+@@ -192,7 +203,9 @@ class DockerSandboxRunner:
+         except urllib.error.URLError as exc:
+             raise RepositoryCheckoutError("repository archive network request failed", retryable=True) from exc
+         except FileNotFoundError as exc:
+-            raise SandboxUnavailable('Docker executable is unavailable') from exc
++            if exc.filename in {'docker', 'docker.exe'}:
++                raise SandboxUnavailable('Docker executable is unavailable') from exc
++            raise AnalysisError('sandbox artifact unavailable: ' + str(exc)) from exc
+         finally:
+             if created:
+                 # Forced removal terminates every descendant, including compiler processes.
+diff --git a/clang_pipeline/sandbox_entry.py b/clang_pipeline/sandbox_entry.py
+index 7f64696..4569d3c 100644
+--- a/clang_pipeline/sandbox_entry.py
++++ b/clang_pipeline/sandbox_entry.py
+@@ -21,9 +21,13 @@ def main():
+     from .repo_agent import run_repo_analysis
+     from .execution import AnalysisError
+     try:
++        identity = None
++        if request.get('commit'):
++            identity = {'repository_url': request['repository_url'], 'commit': request['commit']}
+         result = run_repo_analysis('/work/repository', output_dir='/work/output',
+             work_root='/work/checkout', archive=False, safe_mode=True, build_profile='safe-generic',
+             entry_symbols=request.get('entry_symbols'), optimized_ir=bool(request.get('optimized_ir')),
++            snapshot_identity=identity,
+             max_repository_files=request['max_repository_files'],
+             max_repository_bytes=request['max_repository_bytes'])
+         result['repository_url'] = request['repository_url']
+diff --git a/clang_pipeline/stages.py b/clang_pipeline/stages.py
+index 7c46a52..8c71385 100644
+--- a/clang_pipeline/stages.py
++++ b/clang_pipeline/stages.py
+@@ -19,7 +19,12 @@ from .clang_ast import (
+     utc_now,
+     write_json,
+ )
+-from .libclang_extract import extract_compact_ast
++try:
++    from .libclang_extract import extract_compact_ast
++except (ImportError, OSError, RuntimeError, AttributeError):
++    # Older libclang builds may lack the binary-operator C API. The compiler
++    # JSON AST path preserves the available syntax instead of failing import.
++    extract_compact_ast = None
+ from .visualization import write_visualization
+ 
+ 
+@@ -129,7 +134,7 @@ def stage01_index(workspace: Path) -> dict[str, Any]:
+     compile_units: list[dict[str, Any]] = []
+     manifest: dict[str, str] = {}
+     for unit in units:
+-        if unit.get("file", "").endswith(".c"):
++        if unit.get("file", "").endswith(".c") and extract_compact_ast is not None:
+             ast = extract_compact_ast(unit, source_root)
+         else:
+             ast = run_clang_ast(unit, root)
+@@ -512,7 +517,7 @@ def stage03_callgraph(workspace: Path) -> dict[str, Any]:
+     evidence: dict[str, dict[str, Any]] = {}
+     analyzer = (
+         "libclang compact AST + clang++"
+-        if any(unit.get("file", "").endswith(".c") for unit in _load_compile_units(workspace))
++        if extract_compact_ast is not None and any(unit.get("file", "").endswith(".c") for unit in _load_compile_units(workspace))
+         else "clang++ -Xclang -ast-dump=json"
+     )
+ 

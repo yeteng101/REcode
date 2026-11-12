@@ -1,0 +1,18 @@
+test_api_in_comment_is_ignored_and_source_line_preserved (clang_pipeline.tests.test_concurrency_facts.ConcurrencyFactsTests.test_api_in_comment_is_ignored_and_source_line_preserved) ... ok
+test_c11_create_uses_second_argument_as_entry (clang_pipeline.tests.test_concurrency_facts.ConcurrencyFactsTests.test_c11_create_uses_second_argument_as_entry) ... ok
+test_conditional_lock_and_common_lock_cannot_claim_must_protection (clang_pipeline.tests.test_concurrency_facts.ConcurrencyFactsTests.test_conditional_lock_and_common_lock_cannot_claim_must_protection) ... ok
+test_declarations_contexts_and_distinct_locks_have_source_evidence (clang_pipeline.tests.test_concurrency_facts.ConcurrencyFactsTests.test_declarations_contexts_and_distinct_locks_have_source_evidence) ... ok
+test_join_separated_lifetimes_are_observed_without_serialization_claim (clang_pipeline.tests.test_concurrency_facts.ConcurrencyFactsTests.test_join_separated_lifetimes_are_observed_without_serialization_claim) ... ok
+test_same_static_name_in_other_file_has_distinct_identity (clang_pipeline.tests.test_concurrency_facts.ConcurrencyFactsTests.test_same_static_name_in_other_file_has_distinct_identity) ... ok
+test_shadowed_global_is_unbound (clang_pipeline.tests.test_concurrency_facts.ConcurrencyFactsTests.test_shadowed_global_is_unbound) ... ok
+test_unresolved_callback_keeps_unknown (clang_pipeline.tests.test_concurrency_facts.ConcurrencyFactsTests.test_unresolved_callback_keeps_unknown) ... ok
+test_indirect_index_is_unknown (clang_pipeline.tests.test_race_detector.RaceDetectorTests.test_indirect_index_is_unknown) ... ok
+test_openmp_disjoint_index_is_no_race (clang_pipeline.tests.test_race_detector.RaceDetectorTests.test_openmp_disjoint_index_is_no_race) ... ok
+test_openmp_shifted_index_is_race (clang_pipeline.tests.test_race_detector.RaceDetectorTests.test_openmp_shifted_index_is_race) ... ok
+test_prediction_has_evidence_when_a_candidate_is_found (clang_pipeline.tests.test_race_detector.RaceDetectorTests.test_prediction_has_evidence_when_a_candidate_is_found) ... ok
+test_pthread_atomic_and_lifetime_handling (clang_pipeline.tests.test_race_detector.RaceDetectorTests.test_pthread_atomic_and_lifetime_handling) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.054s
+
+OK

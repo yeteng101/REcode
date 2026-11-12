@@ -1,0 +1,60 @@
+{
+  "status": "passed",
+  "test_count": 314,
+  "suites": [
+    {
+      "name": "common",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 0.97,
+      "test_count": 48,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-flow-framework-final-20261111\\common.log"
+    },
+    {
+      "name": "memory",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 0.107,
+      "test_count": 4,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-flow-framework-final-20261111\\memory.log"
+    },
+    {
+      "name": "concurrency",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 83.125,
+      "test_count": 103,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-flow-framework-final-20261111\\concurrency.log"
+    },
+    {
+      "name": "pr-adapter-routing",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 9.436,
+      "test_count": 14,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-flow-framework-final-20261111\\pr-adapter-routing.log"
+    },
+    {
+      "name": "concurrency-scripts",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 16.146,
+      "test_count": 145,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-flow-framework-final-20261111\\concurrency-scripts.log"
+    },
+    {
+      "name": "smoke",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 5.89,
+      "test_count": 0,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-full-flow-framework-final-20261111\\smoke.log"
+    }
+  ],
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "docker_checks": "not_run",
+  "offline": {
+    "enabled": true,
+    "blocked_python_network_events": 0
+  }
+}

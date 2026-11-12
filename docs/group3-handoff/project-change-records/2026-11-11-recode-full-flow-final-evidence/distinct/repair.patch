@@ -1,0 +1,16 @@
+diff --git a/workers.c b/workers.c
+index 1d12e3e..888f5c8 100644
+--- a/workers.c
++++ b/workers.c
+@@ -12,9 +12,9 @@ void *writer_a(void *unused) {
+ }
+ void *writer_b(void *unused) {
+     (void)unused;
+-    pthread_mutex_lock(&second_mutex);
++    pthread_mutex_lock(&mutex);
+     counter++;
+-    pthread_mutex_unlock(&second_mutex);
++    pthread_mutex_unlock(&mutex);
+     return 0;
+ }
+ int main(void) {

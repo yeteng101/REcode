@@ -1,0 +1,7 @@
+{
+  "status": "failed",
+  "stage": "independent schema audit",
+  "artifact": "common/concurrency/lock-impact-scope.json",
+  "error": "Additional properties are not allowed ('local_limits' was unexpected)",
+  "resolution": "Describe the existing emitted local_limits with precise property constraints and a regression; preserve source artifacts."
+}

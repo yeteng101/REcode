@@ -578,7 +578,7 @@ def _thread_lifecycle(
         if len(args) < 3:
             unresolved = True
             continue
-        target = args[2]
+        target = args[1] if match.group(0).startswith("thrd_create") else args[2]
         target = re.sub(r"^\([^)]*\)", "", target).strip(" &")
         if re.fullmatch(r"[A-Za-z_]\w*", target):
             handle = args[0].strip().lstrip("&")
@@ -814,6 +814,7 @@ def analyze_race_source(
     results: list[RegionResult] = []
     processed_files = []
     warnings = []
+    concurrency_facts = []
     candidates = (
         sorted(Path(path).resolve() for path in source_files)
         if source_files is not None
@@ -831,10 +832,14 @@ def analyze_race_source(
         processed_files.append(relative)
         clean = _strip_comments_and_literals(text)
         ranges = _function_ranges(clean)
-        results.extend(_analyze_openmp(clean, file=relative, ranges=ranges))
+        file_results = _analyze_openmp(clean, file=relative, ranges=ranges)
         pthread = _analyze_pthread(clean, file=relative)
         if pthread:
-            results.append(pthread)
+            file_results.append(pthread)
+        results.extend(file_results)
+        from .concurrency_facts import collect_concurrency_facts
+        concurrency_facts.append(collect_concurrency_facts(text, relative,
+            [_access_record(access) for result in file_results for access in result.accesses]))
     if not processed_files:
         label = "unknown"
         reason = "no C/C++ source files were available"
@@ -859,6 +864,8 @@ def analyze_race_source(
         for access in result.accesses
     ]
     evidence = _evidence(accesses)
+    for facts in concurrency_facts:
+        evidence.extend(facts.pop("evidence"))
     occurrences = []
     for index, result in enumerate(results):
         result_accesses = [_access_record(access) for access in result.accesses]
@@ -903,6 +910,7 @@ def analyze_race_source(
             else 0.0
         ),
         "items": occurrences,
+        "concurrency_facts": concurrency_facts,
         "evidence": evidence,
         "files": processed_files,
         "warnings": warnings,

@@ -1,0 +1,67 @@
+{
+  "schema_version": "review-input.v1",
+  "repository": {
+    "provider": "github",
+    "name": "cbug-integration/recode-contract",
+    "root": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\repository",
+    "commit_sha": "e0afc7adb828e08dd89fda306cf06ac76b8eff0a",
+    "commit_role": "head",
+    "base_sha": "1048b20f016dd62e6b18cc7d9d867a840434cd21",
+    "head_sha": "e0afc7adb828e08dd89fda306cf06ac76b8eff0a",
+    "build_profile": "recode-linux-clang"
+  },
+  "review_target": {
+    "id": "github-pr-local-integration",
+    "kind": "github_pull_request",
+    "base_revision": "1048b20f016dd62e6b18cc7d9d867a840434cd21",
+    "head_revision": "e0afc7adb828e08dd89fda306cf06ac76b8eff0a",
+    "url": "local:two-commit-integration",
+    "diff_base_revision": "1048b20f016dd62e6b18cc7d9d867a840434cd21"
+  },
+  "diff": {
+    "format": "unified",
+    "text": "diff --git a/observe.c b/observe.c\nindex 0c2a6d5..9e7f621 100644\n--- a/observe.c\n+++ b/observe.c\n@@ -1,5 +1,5 @@\n #include \"state.h\"\n int observe(int value) {\n     allocate_temporary();\n-    return value;\n+    return value + 1;\n }\ndiff --git a/workers.c b/workers.c\nindex b6540be..1d12e3e 100644\n--- a/workers.c\n+++ b/workers.c\n@@ -2,25 +2,26 @@\n #include \"state.h\"\n int counter = 0;\n pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;\n+pthread_mutex_t second_mutex = PTHREAD_MUTEX_INITIALIZER;\n void *writer_a(void *unused) {\n     (void)unused;\n     pthread_mutex_lock(&mutex);\n-    counter++;\n+    counter += 2;\n     pthread_mutex_unlock(&mutex);\n     return 0;\n }\n void *writer_b(void *unused) {\n     (void)unused;\n-    pthread_mutex_lock(&mutex);\n+    pthread_mutex_lock(&second_mutex);\n     counter++;\n-    pthread_mutex_unlock(&mutex);\n+    pthread_mutex_unlock(&second_mutex);\n     return 0;\n }\n int main(void) {\n     pthread_t a, b;\n-    pthread_create(&a, 0, writer_a, 0);\n-    pthread_create(&b, 0, writer_b, 0);\n-    pthread_join(a, 0);\n-    pthread_join(b, 0);\n+    if (pthread_create(&a, 0, writer_a, 0) != 0) return 1;\n+    if (pthread_create(&b, 0, writer_b, 0) != 0) return 1;\n+    if (pthread_join(a, 0) != 0) return 1;\n+    if (pthread_join(b, 0) != 0) return 1;\n     return observe(counter);\n }\n",
+    "changed_files": [
+      "observe.c",
+      "workers.c"
+    ]
+  },
+  "changed_functions": [
+    {
+      "kind": "function",
+      "name": "observe",
+      "qualified_name": "observe",
+      "file": "observe.c",
+      "start_line": 2
+    },
+    {
+      "kind": "function",
+      "name": "writer_a",
+      "qualified_name": "writer_a",
+      "file": "workers.c",
+      "start_line": 6
+    },
+    {
+      "kind": "function",
+      "name": "writer_b",
+      "qualified_name": "writer_b",
+      "file": "workers.c",
+      "start_line": 13
+    },
+    {
+      "kind": "function",
+      "name": "main",
+      "qualified_name": "main",
+      "file": "workers.c",
+      "start_line": 20
+    }
+  ],
+  "agent_input_policy": {
+    "oracle_included": false,
+    "healthy_source_included": false,
+    "source_is_head_revision": true
+  },
+  "acquisition_coverage_gaps": [
+    "workers.c: changed head lines not assigned to a function: [5]"
+  ]
+}

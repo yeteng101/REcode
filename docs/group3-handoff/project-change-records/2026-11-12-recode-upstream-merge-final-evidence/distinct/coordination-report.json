@@ -1,0 +1,68 @@
+{
+  "schema_version": "specialty-coordination.v1",
+  "status": "prepared",
+  "review_target": {
+    "id": "github-pr-local-integration",
+    "kind": "github_pull_request",
+    "base_revision": "1048b20f016dd62e6b18cc7d9d867a840434cd21",
+    "head_revision": "e0afc7adb828e08dd89fda306cf06ac76b8eff0a",
+    "url": "local:two-commit-integration",
+    "diff_base_revision": "1048b20f016dd62e6b18cc7d9d867a840434cd21"
+  },
+  "routing": {
+    "routes": [
+      "memory",
+      "concurrency"
+    ],
+    "confidence": 0.5,
+    "reason": "structured first-group resource and synchronization facts",
+    "run_both": true,
+    "signals": {
+      "memory": [
+        "resource_flow"
+      ],
+      "concurrency": [
+        "sync_flow"
+      ]
+    }
+  },
+  "first_group": {
+    "call_chain": {
+      "run_id": "recode-cbug-integration-e0afc7adb828:get_call_chains",
+      "status": "succeeded"
+    },
+    "specialty_facts": {
+      "memory": {
+        "action": "get_resource_flows",
+        "run_id": "recode-cbug-integration-e0afc7adb828:get_resource_flows",
+        "status": "partial"
+      },
+      "concurrency": {
+        "action": "get_sync_flows",
+        "run_id": "recode-cbug-integration-e0afc7adb828:get_sync_flows",
+        "status": "succeeded"
+      }
+    }
+  },
+  "route_errors": [],
+  "bundle_paths": {
+    "memory": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\http\\memory-context-bundle.json",
+    "concurrency": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\http\\concurrency-context-bundle.json"
+  },
+  "handoffs": [
+    {
+      "domain": "memory",
+      "status": "prepared",
+      "context_bundle": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\http\\memory-context-bundle.json",
+      "entrypoint": "D:\\JDProject\\C-BUG-Patch\\v2-memory\\memory_subagent.py",
+      "invocation": "python v2-memory/memory_subagent.py --context-bundle <bundle> --prepare-dir <run-dir>"
+    },
+    {
+      "domain": "concurrency",
+      "status": "prepared",
+      "context_bundle": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-upstream-merge-20261112\\distinct\\http\\concurrency-context-bundle.json",
+      "entrypoint": "D:\\JDProject\\C-BUG-Patch\\v2-concurrency\\concurrency_subagent.py",
+      "invocation": "py -3.12 v2-concurrency/concurrency_subagent.py --context-bundle <bundle> --prepare-dir <run-dir>"
+    }
+  ]
+}

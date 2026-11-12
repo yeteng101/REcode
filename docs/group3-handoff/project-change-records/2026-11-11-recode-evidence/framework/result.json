@@ -1,0 +1,60 @@
+{
+  "status": "passed",
+  "test_count": 287,
+  "suites": [
+    {
+      "name": "common",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 0.677,
+      "test_count": 33,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-framework-routing-final-20261111\\common.log"
+    },
+    {
+      "name": "memory",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 0.102,
+      "test_count": 4,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-framework-routing-final-20261111\\memory.log"
+    },
+    {
+      "name": "concurrency",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 76.238,
+      "test_count": 94,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-framework-routing-final-20261111\\concurrency.log"
+    },
+    {
+      "name": "pr-adapter-routing",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 7.372,
+      "test_count": 12,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-framework-routing-final-20261111\\pr-adapter-routing.log"
+    },
+    {
+      "name": "concurrency-scripts",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 15.19,
+      "test_count": 144,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-framework-routing-final-20261111\\concurrency-scripts.log"
+    },
+    {
+      "name": "smoke",
+      "status": "passed",
+      "exit_code": 0,
+      "seconds": 5.469,
+      "test_count": 0,
+      "log": "D:\\JDProject\\C-BUG-Patch\\runs\\recode-integration-framework-routing-final-20261111\\smoke.log"
+    }
+  ],
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "docker_checks": "not_run",
+  "offline": {
+    "enabled": true,
+    "blocked_python_network_events": 0
+  }
+}

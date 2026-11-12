@@ -1,0 +1,377 @@
+{
+  "candidate_count": 1,
+  "candidate_schedule": {
+    "deferred_candidate_ids": [],
+    "groups": [
+      {
+        "candidate_ids": [
+          "race-1a47d1b2dea759da"
+        ],
+        "group_id": "571e083273ab2a82f36d"
+      }
+    ],
+    "max_review_requests": 32,
+    "selected_candidate_ids": [
+      "race-1a47d1b2dea759da"
+    ],
+    "verdict_propagation": false
+  },
+  "change_context": {
+    "base_is_ancestor_of_head": null,
+    "base_sha": "a8e62f08547113772abdc20c0313fbfa1c9479de",
+    "changed_files": [
+      {
+        "path": "observe.c",
+        "status": "M"
+      },
+      {
+        "path": "workers.c",
+        "status": "M"
+      }
+    ],
+    "changed_locations": [
+      {
+        "end_line": 5,
+        "evidence_ids": [
+          "diff-1d5a4b4c8fb1a8d657c1"
+        ],
+        "file": "observe.c",
+        "new_line_count": 5,
+        "old_line_count": 5,
+        "old_start_line": 1,
+        "side": "right",
+        "start_line": 1
+      },
+      {
+        "end_line": 24,
+        "evidence_ids": [
+          "diff-2f5a76031d98ede7904f"
+        ],
+        "file": "workers.c",
+        "new_line_count": 20,
+        "old_line_count": 22,
+        "old_start_line": 5,
+        "side": "right",
+        "start_line": 5
+      }
+    ],
+    "diff_evidence_ids": [
+      "diff-1d5a4b4c8fb1a8d657c1",
+      "diff-2f5a76031d98ede7904f"
+    ],
+    "diff_sha256": "40b443a6ad022f081408c42d47a451cc6be13cbade2d7c0bb9f1acc4c01c465b",
+    "head_sha": "22c1e66409b78c14d8e00511e1361dcf3c900d17",
+    "merge_base_sha": "a8e62f08547113772abdc20c0313fbfa1c9479de",
+    "reason": null,
+    "status": "complete"
+  },
+  "coverage": {
+    "complete": true,
+    "reason": null,
+    "unresolved": []
+  },
+  "discovery_budget": {
+    "deferred_pair_ranges": [],
+    "exact_duplicates_removed": 0,
+    "examined_access_pairs": 3,
+    "max_access_pairs": 10000,
+    "max_race_candidates": 2000,
+    "shared_object_join": {
+      "duplicate_accesses_removed": 0,
+      "objects_joined": 1
+    }
+  },
+  "errors": [],
+  "missing_review_candidate_ids": [],
+  "provenance": {
+    "analyzer": {
+      "formal_evidence": true,
+      "name": "REcode-bounded-AST-sync",
+      "version": "1.0"
+    },
+    "first_group_run_id": "recode-cbug-integration-22c1e66409b7:get_sync_flows",
+    "first_group_schema_version": "1.0",
+    "formal_evidence": true,
+    "graph_snapshot_id": "recode-e7f9093274226a252708e52ef2b915325b82322d30882989c00743033752bf6f",
+    "review_confidence_cap": 1.0,
+    "source_kind": "first_group",
+    "source_response_sha256": "a371997f07c5a7a3206e759e4e3949ed7453a6a7c1fb38e5ebefb88418fc2d6d"
+  },
+  "repository": {
+    "base_sha": "a8e62f08547113772abdc20c0313fbfa1c9479de",
+    "build_profile": "recode-linux-clang",
+    "graph_snapshot_id": "recode-e7f9093274226a252708e52ef2b915325b82322d30882989c00743033752bf6f",
+    "head_sha": "22c1e66409b78c14d8e00511e1361dcf3c900d17",
+    "name": "cbug-integration/recode-contract"
+  },
+  "reviewed_count": 1,
+  "reviews": [
+    {
+      "access_a": {
+        "access_id": "ast_access_389aaf54c909bbccddb7",
+        "confidence": 1.0,
+        "evidence_ids": [
+          "ev_ast_3953321a0436c80a",
+          "ev_ast_68e2add3ceebe723",
+          "ev_ast_7c33faf9b6d1a5ef"
+        ],
+        "execution_context": {
+          "cannot_run_concurrently_with": [
+            "main:d3d5f7516774"
+          ],
+          "context_id": "thread:ast_thread_9aba0e369f233445",
+          "creation_site": {
+            "column": 9,
+            "file": "workers.c",
+            "line": 20,
+            "snippet": "if (pthread_create(&b, 0, writer_b, 0) != 0) return 1;"
+          },
+          "may_run_concurrently_with": [
+            "thread:ast_thread_c3c084bbc2743b8e"
+          ],
+          "reentrant": false
+        },
+        "function": "writer_b",
+        "kind": "write",
+        "location": {
+          "end_line": 14,
+          "file": "workers.c",
+          "start_line": 14
+        },
+        "may_lockset": [],
+        "must_lockset": [],
+        "other_synchronization": [],
+        "source_finding_ids": [
+          "recode-ast-sync"
+        ]
+      },
+      "access_b": {
+        "access_id": "ast_access_76097af1d56d91dda18c",
+        "confidence": 1.0,
+        "evidence_ids": [
+          "ev_ast_5525e55220b96c21",
+          "ev_ast_68e2add3ceebe723",
+          "ev_ast_78be14100d1d1842",
+          "ev_ast_d86ebeb1d913eb54",
+          "ev_ast_f9573c3d4a60c9b4"
+        ],
+        "execution_context": {
+          "cannot_run_concurrently_with": [
+            "main:d3d5f7516774"
+          ],
+          "context_id": "thread:ast_thread_c3c084bbc2743b8e",
+          "creation_site": {
+            "column": 9,
+            "file": "workers.c",
+            "line": 19,
+            "snippet": "if (pthread_create(&a, 0, writer_a, 0) != 0) return 1;"
+          },
+          "may_run_concurrently_with": [
+            "thread:ast_thread_9aba0e369f233445"
+          ],
+          "reentrant": false
+        },
+        "function": "writer_a",
+        "kind": "write",
+        "location": {
+          "end_line": 8,
+          "file": "workers.c",
+          "start_line": 8
+        },
+        "may_lockset": [
+          {
+            "lock_id": "object_ast_22e0661fea5bc641e24c",
+            "mode": "exclusive"
+          }
+        ],
+        "must_lockset": [
+          {
+            "lock_id": "object_ast_22e0661fea5bc641e24c",
+            "mode": "exclusive"
+          }
+        ],
+        "other_synchronization": [],
+        "source_finding_ids": [
+          "recode-ast-sync"
+        ]
+      },
+      "at_least_one_write": true,
+      "candidate_id": "race-1a47d1b2dea759da",
+      "change_relationship": "introduced",
+      "common_protection": {
+        "common_must_lockset": [],
+        "effective": false,
+        "other_synchronization": []
+      },
+      "confidence": 0.99,
+      "coverage": {
+        "candidate_decision": {
+          "blocking_gaps": [],
+          "checks": {
+            "call_facts": true,
+            "conflict": true,
+            "evidence": true,
+            "identity": true,
+            "overlap": true,
+            "pr_connection": true,
+            "protocol": true,
+            "required_source": true,
+            "source_integrity": true,
+            "source_sites": true,
+            "sync_facts": true,
+            "version": true
+          },
+          "complete": true,
+          "invalid_source_files": [],
+          "max_status": "probable",
+          "missing_source_ranges": [],
+          "nonblocking_gaps": [],
+          "policy": "candidate-local-proof/1",
+          "required_source_ranges": [
+            {
+              "end_line": 3,
+              "file": "workers.c",
+              "role": "object_declaration",
+              "start_line": 3
+            },
+            {
+              "end_line": 4,
+              "file": "workers.c",
+              "role": "lock_declaration",
+              "start_line": 4
+            },
+            {
+              "end_line": 7,
+              "file": "workers.c",
+              "role": "lock_operation",
+              "start_line": 7
+            },
+            {
+              "end_line": 8,
+              "file": "workers.c",
+              "role": "access_b",
+              "start_line": 8
+            },
+            {
+              "end_line": 9,
+              "file": "workers.c",
+              "role": "lock_operation",
+              "start_line": 9
+            },
+            {
+              "end_line": 14,
+              "file": "workers.c",
+              "role": "access_a",
+              "start_line": 14
+            }
+          ]
+        },
+        "complete": true,
+        "reason": null,
+        "source_context": {
+          "complete": true,
+          "included_files": [
+            "observe.c",
+            "resource.c",
+            "workers.c"
+          ],
+          "missing_related_files": [],
+          "missing_required_files": [],
+          "missing_required_ranges": [],
+          "required_files": [
+            "workers.c"
+          ]
+        },
+        "unresolved": []
+      },
+      "defect_type": "data_race",
+      "evidence_ids": [
+        "ev_ast_68e2add3ceebe723",
+        "ev_ast_7c33faf9b6d1a5ef",
+        "ev_ast_f9573c3d4a60c9b4",
+        "ev_ast_5525e55220b96c21",
+        "ev_ast_78be14100d1d1842",
+        "ev_ast_3e9a2fa02f3d1e46",
+        "ev_ast_d86ebeb1d913eb54",
+        "ev_ast_3953321a0436c80a",
+        "ev_ast_6edbd6c7efd53c58",
+        "ev_ast_657271673936cd6a",
+        "diff-2f5a76031d98ede7904f"
+      ],
+      "lock_order": {
+        "applicable": false,
+        "blocking": false,
+        "may_overlap": false,
+        "reachable_cycle": false
+      },
+      "may_concurrent": true,
+      "missing_facts": [],
+      "patch": {
+        "diff": null,
+        "reason": "This bounded review is read-only and patch generation belongs to the separate approval-gated patch stage.",
+        "status": "not_generated"
+      },
+      "provenance": {
+        "analyzer": {
+          "formal_evidence": true,
+          "name": "REcode-bounded-AST-sync",
+          "version": "1.0"
+        },
+        "context_delivery": {
+          "archive_sha256": "f3ecd1baad992663f71d6b0f34e4595155bbeb940c80f30a517340105289b2cc",
+          "lookup": "read_lock_race_candidate_context",
+          "max_inline_chars": 64000,
+          "omissions": [],
+          "revision": 0
+        },
+        "first_group_run_id": "recode-cbug-integration-22c1e66409b7:get_sync_flows",
+        "first_group_schema_version": "1.0",
+        "formal_evidence": true,
+        "graph_snapshot_id": "recode-e7f9093274226a252708e52ef2b915325b82322d30882989c00743033752bf6f",
+        "review_confidence_cap": 1.0,
+        "source_kind": "first_group",
+        "source_response_sha256": "a371997f07c5a7a3206e759e4e3949ed7453a6a7c1fb38e5ebefb88418fc2d6d"
+      },
+      "recommended_action": "Restore acquisition and release of the same mutex around writer_b's counter increment so both worker updates use the shared locking protocol.",
+      "repository": {
+        "base_sha": "a8e62f08547113772abdc20c0313fbfa1c9479de",
+        "build_profile": "recode-linux-clang",
+        "graph_snapshot_id": "recode-e7f9093274226a252708e52ef2b915325b82322d30882989c00743033752bf6f",
+        "head_sha": "22c1e66409b78c14d8e00511e1361dcf3c900d17",
+        "name": "cbug-integration/recode-contract"
+      },
+      "same_object": true,
+      "schema_version": "lock-race-review/0.1",
+      "severity": "medium",
+      "shared_object": {
+        "declaration": {
+          "end_line": 3,
+          "file": "workers.c",
+          "start_line": 3
+        },
+        "identity_confidence": 1.0,
+        "name": "counter",
+        "object_id": "object_ast_a228610e317ce63329f7",
+        "source_finding_ids": [
+          "recode-ast-sync"
+        ],
+        "type": "int"
+      },
+      "status": "probable",
+      "summary": "Both worker functions modify the same global non-atomic int counter. On the successful thread-creation path, main creates both workers before joining either, allowing their read-modify-write operations to overlap. writer_a holds mutex across counter += 2, while writer_b executes counter++ without synchronization. The later joins order worker completion before main continues but provide no ordering between these two worker accesses. The workers.c diff directly introduces this race by removing writer_b's mutex acquisition and release. The supplied candidate_decision.max_status limits this review to probable.",
+      "verdict": "defect",
+      "verification": {
+        "checks": [],
+        "status": "not_run"
+      },
+      "verification_recommendations": [
+        "Under a host-approved verification plan, exercise the normal main entry point with both thread creations succeeding and controlled scheduling that brings both workers to their counter updates. Verify that the repaired accesses serialize through the same mutex.",
+        "Verify that successful completion of both joins yields counter equal to 3 and an observe result equal to 4, and repeat under varied worker scheduling."
+      ]
+    }
+  ],
+  "schema_version": "lock-race-coordinator-result/0.1",
+  "status": "completed",
+  "task_id": "github-pr-local-integration:get_sync_flows",
+  "warnings": []
+}
