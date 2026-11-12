@@ -40,9 +40,11 @@ jobs:
           import boto3
           import time
           access, secret = secrets.token_hex(12), secrets.token_hex(24)
+          print('::add-mask::' + access, flush=True)
+          print('::add-mask::' + secret, flush=True)
           subprocess.run(['docker', 'run', '-d', '--name', 'minio', '-p', '127.0.0.1:9000:9000',
                           '-e', 'MINIO_ROOT_USER=' + access, '-e', 'MINIO_ROOT_PASSWORD=' + secret,
-                          'minio/minio:RELEASE.2025-04-22T22-12-26Z', 'server', '/data'], check=True)
+                          'quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z', 'server', '/data'], check=True)
           client = boto3.client('s3', endpoint_url='http://127.0.0.1:9000',
                                 aws_access_key_id=access, aws_secret_access_key=secret, region_name='us-east-1')
           for attempt in range(60):
