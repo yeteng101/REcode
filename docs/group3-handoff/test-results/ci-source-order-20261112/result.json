@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "source_commits": {
+    "libuv": "8fb9cb919489a48880680a56efecff6a7dfb4504",
+    "redis": "d2c8a4b91e8c0e6aefd1f5bc0bf582cddbe046b7"
+  },
+  "checks": [
+    {
+      "name": "sync-annotations",
+      "exit_code": 0,
+      "status": "passed"
+    },
+    {
+      "name": "validation-tests",
+      "exit_code": 0,
+      "status": "passed"
+    }
+  ]
+}

@@ -4,6 +4,8 @@
 
 ## 对齐入口
 
+- [同步验证 CI 源码准备顺序修复](ci-source-order-2026-11-12.md)记录推送后发现的问题、步骤调整及 35 项验证测试通过结果。
+
 - [第一组 REcode 修改汇总](integrations/2026-11-11-recode-side-changes.md)列出新增模块、修改函数、返回字段、覆盖边界，以及双方待确认事项。
 - [C-BUG-Patch 侧修改与当前请求链](integrations/2026-11-11-c-bug-patch-side-changes.md)说明 HTTP 客户端、产物转换、公共层和专项编排的职责。
 - [HTTP 接口及使用说明](integrations/recode.md)提供已有结果包、任务服务和分析入口的调用方式。
