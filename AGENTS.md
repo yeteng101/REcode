@@ -1,5 +1,7 @@
 # 项目工作约定
 
+- 2026-11-12 默认生产 HTTP→持久队列→Docker→S3 验收脚本与 CI 已加入，运行与边界见 docs/production-entry-acceptance.md；实际通过状态以该提交 CI 证据为准。
+
 - 项目地址：https://github.com/yeteng101/REcode
 - 用户于 2026-11-04 确认的近期任务见 [生产化路线图](docs/production-roadmap.md)。后续规划和开发先读取该文档。
 - 近期主线为验证集之外的生产化与分析能力提升；不要自行把扩充验证集作为下一步主任务。

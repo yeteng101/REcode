@@ -151,11 +151,22 @@ class DockerSandboxRunner:
                 # Export only after the analysis process exits. No host path is mounted.
                 # Stream the bounded tar transport to disk, not host RAM.
                 with tempfile.TemporaryFile() as exported_archive:
-                    copy_code, _, copy_error = self._command(['docker', 'cp', name + ':/work/output/.', '-'],
+                    # Read through the running container. Docker's archive API
+                    # may not expose files in runtime tmpfs mounts.
+                    export = "\n".join([
+                        "import sys, tarfile",
+                        "from pathlib import Path",
+                        "with tarfile.open(fileobj=sys.stdout.buffer, mode='w|') as archive:",
+                        "    for path in sorted(Path('/work/output').iterdir()):",
+                        "        if path.name not in {'workspace', 'checkout', '.git'}:",
+                        "            archive.add(path, arcname=path.name)",
+                    ])
+                    copy_code, _, copy_error = self._command(['docker', 'exec', name, 'python3', '-c', export],
                         cancel_token, deadline, outgoing=exported_archive,
                         output_limit=self.config.disk_mb * 1024 * 1024)
                     if copy_code:
-                        raise AnalysisError('sandbox output unavailable: ' + copy_error.decode(errors='replace')[:500])
+                        detail = error.decode(errors='replace') if code else copy_error.decode(errors='replace')
+                        raise AnalysisError('sandbox analysis/output unavailable: ' + detail[-2000:])
                     # Keep host transport Trace separate from the inner analysis Trace.
                     exported = output_dir / 'analysis'
                     extract_regular_tar(exported_archive, exported,
@@ -192,7 +203,9 @@ class DockerSandboxRunner:
         except urllib.error.URLError as exc:
             raise RepositoryCheckoutError("repository archive network request failed", retryable=True) from exc
         except FileNotFoundError as exc:
-            raise SandboxUnavailable('Docker executable is unavailable') from exc
+            if exc.filename in {'docker', 'docker.exe'}:
+                raise SandboxUnavailable('Docker executable is unavailable') from exc
+            raise AnalysisError('sandbox artifact unavailable: ' + str(exc)) from exc
         finally:
             if created:
                 # Forced removal terminates every descendant, including compiler processes.

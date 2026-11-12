@@ -1,9 +1,9 @@
 name: Sandbox and observability
 on:
   push:
-    paths: ['clang_pipeline/**', 'deploy/**', '.dockerignore', '.github/workflows/sandbox.yml']
+    paths: ['clang_pipeline/**', 'scripts/accept_production_entry.py', 'requirements-jobs-s3.txt', 'deploy/**', '.dockerignore', '.github/workflows/sandbox.yml']
   pull_request:
-    paths: ['clang_pipeline/**', 'deploy/**', '.dockerignore', '.github/workflows/sandbox.yml']
+    paths: ['clang_pipeline/**', 'scripts/accept_production_entry.py', 'requirements-jobs-s3.txt', 'deploy/**', '.dockerignore', '.github/workflows/sandbox.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,7 +18,7 @@ jobs:
           python-version: '3.12'
       - name: Unit and HTTP regression
         run: |
-          python -m unittest clang_pipeline.tests.test_agent_jobs clang_pipeline.tests.test_durable_jobs clang_pipeline.tests.test_job_http clang_pipeline.tests.test_security clang_pipeline.tests.test_observability -v
+          python -m unittest clang_pipeline.tests.test_agent_jobs clang_pipeline.tests.test_durable_jobs clang_pipeline.tests.test_job_http clang_pipeline.tests.test_security clang_pipeline.tests.test_observability clang_pipeline.tests.test_ast_fallback clang_pipeline.tests.test_snapshot_identity -v
       - name: Build immutable sandbox image for real isolation tests
         run: |
           docker run -d --name registry -p 127.0.0.1:5000:5000 registry:2
@@ -30,6 +30,50 @@ jobs:
           echo "CRA_SANDBOX_TEST_IMAGE=$SANDBOX_IMAGE" >> "$GITHUB_ENV"
       - name: Verify real container boundary, quotas and full analysis
         run: python -m unittest clang_pipeline.tests.test_sandbox_integration -v
+      - name: Start real S3-compatible object store
+        run: |
+          pip install -r requirements-jobs-s3.txt
+          python - <<'PY'
+          import secrets
+          import os
+          import subprocess
+          import boto3
+          import time
+          access, secret = secrets.token_hex(12), secrets.token_hex(24)
+          subprocess.run(['docker', 'run', '-d', '--name', 'minio', '-p', '127.0.0.1:9000:9000',
+                          '-e', 'MINIO_ROOT_USER=' + access, '-e', 'MINIO_ROOT_PASSWORD=' + secret,
+                          'minio/minio:RELEASE.2025-04-22T22-12-26Z', 'server', '/data'], check=True)
+          client = boto3.client('s3', endpoint_url='http://127.0.0.1:9000',
+                                aws_access_key_id=access, aws_secret_access_key=secret, region_name='us-east-1')
+          for attempt in range(60):
+              try:
+                  client.create_bucket(Bucket='recode-acceptance')
+                  break
+              except Exception:
+                  if attempt == 59:
+                      raise
+                  time.sleep(1)
+          print('::add-mask::' + access)
+          print('::add-mask::' + secret)
+          with open(os.environ['GITHUB_ENV'], 'a') as env:
+              env.write(f'AWS_ACCESS_KEY_ID={access}\nAWS_SECRET_ACCESS_KEY={secret}\nAWS_DEFAULT_REGION=us-east-1\n')
+          PY
+      - name: Accept default production HTTP entry with Docker and S3
+        env:
+          CRA_OBJECT_BACKEND: s3
+          CRA_S3_ENDPOINT_URL: http://127.0.0.1:9000
+          CRA_S3_BUCKET: recode-acceptance
+          CRA_S3_PREFIX: production-entry
+        run: python scripts/accept_production_entry.py --output "$RUNNER_TEMP/production-entry"
+      - name: Upload production acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-entry-evidence
+          path: |
+            ${{ runner.temp }}/production-entry/evidence.json
+            ${{ runner.temp }}/production-entry/*.log
+          if-no-files-found: warn
       - name: Check no sandbox containers remain
         if: always()
         run: test -z "$(docker ps -q --filter label=recode.sandbox=true)"

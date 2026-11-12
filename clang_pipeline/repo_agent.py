@@ -589,7 +589,19 @@ def run_repo_analysis(
     max_repository_bytes: int = 1024 * 1024 * 1024,
     stage_timeout: float = 1200,
     safe_mode: bool = False,
+    snapshot_identity: dict[str, str] | None = None,
 ) -> dict[str, Any]:
+    identity_url = repository_url
+    if snapshot_identity is not None:
+        from .security import github_archive_url
+        if not safe_mode or set(snapshot_identity) != {"repository_url", "commit"}:
+            raise ValueError("archive snapshot identity requires safe_mode and repository_url/commit")
+        identity_url = snapshot_identity["repository_url"]
+        pinned_commit = snapshot_identity["commit"].lower()
+        snapshot_identity = {**snapshot_identity, "commit": pinned_commit}
+        if not re.fullmatch(r"[0-9a-f]{40}", pinned_commit):
+            raise ValueError("archive snapshot identity requires a full commit SHA")
+        github_archive_url(identity_url, commit=pinned_commit)
     target_output = Path(output_dir).expanduser().resolve()
     target_output.mkdir(parents=True, exist_ok=True)
     label = repository_label(repository_url)
@@ -636,6 +648,8 @@ def run_repo_analysis(
                     commit=commit,
                     work_root=work_root,
                 )
+                if snapshot_identity is not None:
+                    resolved_commit = snapshot_identity["commit"]
                 checkout_span.set_result(
                     {
                         "source_dir": str(repo),
@@ -657,7 +671,7 @@ def run_repo_analysis(
                 )
                 limit_span.set_result(limit_summary)
 
-            repository = repository_identity(repository_url)
+            repository = repository_identity(identity_url)
             profile = build_profile or "repository-auto"
             logs_dir = target_workspace / "logs"
             logs_dir.mkdir(parents=True, exist_ok=True)
@@ -699,7 +713,7 @@ def run_repo_analysis(
                 bundle = bundle_artifacts(
                     target_workspace,
                     target_output,
-                    repository_url=repository_url,
+                    repository_url=identity_url,
                     commit=resolved_commit,
                     run_id=run_id,
                     build_profile=profile,
@@ -724,7 +738,7 @@ def run_repo_analysis(
             cancel_token.check("finalize")
             result = {
                 "status": "succeeded",
-                "repository_url": repository_url,
+                "repository_url": identity_url,
                 "repository": repository,
                 "repository_label": label,
                 "commit": resolved_commit,

@@ -21,13 +21,17 @@ def main():
     from .repo_agent import run_repo_analysis
     from .execution import AnalysisError
     try:
+        identity = None
+        if request.get('commit'):
+            identity = {'repository_url': request['repository_url'], 'commit': request['commit']}
         result = run_repo_analysis('/work/repository', output_dir='/work/output',
             work_root='/work/checkout', archive=False, safe_mode=True, build_profile='safe-generic',
             entry_symbols=request.get('entry_symbols'), optimized_ir=bool(request.get('optimized_ir')),
+            snapshot_identity=identity,
             max_repository_files=request['max_repository_files'],
             max_repository_bytes=request['max_repository_bytes'])
         result['repository_url'] = request['repository_url']
-        result['commit'] = request.get('commit') or 'archive-ref'
+        result['commit'] = request['commit'].lower() if request.get('commit') else 'archive-ref'
         Path('/work/output/sandbox-result.json').write_text(json.dumps(result), encoding='utf-8')
     except Exception as exc:
         Path('/work/output').mkdir(parents=True, exist_ok=True)

@@ -19,7 +19,12 @@ from .clang_ast import (
     utc_now,
     write_json,
 )
-from .libclang_extract import extract_compact_ast
+try:
+    from .libclang_extract import extract_compact_ast
+except (ImportError, OSError, RuntimeError, AttributeError):
+    # Older libclang builds may lack the binary-operator C API. The compiler
+    # JSON AST path preserves the available syntax instead of failing import.
+    extract_compact_ast = None
 from .visualization import write_visualization
 
 
@@ -129,7 +134,7 @@ def stage01_index(workspace: Path) -> dict[str, Any]:
     compile_units: list[dict[str, Any]] = []
     manifest: dict[str, str] = {}
     for unit in units:
-        if unit.get("file", "").endswith(".c"):
+        if unit.get("file", "").endswith(".c") and extract_compact_ast is not None:
             ast = extract_compact_ast(unit, source_root)
         else:
             ast = run_clang_ast(unit, root)
@@ -512,7 +517,7 @@ def stage03_callgraph(workspace: Path) -> dict[str, Any]:
     evidence: dict[str, dict[str, Any]] = {}
     analyzer = (
         "libclang compact AST + clang++"
-        if any(unit.get("file", "").endswith(".c") for unit in _load_compile_units(workspace))
+        if extract_compact_ast is not None and any(unit.get("file", "").endswith(".c") for unit in _load_compile_units(workspace))
         else "clang++ -Xclang -ast-dump=json"
     )
 
