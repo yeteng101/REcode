@@ -14,7 +14,12 @@
   "frozen_files": 32,
   "historical_protocol": "external-v1",
   "historical_lock_digest": "a054c5f1339a9e66d0f925e752dbfa5ee59b3e4b493b7606fd695265920aad67",
-  "external_full_baseline": "not_run",
+  "external_full_baseline": "completed_in_ci",
   "python": "3.12",
-  "execution": "Real Clang tests in read-only source-mounted Docker; validation and lock checks on host."
+  "execution": "Real Clang tests in read-only source-mounted Docker; validation and lock checks on host.",
+  "ci_source_commit": "88eeb06beb057ab835730bee24c86bd38049a98a",
+  "ci_external_run_url": "https://github.com/yeteng101/REcode/actions/runs/43192171292",
+  "ci_python_regression": "passed",
+  "ci_sandbox_observability": "passed",
+  "ci_regression_workflow": "failed_at_existing_benchmark_artifact_diff"
 }

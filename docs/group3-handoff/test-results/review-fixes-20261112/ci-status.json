@@ -1,0 +1,394 @@
+[
+  {
+    "id": 43192171292,
+    "name": "External benchmarks",
+    "sha": "88eeb06beb057ab835730bee24c86bd38049a98a",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/yeteng101/REcode/actions/runs/43192171292",
+    "jobs": [
+      {
+        "id": 131093959090,
+        "name": "external-benchmarks",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Fetch pinned external benchmarks",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Prepare external case indexes",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Build and validate benchmark protocol",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run dry run",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run full fixed baseline",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Validate external benchmark code and protocol",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Upload external benchmark results",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 43192171121,
+    "name": "Regression",
+    "sha": "88eeb06beb057ab835730bee24c86bd38049a98a",
+    "status": "completed",
+    "conclusion": "failure",
+    "url": "https://github.com/yeteng101/REcode/actions/runs/43192171121",
+    "jobs": [
+      {
+        "id": 131093958568,
+        "name": "sync-validation",
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install validation dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Fetch pinned libuv source",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Fetch pinned Redis source",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Validate synchronization annotations and rejection cases",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Reproduce both benchmarks",
+            "status": "completed",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Validation quality gate",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 131093958728,
+        "name": "neo4j-e2e",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Initialize containers",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Write graph and read it back",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Upload Neo4j verification artifact",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Stop containers",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 131093958850,
+        "name": "python-regression",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install validation dependencies",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install Clang",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Fetch pinned libuv source",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Compile Python sources",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Validate call-chain dataset",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Validate resource-flow dataset",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Check validation project registry and workflow tools",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Pipeline and Agent/MCP regression",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "HTTP JSON regression",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "MCP smoke test",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 131093960621,
+        "name": "openai-e2e",
+        "status": "completed",
+        "conclusion": "skipped",
+        "steps": []
+      }
+    ]
+  },
+  {
+    "id": 43192171358,
+    "name": "Sandbox and observability",
+    "sha": "88eeb06beb057ab835730bee24c86bd38049a98a",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/yeteng101/REcode/actions/runs/43192171358",
+    "jobs": [
+      {
+        "id": 131093959308,
+        "name": "isolated-analysis",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Unit and HTTP regression",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Build immutable sandbox image for real isolation tests",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify real container boundary, quotas and full analysis",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Check no sandbox containers remain",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ]
+  }
+]

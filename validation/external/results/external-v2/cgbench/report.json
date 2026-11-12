@@ -1,0 +1,1063 @@
+{
+  "schema_version": "1.0",
+  "dataset": "CG-Bench",
+  "selection_id": "cgbench-v1",
+  "commit": "b277b7329f62fdddc6d4a341057d045bdf69def2",
+  "metric": "callsite target-set prediction; callsite-target micro average",
+  "totals": {
+    "tp": 411,
+    "fp": 197,
+    "fn": 117,
+    "precision": 0.6759868421052632,
+    "recall": 0.7784090909090909,
+    "f1": 0.7235915492957746,
+    "total_expected_units": 611,
+    "binary_answered_units": 528,
+    "unknown_callsites": 41,
+    "unknown_expected_units": 83,
+    "unknown_callsite_rate": 0.3942307692307692,
+    "coverage": 0.8641571194762684
+  },
+  "cases": [
+    {
+      "id": "cgbench_bbb561c81842",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/altsvc.c:100:23",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_a033210ea51b",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/cfilters.c:466:5",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_735e5c4c9ae2",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/cookie.c:872:7",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_bc9227fac74e",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/cookie.c:945:20",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 2,
+      "tp": 1,
+      "fp": 1,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_8bd531601e81",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/http_digest.c:114:3",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_4b4d24b135fc",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/llist.c:130:5",
+      "status": "predicted",
+      "expected_count": 8,
+      "predicted_count": 3,
+      "tp": 0,
+      "fp": 3,
+      "fn": 8
+    },
+    {
+      "id": "cgbench_c038b1cbb3b4",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/md5.c:628:6",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_c527147ad40c",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/md5.c:641:3",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_5de501b3046e",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/multi.c:196:5",
+      "status": "predicted",
+      "expected_count": 3,
+      "predicted_count": 3,
+      "tp": 3,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_94cfe2817ed2",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/share.c:217:5",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 4,
+      "tp": 1,
+      "fp": 3,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_73b0ece4ba34",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/smtp.c:1847:28",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_a6189a36a435",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/vauth/digest.c:789:3",
+      "status": "unknown",
+      "expected_count": 2,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_d9bc6c3944fb",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/vauth/digest.c:806:3",
+      "status": "unknown",
+      "expected_count": 2,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_89790f0f9117",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/version.c:665:23",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 2,
+      "tp": 0,
+      "fp": 2,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_2ac1ee879e1f",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/vtls/vtls.c:1018:14",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_88a544dc3e55",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/vtls/vtls.c:1308:10",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_b958c5b6832f",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/src/../../curl-8.5.0/src/tool_writeout_json.c:112:8",
+      "status": "unknown",
+      "expected_count": 4,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_286eb9769472",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavcodec/aaccoder.c:284:5",
+      "status": "unknown",
+      "expected_count": 10,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_fab5963e9b83",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavcodec/aaccoder.c:671:5",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 2,
+      "tp": 2,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_d5225683ff9f",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavcodec/allcodecs.c:957:14",
+      "status": "unknown",
+      "expected_count": 2,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_fbc32feab2b3",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavcodec/amrwbdec.c:808:5",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 2,
+      "tp": 2,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_de3427b09a03",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavcodec/ass_split.c:329:25",
+      "status": "predicted",
+      "expected_count": 6,
+      "predicted_count": 12,
+      "tp": 6,
+      "fp": 6,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_c703aa266552",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavcodec/dcadsp.c:139:9",
+      "status": "predicted",
+      "expected_count": 3,
+      "predicted_count": 4,
+      "tp": 3,
+      "fp": 1,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_aaa925f3aa42",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavcodec/exr.c:2241:19",
+      "status": "predicted",
+      "expected_count": 13,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 13
+    },
+    {
+      "id": "cgbench_9f785a335241",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavcodec/h263dec.c:248:19",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_c1f96fd88854",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavcodec/mss2.c:439:9",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_f1c2f01fdb05",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavcodec/nellymoserenc.c:132:5",
+      "status": "predicted",
+      "expected_count": 3,
+      "predicted_count": 3,
+      "tp": 3,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_3ec8b3623de5",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavcodec/omx.c:177:5",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_dd000af75c23",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavcodec/rawdec.c:323:17",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 2,
+      "tp": 2,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_265104e3fc2c",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavcodec/speexdec.c:1557:15",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 25,
+      "tp": 2,
+      "fp": 23,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_782ed247bf60",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavfilter/vf_v360.c:4261:32",
+      "status": "predicted",
+      "expected_count": 25,
+      "predicted_count": 25,
+      "tp": 25,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_9c9237389fc0",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavfilter/vf_vectorscope.c:1473:5",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_d429ce62b166",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libswscale/swscale_unscaled.c:177:9",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_eb46234a84b7",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libswscale/swscale_unscaled.c:559:13",
+      "status": "predicted",
+      "expected_count": 5,
+      "predicted_count": 5,
+      "tp": 5,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_d55d61d7328b",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/gcc-clang-build/build-x86_64-pc-linux-gnu/libcpp/../../../gcc-13.2.0/libcpp/directives.cc:2611:5",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_e5f16859dd08",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/gcc-clang-build/gcc/../../gcc-13.2.0/gcc/analyzer/region-model.h:698:12",
+      "status": "unknown",
+      "expected_count": 2,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_12fdcdae8796",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/gcc-clang-build/gcc/../../gcc-13.2.0/gcc/gimple-fold.cc:7670:17",
+      "status": "unknown",
+      "expected_count": 7,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_4c71c957ffc8",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/gcc-clang-build/gcc/../../gcc-13.2.0/gcc/lto-streamer-in.cc:1176:14",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_d7c885aa3033",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/gcc-clang-build/gcc/./gtype-lto.h:1256:13",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_bc9ae67d5269",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/gcc-clang-build/gmp/printf/../../../gcc-13.2.0/gmp/printf/doprnti.c:119:7",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 5,
+      "tp": 0,
+      "fp": 5,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_920dffb7f284",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/atomicio.c:71:23",
+      "status": "unknown",
+      "expected_count": 2,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_d44b4385849b",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/channels.c:2139:7",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 2
+    },
+    {
+      "id": "cgbench_fc7b3361c3b6",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/channels.c:2168:14",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_ee86a500c565",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/channels.c:3612:3",
+      "status": "predicted",
+      "expected_count": 5,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 5
+    },
+    {
+      "id": "cgbench_93924f98bf6e",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/kex.c:1425:6",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 2,
+      "tp": 1,
+      "fp": 1,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_8d4a5ed58084",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/log.c:404:3",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_f638347cb2eb",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/mux.c:1205:10",
+      "status": "predicted",
+      "expected_count": 9,
+      "predicted_count": 18,
+      "tp": 9,
+      "fp": 9,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_4078f72bd8a5",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/ssh-ecdsa-sk.c:79:7",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 11,
+      "tp": 1,
+      "fp": 10,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_432e63999604",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/ssh-ed25519-sk.c:64:11",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 10,
+      "tp": 1,
+      "fp": 9,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_fad508166008",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/ssh-sk.c:148:12",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_a30b8df0fbbb",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/ssh-sk.c:535:11",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_e4e61b8f77db",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/sshkey.c:394:10",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_92d4c609fb7a",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/sshkey.c:620:7",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_4f8fe57846e8",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/deps/hiredis/read.c:323:23",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_a75f1c2345fa",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/deps/jemalloc/include/jemalloc/internal/emap.h:329:21",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_bcc1c6417f4e",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/deps/jemalloc/src/hpa_hooks.c:57:2",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_f04c1f6109ea",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/deps/jemalloc/src/jemalloc.c:3825:3",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_9d90a3631a4c",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/./connection.h:243:12",
+      "status": "unknown",
+      "expected_count": 3,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_78954d060c85",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/cluster.c:498:21",
+      "status": "predicted",
+      "expected_count": 4,
+      "predicted_count": 12,
+      "tp": 4,
+      "fp": 8,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_7fa34f93e778",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/defrag.c:583:23",
+      "status": "unknown",
+      "expected_count": 3,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_f7dab9df2985",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/dict.c:1143:29",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_5d6eab0ac06f",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/functions.c:428:13",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_167041fb0761",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/module.c:11785:16",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_c34e92cb94e6",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/module.c:12148:9",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_3f6bacc0863e",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/pqsort.c:95:38",
+      "status": "unknown",
+      "expected_count": 3,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_b60c75ab100d",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/pubsub.c:167:24",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_a3769a595743",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/quicklist.c:1543:21",
+      "status": "unknown",
+      "expected_count": 2,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_50c70a205423",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/redis-cli.c:8417:12",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_1ccadb4300ea",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/server.c:4872:9",
+      "status": "unknown",
+      "expected_count": 2,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_75642af1ff8b",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/t_zset.c:3102:9",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 2,
+      "tp": 2,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_36ab6a76a22b",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/unix.c:134:12",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_303b6ec72a2e",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/zmalloc.c:146:15",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_1c8bf2e360d7",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/obj/LuaJIT-2.1/src/./lj_gc.h:122:3",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 3,
+      "tp": 1,
+      "fp": 2,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_531db09d19a6",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/obj/openssl-1.1.1i/apps/s_cb.c:1356:10",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_41ea1ad5e6a3",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/obj/openssl-1.1.1i/crypto/dsa/dsa_ossl.c:270:18",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_cae6a58feea6",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/obj/openssl-1.1.1i/crypto/engine/eng_dyn.c:480:10",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_b364b2560080",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/obj/openssl-1.1.1i/crypto/evp/p_lib.c:42:12",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_c00d56e20a98",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/obj/openssl-1.1.1i/crypto/modes/gcm128.c:1092:21",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_26b52c54185d",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/obj/openssl-1.1.1i/crypto/x509/x509_vfy.c:1489:13",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 2,
+      "tp": 1,
+      "fp": 1,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_bf5dbadcffb4",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/obj/openssl-1.1.1i/ssl/record/rec_layer_s3.c:390:13",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 2,
+      "tp": 2,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_58c86a2a3e72",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/obj/openssl-1.1.1i/ssl/s3_cbc.c:449:9",
+      "status": "predicted",
+      "expected_count": 4,
+      "predicted_count": 4,
+      "tp": 4,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_1e7a84549bc1",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/obj/openssl-1.1.1i/ssl/statem/statem_clnt.c:3773:14",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_a2c21c37aff9",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/obj/openssl-1.1.1i/ssl/statem/statem_srvr.c:2172:17",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_b9ec25f49d83",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/src/ae.c:322:22",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_fe03378981e9",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/src/wrk.c:431:17",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 11,
+      "tp": 2,
+      "fp": 9,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_66e07f14192d",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/src/wrk.c:551:17",
+      "status": "unknown",
+      "expected_count": 2,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_26f7fd5e6c7b",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/cmd/zdb/zdb.c:3803:4",
+      "status": "predicted",
+      "expected_count": 19,
+      "predicted_count": 19,
+      "tp": 19,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_c0b7bc068560",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/cmd/zdb/zdb.c:442:10",
+      "status": "predicted",
+      "expected_count": 5,
+      "predicted_count": 9,
+      "tp": 0,
+      "fp": 9,
+      "fn": 5
+    },
+    {
+      "id": "cgbench_b2c479c174da",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/cmd/zdb/zdb.c:6019:2",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 31,
+      "tp": 1,
+      "fp": 30,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_ee0e24f737c4",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/cmd/zed/agents/fmd_api.c:328:3",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_97ed0c771af5",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/cmd/zfs/zfs_main.c:8850:9",
+      "status": "predicted",
+      "expected_count": 36,
+      "predicted_count": 80,
+      "tp": 36,
+      "fp": 44,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_ba4862f49e8b",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/cmd/zstream/zstream_decompress.c:304:21",
+      "status": "predicted",
+      "expected_count": 5,
+      "predicted_count": 5,
+      "tp": 5,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_f8c74ea876ec",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/cmd/zstream/zstream_recompress.c:274:14",
+      "status": "unknown",
+      "expected_count": 5,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_18c26d548551",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/lib/libshare/libshare.c:96:2",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 2,
+      "tp": 0,
+      "fp": 2,
+      "fn": 2
+    },
+    {
+      "id": "cgbench_9237e9fc3c2c",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/lib/libshare/nfs.c:202:11",
+      "status": "unknown",
+      "expected_count": 2,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_722a5d7bed3d",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/module/icp/algs/modes/ccm.c:232:3",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_07f3a542ba5f",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/module/icp/algs/modes/ccm.c:97:3",
+      "status": "unknown",
+      "expected_count": 1,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_b9fb3964ee7b",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/module/icp/algs/sha2/sha2_generic.c:237:3",
+      "status": "unknown",
+      "expected_count": 4,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_edfd1980de33",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/module/os/linux/zfs/zfs_acl.c:1603:14",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 2
+    },
+    {
+      "id": "cgbench_7c4366c0fd2d",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/module/zcommon/zfs_fletcher.c:887:4",
+      "status": "unknown",
+      "expected_count": 3,
+      "predicted_count": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_d80e650ac512",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/module/zfs/ddt.c:181:10",
+      "status": "predicted",
+      "expected_count": 1,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1
+    },
+    {
+      "id": "cgbench_0f9206533abb",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/module/zfs/dsl_userhold.c:534:3",
+      "status": "predicted",
+      "expected_count": 2,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 2
+    },
+    {
+      "id": "cgbench_01982312ccc7",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/module/zfs/vdev_raidz_math_impl.h:1387:3",
+      "status": "predicted",
+      "expected_count": 256,
+      "predicted_count": 256,
+      "tp": 256,
+      "fp": 0,
+      "fn": 0
+    },
+    {
+      "id": "cgbench_3392151a3ec7",
+      "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/module/zfs/zfs_ioctl.c:7848:11",
+      "status": "predicted",
+      "expected_count": 57,
+      "predicted_count": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 57
+    }
+  ]
+}

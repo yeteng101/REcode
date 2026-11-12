@@ -59,3 +59,27 @@
 - [40 项验证测试](test-results/review-fixes-20261112/validation-tests-release.log)
 - [完整上游日志](test-results/review-fixes-20261112/full-upstream.log)
 - [历史冻结来源](../../validation/external/history/external-v1/attribution.json)
+
+## 推送后的真实 CI 验证
+
+三项修复的代码提交为 `88eeb06`。External benchmarks 在 Actions 运行 `43192171292` 中完整通过，包括六组固定子集重跑、版本检查及冻结检查。
+
+本次重新生成的预测和报告已回收至 `validation/external/results/external-v2/`，baseline 状态更新为 `completed`，绑定本次锁摘要及源代码提交。v1 的原始成绩和冻结源码归档保持历史归属。
+
+| CI 检查 | 结果 |
+| --- | --- |
+| External benchmarks | success，六组固定子集已重新运行 |
+| Python regression | success，136 项流水线测试、11 项 HTTP 测试及 MCP smoke |
+| Sandbox and observability | success，49 项回归及 2 项真实 Docker 集成测试 |
+| Neo4j E2E | success |
+| sync-validation 的验证测试 | 40/40 通过 |
+| sync-validation 的 Reproduce both benchmarks | failed，libuv/Redis 保存产物差异，沿用单独问题记录 |
+| OpenAI E2E | skipped |
+
+DataRaceBench 固定 24 例输出 8 个 race、10 个 no_race、6 个 unknown，coverage 为 75%。SV-COMP Concurrency 固定 20 例输出 TP 10、TN 10、FP 0、FN 0、unknown 0。完整指标分别保存在对应 report.json，适用范围为固定子集。
+
+本地 Clang 14 的两项失败和远程 Ubuntu 的通过结果分别保留在日志及 CI 记录中。
+
+- [External benchmarks 运行](https://github.com/yeteng101/REcode/actions/runs/43192171292)
+- [远程检查记录](test-results/review-fixes-20261112/ci-status.json)
+- [本次重新生成的 baseline](../../validation/external/history/external-v2-baseline.json)
