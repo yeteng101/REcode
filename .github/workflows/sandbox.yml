@@ -30,6 +30,17 @@ jobs:
           echo "CRA_SANDBOX_TEST_IMAGE=$SANDBOX_IMAGE" >> "$GITHUB_ENV"
       - name: Verify real container boundary, quotas and full analysis
         run: python -m unittest clang_pipeline.tests.test_sandbox_integration -v
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.2'
+          cache: false
+      - name: Build pinned upstream MinIO source
+        run: |
+          mkdir "$RUNNER_TEMP/minio-source"
+          curl --fail --location --retry 3 https://codeload.github.com/minio/minio/tar.gz/0d7408fc9969caf07de6a8c3a84f9fbb10a6739e -o "$RUNNER_TEMP/minio-source.tar.gz"
+          tar -xzf "$RUNNER_TEMP/minio-source.tar.gz" --strip-components=1 -C "$RUNNER_TEMP/minio-source"
+          cd "$RUNNER_TEMP/minio-source"
+          go build -mod=readonly -p 2 -o "$RUNNER_TEMP/minio" .
       - name: Start real S3-compatible object store
         run: |
           pip install -r requirements-jobs-s3.txt
@@ -42,9 +53,13 @@ jobs:
           access, secret = secrets.token_hex(12), secrets.token_hex(24)
           print('::add-mask::' + access, flush=True)
           print('::add-mask::' + secret, flush=True)
-          subprocess.run(['docker', 'run', '-d', '--name', 'minio', '-p', '127.0.0.1:9000:9000',
-                          '-e', 'MINIO_ROOT_USER=' + access, '-e', 'MINIO_ROOT_PASSWORD=' + secret,
-                          'quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z', 'server', '/data'], check=True)
+          from pathlib import Path
+          temporary = Path(os.environ['RUNNER_TEMP'])
+          with (temporary / 'minio.log').open('wb') as log:
+              subprocess.Popen([str(temporary / 'minio'), 'server', '--address', '127.0.0.1:9000',
+                                str(temporary / 'minio-data')],
+                               env=dict(os.environ, MINIO_ROOT_USER=access, MINIO_ROOT_PASSWORD=secret),
+                               stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
           client = boto3.client('s3', endpoint_url='http://127.0.0.1:9000',
                                 aws_access_key_id=access, aws_secret_access_key=secret, region_name='us-east-1')
           for attempt in range(60):
@@ -75,6 +90,7 @@ jobs:
           path: |
             ${{ runner.temp }}/production-entry/evidence.json
             ${{ runner.temp }}/production-entry/*.log
+            ${{ runner.temp }}/minio.log
           if-no-files-found: warn
       - name: Check no sandbox containers remain
         if: always()
