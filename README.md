@@ -25,6 +25,8 @@
 >
 > 外部评测集接入：[docs/external-benchmarks-2026-10-28.md](docs/external-benchmarks-2026-10-28.md)
 >
+> 外部评测失败样本审计：[failure-audit.md](validation/external/results/failure-audit.md)
+>
 > 评测协议与 Agent 闭环：[validation/external/protocol-v1.json](validation/external/protocol-v1.json)
 > [评测报告](docs/external-protocol-v1-2026-10-29.md)
 >

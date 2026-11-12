@@ -79,3 +79,23 @@ validation/external/results/status.json
 validation/external/results/cgbench/report.md
 validation/external/history/external-v1-baseline.json
 ```
+
+## Failure audit
+
+The frozen baseline also has a diagnosis-only audit. It opens the cases that
+were not resolved, extracts source context and available tool facts, and groups
+them by the analyzer capability that needs work:
+
+```bash
+python3 scripts/audit_external_failures.py
+```
+
+Outputs:
+
+```text
+validation/external/results/failure-audit.json
+validation/external/results/failure-audit.md
+```
+
+The audit reads the existing Gold and prediction files for diagnosis; it does
+not alter `external-v1`, its selections, predictions, or lock file.

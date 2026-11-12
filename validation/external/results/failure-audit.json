@@ -1,0 +1,3271 @@
+{
+  "schema_version": "external-failure-audit-v1",
+  "protocol_id": "external-v1",
+  "generated_at": "2026-11-12T03:13:59Z",
+  "gold_used_for_diagnosis_only": true,
+  "summary": {
+    "unknown_units": 47,
+    "cgbench_unknown_callsites": 41,
+    "datarace_unknown_cases": 6,
+    "callgraph_missing_edges": 13,
+    "memsafety_false_positives": 8,
+    "skipped_cases": 0
+  },
+  "cgbench_unknown": {
+    "count": 41,
+    "by_project": {
+      "curl": 8,
+      "ffmpeg": 2,
+      "gcc": 3,
+      "openssh": 4,
+      "redis": 14,
+      "wrk": 3,
+      "zfs": 7
+    },
+    "by_type": {
+      "fnptr-cast": 4,
+      "fnptr-only": 3,
+      "fnptr-callback": 15,
+      "fnptr-global-struct": 5,
+      "fnptr-global-struct-array": 5,
+      "fnptr-global-array": 1,
+      "fnptr-virtual": 1,
+      "fnptr-dynamic-call": 2,
+      "fnptr-library": 3,
+      "fnptr-struct": 2
+    },
+    "by_failure_category": {
+      "cast_or_global_initializer": 7,
+      "callback_parameter_flow": 15,
+      "struct_or_table_dispatch": 13,
+      "virtual_dispatch": 1,
+      "external_or_dynamic_registration": 5
+    },
+    "cases": [
+      {
+        "id": "cgbench_c038b1cbb3b4",
+        "project": "curl",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/md5.c:628:6",
+        "pointer_expression": "*md5params->md5_init_func",
+        "callsite_type": "fnptr-cast",
+        "expected_targets": [
+          "my_md5_init"
+        ],
+        "failure_category": "cast_or_global_initializer",
+        "source_context": [
+          "if((*md5params->md5_init_func)(ctxt->md5_hashctx)) {",
+          "CURLX_FUNCTION_CAST(Curl_MD5_init_func, my_md5_init),"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_c527147ad40c",
+        "project": "curl",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/md5.c:641:3",
+        "pointer_expression": "*context->md5_hash->md5_update_func",
+        "callsite_type": "fnptr-cast",
+        "expected_targets": [
+          "my_md5_update"
+        ],
+        "failure_category": "cast_or_global_initializer",
+        "source_context": [
+          "(*context->md5_hash->md5_update_func)(context->md5_hashctx, data, len);",
+          "CURLX_FUNCTION_CAST(Curl_MD5_update_func, my_md5_update),"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_73b0ece4ba34",
+        "project": "curl",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/smtp.c:1847:28",
+        "pointer_expression": "Curl_cfree",
+        "callsite_type": "fnptr-only",
+        "expected_targets": [
+          "malloc"
+        ],
+        "failure_category": "cast_or_global_initializer",
+        "source_context": [
+          "scratch = newscratch = malloc(2 * data->set.upload_buffer_size);",
+          "#define malloc(size) Curl_cmalloc(size)"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_a6189a36a435",
+        "project": "curl",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/vauth/digest.c:789:3",
+        "pointer_expression": "hash",
+        "callsite_type": "fnptr-callback",
+        "expected_targets": [
+          "Curl_md5it",
+          "Curl_sha256it"
+        ],
+        "failure_category": "callback_parameter_flow",
+        "source_context": [
+          "CURLcode (*hash)(unsigned char *, const unsigned char *,",
+          "if(!hashthis)",
+          "hash(hashbuf, (unsigned char *) hashthis, strlen(hashthis));",
+          "Curl_md5it);",
+          "Curl_sha256it);"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_d9bc6c3944fb",
+        "project": "curl",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/vauth/digest.c:806:3",
+        "pointer_expression": "convert_to_ascii",
+        "callsite_type": "fnptr-callback",
+        "expected_targets": [
+          "auth_digest_md5_to_ascii",
+          "auth_digest_sha256_to_ascii"
+        ],
+        "failure_category": "callback_parameter_flow",
+        "source_context": [
+          "void (*convert_to_ascii)(unsigned char *, unsigned char *),",
+          "convert_to_ascii(hashbuf, (unsigned char *)userh);",
+          "auth_digest_md5_to_ascii,",
+          "auth_digest_sha256_to_ascii,"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_2ac1ee879e1f",
+        "project": "curl",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/vtls/vtls.c:1018:14",
+        "pointer_expression": "Curl_ssl->sha256sum",
+        "callsite_type": "fnptr-global-struct",
+        "expected_targets": [
+          "ossl_sha256sum"
+        ],
+        "failure_category": "struct_or_table_dispatch",
+        "source_context": [
+          "/* compute sha256sum of public key */",
+          "sha256sumdigest = malloc(CURL_SHA256_DIGEST_LENGTH);",
+          "if(!sha256sumdigest)",
+          "encode = Curl_ssl->sha256sum(pubkey, pubkeylen,",
+          "sha256sumdigest, CURL_SHA256_DIGEST_LENGTH);"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_88a544dc3e55",
+        "project": "curl",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/lib/../../curl-8.5.0/lib/vtls/vtls.c:1308:10",
+        "pointer_expression": "Curl_ssl->send_plain",
+        "callsite_type": "fnptr-global-struct",
+        "expected_targets": [
+          "multissl_send_plain"
+        ],
+        "failure_category": "struct_or_table_dispatch",
+        "source_context": [
+          "static ssize_t multissl_send_plain(struct Curl_cfilter *cf,",
+          "return Curl_ssl->send_plain(cf, data, mem, len, code);",
+          "multissl_send_plain, /* send data to encrypt */",
+          "ssize_t (*send_plain)(struct Curl_cfilter *cf, struct Curl_easy *data,"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_b958c5b6832f",
+        "project": "curl",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/curl-build/src/../../curl-8.5.0/src/tool_writeout_json.c:112:8",
+        "pointer_expression": "mappings[i].writefunc",
+        "callsite_type": "fnptr-global-struct-array",
+        "expected_targets": [
+          "writeLong",
+          "writeOffset",
+          "writeString",
+          "writeTime"
+        ],
+        "failure_category": "struct_or_table_dispatch",
+        "source_context": [
+          "if(mappings[i].writefunc &&",
+          "mappings[i].writefunc(stream, &mappings[i], per, per_result, true))",
+          "{\"certs\", VAR_CERT, CURLINFO_NONE, writeString},",
+          "CURLINFO_PROXY_SSL_VERIFYRESULT, writeLong},",
+          "{\"scheme\", VAR_SCHEME, CURLINFO_SCHEME, writeString},"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_286eb9769472",
+        "project": "ffmpeg",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavcodec/aaccoder.c:284:5",
+        "pointer_expression": "uantize_and_encode_band_cost_arr)[cb]",
+        "callsite_type": "fnptr-global-array",
+        "expected_targets": [
+          "quantize_and_encode_band_cost_ESC",
+          "quantize_and_encode_band_cost_ESC_RTZ",
+          "quantize_and_encode_band_cost_NOISE",
+          "quantize_and_encode_band_cost_NONE",
+          "quantize_and_encode_band_cost_SPAIR",
+          "quantize_and_encode_band_cost_SQUAD",
+          "quantize_and_encode_band_cost_STEREO",
+          "quantize_and_encode_band_cost_UPAIR",
+          "quantize_and_encode_band_cost_UQUAD",
+          "quantize_and_encode_band_cost_ZERO"
+        ],
+        "failure_category": "struct_or_table_dispatch",
+        "source_context": [
+          "(rtz ? quantize_and_encode_band_cost_rtz_arr : quantize_and_encode_band_cost_arr)[cb](s, pb, in, out, NULL, size, scale_idx, cb,",
+          "static const quantize_and_encode_band_func quantize_and_encode_band_cost_arr[] =",
+          "quantize_and_encode_band_cost_ZERO,",
+          "quantize_and_encode_band_cost_SQUAD,",
+          "quantize_and_encode_band_cost_SQUAD,"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_d5225683ff9f",
+        "project": "ffmpeg",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/ffmpeg-6.1.1/libavcodec/allcodecs.c:957:14",
+        "pointer_expression": "x",
+        "callsite_type": "fnptr-callback",
+        "expected_targets": [
+          "av_codec_is_decoder",
+          "av_codec_is_encoder"
+        ],
+        "failure_category": "callback_parameter_flow",
+        "source_context": [
+          "static const AVCodec *find_codec(enum AVCodecID id, int (*x)(const AVCodec *))",
+          "const AVCodec *p, *experimental = NULL;",
+          "if (!x(p))",
+          "if (p->capabilities & AV_CODEC_CAP_EXPERIMENTAL && !experimental) {",
+          "experimental = p;"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_e5f16859dd08",
+        "project": "gcc",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/gcc-clang-build/gcc/../../gcc-13.2.0/gcc/analyzer/region-model.h:698:12",
+        "pointer_expression": "get_state_map_by_name",
+        "callsite_type": "fnptr-virtual",
+        "expected_targets": [
+          "noop_region_model_context::get_state_map_by_name",
+          "region_model_context_decorator::get_state_map_by_name"
+        ],
+        "failure_category": "virtual_dispatch",
+        "source_context": [
+          "get_state_map_by_name (const char *name,",
+          "return get_state_map_by_name (\"file-descriptor\", out_smap, out_sm,",
+          "return get_state_map_by_name (\"malloc\", out_smap, out_sm, out_sm_idx, NULL);",
+          "return get_state_map_by_name (\"taint\", out_smap, out_sm, out_sm_idx, NULL);",
+          "bool get_state_map_by_name (const char *,"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_12fdcdae8796",
+        "project": "gcc",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/gcc-clang-build/gcc/../../gcc-13.2.0/gcc/gimple-fold.cc:7670:17",
+        "pointer_expression": "valueize",
+        "callsite_type": "fnptr-callback",
+        "expected_targets": [
+          "do_valueize",
+          "dom_valueize",
+          "pta_valueize",
+          "threadedge_valueize",
+          "valueize_op",
+          "valueize_val",
+          "vn_valueize"
+        ],
+        "failure_category": "callback_parameter_flow",
+        "source_context": [
+          "gimple_fold_stmt_to_constant_1 (gimple *stmt, tree (*valueize) (tree),",
+          "tree (*gvalueize) (tree))",
+          "tree op0 = (*valueize) (arg0);",
+          "tree op1 = (*valueize) (arg1);",
+          "gimple_fold_stmt_to_constant (gimple *stmt, tree (*valueize) (tree))"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_d7c885aa3033",
+        "project": "gcc",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/gcc-clang-build/gcc/./gtype-lto.h:1256:13",
+        "pointer_expression": "op",
+        "callsite_type": "fnptr-callback",
+        "expected_targets": [
+          "relocate_ptrs"
+        ],
+        "failure_category": "callback_parameter_flow",
+        "source_context": [
+          "ATTRIBUTE_UNUSED gt_pointer_operator op,",
+          "op (&((*x).generic.typed.type), NULL, cookie);",
+          "relocate_ptrs, &state);",
+          "relocate_ptrs (void *ptr_p, void *real_ptr_p, void *state_p)"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_920dffb7f284",
+        "project": "openssh",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/atomicio.c:71:23",
+        "pointer_expression": "cb",
+        "callsite_type": "fnptr-callback",
+        "expected_targets": [
+          "scpio",
+          "sftpio"
+        ],
+        "failure_category": "callback_parameter_flow",
+        "source_context": [
+          "int (*cb)(void *, size_t), void *cb_arg)",
+          "if (cb != NULL && cb(cb_arg, 0) == -1) {",
+          "if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {",
+          "if (atomicio6(vwrite, remout, bp->buf, amt, scpio,",
+          "scpio(void *_cnt, size_t s)"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_fad508166008",
+        "project": "openssh",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/ssh-sk.c:148:12",
+        "pointer_expression": "ret->sk_api_version",
+        "callsite_type": "fnptr-dynamic-call",
+        "expected_targets": [
+          "sk_api_version"
+        ],
+        "failure_category": "external_or_dynamic_registration",
+        "source_context": [
+          "if ((ret->sk_api_version = dlsym(ret->dlhandle,",
+          "\"sk_api_version\")) == NULL) {",
+          "error(\"Provider \\\"%s\\\" dlsym(sk_api_version) failed: %s\",",
+          "version = ret->sk_api_version();"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_e4e61b8f77db",
+        "project": "openssh",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/sshkey.c:394:10",
+        "pointer_expression": "impl->funcs->size",
+        "callsite_type": "fnptr-global-struct-array",
+        "expected_targets": [
+          "ssh_rsa_size"
+        ],
+        "failure_category": "struct_or_table_dispatch",
+        "source_context": [
+          "sshkey_size(const struct sshkey *k)",
+          "if (impl->funcs->size != NULL)",
+          "return impl->funcs->size(k);",
+          "/* .size = */ ssh_rsa_size,"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_92d4c609fb7a",
+        "project": "openssh",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/openssh-build/../openssh-9.6p1/sshkey.c:620:7",
+        "pointer_expression": "impl->funcs->alloc",
+        "callsite_type": "fnptr-global-struct-array",
+        "expected_targets": [
+          "ssh_rsa_alloc"
+        ],
+        "failure_category": "struct_or_table_dispatch",
+        "source_context": [
+          "if ((k = calloc(1, sizeof(*k))) == NULL)",
+          "if (impl != NULL && impl->funcs->alloc != NULL) {",
+          "if (impl->funcs->alloc(k) != 0) {",
+          "/* .alloc = */ ssh_rsa_alloc,"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_4f8fe57846e8",
+        "project": "redis",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/deps/hiredis/read.c:323:23",
+        "pointer_expression": "r->fn->createDouble",
+        "callsite_type": "fnptr-global-struct",
+        "expected_targets": [
+          "createDoubleObject"
+        ],
+        "failure_category": "struct_or_table_dispatch",
+        "source_context": [
+          "if (r->fn && r->fn->createDouble) {",
+          "obj = r->fn->createDouble(cur,d,buf,len);",
+          "createDoubleObject,"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_a75f1c2345fa",
+        "project": "redis",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/deps/jemalloc/include/jemalloc/internal/emap.h:329:21",
+        "pointer_expression": "ptr_getter",
+        "callsite_type": "fnptr-callback",
+        "expected_targets": [
+          "tcache_bin_flush_ptr_getter"
+        ],
+        "failure_category": "callback_parameter_flow",
+        "source_context": [
+          "emap_ptr_getter ptr_getter, void *ptr_getter_ctx,",
+          "const void *ptr = ptr_getter(ptr_getter_ctx, i);",
+          "&tcache_bin_flush_ptr_getter, (void *)arr,"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_f04c1f6109ea",
+        "project": "redis",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/deps/jemalloc/src/jemalloc.c:3825:3",
+        "pointer_expression": "junk_alloc_callback",
+        "callsite_type": "fnptr-only",
+        "expected_targets": [
+          "default_junk_alloc"
+        ],
+        "failure_category": "cast_or_global_initializer",
+        "source_context": [
+          "junk_alloc_callback(excess_start, excess_len);",
+          "void (*junk_alloc_callback)(void *ptr, size_t size) = &default_junk_alloc;"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_9d90a3631a4c",
+        "project": "redis",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/./connection.h:243:12",
+        "pointer_expression": "conn->type->set_write_handler",
+        "callsite_type": "fnptr-library",
+        "expected_targets": [
+          "connSocketSetWriteHandler",
+          "connTLSSetWriteHandler",
+          "connUnixSetWriteHandler"
+        ],
+        "failure_category": "external_or_dynamic_registration",
+        "source_context": [
+          "return conn->type->set_write_handler(conn, func, barrier);",
+          ".set_write_handler = connSocketSetWriteHandler,",
+          ".set_write_handler = connTLSSetWriteHandler,",
+          ".set_write_handler = connUnixSetWriteHandler,"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_7fa34f93e778",
+        "project": "redis",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/defrag.c:583:23",
+        "pointer_expression": "element_cb",
+        "callsite_type": "fnptr-callback",
+        "expected_targets": [
+          "defragStreamConsumer",
+          "defragStreamConsumerGroup",
+          "defragStreamConsumerPendingEntry"
+        ],
+        "failure_category": "callback_parameter_flow",
+        "source_context": [
+          "void defragRadixTree(rax **raxref, int defrag_data, raxDefragFunction *element_cb, void *element_cb_data) {",
+          "if (element_cb)",
+          "newdata = element_cb(&ri, element_cb_data);",
+          "void* defragStreamConsumer(raxIterator *ri, void *privdata) {",
+          "defragRadixTree(&c->pel, 0, defragStreamConsumerPendingEntry, &pel_ctx);"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_5d6eab0ac06f",
+        "project": "redis",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/functions.c:428:13",
+        "pointer_expression": "engine->get_engine_memory_overhead",
+        "callsite_type": "fnptr-struct",
+        "expected_targets": [
+          "luaEngineMemoryOverhead"
+        ],
+        "failure_category": "struct_or_table_dispatch",
+        "source_context": [
+          "engine->get_engine_memory_overhead(engine->engine_ctx);",
+          ".get_engine_memory_overhead = luaEngineMemoryOverhead,"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_167041fb0761",
+        "project": "redis",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/module.c:11785:16",
+        "pointer_expression": "mt->mem_usage2",
+        "callsite_type": "fnptr-library",
+        "expected_targets": [
+          "NULL"
+        ],
+        "failure_category": "external_or_dynamic_registration",
+        "source_context": [
+          "if (mt->mem_usage2 != NULL) {",
+          "RedisModuleKeyOptCtx ctx = {key, NULL, dbid, -1};",
+          "size = mt->mem_usage2(&ctx, mv->value, sample_size);",
+          "} else if (mt->mem_usage != NULL) {"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_3f6bacc0863e",
+        "project": "redis",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/pqsort.c:95:38",
+        "pointer_expression": "cmp",
+        "callsite_type": "fnptr-callback",
+        "expected_targets": [
+          "sortCompare",
+          "sort_gp_asc",
+          "sort_gp_desc"
+        ],
+        "failure_category": "callback_parameter_flow",
+        "source_context": [
+          "int (*cmp) (const void *, const void *))",
+          "return cmp(a, b) < 0 ?",
+          "(cmp(b, c) < 0 ? b : (cmp(a, c) < 0 ? c : a ))",
+          ":(cmp(b, c) > 0 ? b : (cmp(a, c) < 0 ? a : c ));",
+          "int (*cmp) (const void *, const void *), void *lrange, void *rrange)"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_b60c75ab100d",
+        "project": "redis",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/pubsub.c:167:24",
+        "pointer_expression": "type.clientPubSubChannels",
+        "callsite_type": "fnptr-global-struct",
+        "expected_targets": [
+          "getClientPubSubChannels"
+        ],
+        "failure_category": "struct_or_table_dispatch",
+        "source_context": [
+          ".clientPubSubChannels = getClientPubSubChannels,",
+          "if (dictAdd(type.clientPubSubChannels(c),channel,NULL) == DICT_OK) {"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_a3769a595743",
+        "project": "redis",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/quicklist.c:1543:21",
+        "pointer_expression": "saver",
+        "callsite_type": "fnptr-callback",
+        "expected_targets": [
+          "_quicklistSaver",
+          "listPopSaver"
+        ],
+        "failure_category": "callback_parameter_flow",
+        "source_context": [
+          "void *(*saver)(unsigned char *data, size_t sz)) {",
+          "*data = saver(node->entry, node->sz);",
+          "NULL, &vlong, listPopSaver)) {",
+          "_quicklistSaver);"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_50c70a205423",
+        "project": "redis",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/redis-cli.c:8417:12",
+        "pointer_expression": "c->funcs->read",
+        "callsite_type": "fnptr-library",
+        "expected_targets": [
+          "redisNetRead"
+        ],
+        "failure_category": "external_or_dynamic_registration",
+        "source_context": [
+          "/* Read raw bytes through a redisContext. The read operation is not greedy",
+          "static ssize_t readConn(redisContext *c, char *buf, size_t len)",
+          "return c->funcs->read(c, buf, len);",
+          "c->reader = redisReaderCreate();",
+          "if (c->obuf == NULL || c->reader == NULL) {"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_1ccadb4300ea",
+        "project": "redis",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/server.c:4872:9",
+        "pointer_expression": "reply_function",
+        "callsite_type": "fnptr-callback",
+        "expected_targets": [
+          "addReplyCommandDocs",
+          "addReplyCommandInfo"
+        ],
+        "failure_category": "callback_parameter_flow",
+        "source_context": [
+          "void addReplyCommandSubCommands(client *c, struct redisCommand *cmd, void (*reply_function)(client*, struct redisCommand*), int use_map) {",
+          "reply_function(c, sub);",
+          "void addReplyCommandInfo(client *c, struct redisCommand *cmd) {",
+          "addReplyCommandSubCommands(c, cmd, addReplyCommandInfo, 0);",
+          "void addReplyCommandDocs(client *c, struct redisCommand *cmd) {"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_36ab6a76a22b",
+        "project": "redis",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/unix.c:134:12",
+        "pointer_expression": "connectionTypeTcp()->read",
+        "callsite_type": "fnptr-global-struct",
+        "expected_targets": [
+          "connTLSRead"
+        ],
+        "failure_category": "struct_or_table_dispatch",
+        "source_context": [
+          "return connectionTypeTcp()->read(conn, buf, buf_len);",
+          ".read = connTLSRead,",
+          ".read = connTLSRead,"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_303b6ec72a2e",
+        "project": "redis",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/redis-stable/src/zmalloc.c:146:15",
+        "pointer_expression": "zmalloc_oom_handler",
+        "callsite_type": "fnptr-only",
+        "expected_targets": [
+          "zmalloc_default_oom"
+        ],
+        "failure_category": "cast_or_global_initializer",
+        "source_context": [
+          "if (!ptr) zmalloc_oom_handler(size);",
+          "static void (*zmalloc_oom_handler)(size_t) = zmalloc_default_oom;"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_cae6a58feea6",
+        "project": "wrk",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/obj/openssl-1.1.1i/crypto/engine/eng_dyn.c:480:10",
+        "pointer_expression": "ctx->bind_engine",
+        "callsite_type": "fnptr-dynamic-call",
+        "expected_targets": [
+          "bind_engine"
+        ],
+        "failure_category": "external_or_dynamic_registration",
+        "source_context": [
+          "c->DYNAMIC_F2 = \"bind_engine\";",
+          "(ctx->bind_engine =",
+          "(dynamic_bind_engine) DSO_bind_func(ctx->dynamic_dso,",
+          "ctx->bind_engine = NULL;",
+          "ctx->bind_engine = NULL;"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_1e7a84549bc1",
+        "project": "wrk",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/obj/openssl-1.1.1i/ssl/statem/statem_clnt.c:3773:14",
+        "pointer_expression": "s->method->put_cipher_by_char",
+        "callsite_type": "fnptr-struct",
+        "expected_targets": [
+          "ssl3_put_cipher_by_char"
+        ],
+        "failure_category": "struct_or_table_dispatch",
+        "source_context": [
+          "if (!s->method->put_cipher_by_char(c, pkt, &len)) {",
+          "ssl3_put_cipher_by_char, \\",
+          "int (*put_cipher_by_char) (const SSL_CIPHER *cipher, WPACKET *pkt,",
+          "int ssl3_put_cipher_by_char(const SSL_CIPHER *c, WPACKET *pkt, size_t *len)"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_66e07f14192d",
+        "project": "wrk",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/wrk-4.2.0/src/wrk.c:551:17",
+        "pointer_expression": "fmt",
+        "callsite_type": "fnptr-callback",
+        "expected_targets": [
+          "format_metric",
+          "format_time_us"
+        ],
+        "failure_category": "callback_parameter_flow",
+        "source_context": [
+          "static void print_units(long double n, char *(*fmt)(long double), int width) {",
+          "char *msg = fmt(n);",
+          "print_units(n, format_time_us, 10);",
+          "static void print_stats(char *name, stats *stats, char *(*fmt)(long double)) {",
+          "print_units(mean, fmt, 8);"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_ee0e24f737c4",
+        "project": "zfs",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/cmd/zed/agents/fmd_api.c:328:3",
+        "pointer_expression": "ops->fmdo_close",
+        "callsite_type": "fnptr-cast",
+        "expected_targets": [
+          "zfs_fm_close"
+        ],
+        "failure_category": "cast_or_global_initializer",
+        "source_context": [
+          "if (ops->fmdo_close != NULL)",
+          "ops->fmdo_close(hdl, cp);",
+          "zfs_fm_close, /* fmdo_close */",
+          "zfs_fm_close(fmd_hdl_t *hdl, fmd_case_t *cs)"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_f8c74ea876ec",
+        "project": "zfs",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/cmd/zstream/zstream_recompress.c:274:14",
+        "pointer_expression": "ci_decompress",
+        "callsite_type": "fnptr-global-struct-array",
+        "expected_targets": [
+          "gzip_decompress",
+          "lz4_decompress_zfs",
+          "lzjb_decompress",
+          "zfs_zstd_decompress",
+          "zle_decompress"
+        ],
+        "failure_category": "struct_or_table_dispatch",
+        "source_context": [
+          "if (dinfo->ci_decompress != NULL) {",
+          "if (0 != dinfo->ci_decompress(cbuf, dbuf,",
+          "{\"lzjb\", 0, lzjb_compress, lzjb_decompress, NULL},",
+          "{\"gzip-1\", 1, gzip_compress, gzip_decompress, NULL},",
+          "{\"gzip-2\", 2, gzip_compress, gzip_decompress, NULL},"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_9237e9fc3c2c",
+        "project": "zfs",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/lib/libshare/nfs.c:202:11",
+        "pointer_expression": "cbk",
+        "callsite_type": "fnptr-callback",
+        "expected_targets": [
+          "nfs_copy_entries_cb",
+          "nfs_is_shared_cb"
+        ],
+        "failure_category": "callback_parameter_flow",
+        "source_context": [
+          "boolean_t (*cbk)(void *userdata, char *line, boolean_t found_mountpoint),",
+          "cont = cbk(userdata, buf,",
+          "exports, mountpoint, nfs_copy_entries_cb, newfp);",
+          "nfs_is_shared_cb, &found);"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_722a5d7bed3d",
+        "project": "zfs",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/module/icp/algs/modes/ccm.c:232:3",
+        "pointer_expression": "xor_block",
+        "callsite_type": "fnptr-callback",
+        "expected_targets": [
+          "aes_xor_block"
+        ],
+        "failure_category": "callback_parameter_flow",
+        "source_context": [
+          "void (*xor_block)(uint8_t *, uint8_t *))",
+          "xor_block(macp, mac_buf);",
+          "aes_xor_block);",
+          "AES_BLOCK_LEN, aes_encrypt_block, aes_xor_block);",
+          "AES_BLOCK_LEN, aes_encrypt_block, aes_xor_block);"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_07f3a542ba5f",
+        "project": "zfs",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/module/icp/algs/modes/ccm.c:97:3",
+        "pointer_expression": "encrypt_block",
+        "callsite_type": "fnptr-callback",
+        "expected_targets": [
+          "aes_encrypt_block"
+        ],
+        "failure_category": "callback_parameter_flow",
+        "source_context": [
+          "int (*encrypt_block)(const void *, const uint8_t *, uint8_t *),",
+          "encrypt_block(ctx->ccm_keysched, mac_buf, mac_buf);",
+          "encrypt_block(ctx->ccm_keysched, (uint8_t *)ctx->ccm_cb,",
+          "AES_BLOCK_LEN, aes_encrypt_block, aes_xor_block);",
+          "out, AES_BLOCK_LEN, aes_encrypt_block, aes_copy_block,"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_b9fb3964ee7b",
+        "project": "zfs",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/module/icp/algs/sha2/sha2_generic.c:237:3",
+        "pointer_expression": "ops->transform",
+        "callsite_type": "fnptr-global-struct-array",
+        "expected_targets": [
+          "sha256_generic",
+          "sha512_generic",
+          "tf_sha256_transform_x64",
+          "tf_sha512_transform_x64"
+        ],
+        "failure_category": "struct_or_table_dispatch",
+        "source_context": [
+          "ops->transform(ctx->state, m, 1);",
+          "ops->transform(ctx->state, data, blocks);",
+          "&sha256_generic_impl,",
+          "const sha256_ops_t sha256_generic_impl = {",
+          ".transform = sha256_generic,"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      },
+      {
+        "id": "cgbench_7c4366c0fd2d",
+        "project": "zfs",
+        "callsite": "/home/yuanting/work/icall-benchmarks/llm/zfs-build/../zfs-2.2.2/module/zcommon/zfs_fletcher.c:887:4",
+        "pointer_expression": "ops->compute_native",
+        "callsite_type": "fnptr-cast",
+        "expected_targets": [
+          "fletcher_4_scalar_native",
+          "fletcher_4_superscalar4_native",
+          "fletcher_4_superscalar_native"
+        ],
+        "failure_category": "cast_or_global_initializer",
+        "source_context": [
+          "ops->compute_native(ctx, data, asize);",
+          ".compute_native = fletcher_4_scalar_native,",
+          ".compute_native = fletcher_4_superscalar_native,",
+          ".compute_native = fletcher_4_superscalar4_native,"
+        ],
+        "predicted_targets": [],
+        "confidence": 0.0,
+        "candidate_reasons": {},
+        "tool_trace": [
+          {
+            "tool": "inspect_pointer_assignments",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_pointer_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_struct_tables",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_callback_registration",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "inspect_macros",
+            "status": "ok",
+            "candidates": []
+          },
+          {
+            "tool": "finalize_target_set",
+            "status": "ok",
+            "candidates": []
+          }
+        ]
+      }
+    ]
+  },
+  "datarace_unknown": {
+    "count": 6,
+    "by_failure_category": {
+      "indirect_index_or_pointer_alias": 5,
+      "affine_tiled_loop_dependence": 1
+    },
+    "cases": [
+      {
+        "id": "DRB005-indirectaccess1-orig-yes",
+        "expected_race": true,
+        "status": "unknown",
+        "reason": "shared accesses exist but index disjointness cannot be proven: xa1[idx], xa2[idx]",
+        "source_file": "micro-benchmarks/DRB005-indirectaccess1-orig-yes.c",
+        "failure_category": "indirect_index_or_pointer_alias",
+        "source_context": [
+          "48: Two pointers (xa1 and xa2) have a pair of values with a distance of 12.",
+          "59: Data race pair: xa1[idx]@128:5:W vs. xa2[idx]@129:5:W",
+          "66: int indexSet[N] = {",
+          "105: // max index value is 2013. +12 to obtain a valid xa2[idx] after xa1+12.",
+          "114: double * xa1 = base;",
+          "115: double * xa2 = xa1 + 12;",
+          "118: // initialize segments touched by indexSet",
+          "121: base[i]=0.5*i;",
+          "124: #pragma omp parallel for schedule(static,1)",
+          "127: int idx = indexSet[i];",
+          "128: xa1[idx]+= 1.0 + i;",
+          "129: xa2[idx]+= 3.0 + i;",
+          "132: printf(\"x1[999]=%f xa2[1285]=%f\\n\", xa1[999], xa2[1285]);"
+        ],
+        "index_set": {
+          "count": 180,
+          "min": 521,
+          "max": 2013,
+          "distance_checked": 12,
+          "pairs_at_distance": [
+            {
+              "first": 911,
+              "second": 923,
+              "first_position": 48,
+              "second_position": 53
+            }
+          ]
+        }
+      },
+      {
+        "id": "DRB006-indirectaccess2-orig-yes",
+        "expected_race": true,
+        "status": "unknown",
+        "reason": "shared accesses exist but index disjointness cannot be proven: xa1[idx], xa2[idx]",
+        "source_file": "micro-benchmarks/DRB006-indirectaccess2-orig-yes.c",
+        "failure_category": "indirect_index_or_pointer_alias",
+        "source_context": [
+          "51: indexSet[5]- indexSet[0] = 533 - 521 = 12",
+          "61: Data race pair: xa1[idx]@128:5:W vs. xa2[idx]@129:5:W",
+          "68: int indexSet[N] = {",
+          "114: double * xa1 = base;",
+          "115: double * xa2 = xa1 + 12;",
+          "118: // initialize segments touched by indexSet",
+          "121: base[i]=0.5*i;",
+          "124: #pragma omp parallel for // default static even scheduling may not trigger data race!",
+          "127: int idx = indexSet[i];",
+          "128: xa1[idx]+= 1.0;",
+          "129: xa2[idx]+= 3.0;",
+          "131: printf(\"x1[999]=%f xa2[1285]=%f\\n\", xa1[999], xa2[1285]);"
+        ],
+        "index_set": {
+          "count": 180,
+          "min": 521,
+          "max": 2013,
+          "distance_checked": 12,
+          "pairs_at_distance": [
+            {
+              "first": 521,
+              "second": 533,
+              "first_position": 0,
+              "second_position": 5
+            }
+          ]
+        }
+      },
+      {
+        "id": "DRB007-indirectaccess3-orig-yes",
+        "expected_race": true,
+        "status": "unknown",
+        "reason": "shared accesses exist but index disjointness cannot be proven: xa1[idx], xa2[idx]",
+        "source_file": "micro-benchmarks/DRB007-indirectaccess3-orig-yes.c",
+        "failure_category": "indirect_index_or_pointer_alias",
+        "source_context": [
+          "51: indexSet[3]- indexSet[0] = 533 - 521 = 12",
+          "61: Data race pair: xa1[idx]@128:5:W vs. xa2[idx]@129:5:W",
+          "68: int indexSet[N] = {",
+          "114: double * xa1 = base;",
+          "115: double * xa2 = xa1 + 12;",
+          "118: // initialize segments touched by indexSet",
+          "121: base[i]=0.5*i;",
+          "124: #pragma omp parallel for // default static even scheduling may not trigger data race!",
+          "127: int idx = indexSet[i];",
+          "128: xa1[idx]+= 1.0;",
+          "129: xa2[idx]+= 3.0;",
+          "131: printf(\"x1[999]=%f xa2[1285]=%f\\n\", xa1[999], xa2[1285]);"
+        ],
+        "index_set": {
+          "count": 180,
+          "min": 521,
+          "max": 2013,
+          "distance_checked": 12,
+          "pairs_at_distance": [
+            {
+              "first": 521,
+              "second": 533,
+              "first_position": 0,
+              "second_position": 3
+            }
+          ]
+        }
+      },
+      {
+        "id": "DRB008-indirectaccess4-orig-yes",
+        "expected_race": true,
+        "status": "unknown",
+        "reason": "shared accesses exist but index disjointness cannot be proven: xa1[idx], xa2[idx]",
+        "source_file": "micro-benchmarks/DRB008-indirectaccess4-orig-yes.c",
+        "failure_category": "indirect_index_or_pointer_alias",
+        "source_context": [
+          "47: Two pointers have a distance of 12 (xa2 - xa1 = 12).",
+          "51: indexSet[1]- indexSet[0] = 533 - 521 = 12",
+          "52: So xa1[idx] and xa2[idx] may cause loop carried dependence for N=0 and N=3.",
+          "62: Data race pair: xa1[idx]@128:5:W vs. xa2[idx]@129:5:W",
+          "69: int indexSet[N] = {",
+          "114: double * xa1 = base;",
+          "115: double * xa2 = xa1 + 12;",
+          "118: // initialize segments touched by indexSet",
+          "121: base[i]=0.5*i;",
+          "124: #pragma omp parallel for // default static even scheduling may not trigger data race!",
+          "127: int idx = indexSet[i];",
+          "128: xa1[idx]+= 1.0;",
+          "129: xa2[idx]+= 3.0;",
+          "131: printf(\"x1[999]=%f xa2[1285]=%f\\n\", xa1[999], xa2[1285]);"
+        ],
+        "index_set": {
+          "count": 180,
+          "min": 521,
+          "max": 2013,
+          "distance_checked": 12,
+          "pairs_at_distance": [
+            {
+              "first": 521,
+              "second": 533,
+              "first_position": 0,
+              "second_position": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "DRB044-adi-tile-no",
+        "expected_race": false,
+        "status": "unknown",
+        "reason": "shared accesses exist but index disjointness cannot be proven: B[c15 | n - 3 - c9], X[c15 | n - 2 - c9], X[c15 | n - 2 - c9 - 1], X[c15 | n - c9 - 2]",
+        "source_file": "micro-benchmarks/DRB044-adi-tile-no.c",
+        "failure_category": "affine_tiled_loop_dependence",
+        "source_context": [
+          "30: #pragma omp parallel for private(c4, c2, c3)",
+          "34: #pragma omp simd",
+          "36: X[c3][c4] = (((double )c3) * (c4 + 1) + 1) / n;",
+          "37: A[c3][c4] = (((double )c3) * (c4 + 2) + 2) / n;",
+          "38: B[c3][c4] = (((double )c3) * (c4 + 3) + 3) / n;",
+          "80: #pragma omp parallel for private(c15, c9, c8)",
+          "84: #pragma omp simd",
+          "86: B[c15][c9] = B[c15][c9] - A[c15][c9] * A[c15][c9] / B[c15][c9 - 1];",
+          "94: X[c15][c9] = X[c15][c9] - X[c15][c9 - 1] * A[c15][c9] / B[c15][c9 - 1];",
+          "102: X[c15][n - c9 - 2] = (X[c15][n - 2 - c9] - X[c15][n - 2 - c9 - 1] * A[c15][n - c9 - 3]) / B[c15][n - 3 - c9];",
+          "112: X[c15][n - 1] = X[c15][n - 1] / B[c15][n - 1];",
+          "122: B[c9][c15] = B[c9][c15] - A[c9][c15] * A[c9][c15] / B[c9 - 1][c15];",
+          "130: X[c9][c15] = X[c9][c15] - X[c9 - 1][c15] * A[c9][c15] / B[c9 - 1][c15];",
+          "138: X[n - 2 - c9][c15] = (X[n - 2 - c9][c15] - X[n - c9 - 3][c15] * A[n - 3 - c9][c15]) / B[n - 2 - c9][c15];",
+          "148: X[n - 1][c15] = X[n - 1][c15] / B[n - 1][c15];"
+        ],
+        "index_set": {}
+      },
+      {
+        "id": "DRB052-indirectaccesssharebase-orig-no",
+        "expected_race": false,
+        "status": "unknown",
+        "reason": "shared accesses exist but index disjointness cannot be proven: xa1[idx], xa2[idx]",
+        "source_file": "micro-benchmarks/DRB052-indirectaccesssharebase-orig-no.c",
+        "failure_category": "indirect_index_or_pointer_alias",
+        "source_context": [
+          "60: int indexSet[N] = {",
+          "106: double * xa1 = base;",
+          "107: double * xa2 = base + 12;",
+          "112: base[i]=0.0;",
+          "115: #pragma omp parallel for",
+          "118: int idx = indexSet[i];",
+          "119: xa1[idx]+= 1.0;",
+          "120: xa2[idx]+= 3.0;",
+          "123: // verify the results, no overlapping of xa1 vs. xa2, no addition happens to the same element twice"
+        ],
+        "index_set": {
+          "count": 180,
+          "min": 521,
+          "max": 2013,
+          "distance_checked": 12,
+          "pairs_at_distance": []
+        }
+      }
+    ]
+  },
+  "callgraph_missing": {
+    "count": 13,
+    "by_failure_category": {
+      "function_pointer_dispatch": 4,
+      "cross_file_callback_registration": 2,
+      "constructor_or_member_call": 3,
+      "virtual_dispatch": 4
+    },
+    "edges": [
+      {
+        "case": "c/c_dynamic",
+        "caller": "c:c_dynamic:process_device",
+        "callee": "c:c_dynamic:tcp_open",
+        "failure_category": "function_pointer_dispatch",
+        "gold_kind": "indirect",
+        "gold_evidence": "driver->open(target) can target tcp_open through tcp_driver.",
+        "caller_source": {
+          "file": "src/device.c",
+          "line": 13,
+          "context": [
+            "11: }",
+            "13: int process_device(const char *scheme, const char *target) {",
+            "14: struct Driver *driver = pick_driver(scheme);",
+            "15: int handle = driver->open(target);"
+          ]
+        },
+        "callee_source": {
+          "file": "src/drivers.c",
+          "line": 3,
+          "context": [
+            "1: #include \"device.h\"",
+            "3: int tcp_open(const char *target) {",
+            "4: (void)target;",
+            "5: return 7;"
+          ]
+        },
+        "manifest": "callgraphbench/datasets/c/c_dynamic/manifest.json"
+      },
+      {
+        "case": "c/c_dynamic",
+        "caller": "c:c_dynamic:process_device",
+        "callee": "c:c_dynamic:tcp_read",
+        "failure_category": "function_pointer_dispatch",
+        "gold_kind": "indirect",
+        "gold_evidence": "driver->read(handle) can target tcp_read through tcp_driver.",
+        "caller_source": {
+          "file": "src/device.c",
+          "line": 13,
+          "context": [
+            "11: }",
+            "13: int process_device(const char *scheme, const char *target) {",
+            "14: struct Driver *driver = pick_driver(scheme);",
+            "15: int handle = driver->open(target);"
+          ]
+        },
+        "callee_source": {
+          "file": "src/drivers.c",
+          "line": 13,
+          "context": [
+            "11: }",
+            "13: int tcp_read(int handle) {",
+            "14: return handle + 100;",
+            "15: }"
+          ]
+        },
+        "manifest": "callgraphbench/datasets/c/c_dynamic/manifest.json"
+      },
+      {
+        "case": "c/c_dynamic",
+        "caller": "c:c_dynamic:process_device",
+        "callee": "c:c_dynamic:udp_open",
+        "failure_category": "function_pointer_dispatch",
+        "gold_kind": "indirect",
+        "gold_evidence": "driver->open(target) can target udp_open through udp_driver.",
+        "caller_source": {
+          "file": "src/device.c",
+          "line": 13,
+          "context": [
+            "11: }",
+            "13: int process_device(const char *scheme, const char *target) {",
+            "14: struct Driver *driver = pick_driver(scheme);",
+            "15: int handle = driver->open(target);"
+          ]
+        },
+        "callee_source": {
+          "file": "src/drivers.c",
+          "line": 8,
+          "context": [
+            "6: }",
+            "8: int udp_open(const char *target) {",
+            "9: (void)target;",
+            "10: return 11;"
+          ]
+        },
+        "manifest": "callgraphbench/datasets/c/c_dynamic/manifest.json"
+      },
+      {
+        "case": "c/c_dynamic",
+        "caller": "c:c_dynamic:process_device",
+        "callee": "c:c_dynamic:udp_read",
+        "failure_category": "function_pointer_dispatch",
+        "gold_kind": "indirect",
+        "gold_evidence": "driver->read(handle) can target udp_read through udp_driver.",
+        "caller_source": {
+          "file": "src/device.c",
+          "line": 13,
+          "context": [
+            "11: }",
+            "13: int process_device(const char *scheme, const char *target) {",
+            "14: struct Driver *driver = pick_driver(scheme);",
+            "15: int handle = driver->open(target);"
+          ]
+        },
+        "callee_source": {
+          "file": "src/drivers.c",
+          "line": 17,
+          "context": [
+            "15: }",
+            "17: int udp_read(int handle) {",
+            "18: return handle + 200;",
+            "19: }"
+          ]
+        },
+        "manifest": "callgraphbench/datasets/c/c_dynamic/manifest.json"
+      },
+      {
+        "case": "c/c_multifile",
+        "caller": "c:c_multifile:run_pipeline",
+        "callee": "c:c_multifile:suffix_handler",
+        "failure_category": "cross_file_callback_registration",
+        "gold_kind": "indirect",
+        "gold_evidence": "handler(input) can target suffix_handler returned by select_handler.",
+        "caller_source": {
+          "file": "src/pipeline.c",
+          "line": 12,
+          "context": [
+            "10: }",
+            "12: char *run_pipeline(const char *input, int mode) {",
+            "13: StageHandler handler = select_handler(mode);",
+            "14: char *result = handler(input);"
+          ]
+        },
+        "callee_source": {
+          "file": "src/handlers.c",
+          "line": 8,
+          "context": [
+            "6: }",
+            "8: char *suffix_handler(const char *input) {",
+            "9: (void)input;",
+            "10: return \"ada-ready\";"
+          ]
+        },
+        "manifest": "callgraphbench/datasets/c/c_multifile/manifest.json"
+      },
+      {
+        "case": "c/c_multifile",
+        "caller": "c:c_multifile:run_pipeline",
+        "callee": "c:c_multifile:uppercase_handler",
+        "failure_category": "cross_file_callback_registration",
+        "gold_kind": "indirect",
+        "gold_evidence": "handler(input) can target uppercase_handler returned by select_handler.",
+        "caller_source": {
+          "file": "src/pipeline.c",
+          "line": 12,
+          "context": [
+            "10: }",
+            "12: char *run_pipeline(const char *input, int mode) {",
+            "13: StageHandler handler = select_handler(mode);",
+            "14: char *result = handler(input);"
+          ]
+        },
+        "callee_source": {
+          "file": "src/handlers.c",
+          "line": 3,
+          "context": [
+            "1: #include \"pipeline.h\"",
+            "3: char *uppercase_handler(const char *input) {",
+            "4: (void)input;",
+            "5: return \"ADA\";"
+          ]
+        },
+        "manifest": "callgraphbench/datasets/c/c_multifile/manifest.json"
+      },
+      {
+        "case": "cpp/cpp_basic",
+        "caller": "cpp:cpp_basic:User.welcome",
+        "callee": "cpp:cpp_basic:greet",
+        "failure_category": "constructor_or_member_call",
+        "gold_kind": "direct",
+        "gold_evidence": "welcome returns greet(name_).",
+        "caller_source": {
+          "file": "src/main.cpp",
+          "line": 15,
+          "context": [
+            "13: explicit User(std::string name) : name_(name) {}",
+            "15: std::string welcome() const {",
+            "16: return greet(name_);",
+            "17: }"
+          ]
+        },
+        "callee_source": {
+          "file": "src/main.cpp",
+          "line": 7,
+          "context": [
+            "5: }",
+            "7: std::string greet(const std::string &name) {",
+            "8: return formatName(name);",
+            "9: }"
+          ]
+        },
+        "manifest": "callgraphbench/datasets/cpp/cpp_basic/manifest.json"
+      },
+      {
+        "case": "cpp/cpp_basic",
+        "caller": "cpp:cpp_basic:main",
+        "callee": "cpp:cpp_basic:User.User",
+        "failure_category": "constructor_or_member_call",
+        "gold_kind": "constructor",
+        "gold_evidence": "User user(\"ada\") invokes the constructor.",
+        "caller_source": {
+          "file": "src/main.cpp",
+          "line": 23,
+          "context": [
+            "21: };",
+            "23: int main() {",
+            "24: User user(\"ada\");",
+            "25: user.welcome();"
+          ]
+        },
+        "callee_source": {
+          "file": "src/main.cpp",
+          "line": 13,
+          "context": [
+            "11: class User {",
+            "12: public:",
+            "13: explicit User(std::string name) : name_(name) {}",
+            "15: std::string welcome() const {"
+          ]
+        },
+        "manifest": "callgraphbench/datasets/cpp/cpp_basic/manifest.json"
+      },
+      {
+        "case": "cpp/cpp_basic",
+        "caller": "cpp:cpp_basic:main",
+        "callee": "cpp:cpp_basic:User.welcome",
+        "failure_category": "constructor_or_member_call",
+        "gold_kind": "direct",
+        "gold_evidence": "main calls user.welcome().",
+        "caller_source": {
+          "file": "src/main.cpp",
+          "line": 23,
+          "context": [
+            "21: };",
+            "23: int main() {",
+            "24: User user(\"ada\");",
+            "25: user.welcome();"
+          ]
+        },
+        "callee_source": {
+          "file": "src/main.cpp",
+          "line": 15,
+          "context": [
+            "13: explicit User(std::string name) : name_(name) {}",
+            "15: std::string welcome() const {",
+            "16: return greet(name_);",
+            "17: }"
+          ]
+        },
+        "manifest": "callgraphbench/datasets/cpp/cpp_basic/manifest.json"
+      },
+      {
+        "case": "cpp/cpp_dispatch",
+        "caller": "cpp:cpp_dispatch:execute_rule",
+        "callee": "cpp:cpp_dispatch:LengthRule.apply",
+        "failure_category": "virtual_dispatch",
+        "gold_kind": "virtual",
+        "gold_evidence": "rule.apply(value) can dispatch to LengthRule::apply.",
+        "caller_source": {
+          "file": "src/workflow.cpp",
+          "line": 3,
+          "context": [
+            "1: #include \"rule.h\"",
+            "3: bool execute_rule(const Rule& rule, const std::string& value) {",
+            "4: return rule.apply(value);",
+            "5: }"
+          ]
+        },
+        "callee_source": {
+          "file": "src/strategies.cpp",
+          "line": 5,
+          "context": [
+            "3: class LengthRule : public Rule {",
+            "4: public:",
+            "5: bool apply(const std::string& value) const override {",
+            "6: return value.size() > 3;",
+            "7: }"
+          ]
+        },
+        "manifest": "callgraphbench/datasets/cpp/cpp_dispatch/manifest.json"
+      },
+      {
+        "case": "cpp/cpp_dispatch",
+        "caller": "cpp:cpp_dispatch:execute_rule",
+        "callee": "cpp:cpp_dispatch:PrefixRule.apply",
+        "failure_category": "virtual_dispatch",
+        "gold_kind": "virtual",
+        "gold_evidence": "rule.apply(value) can dispatch to PrefixRule::apply.",
+        "caller_source": {
+          "file": "src/workflow.cpp",
+          "line": 3,
+          "context": [
+            "1: #include \"rule.h\"",
+            "3: bool execute_rule(const Rule& rule, const std::string& value) {",
+            "4: return rule.apply(value);",
+            "5: }"
+          ]
+        },
+        "callee_source": {
+          "file": "src/strategies.cpp",
+          "line": 12,
+          "context": [
+            "10: class PrefixRule : public Rule {",
+            "11: public:",
+            "12: bool apply(const std::string& value) const override {",
+            "13: return value.rfind(\"ada\", 0) == 0;",
+            "14: }"
+          ]
+        },
+        "manifest": "callgraphbench/datasets/cpp/cpp_dispatch/manifest.json"
+      },
+      {
+        "case": "cpp/cpp_multifile",
+        "caller": "cpp:cpp_multifile:dispatch",
+        "callee": "cpp:cpp_multifile:JsonParser.handle",
+        "failure_category": "virtual_dispatch",
+        "gold_kind": "virtual",
+        "gold_evidence": "handler.handle(text) can dispatch to JsonParser::handle.",
+        "caller_source": {
+          "file": "src/router.cpp",
+          "line": 3,
+          "context": [
+            "1: #include \"router.h\"",
+            "3: std::string dispatch(Handler& handler, const std::string& text) {",
+            "4: return handler.handle(text);",
+            "5: }"
+          ]
+        },
+        "callee_source": {
+          "file": "src/handlers.cpp",
+          "line": 5,
+          "context": [
+            "3: class JsonParser : public Handler {",
+            "4: public:",
+            "5: std::string handle(const std::string& text) override {",
+            "6: return \"json:\" + text;",
+            "7: }"
+          ]
+        },
+        "manifest": "callgraphbench/datasets/cpp/cpp_multifile/manifest.json"
+      },
+      {
+        "case": "cpp/cpp_multifile",
+        "caller": "cpp:cpp_multifile:dispatch",
+        "callee": "cpp:cpp_multifile:TextParser.handle",
+        "failure_category": "virtual_dispatch",
+        "gold_kind": "virtual",
+        "gold_evidence": "handler.handle(text) can dispatch to TextParser::handle.",
+        "caller_source": {
+          "file": "src/router.cpp",
+          "line": 3,
+          "context": [
+            "1: #include \"router.h\"",
+            "3: std::string dispatch(Handler& handler, const std::string& text) {",
+            "4: return handler.handle(text);",
+            "5: }"
+          ]
+        },
+        "callee_source": {
+          "file": "src/handlers.cpp",
+          "line": 12,
+          "context": [
+            "10: class TextParser : public Handler {",
+            "11: public:",
+            "12: std::string handle(const std::string& text) override {",
+            "13: return \"text:\" + text;",
+            "14: }"
+          ]
+        },
+        "manifest": "callgraphbench/datasets/cpp/cpp_multifile/manifest.json"
+      }
+    ]
+  },
+  "memsafety_false_positive": {
+    "count": 8,
+    "by_failure_category": {
+      "multi_branch_pointer_adjustment": 1,
+      "linked_list_ownership_loop": 1,
+      "struct_field_alias_and_early_return": 1,
+      "linked_list_field_alias": 1,
+      "container_of_pointer_arithmetic": 1,
+      "linked_list_branch_ownership": 2,
+      "nested_struct_and_custom_calloc": 1
+    },
+    "cases": [
+      {
+        "id": "960521-1-2",
+        "expected_leak": false,
+        "status": "leak",
+        "reason": "resource path ends without release",
+        "task_file": "c/memsafety/960521-1-2.yml",
+        "input_files": [
+          "960521-1-2.i"
+        ],
+        "failure_category": "multi_branch_pointer_adjustment",
+        "evidence": [
+          {
+            "id": "ev_00afd3c2b263",
+            "file": "960521-1-2.i",
+            "line": 536,
+            "snippet": "a = malloc (n * sizeof(*a));"
+          },
+          {
+            "id": "ev_212773ab5233",
+            "file": "960521-1-2.i",
+            "line": 536,
+            "snippet": "a = malloc (n * sizeof(*a));"
+          },
+          {
+            "id": "ev_c3c8de91eb8f",
+            "file": "960521-1-2.i",
+            "line": 537,
+            "snippet": "b = malloc (n * sizeof(*b));"
+          },
+          {
+            "id": "ev_de4415b6d03f",
+            "file": "960521-1-2.i",
+            "line": 543,
+            "snippet": "{ free(a); free(b-1); }"
+          },
+          {
+            "id": "ev_e5dc1bf6207c",
+            "file": "960521-1-2.i",
+            "line": 537,
+            "snippet": "b = malloc (n * sizeof(*b));"
+          }
+        ],
+        "source_context": [
+          "535: n = 32768;",
+          "536: a = malloc (n * sizeof(*a));",
+          "537: b = malloc (n * sizeof(*b));",
+          "538: *b++ = 0;",
+          "542: else",
+          "543: { free(a); free(b-1); }",
+          "544: return 0;"
+        ]
+      },
+      {
+        "id": "lockfree-3_0",
+        "expected_leak": false,
+        "status": "leak",
+        "reason": "resource path ends without release",
+        "task_file": "c/memsafety/lockfree-3.0.yml",
+        "input_files": [
+          "lockfree-3.0.i"
+        ],
+        "failure_category": "linked_list_ownership_loop",
+        "evidence": [
+          {
+            "id": "ev_244011dbb11e",
+            "file": "lockfree-3.0.i",
+            "line": 548,
+            "snippet": "x1->next = t1;"
+          },
+          {
+            "id": "ev_54a8c0e506ac",
+            "file": "lockfree-3.0.i",
+            "line": 534,
+            "snippet": "static struct cell *x1 = ((void *)0);"
+          },
+          {
+            "id": "ev_709b822a7eba",
+            "file": "lockfree-3.0.i",
+            "line": 533,
+            "snippet": "static struct cell *t1 = ((void *)0);"
+          },
+          {
+            "id": "ev_8581f12d963e",
+            "file": "lockfree-3.0.i",
+            "line": 601,
+            "snippet": "struct cell *next = garbage->next;"
+          },
+          {
+            "id": "ev_89f346c7be23",
+            "file": "lockfree-3.0.i",
+            "line": 537,
+            "snippet": "x1 = malloc(sizeof(*x1));"
+          }
+        ],
+        "source_context": [
+          "547: case 4:",
+          "548: x1->next = t1;",
+          "549: return;",
+          "533: static struct cell *t1 = ((void *)0);",
+          "534: static struct cell *x1 = ((void *)0);",
+          "535: switch (pc1++) {",
+          "532: {",
+          "600: while (garbage) {",
+          "601: struct cell *next = garbage->next;",
+          "602: free(garbage);",
+          "536: case 1:",
+          "537: x1 = malloc(sizeof(*x1));",
+          "538: x1->data = 0;"
+        ]
+      },
+      {
+        "id": "test-0019-1",
+        "expected_leak": false,
+        "status": "leak",
+        "reason": "resource path ends without release",
+        "task_file": "c/memsafety/test-0019-1.yml",
+        "input_files": [
+          "test-0019-1.i"
+        ],
+        "failure_category": "struct_field_alias_and_early_return",
+        "evidence": [
+          {
+            "id": "ev_058671c2e956",
+            "file": "test-0019-1.i",
+            "line": 530,
+            "snippet": "pdata->hi = malloc(24);"
+          },
+          {
+            "id": "ev_2d624170329f",
+            "file": "test-0019-1.i",
+            "line": 534,
+            "snippet": "void *lo = data.lo;"
+          },
+          {
+            "id": "ev_376878526745",
+            "file": "test-0019-1.i",
+            "line": 538,
+            "snippet": "free(lo);"
+          },
+          {
+            "id": "ev_6bce21b20ccb",
+            "file": "test-0019-1.i",
+            "line": 529,
+            "snippet": "pdata->lo = malloc(16);"
+          },
+          {
+            "id": "ev_7a2729df5b68",
+            "file": "test-0019-1.i",
+            "line": 529,
+            "snippet": "pdata->lo = malloc(16);"
+          }
+        ],
+        "source_context": [
+          "529: pdata->lo = malloc(16);",
+          "530: pdata->hi = malloc(24);",
+          "531: }",
+          "533: {",
+          "534: void *lo = data.lo;",
+          "535: void *hi = data.hi;",
+          "537: return;",
+          "538: free(lo);",
+          "539: free(hi);",
+          "528: {"
+        ]
+      },
+      {
+        "id": "test-0102-1",
+        "expected_leak": false,
+        "status": "leak",
+        "reason": "resource path ends without release",
+        "task_file": "c/memsafety/test-0102-1.yml",
+        "input_files": [
+          "test-0102-1.i"
+        ],
+        "failure_category": "linked_list_field_alias",
+        "evidence": [
+          {
+            "id": "ev_2882a547282b",
+            "file": "test-0102-1.i",
+            "line": 555,
+            "snippet": "now = next;"
+          },
+          {
+            "id": "ev_2b9900545238",
+            "file": "test-0102-1.i",
+            "line": 587,
+            "snippet": "struct top_list *top = malloc(sizeof(*top));"
+          },
+          {
+            "id": "ev_2ce66e01b4c9",
+            "file": "test-0102-1.i",
+            "line": 571,
+            "snippet": "struct sub_list *sub = malloc(sizeof(*sub));"
+          },
+          {
+            "id": "ev_3cb449791e33",
+            "file": "test-0102-1.i",
+            "line": 571,
+            "snippet": "struct sub_list *sub = malloc(sizeof(*sub));"
+          },
+          {
+            "id": "ev_48ccc1b47bc7",
+            "file": "test-0102-1.i",
+            "line": 551,
+            "snippet": "struct sub_list *now = ((struct sub_list *)((char *)(head->next)-(unsigned long)(&((struct sub_list *)0)->link)));"
+          }
+        ],
+        "source_context": [
+          "554: free(now);",
+          "555: now = next;",
+          "556: }",
+          "586: {",
+          "587: struct top_list *top = malloc(sizeof(*top));",
+          "588: if (!top)",
+          "570: {",
+          "571: struct sub_list *sub = malloc(sizeof(*sub));",
+          "572: if (!sub)",
+          "550: {",
+          "551: struct sub_list *now = ((struct sub_list *)((char *)(head->next)-(unsigned long)(&((struct sub_list *)0)->link)));",
+          "552: while (&now->link != (head)) {"
+        ]
+      },
+      {
+        "id": "test-0134",
+        "expected_leak": false,
+        "status": "leak",
+        "reason": "resource path ends without release",
+        "task_file": "c/memsafety/test-0134.yml",
+        "input_files": [
+          "test-0134.i"
+        ],
+        "failure_category": "container_of_pointer_arithmetic",
+        "evidence": [
+          {
+            "id": "ev_4f9a73530e8f",
+            "file": "test-0134.i",
+            "line": 567,
+            "snippet": "struct node *node = malloc(sizeof *node);"
+          },
+          {
+            "id": "ev_b1beedf56358",
+            "file": "test-0134.i",
+            "line": 585,
+            "snippet": "free(((struct node *)((char *)(next)-(unsigned long)(&((struct node *)0)->linkage))));"
+          },
+          {
+            "id": "ev_f66f5e9fbc08",
+            "file": "test-0134.i",
+            "line": 567,
+            "snippet": "struct node *node = malloc(sizeof *node);"
+          }
+        ],
+        "source_context": [
+          "566: {",
+          "567: struct node *node = malloc(sizeof *node);",
+          "568: if (!node)",
+          "584: gl_list.next = next->next;",
+          "585: free(((struct node *)((char *)(next)-(unsigned long)(&((struct node *)0)->linkage))));",
+          "586: }"
+        ]
+      },
+      {
+        "id": "test-0214",
+        "expected_leak": false,
+        "status": "leak",
+        "reason": "resource path ends without release",
+        "task_file": "c/memsafety/test-0214.yml",
+        "input_files": [
+          "test-0214.i"
+        ],
+        "failure_category": "linked_list_branch_ownership",
+        "evidence": [
+          {
+            "id": "ev_2ba18a6f8567",
+            "file": "test-0214.i",
+            "line": 709,
+            "snippet": "item_p item = (*list)[from];"
+          },
+          {
+            "id": "ev_3b57b16b3a57",
+            "file": "test-0214.i",
+            "line": 741,
+            "snippet": "item_p cursor = list[end_point];"
+          },
+          {
+            "id": "ev_59562f8d797f",
+            "file": "test-0214.i",
+            "line": 745,
+            "snippet": "cursor = next;"
+          },
+          {
+            "id": "ev_5dcf73e2dabe",
+            "file": "test-0214.i",
+            "line": 743,
+            "snippet": "item_p next = (*cursor)[direction];"
+          },
+          {
+            "id": "ev_62385b4d49f7",
+            "file": "test-0214.i",
+            "line": 662,
+            "snippet": "free(list);"
+          }
+        ],
+        "source_context": [
+          "708: const direction_t term_field = (LIST_END == from) ? ITEM_NEXT : ITEM_PREV;",
+          "709: item_p item = (*list)[from];",
+          "710: item_p next = (*item)[next_field];",
+          "740: }",
+          "741: item_p cursor = list[end_point];",
+          "742: while (cursor) {",
+          "744: free(cursor);",
+          "745: cursor = next;",
+          "746: }",
+          "743: item_p next = (*cursor)[direction];",
+          "661: if (no_beg != no_end)",
+          "662: free(list);",
+          "663: return no_beg;"
+        ]
+      },
+      {
+        "id": "test-0217",
+        "expected_leak": false,
+        "status": "leak",
+        "reason": "resource path ends without release",
+        "task_file": "c/memsafety/test-0217.yml",
+        "input_files": [
+          "test-0217.i"
+        ],
+        "failure_category": "linked_list_branch_ownership",
+        "evidence": [
+          {
+            "id": "ev_1a4e754939cb",
+            "file": "test-0217.i",
+            "line": 667,
+            "snippet": "user_item_p item = malloc(sizeof *item);"
+          },
+          {
+            "id": "ev_2048c7aca189",
+            "file": "test-0217.i",
+            "line": 749,
+            "snippet": "cursor = next;"
+          },
+          {
+            "id": "ev_67ca3760587b",
+            "file": "test-0217.i",
+            "line": 717,
+            "snippet": "free(item);"
+          },
+          {
+            "id": "ev_68463bac58da",
+            "file": "test-0217.i",
+            "line": 662,
+            "snippet": "free(list);"
+          },
+          {
+            "id": "ev_93dd420f638b",
+            "file": "test-0217.i",
+            "line": 713,
+            "snippet": "item_p item = (*list)[from];"
+          }
+        ],
+        "source_context": [
+          "666: {",
+          "667: user_item_p item = malloc(sizeof *item);",
+          "668: if (!item)",
+          "748: free(cursor);",
+          "749: cursor = next;",
+          "750: }",
+          "716: (*list)[from] = next;",
+          "717: free(item);",
+          "718: }",
+          "661: if (no_beg != no_end)",
+          "662: free(list);",
+          "663: return no_beg;",
+          "712: const direction_t term_field = (LIST_END == from) ? ITEM_NEXT : ITEM_PREV;",
+          "713: item_p item = (*list)[from];",
+          "714: item_p next = (*item)[next_field];"
+        ]
+      },
+      {
+        "id": "test-0219",
+        "expected_leak": false,
+        "status": "leak",
+        "reason": "resource path ends without release",
+        "task_file": "c/memsafety/test-0219.yml",
+        "input_files": [
+          "test-0219.i"
+        ],
+        "failure_category": "nested_struct_and_custom_calloc",
+        "evidence": [
+          {
+            "id": "ev_088db8a6b176",
+            "file": "test-0219.i",
+            "line": 670,
+            "snippet": "list = next;"
+          },
+          {
+            "id": "ev_0f76be5da65f",
+            "file": "test-0219.i",
+            "line": 695,
+            "snippet": "list = next;"
+          },
+          {
+            "id": "ev_1df691b97a6b",
+            "file": "test-0219.i",
+            "line": 669,
+            "snippet": "free(list);"
+          },
+          {
+            "id": "ev_3ee3b0fcf1fc",
+            "file": "test-0219.i",
+            "line": 694,
+            "snippet": "free(list);"
+          },
+          {
+            "id": "ev_6348c27096d4",
+            "file": "test-0219.i",
+            "line": 658,
+            "snippet": "item->proto = malloc(119U);"
+          }
+        ],
+        "source_context": [
+          "669: free(list);",
+          "670: list = next;",
+          "671: }",
+          "694: free(list);",
+          "695: list = next;",
+          "696: }",
+          "668: free(list->proto);",
+          "693: l2_destroy(list->l2);",
+          "657: abort();",
+          "658: item->proto = malloc(119U);",
+          "659: if (!item->proto)"
+        ]
+      }
+    ]
+  }
+}
