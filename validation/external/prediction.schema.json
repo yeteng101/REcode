@@ -16,7 +16,7 @@
       "const": "external-prediction-v1"
     },
     "protocol_id": {
-      "const": "external-v1"
+      "const": "external-v2"
     },
     "dataset": {
       "enum": [

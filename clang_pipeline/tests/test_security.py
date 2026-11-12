@@ -34,6 +34,20 @@ def archive(entries):
 
 
 class SecurityTests(unittest.TestCase):
+    def test_sandbox_runner_normalizes_commit_before_submission_validation(self):
+        runner = DockerSandboxRunner(SandboxConfig(IMAGE))
+        with patch.object(runner, 'validate_submission', side_effect=ValueError('stop before execution')) as validate:
+            with self.assertRaisesRegex(ValueError, 'stop before execution'):
+                runner('https://github.com/a/b', output_dir='unused', cancel_token=CancellationToken(),
+                       trace=None, max_repository_files=10, max_repository_bytes=1000, commit='A' * 40)
+        self.assertEqual('a' * 40, validate.call_args.args[1]['commit'])
+
+    def test_uppercase_commit_archive_uses_canonical_lowercase(self):
+        commit = 'ABCDEF0123456789' * 2 + 'ABCDEF01'
+        self.assertEqual(
+            'https://codeload.github.com/a/repo/tar.gz/' + commit.lower(),
+            github_archive_url('https://github.com/a/repo.git', commit=commit))
+
     def test_github_only_and_ref_validation(self):
         self.assertEqual(github_archive_url('https://github.com/a/repo.git', 'feature/test'),
                          'https://codeload.github.com/a/repo/tar.gz/feature%2Ftest')

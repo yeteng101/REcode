@@ -227,6 +227,82 @@ class SemanticSyncTests(unittest.TestCase):
         self.assertFalse(result["coverage"]["complete"])
         self.assertTrue(any("nested_lock_order_analysis_unavailable" in gap for gap in result["coverage"]["gaps"]))
 
+    def test_pthread_join_output_is_a_shared_write(self):
+        source = """#include <pthread.h>
+void *shared_result;
+void *finished(void *arg) { return 0; }
+void *reader(void *arg) { return shared_result; }
+int main(void) {
+    pthread_t a, b;
+    if (pthread_create(&a, 0, finished, 0) != 0) return 1;
+    if (pthread_create(&b, 0, reader, 0) != 0) return 1;
+    if (pthread_join(a, &shared_result) != 0) return 1;
+    if (pthread_join(b, 0) != 0) return 1;
+    return 0;
+}
+"""
+        result = self.analyze(source)
+        self.assertTrue(result["coverage"]["complete"], result["coverage"])
+        accesses = self.accesses(result, "shared_result")
+        writes = [a for a in accesses if a["kind"] == "write" and a["function"] == "main"]
+        reads = [a for a in accesses if a["kind"] == "read" and a["function"] == "reader"]
+        self.assertTrue(writes)
+        self.assertTrue(reads)
+        reader_context = reads[0]["execution_context"]["context_id"]
+        self.assertTrue(any(reader_context in a["execution_context"]["may_run_concurrently_with"] for a in writes))
+        self.assertTrue(all("pthread_join" in a["location"]["snippet"] for a in writes))
+
+    def test_thrd_join_invalidates_old_local_result_before_branching(self):
+        source = """#include <threads.h>
+int counter;
+int worker(void *arg) { return 1; }
+int main(void) {
+    thrd_t t;
+    int result = 0;
+    if (thrd_create(&t, worker, 0) != 0) return 1;
+    if (thrd_join(t, &result) != 0) return 1;
+    if (result) counter = 1;
+    return 0;
+}
+"""
+        result = self.analyze(source)
+        self.assertTrue(result["coverage"]["complete"], result["coverage"])
+        self.assertTrue(any(a["kind"] == "write" for a in self.accesses(result)))
+
+    def test_pthread_join_invalidates_old_local_pointer(self):
+        source = """#include <pthread.h>
+int counter;
+void *worker(void *arg) { return 0; }
+int main(void) {
+    pthread_t t;
+    void *result = 0;
+    if (pthread_create(&t, 0, worker, 0) != 0) return 1;
+    if (pthread_join(t, &result) != 0) return 1;
+    if (result) counter = 1;
+    return 0;
+}
+"""
+        result = self.analyze(source)
+        self.assertTrue(result["coverage"]["complete"], result["coverage"])
+        self.assertTrue(any(a["kind"] == "write" for a in self.accesses(result)))
+
+    def test_unresolved_join_output_retains_a_gap(self):
+        source = """#include <threads.h>
+int counter;
+int worker(void *arg) { return 1; }
+int main(void) {
+    thrd_t t;
+    int *output;
+    if (thrd_create(&t, worker, 0) != 0) return 1;
+    if (thrd_join(t, output) != 0) return 1;
+    counter = 1;
+    return 0;
+}
+"""
+        result = self.analyze(source)
+        self.assertFalse(result["coverage"]["complete"])
+        self.assertTrue(any("unresolved_join_output" in gap for gap in result["coverage"]["gaps"]))
+
 
 if __name__ == "__main__":
     unittest.main()

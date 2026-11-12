@@ -1,0 +1,157 @@
+{
+  "schema_version": "external-protocol-v1",
+  "protocol_id": "external-v1",
+  "status": "locked",
+  "created_at": "2026-10-29",
+  "principles": {
+    "gold_is_read_only": true,
+    "agent_must_not_receive_gold": true,
+    "unknown_is_a_first_class_result": true,
+    "datasets_are_not_combined_into_one_score": true,
+    "post_result_gold_changes_require_a_new_protocol_version": true
+  },
+  "prediction_contract": {
+    "schema": "validation/external/prediction.schema.json",
+    "schema_version": "external-prediction-v1",
+    "prediction_identity_must_be_unique": true,
+    "missing_prediction_policy": "false_negative_for_positive_units",
+    "unknown_policy": "excluded_from_binary_confusion_matrix_but_reported_as_unknown_and_lost_coverage",
+    "allow_empty_target_set": false
+  },
+  "datasets": {
+    "callgraphbench": {
+      "selection": "validation/external/selections/callgraphbench-v1.json",
+      "unit": "call_edge",
+      "identity_fields": [
+        "caller",
+        "callee"
+      ],
+      "positive_label": "official_ground_truth_edge",
+      "metrics": [
+        "precision",
+        "recall",
+        "f1"
+      ],
+      "generator": "clang_pipeline-native",
+      "gold_source": "each case manifest.json ground_truth.edges"
+    },
+    "cgbench": {
+      "selection": "validation/external/selections/cgbench-v1.json",
+      "unit": "callsite_target_pair",
+      "agent_output_unit": "callsite_target_set",
+      "identity_fields": [
+        "callsite",
+        "target"
+      ],
+      "positive_label": "official_callee_target",
+      "metrics": [
+        "precision",
+        "recall",
+        "f1",
+        "unknown_rate",
+        "coverage"
+      ],
+      "generator": "cgbench-target-agent",
+      "prompt": "validation/external/prompts/cgbench-target-agent-v1.txt",
+      "gold_source": "official markdown parser, pinned in registry.json",
+      "runtime_rule": "The agent receives source context only; targets and the Gold selection are withheld."
+    },
+    "juliet-cwe401": {
+      "selection": "validation/external/selections/juliet-cwe401-v1.json",
+      "unit": "function",
+      "identity_fields": [
+        "case_id",
+        "source_file",
+        "function"
+      ],
+      "positive_label": "leak",
+      "negative_label": "no_leak",
+      "metrics": [
+        "precision",
+        "recall",
+        "f1",
+        "unknown_rate",
+        "coverage"
+      ],
+      "generator": "resource-flow-native",
+      "gold_source": "Juliet bad/good function names for CWE-401 only"
+    },
+    "svcomp-memsafety": {
+      "selection": "validation/external/selections/svcomp-memsafety-v1.json",
+      "unit": "task_property",
+      "identity_fields": [
+        "task_file",
+        "property_file",
+        "subproperty"
+      ],
+      "positive_label": "expected_verdict_false",
+      "negative_label": "expected_verdict_true",
+      "metrics": [
+        "precision",
+        "recall",
+        "f1",
+        "unknown_rate",
+        "coverage"
+      ],
+      "generator": "resource-flow-native",
+      "gold_source": "official task YAML property verdict"
+    },
+    "dataracebench": {
+      "selection": "validation/external/selections/dataracebench-v1.json",
+      "unit": "case",
+      "identity_fields": [
+        "case_id"
+      ],
+      "positive_label": "race",
+      "negative_label": "no_race",
+      "metrics": [
+        "race_precision",
+        "race_recall",
+        "false_race_rate",
+        "no_race_recall",
+        "unknown_rate",
+        "coverage"
+      ],
+      "generator": "race-detector-native",
+      "gold_source": "official -yes/-no filename semantics"
+    },
+    "svcomp-concurrency": {
+      "selection": "validation/external/selections/svcomp-concurrency-v1.json",
+      "unit": "task_property",
+      "identity_fields": [
+        "task_file",
+        "property_file"
+      ],
+      "positive_label": "race",
+      "negative_label": "no_race",
+      "metrics": [
+        "race_precision",
+        "race_recall",
+        "false_race_rate",
+        "no_race_recall",
+        "unknown_rate",
+        "coverage"
+      ],
+      "generator": "race-detector-native",
+      "gold_source": "official no-data-race property verdict"
+    }
+  },
+  "reporting": {
+    "report_per_dataset": true,
+    "aggregate_score": null,
+    "accuracy_allowed_only_when_unknown_count_is_zero": true,
+    "raw_predictions_required": true,
+    "tool_trace_required_for_agent_runs": true,
+    "record_data_versions": true,
+    "record_generator_version": true,
+    "record_prompt_hash_when_llm_is_used": true
+  },
+  "release_gates": {
+    "schema_validation_required": true,
+    "selection_hash_required": true,
+    "protocol_lock_required": true,
+    "dry_run_required_before_baseline": true,
+    "baseline_requires_all_selected_units": true,
+    "no_regression_policy": "A generator change must be compared with the immediately preceding locked baseline on every dataset."
+  }
+}

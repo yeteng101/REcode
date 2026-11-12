@@ -1,0 +1,373 @@
+{
+  "schema_version": "selection-v1",
+  "selection_id": "svcomp-memsafety-v1",
+  "dataset": "svcomp-memsafety",
+  "source": {
+    "repo": "https://gitlab.com/sosy-lab/benchmarking/sv-benchmarks.git",
+    "revision": "7efe28dd29576b46927b7a34e8f742bd90966a75",
+    "license": "Varies by task; retain task provenance"
+  },
+  "unit": "task_property",
+  "identity_fields": [
+    "task_file",
+    "property_file",
+    "subproperty"
+  ],
+  "rules": [
+    "use the pinned SV-COMP case index",
+    "expected_verdict=true is the safe negative class",
+    "expected_verdict=false is the property-violation positive class",
+    "do not drop unparsable tasks; emit unknown instead"
+  ],
+  "counts": {
+    "cases": 20,
+    "units": 20,
+    "positive_units": 10,
+    "negative_units": 10
+  },
+  "cases": [
+    {
+      "id": "960521-1-2",
+      "task_file": "c/memsafety/960521-1-2.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "lockfree-3_0",
+      "task_file": "c/memsafety/lockfree-3.0.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "test-0019-1",
+      "task_file": "c/memsafety/test-0019-1.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "test-0102-1",
+      "task_file": "c/memsafety/test-0102-1.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "test-0134",
+      "task_file": "c/memsafety/test-0134.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "test-0158-1",
+      "task_file": "c/memsafety/test-0158-1.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "test-0214",
+      "task_file": "c/memsafety/test-0214.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "test-0217",
+      "task_file": "c/memsafety/test-0217.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "test-0218",
+      "task_file": "c/memsafety/test-0218.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "test-0219",
+      "task_file": "c/memsafety/test-0219.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": ""
+    },
+    {
+      "id": "20020406-1",
+      "task_file": "c/memsafety/20020406-1.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": "valid-memtrack"
+    },
+    {
+      "id": "20051113-1",
+      "task_file": "c/memsafety/20051113-1.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": "valid-memtrack"
+    },
+    {
+      "id": "global-atexit-2",
+      "task_file": "c/memsafety/global-atexit-2.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": "valid-memtrack"
+    },
+    {
+      "id": "lockfree-3_1",
+      "task_file": "c/memsafety/lockfree-3.1.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": "valid-memtrack"
+    },
+    {
+      "id": "lockfree-3_2",
+      "task_file": "c/memsafety/lockfree-3.2.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": "valid-memtrack"
+    },
+    {
+      "id": "lockfree-3_3",
+      "task_file": "c/memsafety/lockfree-3.3.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": "valid-memtrack"
+    },
+    {
+      "id": "test-0019-2",
+      "task_file": "c/memsafety/test-0019-2.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": "valid-memtrack"
+    },
+    {
+      "id": "test-0102-2",
+      "task_file": "c/memsafety/test-0102-2.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": "valid-memtrack"
+    },
+    {
+      "id": "test-0158-2",
+      "task_file": "c/memsafety/test-0158-2.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": "valid-memtrack"
+    },
+    {
+      "id": "test-0220",
+      "task_file": "c/memsafety/test-0220.yml",
+      "property": "../properties/valid-memsafety.prp",
+      "subproperty": "valid-memtrack"
+    }
+  ],
+  "units": [
+    {
+      "id": "unit_e0284c04503e224b",
+      "case_id": "960521-1-2",
+      "identity": {
+        "task_file": "c/memsafety/960521-1-2.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "label": "no_leak",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_fa2713361031b94d",
+      "case_id": "lockfree-3_0",
+      "identity": {
+        "task_file": "c/memsafety/lockfree-3.0.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "label": "no_leak",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_af5f6ee2c63b371e",
+      "case_id": "test-0019-1",
+      "identity": {
+        "task_file": "c/memsafety/test-0019-1.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "label": "no_leak",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_46969ea20147dd1b",
+      "case_id": "test-0102-1",
+      "identity": {
+        "task_file": "c/memsafety/test-0102-1.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "label": "no_leak",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_9b759652208b9440",
+      "case_id": "test-0134",
+      "identity": {
+        "task_file": "c/memsafety/test-0134.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "label": "no_leak",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_81119d0cf5eb61f8",
+      "case_id": "test-0158-1",
+      "identity": {
+        "task_file": "c/memsafety/test-0158-1.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "label": "no_leak",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_fb781ad8287a2e38",
+      "case_id": "test-0214",
+      "identity": {
+        "task_file": "c/memsafety/test-0214.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "label": "no_leak",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_19bb70b41c9f6354",
+      "case_id": "test-0217",
+      "identity": {
+        "task_file": "c/memsafety/test-0217.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "label": "no_leak",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_00b10af328fbab53",
+      "case_id": "test-0218",
+      "identity": {
+        "task_file": "c/memsafety/test-0218.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "label": "no_leak",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_8c4cdf94eb4df21b",
+      "case_id": "test-0219",
+      "identity": {
+        "task_file": "c/memsafety/test-0219.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": ""
+      },
+      "label": "no_leak",
+      "expected_verdict": true
+    },
+    {
+      "id": "unit_e0874240f962ac80",
+      "case_id": "20020406-1",
+      "identity": {
+        "task_file": "c/memsafety/20020406-1.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "label": "leak",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_70c1cb3c400cb2fd",
+      "case_id": "20051113-1",
+      "identity": {
+        "task_file": "c/memsafety/20051113-1.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "label": "leak",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_da525d4c14461697",
+      "case_id": "global-atexit-2",
+      "identity": {
+        "task_file": "c/memsafety/global-atexit-2.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "label": "leak",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_e2247b2f39ad6909",
+      "case_id": "lockfree-3_1",
+      "identity": {
+        "task_file": "c/memsafety/lockfree-3.1.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "label": "leak",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_1b916325e8fd7fbc",
+      "case_id": "lockfree-3_2",
+      "identity": {
+        "task_file": "c/memsafety/lockfree-3.2.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "label": "leak",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_97192e4cd7d37286",
+      "case_id": "lockfree-3_3",
+      "identity": {
+        "task_file": "c/memsafety/lockfree-3.3.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "label": "leak",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_b55ecec3b1f4a0d9",
+      "case_id": "test-0019-2",
+      "identity": {
+        "task_file": "c/memsafety/test-0019-2.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "label": "leak",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_7fde67dc45405b23",
+      "case_id": "test-0102-2",
+      "identity": {
+        "task_file": "c/memsafety/test-0102-2.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "label": "leak",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_52f0d2916193c750",
+      "case_id": "test-0158-2",
+      "identity": {
+        "task_file": "c/memsafety/test-0158-2.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "label": "leak",
+      "expected_verdict": false
+    },
+    {
+      "id": "unit_6ba39d2b09485467",
+      "case_id": "test-0220",
+      "identity": {
+        "task_file": "c/memsafety/test-0220.yml",
+        "property_file": "../properties/valid-memsafety.prp",
+        "subproperty": "valid-memtrack"
+      },
+      "label": "leak",
+      "expected_verdict": false
+    }
+  ],
+  "exclusions": []
+}

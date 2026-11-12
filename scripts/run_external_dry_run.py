@@ -10,7 +10,9 @@ import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_OUTPUT = ROOT / "validation/external/results/dry-run"
+sys.path.insert(0, str(ROOT))
+from clang_pipeline.evaluation_protocol import PROTOCOL_ID, RESULTS_ROOT
+DEFAULT_OUTPUT = RESULTS_ROOT / "dry-run"
 
 
 def run(command: list[str], *, timeout: int = 1200) -> dict:
@@ -154,7 +156,7 @@ def main() -> int:
 
     summary = {
         "schema_version": "external-dry-run-v1",
-        "protocol_id": "external-v1",
+        "protocol_id": PROTOCOL_ID,
         "status": "succeeded",
         "output_root": str(output),
         "benchmarks": {

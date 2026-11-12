@@ -12,12 +12,12 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from clang_pipeline.evaluation_protocol import validate_prediction_document
+from clang_pipeline.evaluation_protocol import RESULTS_ROOT, validate_prediction_document
 
 
 DEFAULT_SELECTION = ROOT / "validation/external/selections/cgbench-v1.json"
 DEFAULT_SCHEMA = ROOT / "validation/external/prediction.schema.json"
-DEFAULT_REPORT = ROOT / "validation/external/results/cgbench/report.json"
+DEFAULT_REPORT = RESULTS_ROOT / "cgbench/report.json"
 
 
 def read_json(path: Path) -> dict[str, Any]:
@@ -88,7 +88,9 @@ def validate_prediction_schema(predictions: dict[str, Any], schema_path: Path) -
         raise ValueError("missing external-prediction-v1 envelope")
     if not schema_path.is_file():
         raise ValueError(f"prediction schema does not exist: {schema_path}")
-    validate_prediction_document(predictions, expected_dataset="cgbench")
+    schema = read_json(schema_path)
+    protocol_id = schema["properties"]["protocol_id"]["const"]
+    validate_prediction_document(predictions, expected_dataset="cgbench", expected_protocol_id=protocol_id)
 
 
 def score(

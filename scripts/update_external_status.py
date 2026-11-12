@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 from datetime import datetime, timezone
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RESULTS = ROOT / "validation/external/results"
+sys.path.insert(0, str(ROOT))
+from clang_pipeline.evaluation_protocol import PROTOCOL_ID, RESULTS_ROOT, validate_prediction_document
+RESULTS = RESULTS_ROOT
 OUTPUT = RESULTS / "status.json"
 
 
@@ -17,6 +20,16 @@ def read(path: Path) -> dict:
 
 
 def main() -> int:
+    prediction_paths = {
+        "callgraphbench": "callgraphbench/predictions.json",
+        "cgbench": "cgbench/predictions.json",
+        "juliet-cwe401": "juliet/predictions.json",
+        "svcomp-memsafety": "svcomp/memsafety/predictions.json",
+        "dataracebench": "dataracebench/predictions.json",
+        "svcomp-concurrency": "svcomp/concurrency/predictions.json",
+    }
+    for dataset, path in prediction_paths.items():
+        validate_prediction_document(read(RESULTS / path), expected_dataset=dataset)
     callgraph = read(RESULTS / "callgraphbench/summary.json")
     cgbench = read(RESULTS / "cgbench/report.json")
     juliet = read(RESULTS / "juliet/report.json")
@@ -29,7 +42,7 @@ def main() -> int:
         .replace(microsecond=0)
         .isoformat()
         .replace("+00:00", "Z"),
-        "protocol_id": "external-v1",
+        "protocol_id": PROTOCOL_ID,
         "groups": {
             "call_graph": {
                 "datasets": ["CallGraphBench", "CG-Bench"],

@@ -14,7 +14,14 @@ class SecurityError(AnalysisError):
     code = "security_policy_denied"
 
 
+def normalize_commit_sha(commit: str | None) -> str | None:
+    if isinstance(commit, str) and re.fullmatch(r"[0-9a-fA-F]{40}", commit):
+        return commit.lower()
+    return commit
+
+
 def github_archive_url(url: str, branch=None, commit=None) -> str:
+    commit = normalize_commit_sha(commit)
     parsed = urlparse(url)
     if parsed.scheme != "https" or parsed.hostname != "github.com" or parsed.port not in {None, 443} or parsed.username or parsed.password or parsed.query or parsed.fragment:
         raise SecurityError("sandbox accepts only public GitHub HTTPS repository URLs")

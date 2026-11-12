@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/code-reverse/race-analysis.schema.json",
+  "title": "Tri-state race analysis",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "result_type",
+    "status",
+    "label",
+    "items",
+    "evidence"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "result_type": {
+      "const": "race_analysis"
+    },
+    "status": {
+      "enum": [
+        "succeeded",
+        "not_available",
+        "failed"
+      ]
+    },
+    "label": {
+      "enum": [
+        "race",
+        "no_race",
+        "unknown"
+      ]
+    },
+    "reason": {
+      "type": "string"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "confidence",
+          "reason",
+          "accesses",
+          "evidence_ids"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "race",
+              "no_race",
+              "unknown"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "reason": {
+            "type": "string"
+          },
+          "accesses": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "location"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "location": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

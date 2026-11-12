@@ -12,6 +12,25 @@ from clang_pipeline.execution import ClangStageError
 
 
 class AgentJobTests(unittest.TestCase):
+    def test_commit_case_is_canonical_for_job_identity_and_runner(self):
+        commits = []
+        def runner(url, *, output_dir, **options):
+            commits.append(options['commit'])
+            return {'status': 'succeeded', 'commit': options['commit'], 'output_dir': str(output_dir)}
+        with tempfile.TemporaryDirectory() as root:
+            with AnalysisJobManager(root, runner=runner, max_workers=1) as manager:
+                upper = manager.submit('https://example.com/org/repo.git', commit='A' * 40, idempotency_key='same')
+                lower = manager.submit('https://example.com/org/repo.git', commit='a' * 40, idempotency_key='same')
+                self.assertEqual(upper['job_id'], lower['job_id'])
+                for _ in range(200):
+                    state = manager.get(upper['job_id'])
+                    if state['status'] in {'succeeded', 'failed'}:
+                        break
+                    time.sleep(0.01)
+                self.assertEqual('succeeded', state['status'])
+                self.assertEqual('a' * 40, state['result']['commit'])
+                self.assertEqual(['a' * 40], commits)
+
     def test_job_runs_and_returns_artifacts(self) -> None:
         def runner(url: str, *, output_dir: Path, **options):
             output_dir.mkdir(parents=True, exist_ok=True)

@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .execution import AnalysisError, RepositoryCheckoutError
-from .security import SecurityError, extract_regular_tar, github_archive_url, public_host
+from .security import SecurityError, extract_regular_tar, github_archive_url, normalize_commit_sha, public_host
 
 
 class SandboxUnavailable(AnalysisError):
@@ -96,6 +96,7 @@ class DockerSandboxRunner:
 
     def __call__(self, repository_url, *, output_dir, cancel_token, trace,
                  max_repository_files, max_repository_bytes, **options):
+        options = dict(options, commit=normalize_commit_sha(options.get('commit')))
         self.validate_submission(repository_url, options)
         if not shutil.which('docker'):
             raise SandboxUnavailable('Docker is required; host execution fallback is disabled')
@@ -180,6 +181,13 @@ class DockerSandboxRunner:
                 if result_file.stat().st_size > 4 * 1024 * 1024:
                     raise SecurityError('sandbox result JSON exceeds quota')
                 result = json.loads(result_file.read_text())
+                if options.get('commit'):
+                    expected_commit = options['commit']
+                    manifest = json.loads((exported / 'manifest.json').read_text())
+                    graph = json.loads((exported / 'graph.json').read_text())
+                    if any(value != expected_commit for value in (
+                            result.get('commit'), manifest.get('commit'), graph.get('meta', {}).get('commit'))):
+                        raise AnalysisError('sandbox result commit binding mismatch', retryable=False)
                 span.set_result({'status': 'succeeded'})
             stats_code, stats_raw, _ = self._command(['docker', 'stats', '--no-stream', '--format', '{{json .}}', name],
                                                        cancel_token, deadline)

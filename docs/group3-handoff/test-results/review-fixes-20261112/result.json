@@ -1,0 +1,20 @@
+{
+  "status": "targeted_checks_passed",
+  "targeted_real_clang_tests": 48,
+  "validation_tests": 40,
+  "full_upstream": {
+    "tests": 136,
+    "passed": 132,
+    "failed": 2,
+    "skipped": 2,
+    "errors": 0
+  },
+  "active_protocol": "external-v2",
+  "active_lock_digest": "f9726d9fca14edba8a1dc189c9b208535764d521c2d874be3cf735c223088973",
+  "frozen_files": 32,
+  "historical_protocol": "external-v1",
+  "historical_lock_digest": "a054c5f1339a9e66d0f925e752dbfa5ee59b3e4b493b7606fd695265920aad67",
+  "external_full_baseline": "not_run",
+  "python": "3.12",
+  "execution": "Real Clang tests in read-only source-mounted Docker; validation and lock checks on host."
+}

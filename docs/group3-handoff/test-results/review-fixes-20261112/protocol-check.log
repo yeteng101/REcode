@@ -1,0 +1,38 @@
+{
+  "status": "ok",
+  "protocol_id": "external-v2",
+  "datasets": {
+    "callgraphbench": {
+      "cases": 6,
+      "units": 31
+    },
+    "cgbench": {
+      "cases": 104,
+      "units": 611
+    },
+    "juliet-cwe401": {
+      "cases": 5,
+      "units": 28,
+      "positive_units": 5,
+      "negative_units": 23
+    },
+    "svcomp-memsafety": {
+      "cases": 20,
+      "units": 20,
+      "positive_units": 10,
+      "negative_units": 10
+    },
+    "dataracebench": {
+      "cases": 24,
+      "units": 24,
+      "positive_units": 12,
+      "negative_units": 12
+    },
+    "svcomp-concurrency": {
+      "cases": 20,
+      "units": 20,
+      "positive_units": 10,
+      "negative_units": 10
+    }
+  }
+}

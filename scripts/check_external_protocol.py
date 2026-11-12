@@ -7,10 +7,14 @@ import hashlib
 import json
 from pathlib import Path
 from typing import Any
+import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PROTOCOL = ROOT / "validation/external/protocol-v1.json"
+sys.path.insert(0, str(ROOT))
+from clang_pipeline.evaluation_protocol import PROTOCOL_ID, PROTOCOL_PATH
+
+PROTOCOL = PROTOCOL_PATH
 SCHEMA = ROOT / "validation/external/prediction.schema.json"
 REGISTRY = ROOT / "validation/external/registry.json"
 
@@ -105,8 +109,10 @@ def main() -> int:
     protocol = read_json(PROTOCOL)
     registry = read_json(REGISTRY)
     schema = read_json(SCHEMA)
-    if protocol.get("protocol_id") != "external-v1":
-        errors.append("protocol_id must be external-v1")
+    if protocol.get("protocol_id") != PROTOCOL_ID:
+        errors.append("protocol_id must be " + PROTOCOL_ID)
+    if schema.get("properties", {}).get("protocol_id", {}).get("const") != PROTOCOL_ID:
+        errors.append("protocol and prediction schema protocol IDs differ")
     if protocol.get("prediction_contract", {}).get("schema_version") != schema.get(
         "properties", {}
     ).get("schema_version", {}).get("const"):

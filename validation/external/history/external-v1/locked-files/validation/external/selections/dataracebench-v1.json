@@ -1,0 +1,342 @@
+{
+  "schema_version": "selection-v1",
+  "selection_id": "dataracebench-v1",
+  "dataset": "dataracebench",
+  "source": {
+    "repo": "https://github.com/LLNL/dataracebench.git",
+    "revision": "7d07c5d637fa80f1fd7c239bdc34ae53094badc2",
+    "license": "BSD (see LICENSE.txt and LICENSE.OSU.txt)"
+  },
+  "unit": "case",
+  "identity_fields": [
+    "case_id"
+  ],
+  "rules": [
+    "use the pinned deterministic first-12-per-label subset",
+    "official -yes suffix is race and -no suffix is no-race",
+    "unknown is not converted into no-race"
+  ],
+  "counts": {
+    "cases": 24,
+    "units": 24,
+    "positive_units": 12,
+    "negative_units": 12
+  },
+  "cases": [
+    {
+      "id": "DRB001-antidep1-orig-yes",
+      "source_file": "micro-benchmarks/DRB001-antidep1-orig-yes.c"
+    },
+    {
+      "id": "DRB002-antidep1-var-yes",
+      "source_file": "micro-benchmarks/DRB002-antidep1-var-yes.c"
+    },
+    {
+      "id": "DRB003-antidep2-orig-yes",
+      "source_file": "micro-benchmarks/DRB003-antidep2-orig-yes.c"
+    },
+    {
+      "id": "DRB004-antidep2-var-yes",
+      "source_file": "micro-benchmarks/DRB004-antidep2-var-yes.c"
+    },
+    {
+      "id": "DRB005-indirectaccess1-orig-yes",
+      "source_file": "micro-benchmarks/DRB005-indirectaccess1-orig-yes.c"
+    },
+    {
+      "id": "DRB006-indirectaccess2-orig-yes",
+      "source_file": "micro-benchmarks/DRB006-indirectaccess2-orig-yes.c"
+    },
+    {
+      "id": "DRB007-indirectaccess3-orig-yes",
+      "source_file": "micro-benchmarks/DRB007-indirectaccess3-orig-yes.c"
+    },
+    {
+      "id": "DRB008-indirectaccess4-orig-yes",
+      "source_file": "micro-benchmarks/DRB008-indirectaccess4-orig-yes.c"
+    },
+    {
+      "id": "DRB009-lastprivatemissing-orig-yes",
+      "source_file": "micro-benchmarks/DRB009-lastprivatemissing-orig-yes.c"
+    },
+    {
+      "id": "DRB010-lastprivatemissing-var-yes",
+      "source_file": "micro-benchmarks/DRB010-lastprivatemissing-var-yes.c"
+    },
+    {
+      "id": "DRB011-minusminus-orig-yes",
+      "source_file": "micro-benchmarks/DRB011-minusminus-orig-yes.c"
+    },
+    {
+      "id": "DRB012-minusminus-var-yes",
+      "source_file": "micro-benchmarks/DRB012-minusminus-var-yes.c"
+    },
+    {
+      "id": "DRB041-3mm-parallel-no",
+      "source_file": "micro-benchmarks/DRB041-3mm-parallel-no.c"
+    },
+    {
+      "id": "DRB042-3mm-tile-no",
+      "source_file": "micro-benchmarks/DRB042-3mm-tile-no.c"
+    },
+    {
+      "id": "DRB043-adi-parallel-no",
+      "source_file": "micro-benchmarks/DRB043-adi-parallel-no.c"
+    },
+    {
+      "id": "DRB044-adi-tile-no",
+      "source_file": "micro-benchmarks/DRB044-adi-tile-no.c"
+    },
+    {
+      "id": "DRB045-doall1-orig-no",
+      "source_file": "micro-benchmarks/DRB045-doall1-orig-no.c"
+    },
+    {
+      "id": "DRB046-doall2-orig-no",
+      "source_file": "micro-benchmarks/DRB046-doall2-orig-no.c"
+    },
+    {
+      "id": "DRB047-doallchar-orig-no",
+      "source_file": "micro-benchmarks/DRB047-doallchar-orig-no.c"
+    },
+    {
+      "id": "DRB048-firstprivate-orig-no",
+      "source_file": "micro-benchmarks/DRB048-firstprivate-orig-no.c"
+    },
+    {
+      "id": "DRB049-fprintf-orig-no",
+      "source_file": "micro-benchmarks/DRB049-fprintf-orig-no.c"
+    },
+    {
+      "id": "DRB050-functionparameter-orig-no",
+      "source_file": "micro-benchmarks/DRB050-functionparameter-orig-no.c"
+    },
+    {
+      "id": "DRB051-getthreadnum-orig-no",
+      "source_file": "micro-benchmarks/DRB051-getthreadnum-orig-no.c"
+    },
+    {
+      "id": "DRB052-indirectaccesssharebase-orig-no",
+      "source_file": "micro-benchmarks/DRB052-indirectaccesssharebase-orig-no.c"
+    }
+  ],
+  "units": [
+    {
+      "id": "unit_339a699e2f008c6e",
+      "case_id": "DRB001-antidep1-orig-yes",
+      "identity": {
+        "case_id": "DRB001-antidep1-orig-yes"
+      },
+      "label": "race",
+      "source_file": "micro-benchmarks/DRB001-antidep1-orig-yes.c"
+    },
+    {
+      "id": "unit_0a151680920be732",
+      "case_id": "DRB002-antidep1-var-yes",
+      "identity": {
+        "case_id": "DRB002-antidep1-var-yes"
+      },
+      "label": "race",
+      "source_file": "micro-benchmarks/DRB002-antidep1-var-yes.c"
+    },
+    {
+      "id": "unit_ec6cf2f73bd8cf47",
+      "case_id": "DRB003-antidep2-orig-yes",
+      "identity": {
+        "case_id": "DRB003-antidep2-orig-yes"
+      },
+      "label": "race",
+      "source_file": "micro-benchmarks/DRB003-antidep2-orig-yes.c"
+    },
+    {
+      "id": "unit_2211db13946cfbeb",
+      "case_id": "DRB004-antidep2-var-yes",
+      "identity": {
+        "case_id": "DRB004-antidep2-var-yes"
+      },
+      "label": "race",
+      "source_file": "micro-benchmarks/DRB004-antidep2-var-yes.c"
+    },
+    {
+      "id": "unit_0dc3a3e9bc27ddca",
+      "case_id": "DRB005-indirectaccess1-orig-yes",
+      "identity": {
+        "case_id": "DRB005-indirectaccess1-orig-yes"
+      },
+      "label": "race",
+      "source_file": "micro-benchmarks/DRB005-indirectaccess1-orig-yes.c"
+    },
+    {
+      "id": "unit_c11d742dcc005365",
+      "case_id": "DRB006-indirectaccess2-orig-yes",
+      "identity": {
+        "case_id": "DRB006-indirectaccess2-orig-yes"
+      },
+      "label": "race",
+      "source_file": "micro-benchmarks/DRB006-indirectaccess2-orig-yes.c"
+    },
+    {
+      "id": "unit_1eb4c0e434e2b5da",
+      "case_id": "DRB007-indirectaccess3-orig-yes",
+      "identity": {
+        "case_id": "DRB007-indirectaccess3-orig-yes"
+      },
+      "label": "race",
+      "source_file": "micro-benchmarks/DRB007-indirectaccess3-orig-yes.c"
+    },
+    {
+      "id": "unit_3efa67231a8728c5",
+      "case_id": "DRB008-indirectaccess4-orig-yes",
+      "identity": {
+        "case_id": "DRB008-indirectaccess4-orig-yes"
+      },
+      "label": "race",
+      "source_file": "micro-benchmarks/DRB008-indirectaccess4-orig-yes.c"
+    },
+    {
+      "id": "unit_69761a183b175232",
+      "case_id": "DRB009-lastprivatemissing-orig-yes",
+      "identity": {
+        "case_id": "DRB009-lastprivatemissing-orig-yes"
+      },
+      "label": "race",
+      "source_file": "micro-benchmarks/DRB009-lastprivatemissing-orig-yes.c"
+    },
+    {
+      "id": "unit_7ed9cb81eac9ec58",
+      "case_id": "DRB010-lastprivatemissing-var-yes",
+      "identity": {
+        "case_id": "DRB010-lastprivatemissing-var-yes"
+      },
+      "label": "race",
+      "source_file": "micro-benchmarks/DRB010-lastprivatemissing-var-yes.c"
+    },
+    {
+      "id": "unit_07d53db949c01cbd",
+      "case_id": "DRB011-minusminus-orig-yes",
+      "identity": {
+        "case_id": "DRB011-minusminus-orig-yes"
+      },
+      "label": "race",
+      "source_file": "micro-benchmarks/DRB011-minusminus-orig-yes.c"
+    },
+    {
+      "id": "unit_fae51182c4b64452",
+      "case_id": "DRB012-minusminus-var-yes",
+      "identity": {
+        "case_id": "DRB012-minusminus-var-yes"
+      },
+      "label": "race",
+      "source_file": "micro-benchmarks/DRB012-minusminus-var-yes.c"
+    },
+    {
+      "id": "unit_322854857311cec4",
+      "case_id": "DRB041-3mm-parallel-no",
+      "identity": {
+        "case_id": "DRB041-3mm-parallel-no"
+      },
+      "label": "no_race",
+      "source_file": "micro-benchmarks/DRB041-3mm-parallel-no.c"
+    },
+    {
+      "id": "unit_82d5b1d5ce789751",
+      "case_id": "DRB042-3mm-tile-no",
+      "identity": {
+        "case_id": "DRB042-3mm-tile-no"
+      },
+      "label": "no_race",
+      "source_file": "micro-benchmarks/DRB042-3mm-tile-no.c"
+    },
+    {
+      "id": "unit_c577d005d7956752",
+      "case_id": "DRB043-adi-parallel-no",
+      "identity": {
+        "case_id": "DRB043-adi-parallel-no"
+      },
+      "label": "no_race",
+      "source_file": "micro-benchmarks/DRB043-adi-parallel-no.c"
+    },
+    {
+      "id": "unit_e7df4f510bb94a6a",
+      "case_id": "DRB044-adi-tile-no",
+      "identity": {
+        "case_id": "DRB044-adi-tile-no"
+      },
+      "label": "no_race",
+      "source_file": "micro-benchmarks/DRB044-adi-tile-no.c"
+    },
+    {
+      "id": "unit_08b4862862151401",
+      "case_id": "DRB045-doall1-orig-no",
+      "identity": {
+        "case_id": "DRB045-doall1-orig-no"
+      },
+      "label": "no_race",
+      "source_file": "micro-benchmarks/DRB045-doall1-orig-no.c"
+    },
+    {
+      "id": "unit_86c1633453e2d026",
+      "case_id": "DRB046-doall2-orig-no",
+      "identity": {
+        "case_id": "DRB046-doall2-orig-no"
+      },
+      "label": "no_race",
+      "source_file": "micro-benchmarks/DRB046-doall2-orig-no.c"
+    },
+    {
+      "id": "unit_2865bb797a52edb1",
+      "case_id": "DRB047-doallchar-orig-no",
+      "identity": {
+        "case_id": "DRB047-doallchar-orig-no"
+      },
+      "label": "no_race",
+      "source_file": "micro-benchmarks/DRB047-doallchar-orig-no.c"
+    },
+    {
+      "id": "unit_18e12ffe7bac0281",
+      "case_id": "DRB048-firstprivate-orig-no",
+      "identity": {
+        "case_id": "DRB048-firstprivate-orig-no"
+      },
+      "label": "no_race",
+      "source_file": "micro-benchmarks/DRB048-firstprivate-orig-no.c"
+    },
+    {
+      "id": "unit_17a56dd3add1a527",
+      "case_id": "DRB049-fprintf-orig-no",
+      "identity": {
+        "case_id": "DRB049-fprintf-orig-no"
+      },
+      "label": "no_race",
+      "source_file": "micro-benchmarks/DRB049-fprintf-orig-no.c"
+    },
+    {
+      "id": "unit_126a588c65353694",
+      "case_id": "DRB050-functionparameter-orig-no",
+      "identity": {
+        "case_id": "DRB050-functionparameter-orig-no"
+      },
+      "label": "no_race",
+      "source_file": "micro-benchmarks/DRB050-functionparameter-orig-no.c"
+    },
+    {
+      "id": "unit_3d6cfea17842b22a",
+      "case_id": "DRB051-getthreadnum-orig-no",
+      "identity": {
+        "case_id": "DRB051-getthreadnum-orig-no"
+      },
+      "label": "no_race",
+      "source_file": "micro-benchmarks/DRB051-getthreadnum-orig-no.c"
+    },
+    {
+      "id": "unit_5a705123b937217a",
+      "case_id": "DRB052-indirectaccesssharebase-orig-no",
+      "identity": {
+        "case_id": "DRB052-indirectaccesssharebase-orig-no"
+      },
+      "label": "no_race",
+      "source_file": "micro-benchmarks/DRB052-indirectaccesssharebase-orig-no.c"
+    }
+  ],
+  "exclusions": []
+}

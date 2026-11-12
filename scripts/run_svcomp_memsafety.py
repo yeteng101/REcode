@@ -15,6 +15,7 @@ sys.path.insert(0, str(ROOT))
 
 from clang_pipeline.clang_ast import read_json, write_json
 from clang_pipeline.evaluation_protocol import (
+    RESULTS_ROOT,
     prediction_envelope,
     validate_prediction_document,
 )
@@ -26,7 +27,7 @@ from clang_pipeline.resource_flow import analyze_resource_flow
 DATASET = ROOT / ".benchmark-cache/svcomp26"
 CASES = ROOT / "validation/external/results/svcomp/cases.json"
 SELECTION = ROOT / "validation/external/selections/svcomp-memsafety-v1.json"
-OUTPUT = ROOT / "validation/external/results/svcomp/memsafety"
+OUTPUT = RESULTS_ROOT / "svcomp/memsafety"
 
 
 def compile_commands(repo: Path) -> list[dict]:

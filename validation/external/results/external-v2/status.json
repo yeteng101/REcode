@@ -1,0 +1,7 @@
+{
+  "schema_version": "1.0",
+  "protocol_id": "external-v2",
+  "status": "not_run",
+  "analyzer_lock_digest": "f9726d9fca14edba8a1dc189c9b208535764d521c2d874be3cf735c223088973",
+  "baseline_record": "validation/external/history/external-v2-baseline.json"
+}

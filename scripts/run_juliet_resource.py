@@ -15,6 +15,7 @@ sys.path.insert(0, str(ROOT))
 
 from clang_pipeline.clang_ast import read_json, write_json
 from clang_pipeline.evaluation_protocol import (
+    RESULTS_ROOT,
     prediction_envelope,
     validate_prediction_document,
 )
@@ -26,7 +27,7 @@ from clang_pipeline.resource_flow import analyze_resource_flow
 DATASET = ROOT / ".benchmark-cache/juliet-c-cpp-1.3"
 CASES = ROOT / "validation/external/results/juliet/cases.json"
 SELECTION = ROOT / "validation/external/selections/juliet-cwe401-v1.json"
-OUTPUT = ROOT / "validation/external/results/juliet"
+OUTPUT = RESULTS_ROOT / "juliet"
 
 
 def compile_commands(repo: Path, source: Path, language: str) -> list[dict]:

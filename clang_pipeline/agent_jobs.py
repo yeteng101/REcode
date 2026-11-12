@@ -22,6 +22,7 @@ from .job_queue import IdempotencyConflict, JobError, JobQueue
 from .object_store import FileObjectStore, ObjectStore
 from .tool_trace import ToolTraceRecorder
 from .observability import Observability
+from .security import normalize_commit_sha
 
 AnalysisRunner = Callable[..., dict[str, Any]]
 logger = logging.getLogger(__name__)
@@ -112,6 +113,7 @@ class AnalysisJobManager:
         for name, value in (("entry_symbols", entry_symbols), ("log_paths", log_paths)):
             if value is not None and (not isinstance(value, list) or not all(isinstance(item, str) for item in value)):
                 raise JobError(f"{name} must be a list of strings")
+        commit = normalize_commit_sha(commit)
         options = dict(branch=branch, commit=commit, build_profile=build_profile,
                        entry_symbols=entry_symbols or [], log_paths=log_paths or [], optimized_ir=bool(optimized_ir))
         if hasattr(self._runner, "validate_submission"):

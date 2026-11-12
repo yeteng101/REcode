@@ -1,5 +1,18 @@
 # External benchmark integration
 
+## Current analyzer revision
+
+The group3 analyzer uses `external-v2`, defined in `protocol-v2.json` and the
+active `protocol-lock.json`. It reuses the frozen v1 selections and Gold.
+New predictions and reports go to `results/external-v2/` and the new baseline
+record is `history/external-v2-baseline.json`. Its initial status is `not_run`.
+The baseline runner checks the analyzer lock before executing the fixed subsets.
+
+The original v1 lock, locked source files and baseline bytes are preserved in
+`history/external-v1/`. `history/external-v1-baseline.json` attributes its scores
+to source commit `f14e4da3f872e0d24bb24389e3e8fc88c49b8a28` and the archived lock.
+The v1 scores shown below describe that historical analyzer revision.
+
 The official evaluation sources are pinned in `registry.json`:
 
 ```text
@@ -43,14 +56,14 @@ python3 scripts/freeze_external_protocol.py --check
 The following files are versioned together:
 
 ```text
-protocol-v1.json
+protocol-v2.json
 prediction.schema.json
 selections/*.json
 protocol-lock.json
-history/external-v1-baseline.json
-results/*/predictions.json
-results/*/report.json
-results/status.json
+history/external-v2-baseline.json
+results/external-v2/*/predictions.json
+results/external-v2/*/report.json
+results/external-v2/status.json
 ```
 
 Every run must produce schema-valid predictions. `unknown` is retained in the

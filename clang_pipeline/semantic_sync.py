@@ -569,6 +569,18 @@ class SemanticSyncAnalyzer:
                 self.gap("unresolved_join_handle", node, tu)
                 return [(state, None)]
             success.active.discard(handle[1])
+            output = values[1] if len(values) > 1 else None
+            if output != 0:
+                destination = output[1] if isinstance(output, tuple) and output[0] == "address" else None
+                if destination is None:
+                    self.gap("unresolved_join_output", node, tu)
+                else:
+                    self.emit(node, destination, "write", success, tu, stack)
+                    if destination[0] == "local":
+                        # The thread's return value is not yet propagated. An
+                        # unknown value keeps both subsequent branches reachable.
+                        success.environment[destination[1]] = None
+                        failure.environment[destination[1]] = None
         return [(success, 0), (failure, NONZERO)]
 
     def analyze(self, asts):

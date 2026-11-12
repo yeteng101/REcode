@@ -1,0 +1,27 @@
+{
+  "schema_version": "external-baseline-v1",
+  "protocol_id": "external-v1",
+  "status": "locked",
+  "generated_at": "2026-10-29T08:55:05Z",
+  "protocol_lock": {
+    "path": "validation/external/protocol-lock.json",
+    "lock_digest": "a054c5f1339a9e66d0f925e752dbfa5ee59b3e4b493b7606fd695265920aad67"
+  },
+  "status_report": "validation/external/results/status.json",
+  "reports": {
+    "callgraphbench": "validation/external/results/callgraphbench/summary.json",
+    "cgbench": "validation/external/results/cgbench/report.json",
+    "juliet": "validation/external/results/juliet/report.json",
+    "svcomp_memsafety": "validation/external/results/svcomp/memsafety/report.json",
+    "dataracebench": "validation/external/results/dataracebench/report.json",
+    "svcomp_concurrency": "validation/external/results/svcomp/concurrency/report.json"
+  },
+  "predictions": {
+    "callgraphbench": "validation/external/results/callgraphbench/predictions.json",
+    "cgbench": "validation/external/results/cgbench/predictions.json",
+    "juliet": "validation/external/results/juliet/predictions.json",
+    "svcomp_memsafety": "validation/external/results/svcomp/memsafety/predictions.json",
+    "dataracebench": "validation/external/results/dataracebench/predictions.json",
+    "svcomp_concurrency": "validation/external/results/svcomp/concurrency/predictions.json"
+  }
+}

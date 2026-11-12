@@ -5,7 +5,7 @@ import os
 import sys
 from pathlib import Path
 
-from .security import extract_regular_tar
+from .security import extract_regular_tar, normalize_commit_sha
 
 
 def main():
@@ -16,6 +16,7 @@ def main():
     if sys.argv[1] != "analyze":
         raise ValueError('unsupported sandbox operation')
     request = json.load(sys.stdin)
+    request['commit'] = normalize_commit_sha(request.get('commit'))
     # No repository instructions, shell, model credentials, CMake or supplied
     # compile_commands are used. The pipeline generates compiler arguments.
     from .repo_agent import run_repo_analysis

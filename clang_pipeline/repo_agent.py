@@ -21,6 +21,7 @@ from .execution import (
 from .nl_repo import discover_compile_commands, slugify_repository
 from .pipeline import run_pipeline
 from .tool_trace import ToolTraceRecorder
+from .security import normalize_commit_sha
 from .visualization import write_visualization
 
 
@@ -591,15 +592,17 @@ def run_repo_analysis(
     safe_mode: bool = False,
     snapshot_identity: dict[str, str] | None = None,
 ) -> dict[str, Any]:
+    commit = normalize_commit_sha(commit)
     identity_url = repository_url
     if snapshot_identity is not None:
         from .security import github_archive_url
         if not safe_mode or set(snapshot_identity) != {"repository_url", "commit"}:
             raise ValueError("archive snapshot identity requires safe_mode and repository_url/commit")
         identity_url = snapshot_identity["repository_url"]
-        pinned_commit = snapshot_identity["commit"]
-        if not re.fullmatch(r"[0-9a-f]{40}", pinned_commit):
+        pinned_commit = normalize_commit_sha(snapshot_identity["commit"])
+        if not isinstance(pinned_commit, str) or not re.fullmatch(r"[0-9a-f]{40}", pinned_commit):
             raise ValueError("archive snapshot identity requires a full commit SHA")
+        snapshot_identity = dict(snapshot_identity, commit=pinned_commit)
         github_archive_url(identity_url, commit=pinned_commit)
     target_output = Path(output_dir).expanduser().resolve()
     target_output.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0",
+  "cache_root": ".benchmark-cache",
+  "benchmarks": {
+    "callgraphbench": {
+      "name": "CallGraphBench",
+      "source": {
+        "type": "git",
+        "repo": "https://github.com/lvyahui8/CallGraphBench.git",
+        "commit": "fe003b9e9de38d06aa67cabb8643a55dbac7dcbf",
+        "sparse_paths": [
+          "datasets/c",
+          "datasets/cpp",
+          "cgb",
+          "tools",
+          "docs"
+        ]
+      },
+      "license": "MIT",
+      "homepage": "https://github.com/lvyahui8/CallGraphBench",
+      "category": "call_chain"
+    },
+    "cgbench": {
+      "name": "CG-Bench",
+      "source": {
+        "type": "git",
+        "repo": "https://github.com/timmyyuan/CG-Bench.git",
+        "commit": "b277b7329f62fdddc6d4a341057d045bdf69def2"
+      },
+      "license": "MIT",
+      "homepage": "https://github.com/timmyyuan/CG-Bench",
+      "category": "call_chain"
+    },
+    "juliet-c-cpp-1.3": {
+      "name": "NIST Juliet C/C++ 1.3",
+      "source": {
+        "type": "archive",
+        "url": "https://samate.nist.gov/SARD/downloads/test-suites/2017-10-01-juliet-test-suite-for-c-cplusplus-v1-3.zip",
+        "sha256": "ada9d7e1c323d283446df3f55bdee0d00bda1fed786785fe98764d58688f38eb"
+      },
+      "license": "CC0-1.0 / public domain",
+      "homepage": "https://samate.nist.gov/SARD/test-suites/112",
+      "category": "resource_flow"
+    },
+    "dataracebench": {
+      "name": "DataRaceBench",
+      "source": {
+        "type": "git",
+        "repo": "https://github.com/LLNL/dataracebench.git",
+        "commit": "7d07c5d637fa80f1fd7c239bdc34ae53094badc2"
+      },
+      "license": "BSD (see LICENSE.txt and LICENSE.OSU.txt)",
+      "homepage": "https://github.com/LLNL/dataracebench",
+      "category": "sync_relation"
+    },
+    "svcomp26": {
+      "name": "SV-COMP 2026",
+      "source": {
+        "type": "git",
+        "repo": "https://gitlab.com/sosy-lab/benchmarking/sv-benchmarks.git",
+        "commit": "7efe28dd29576b46927b7a34e8f742bd90966a75",
+        "sparse_paths": [
+          "c/memsafety",
+          "c/pthread",
+          "c/pthread-atomic",
+          "c/pthread-ext",
+          "c/pthread-memsafety"
+        ]
+      },
+      "license": "Varies by task; retain task provenance",
+      "homepage": "https://sv-comp.sosy-lab.org/2026/benchmarks.php",
+      "category": "resource_flow+sync_relation"
+    }
+  },
+  "groups": {
+    "call_graph": [
+      "callgraphbench",
+      "cgbench"
+    ],
+    "resource_flow": [
+      "juliet-c-cpp-1.3",
+      "svcomp26"
+    ],
+    "sync_relation": [
+      "dataracebench",
+      "svcomp26"
+    ]
+  }
+}

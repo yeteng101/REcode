@@ -1,0 +1,45 @@
+test_closed_world_can_scope_to_source_function (test_benchmark.BenchmarkTests.test_closed_world_can_scope_to_source_function) ... ok
+test_closed_world_counts_unlabelled_in_scope_prediction_as_fp (test_benchmark.BenchmarkTests.test_closed_world_counts_unlabelled_in_scope_prediction_as_fp) ... ok
+test_closed_world_ignores_prediction_outside_scope (test_benchmark.BenchmarkTests.test_closed_world_ignores_prediction_outside_scope) ... ok
+test_duplicates_do_not_inflate_recall (test_benchmark.BenchmarkTests.test_duplicates_do_not_inflate_recall) ... ok
+test_evidence_must_match_all_required_anchors (test_benchmark.BenchmarkTests.test_evidence_must_match_all_required_anchors) ... ok
+test_explicit_negative (test_benchmark.BenchmarkTests.test_explicit_negative) ... ok
+test_external_call_nodes_use_stable_symbols_for_scoring (test_benchmark.BenchmarkTests.test_external_call_nodes_use_stable_symbols_for_scoring) ... ok
+test_extra_wrong_kind_lowers_type_accuracy (test_benchmark.BenchmarkTests.test_extra_wrong_kind_lowers_type_accuracy) ... ok
+test_invalid_inputs_fail (test_benchmark.BenchmarkTests.test_invalid_inputs_fail) ... ok
+test_missing_prediction_is_false_negative (test_benchmark.BenchmarkTests.test_missing_prediction_is_false_negative) ... ok
+test_perfect_candidate_is_not_confirmed (test_benchmark.BenchmarkTests.test_perfect_candidate_is_not_confirmed) ... ok
+test_refuted_is_not_a_positive_prediction (test_benchmark.BenchmarkTests.test_refuted_is_not_a_positive_prediction) ... ok
+test_resource_and_sync_adapters_are_explicitly_reviewed (test_benchmark.BenchmarkTests.test_resource_and_sync_adapters_are_explicitly_reviewed) ... ok
+test_resource_and_sync_scoring (test_benchmark.BenchmarkTests.test_resource_and_sync_scoring) ... ok
+test_source_anchor_resource_identity (test_benchmark.BenchmarkTests.test_source_anchor_resource_identity) ... ok
+test_unlabelled_predictions_not_assumed_false (test_benchmark.BenchmarkTests.test_unlabelled_predictions_not_assumed_false) ... ok
+test_verification_verdict_not_confidence_controls_confirmation (test_benchmark.BenchmarkTests.test_verification_verdict_not_confidence_controls_confirmation) ... ok
+test_wrong_kind_is_fp_and_fn (test_benchmark.BenchmarkTests.test_wrong_kind_is_fp_and_fn) ... ok
+test_callgraphbench_maps_file_line_and_method_symbols (test_external_benchmarks.ExternalBenchmarkTests.test_callgraphbench_maps_file_line_and_method_symbols) ... ok
+test_cgbench_prediction_normalization (test_external_benchmarks.ExternalBenchmarkTests.test_cgbench_prediction_normalization) ... ok
+test_registry_pins_official_sources (test_external_benchmarks.ExternalBenchmarkTests.test_registry_pins_official_sources) ... ok
+test_active_freeze_covers_new_analyzer_modules_and_detects_changes (test_external_protocol.ExternalProtocolTests.test_active_freeze_covers_new_analyzer_modules_and_detects_changes) ... ok
+test_active_prediction_rejects_historical_protocol (test_external_protocol.ExternalProtocolTests.test_active_prediction_rejects_historical_protocol) ... ok
+test_cgbench_prediction_requires_targets (test_external_protocol.ExternalProtocolTests.test_cgbench_prediction_requires_targets) ... ok
+test_current_revision_is_separate_from_historical_scores (test_external_protocol.ExternalProtocolTests.test_current_revision_is_separate_from_historical_scores) ... ok
+test_current_status_cannot_aggregate_historical_predictions (test_external_protocol.ExternalProtocolTests.test_current_status_cannot_aggregate_historical_predictions) ... ok
+test_historical_prediction_requires_its_archived_schema (test_external_protocol.ExternalProtocolTests.test_historical_prediction_requires_its_archived_schema) ... ok
+test_selection_manifests_have_unique_units (test_external_protocol.ExternalProtocolTests.test_selection_manifests_have_unique_units) ... ok
+test_unknown_is_a_first_class_prediction (test_external_protocol.ExternalProtocolTests.test_unknown_is_a_first_class_prediction) ... ok
+test_full_new_project_workflow (test_project_registry.ValidationProjectRegistryTests.test_full_new_project_workflow) ... ok
+test_fails_on_metric_regression_and_false_positive (test_quality_gate.QualityGateTests.test_fails_on_metric_regression_and_false_positive) ... ok
+test_passes_thresholds_and_reports_pending_review_informationally (test_quality_gate.QualityGateTests.test_passes_thresholds_and_reports_pending_review_informationally) ... ok
+test_review_status_is_confirmed_only_when_all_datasets_are_confirmed (test_quality_gate.QualityGateTests.test_review_status_is_confirmed_only_when_all_datasets_are_confirmed) ... ok
+test_strict_review_requires_confirmed (test_quality_gate.QualityGateTests.test_strict_review_requires_confirmed) ... ok
+test_category_decision_counts (test_simulated_review.SimulatedReviewTests.test_category_decision_counts) ... ok
+test_bad_annotations (test_sync_validation.SyncValidationTests.test_bad_annotations) ... ok
+test_curated_dataset (test_sync_validation.SyncValidationTests.test_curated_dataset) ... ok
+test_missing_source_fails_closed (test_sync_validation.SyncValidationTests.test_missing_source_fails_closed) ... ok
+test_tampered_hash (test_sync_validation.SyncValidationTests.test_tampered_hash) ... ok
+test_wrong_checkout (test_sync_validation.SyncValidationTests.test_wrong_checkout) ... ok
+
+----------------------------------------------------------------------
+Ran 40 tests in 1.608s
+
+OK

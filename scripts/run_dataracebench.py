@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from clang_pipeline.evaluation_protocol import (
+    RESULTS_ROOT,
     prediction_envelope,
     validate_prediction_document,
     write_json,
@@ -22,7 +23,7 @@ from clang_pipeline.race_detector import analyze_race_file
 DATASET = ROOT / ".benchmark-cache/dataracebench"
 CASES = ROOT / "validation/external/results/dataracebench/cases.json"
 SELECTION = ROOT / "validation/external/selections/dataracebench-v1.json"
-OUTPUT = ROOT / "validation/external/results/dataracebench"
+OUTPUT = RESULTS_ROOT / "dataracebench"
 
 
 def select_cases(cases: list[dict], limit: int | None) -> list[dict]:

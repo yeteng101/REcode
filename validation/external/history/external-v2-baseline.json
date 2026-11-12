@@ -1,0 +1,13 @@
+{
+  "schema_version": "external-baseline-v1",
+  "protocol_id": "external-v2",
+  "status": "not_run",
+  "created_at": "2026-11-12",
+  "protocol_lock": {
+    "path": "validation/external/protocol-lock.json",
+    "lock_digest": "f9726d9fca14edba8a1dc189c9b208535764d521c2d874be3cf735c223088973"
+  },
+  "results_root": "validation/external/results/external-v2",
+  "historical_baseline": "validation/external/history/external-v1-baseline.json",
+  "interpretation": "This analyzer revision requires a fresh run of the fixed subsets. Metrics belong to their recorded analyzer lock."
+}

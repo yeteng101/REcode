@@ -5,6 +5,11 @@ from pathlib import Path
 from typing import Any
 
 
+PROTOCOL_ID = "external-v2"
+PROTOCOL_PATH = Path(__file__).resolve().parents[1] / "validation/external/protocol-v2.json"
+RESULTS_ROOT = PROTOCOL_PATH.parent / "results" / PROTOCOL_ID
+
+
 DATASETS = {
     "callgraphbench",
     "cgbench",
@@ -46,7 +51,7 @@ def prediction_envelope(
 ) -> dict[str, Any]:
     return {
         "schema_version": "external-prediction-v1",
-        "protocol_id": "external-v1",
+        "protocol_id": PROTOCOL_ID,
         "dataset": dataset,
         "generator": generator,
         "predictions": predictions,
@@ -57,6 +62,7 @@ def validate_prediction_document(
     document: dict[str, Any],
     *,
     expected_dataset: str | None = None,
+    expected_protocol_id: str = PROTOCOL_ID,
 ) -> None:
     if not isinstance(document, dict):
         raise ValueError("prediction document must be an object")
@@ -72,7 +78,7 @@ def validate_prediction_document(
         raise ValueError(f"prediction document is missing {sorted(missing)}")
     if document["schema_version"] != "external-prediction-v1":
         raise ValueError("invalid prediction schema_version")
-    if document["protocol_id"] != "external-v1":
+    if document["protocol_id"] != expected_protocol_id:
         raise ValueError("invalid protocol_id")
     if document["dataset"] not in DATASETS:
         raise ValueError(f"unknown prediction dataset: {document['dataset']}")

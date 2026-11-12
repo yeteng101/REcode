@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -12,10 +13,12 @@ from typing import Any, Iterable
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from clang_pipeline.evaluation_protocol import PROTOCOL_ID, RESULTS_ROOT
 CASES = ROOT / "validation/external/results/cgbench/cases.json"
 SELECTION = ROOT / "validation/external/selections/cgbench-v1.json"
 PROMPT = ROOT / "validation/external/prompts/cgbench-target-agent-v1.txt"
-DEFAULT_OUTPUT = ROOT / "validation/external/results/cgbench/predictions.json"
+DEFAULT_OUTPUT = RESULTS_ROOT / "cgbench/predictions.json"
 
 KEYWORDS = {
     "alignas",
@@ -557,7 +560,7 @@ def main() -> int:
         )
     output = {
         "schema_version": "external-prediction-v1",
-        "protocol_id": "external-v1",
+        "protocol_id": PROTOCOL_ID,
         "dataset": "cgbench",
         "generator": {
             "name": "cgbench-target-agent",

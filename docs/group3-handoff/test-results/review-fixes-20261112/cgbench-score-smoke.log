@@ -1,0 +1,14 @@
+{
+  "tp": 1,
+  "fp": 0,
+  "fn": 610,
+  "precision": 1.0,
+  "recall": 0.0016366612111292963,
+  "f1": 0.0032679738562091504,
+  "total_expected_units": 611,
+  "binary_answered_units": 611,
+  "unknown_callsites": 0,
+  "unknown_expected_units": 0,
+  "unknown_callsite_rate": 0.0,
+  "coverage": 1.0
+}

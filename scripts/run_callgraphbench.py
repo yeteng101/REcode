@@ -15,6 +15,7 @@ sys.path.insert(0, str(ROOT))
 
 from clang_pipeline.clang_ast import read_json, write_json
 from clang_pipeline.evaluation_protocol import (
+    RESULTS_ROOT,
     prediction_envelope,
     validate_prediction_document,
 )
@@ -23,7 +24,7 @@ from clang_pipeline.repo_agent import _relativize_json_paths, generic_compile_co
 
 
 BENCHMARK = ROOT / ".benchmark-cache/callgraphbench"
-OUTPUT = ROOT / "validation/external/results/callgraphbench"
+OUTPUT = RESULTS_ROOT / "callgraphbench"
 SELECTION = ROOT / "validation/external/selections/callgraphbench-v1.json"
 SUPPORTED_LANGUAGES = ("c", "cpp")
 

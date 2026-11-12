@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
-"""Create or verify the immutable external-v1 protocol lock."""
+"""Create or verify the active analyzer protocol lock."""
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
 from pathlib import Path
+import sys
 from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from clang_pipeline.evaluation_protocol import PROTOCOL_ID, PROTOCOL_PATH
 LOCK_PATH = ROOT / "validation/external/protocol-lock.json"
 LOCKED_FILES = (
-    "validation/external/protocol-v1.json",
+    "validation/external/protocol-v2.json",
     "validation/external/prediction.schema.json",
     "validation/external/registry.json",
     "validation/external/prompts/cgbench-target-agent-v1.txt",
@@ -36,9 +39,14 @@ LOCKED_FILES = (
     "scripts/update_external_status.py",
     "clang_pipeline/evaluation_protocol.py",
     "clang_pipeline/race_detector.py",
+    "clang_pipeline/concurrency_facts.py",
+    "clang_pipeline/semantic_sync.py",
+    "clang_pipeline/native_export.py",
+    "clang_pipeline/stages.py",
     "clang_pipeline/resource_flow.py",
     "clang_pipeline/sync_flow.py",
     "schemas/race-analysis.schema.json",
+    "scripts/freeze_external_protocol.py",
 )
 
 
@@ -47,24 +55,22 @@ def read_json(path: Path) -> dict[str, Any]:
 
 
 def sha256_path(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+    # All locked inputs are text. Git checkouts may use CRLF on Windows.
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def build_lock() -> dict[str, Any]:
     missing = [path for path in LOCKED_FILES if not (ROOT / path).is_file()]
     if missing:
         raise SystemExit("cannot lock missing files:\n" + "\n".join(missing))
-    protocol = read_json(ROOT / "validation/external/protocol-v1.json")
+    protocol = read_json(PROTOCOL_PATH)
     hashes = {path: sha256_path(ROOT / path) for path in LOCKED_FILES}
     return {
         "schema_version": "external-protocol-lock-v1",
         "protocol_id": protocol["protocol_id"],
         "status": "locked",
         "hash_algorithm": "sha256",
+        "text_normalization": "lf",
         "files": hashes,
         "lock_digest": hashlib.sha256(
             json.dumps(hashes, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -79,8 +85,10 @@ def verify_lock() -> list[str]:
     errors = []
     if lock.get("schema_version") != "external-protocol-lock-v1":
         errors.append("invalid lock schema")
-    if lock.get("protocol_id") != "external-v1":
-        errors.append("lock protocol_id is not external-v1")
+    if lock.get("protocol_id") != PROTOCOL_ID:
+        errors.append("lock protocol_id is not " + PROTOCOL_ID)
+    if lock.get("text_normalization") != "lf":
+        errors.append("invalid text normalization")
     files = lock.get("files", {})
     if set(files) != set(LOCKED_FILES):
         errors.append("locked file list differs from freezer")

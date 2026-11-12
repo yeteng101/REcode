@@ -1,0 +1,350 @@
+{
+  "schema_version": "selection-v1",
+  "selection_id": "callgraphbench-v1",
+  "dataset": "callgraphbench",
+  "source": {
+    "repo": "https://github.com/lvyahui8/CallGraphBench.git",
+    "revision": "fe003b9e9de38d06aa67cabb8643a55dbac7dcbf",
+    "license": "MIT"
+  },
+  "unit": "call_edge",
+  "identity_fields": [
+    "caller",
+    "callee"
+  ],
+  "rules": [
+    "include every official C and C++ manifest under datasets/",
+    "score only edges present in manifest ground_truth.edges",
+    "deduplicate repeated caller-callee edges by identity"
+  ],
+  "counts": {
+    "cases": 6,
+    "units": 31
+  },
+  "cases": [
+    {
+      "id": "c/c_basic",
+      "language": "c",
+      "case_id": "c_basic",
+      "manifest": "datasets/c/c_basic/manifest.json",
+      "manifest_sha256": "6cd75e973aefe24f2058b280aa3d5e562921928cc59067b29b277a93a045c835"
+    },
+    {
+      "id": "c/c_dynamic",
+      "language": "c",
+      "case_id": "c_dynamic",
+      "manifest": "datasets/c/c_dynamic/manifest.json",
+      "manifest_sha256": "bd9c9e7f3e5cfb7baebf5a1730406574b70901efd548d8206d80490433846467"
+    },
+    {
+      "id": "c/c_multifile",
+      "language": "c",
+      "case_id": "c_multifile",
+      "manifest": "datasets/c/c_multifile/manifest.json",
+      "manifest_sha256": "51752a629d03c58a4282df48fa4d3bac4c11e19e5b33c396c582daa7c81e874d"
+    },
+    {
+      "id": "cpp/cpp_basic",
+      "language": "cpp",
+      "case_id": "cpp_basic",
+      "manifest": "datasets/cpp/cpp_basic/manifest.json",
+      "manifest_sha256": "069fa1fa28a9df5ca6209deced804cf8d431e1a206622354f4bfce38a193c1fb"
+    },
+    {
+      "id": "cpp/cpp_dispatch",
+      "language": "cpp",
+      "case_id": "cpp_dispatch",
+      "manifest": "datasets/cpp/cpp_dispatch/manifest.json",
+      "manifest_sha256": "45cde0e7a538965a53d8b54257f6bc5f5ed4f11a29a657135400991ddbec5dde"
+    },
+    {
+      "id": "cpp/cpp_multifile",
+      "language": "cpp",
+      "case_id": "cpp_multifile",
+      "manifest": "datasets/cpp/cpp_multifile/manifest.json",
+      "manifest_sha256": "6d24c06bf75044344b75fa4ed35e623c2041cfa626c0c0e56d4c03b30df2f58e"
+    }
+  ],
+  "units": [
+    {
+      "id": "unit_9c2eae8d33939d90",
+      "case_id": "c/c_basic",
+      "identity": {
+        "caller": "c:c_basic:greet",
+        "callee": "c:c_basic:format_name"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_498dab586aadbd66",
+      "case_id": "c/c_basic",
+      "identity": {
+        "caller": "c:c_basic:welcome",
+        "callee": "c:c_basic:greet"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_b9ecd52e54079ed5",
+      "case_id": "c/c_basic",
+      "identity": {
+        "caller": "c:c_basic:main",
+        "callee": "c:c_basic:make_user"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_92af623d4e06ce23",
+      "case_id": "c/c_basic",
+      "identity": {
+        "caller": "c:c_basic:main",
+        "callee": "c:c_basic:welcome"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_e4da0bf71556a2e2",
+      "case_id": "c/c_dynamic",
+      "identity": {
+        "caller": "c:c_dynamic:main",
+        "callee": "c:c_dynamic:process_device"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_6daa8c5afa3af2f2",
+      "case_id": "c/c_dynamic",
+      "identity": {
+        "caller": "c:c_dynamic:process_device",
+        "callee": "c:c_dynamic:pick_driver"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_4d018f63d579da7d",
+      "case_id": "c/c_dynamic",
+      "identity": {
+        "caller": "c:c_dynamic:process_device",
+        "callee": "c:c_dynamic:tcp_open"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_ffa0bbd3132acf09",
+      "case_id": "c/c_dynamic",
+      "identity": {
+        "caller": "c:c_dynamic:process_device",
+        "callee": "c:c_dynamic:udp_open"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_142ba554d295cfbc",
+      "case_id": "c/c_dynamic",
+      "identity": {
+        "caller": "c:c_dynamic:process_device",
+        "callee": "c:c_dynamic:tcp_read"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_0cc299dbfe24cca3",
+      "case_id": "c/c_dynamic",
+      "identity": {
+        "caller": "c:c_dynamic:process_device",
+        "callee": "c:c_dynamic:udp_read"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_1f35a796545a0327",
+      "case_id": "c/c_dynamic",
+      "identity": {
+        "caller": "c:c_dynamic:process_device",
+        "callee": "c:c_dynamic:record_metric"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_0a92d887469e31a0",
+      "case_id": "c/c_multifile",
+      "identity": {
+        "caller": "c:c_multifile:main",
+        "callee": "c:c_multifile:run_pipeline"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_3267b166f4dfd27b",
+      "case_id": "c/c_multifile",
+      "identity": {
+        "caller": "c:c_multifile:main",
+        "callee": "c:c_multifile:audit_result"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_e32df56a58a1c1e6",
+      "case_id": "c/c_multifile",
+      "identity": {
+        "caller": "c:c_multifile:run_pipeline",
+        "callee": "c:c_multifile:select_handler"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_e3aff4ac1eae9e59",
+      "case_id": "c/c_multifile",
+      "identity": {
+        "caller": "c:c_multifile:run_pipeline",
+        "callee": "c:c_multifile:uppercase_handler"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_057213ef6ff12b16",
+      "case_id": "c/c_multifile",
+      "identity": {
+        "caller": "c:c_multifile:run_pipeline",
+        "callee": "c:c_multifile:suffix_handler"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_a5a72adadb2c5ad8",
+      "case_id": "c/c_multifile",
+      "identity": {
+        "caller": "c:c_multifile:run_pipeline",
+        "callee": "c:c_multifile:audit_result"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_8518b2d518d48dc6",
+      "case_id": "cpp/cpp_basic",
+      "identity": {
+        "caller": "cpp:cpp_basic:greet",
+        "callee": "cpp:cpp_basic:formatName"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_a89b438de9393dae",
+      "case_id": "cpp/cpp_basic",
+      "identity": {
+        "caller": "cpp:cpp_basic:User.welcome",
+        "callee": "cpp:cpp_basic:greet"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_6c3ebe554477a0b2",
+      "case_id": "cpp/cpp_basic",
+      "identity": {
+        "caller": "cpp:cpp_basic:main",
+        "callee": "cpp:cpp_basic:User.User"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_5a22b7f3e43e1507",
+      "case_id": "cpp/cpp_basic",
+      "identity": {
+        "caller": "cpp:cpp_basic:main",
+        "callee": "cpp:cpp_basic:User.welcome"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_dbce9477389770ea",
+      "case_id": "cpp/cpp_dispatch",
+      "identity": {
+        "caller": "cpp:cpp_dispatch:main",
+        "callee": "cpp:cpp_dispatch:orchestrate"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_f02b1f81f9e20a2a",
+      "case_id": "cpp/cpp_dispatch",
+      "identity": {
+        "caller": "cpp:cpp_dispatch:orchestrate",
+        "callee": "cpp:cpp_dispatch:choose_rule"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_3b10c678087c282a",
+      "case_id": "cpp/cpp_dispatch",
+      "identity": {
+        "caller": "cpp:cpp_dispatch:orchestrate",
+        "callee": "cpp:cpp_dispatch:execute_rule"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_8d49e26f271e6f48",
+      "case_id": "cpp/cpp_dispatch",
+      "identity": {
+        "caller": "cpp:cpp_dispatch:execute_rule",
+        "callee": "cpp:cpp_dispatch:LengthRule.apply"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_99ff9b2fd48ef7bc",
+      "case_id": "cpp/cpp_dispatch",
+      "identity": {
+        "caller": "cpp:cpp_dispatch:execute_rule",
+        "callee": "cpp:cpp_dispatch:PrefixRule.apply"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_472e6ee06fa4d5d7",
+      "case_id": "cpp/cpp_multifile",
+      "identity": {
+        "caller": "cpp:cpp_multifile:main",
+        "callee": "cpp:cpp_multifile:run"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_9cf11575a4bb6e6d",
+      "case_id": "cpp/cpp_multifile",
+      "identity": {
+        "caller": "cpp:cpp_multifile:run",
+        "callee": "cpp:cpp_multifile:make_handler"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_0fc6f5c6754d4724",
+      "case_id": "cpp/cpp_multifile",
+      "identity": {
+        "caller": "cpp:cpp_multifile:run",
+        "callee": "cpp:cpp_multifile:dispatch"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_76001cd2c6a7736d",
+      "case_id": "cpp/cpp_multifile",
+      "identity": {
+        "caller": "cpp:cpp_multifile:dispatch",
+        "callee": "cpp:cpp_multifile:JsonParser.handle"
+      },
+      "label": "edge"
+    },
+    {
+      "id": "unit_31e59f0b68d135c1",
+      "case_id": "cpp/cpp_multifile",
+      "identity": {
+        "caller": "cpp:cpp_multifile:dispatch",
+        "callee": "cpp:cpp_multifile:TextParser.handle"
+      },
+      "label": "edge"
+    }
+  ],
+  "exclusions": []
+}
