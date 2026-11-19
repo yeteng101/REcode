@@ -643,14 +643,13 @@ class SemanticSyncAnalyzer:
                 "api_model": "POSIX default initialized nonrecursive mutex and bounded rwlock operations; thread API success/failure paths"}
 
 
-def analyze_semantic_sync(workspace: str | Path, source_root: str | Path) -> dict:
+def load_semantic_asts(workspace: str | Path, source_root: str | Path):
     workspace, root = Path(workspace), Path(source_root)
     units = read_json(workspace / "compile_commands.json")
-    analyzer = SemanticSyncAnalyzer(root, units)
     manifest_path = workspace / "01-index/ast/manifest.json"
     manifest = read_json(manifest_path) if manifest_path.exists() else {}
     paths = {file: workspace / "01-index/ast" / (stem + ".ast.json") for stem, file in manifest.items()}
-    asts = []
+    asts, bindings, errors = [], [], []
     for unit in units:
         filename = str(unit["file"])
         path = Path(filename)
@@ -664,11 +663,20 @@ def analyze_semantic_sync(workspace: str | Path, source_root: str | Path) -> dic
             if ast is None or not str(ast.get("id", "")).startswith("0x"):
                 ast = run_clang_ast(unit, root)
             asts.append((relative, ast))
-            analyzer.translation_units.append({"file": relative, "ast_sha256": stable_digest(ast),
+            bindings.append({"file": relative, "ast_sha256": stable_digest(ast),
                 "arguments_sha256": stable_digest(unit.get("arguments", unit.get("command", "")))})
         except Exception as exc:
-            analyzer.gap("translation_unit_failed:" + filename + ":" + type(exc).__name__)
-            analyzer.call_gaps.add("translation_unit_failed:" + filename)
+            errors.append((filename, type(exc).__name__))
+    return units, asts, bindings, errors
+
+
+def analyze_semantic_sync(workspace: str | Path, source_root: str | Path, *, prepared=None) -> dict:
+    units, asts, bindings, errors = prepared if prepared is not None else load_semantic_asts(workspace, source_root)
+    analyzer = SemanticSyncAnalyzer(Path(source_root), units)
+    analyzer.translation_units = bindings
+    for filename, reason in errors:
+        analyzer.gap("translation_unit_failed:" + filename + ":" + reason)
+        analyzer.call_gaps.add("translation_unit_failed:" + filename)
     if not units:
         analyzer.gap("compile_commands_unavailable")
         analyzer.call_gaps.add("compile_commands_unavailable")

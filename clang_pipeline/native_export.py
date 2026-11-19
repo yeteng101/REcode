@@ -7,8 +7,9 @@ from .clang_ast import read_json, write_json
 from .compiler_facts import extract_build_profile, optimized_ir_facts
 from .knowledge_graph import build_knowledge_graph
 from .log_facts import collect_log_facts
+from .memory_paths import analyze_memory_paths
 from .race_detector import analyze_race_source
-from .semantic_sync import analyze_semantic_sync
+from .semantic_sync import analyze_semantic_sync, load_semantic_asts
 from .resource_flow import analyze_resource_flow
 from .sync_flow import analyze_sync_relations
 from .visualization import write_visualization
@@ -56,11 +57,24 @@ def run_native_export(
     )
     if source_root and compile_commands:
         try:
-            semantic_sync = analyze_semantic_sync(workspace_path, source_root)
+            prepared = load_semantic_asts(workspace_path, source_root)
+            semantic_sync = analyze_semantic_sync(workspace_path, source_root, prepared=prepared)
             race_analysis["semantic_sync"] = {key: value for key, value in semantic_sync.items() if key != "evidence"}
             race_analysis["evidence"].extend(semantic_sync["evidence"])
         except (OSError, ValueError, KeyError, TypeError, RecursionError) as exc:
             race_analysis["warnings"].append("semantic_sync_failed:" + type(exc).__name__ + ":" + str(exc))
+        else:
+            if request.get("entry_symbols"):
+                try:
+                    source = resource_flow["source"]
+                    binding = {key: source[key] for key in ("repository", "commit", "build_profile")}
+                    binding["run_id"] = resource_flow["run_id"]
+                    proofs, evidence = analyze_memory_paths(source_root, prepared, binding, request["entry_symbols"])
+                    if proofs is not None:
+                        resource_flow["memory_path_proofs"] = proofs
+                        resource_flow["evidence"].extend(evidence)
+                except (OSError, ValueError, KeyError, TypeError, RecursionError) as exc:
+                    resource_flow["warnings"].append("memory_path_analysis_failed:" + type(exc).__name__ + ":" + str(exc))
     build_profile = extract_build_profile(
         compile_commands,
         source_root or request.get("repo_root") or Path.cwd(),

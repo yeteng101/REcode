@@ -57,8 +57,69 @@
         "additionalProperties": true
       }
     },
+    "memory_path_proofs": {
+      "type": "object",
+      "required": ["schema_version", "basis", "binding", "traces", "gaps"],
+      "properties": {
+        "schema_version": {"const": "recode-memory-path/1"},
+        "basis": {"const": "clang-json-ast-paths"},
+        "binding": {
+          "type": "object",
+          "required": ["repository", "commit", "build_profile", "run_id"],
+          "properties": {
+            "repository": {"type": "string"},
+            "commit": {"type": "string"},
+            "build_profile": {"type": "string"},
+            "run_id": {"type": "string"}
+          },
+          "additionalProperties": false
+        },
+        "traces": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "type": "object",
+            "required": ["entry", "arguments", "events"],
+            "properties": {
+              "entry": {"$ref": "#/$defs/memoryProofLocation"},
+              "arguments": {"type": "array", "maxItems": 2, "items": {"enum": [0, 1]}},
+              "events": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 192,
+                "items": {
+                  "type": "object",
+                  "required": ["kind", "location", "evidence_ids"],
+                  "properties": {
+                    "kind": {"enum": ["acquire", "allocation_failure", "bind_field", "call", "branch", "release_container", "release", "exit"]},
+                    "location": {"$ref": "#/$defs/memoryProofLocation"},
+                    "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+                  }
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "gaps": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
     "evidence": {"type": "array", "items": {"type": "object"}},
     "warnings": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {
+    "memoryProofLocation": {
+      "type": "object",
+      "required": ["file", "line", "snippet"],
+      "properties": {
+        "file": {"type": "string", "minLength": 1},
+        "line": {"type": "integer", "minimum": 1},
+        "column": {"type": "integer", "minimum": 1},
+        "snippet": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
   },
   "additionalProperties": true
 }
