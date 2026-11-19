@@ -20,7 +20,7 @@ class AstFallbackTests(unittest.TestCase):
             (root / "compile_commands.json").write_text(json.dumps([unit]), encoding="utf-8")
             with patch.object(stages, "extract_compact_ast", None), patch.object(stages, "run_clang_ast", return_value={"kind": "TranslationUnitDecl"}) as extract:
                 result = stages.stage01_index(root)
-            extract.assert_called_once_with(unit, root)
+            extract.assert_called_once_with(unit, root.resolve())
             self.assertEqual("succeeded", result["status"])
 
     def test_missing_optional_libclang_does_not_prevent_stage_import(self):
