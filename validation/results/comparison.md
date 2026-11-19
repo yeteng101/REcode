@@ -3,6 +3,9 @@
 > **数据泄漏警告：** 本页是历史 regression 对比，不是独立准确率报告。
 > libuv 调用链 Gold 与预测图部分同源，旧 Precision 又排除了未标注预测。
 > 2026-10-28 起以 `docs/external-benchmarks-2026-10-28.md` 为正式评测口径。
+> libuv 同步 Gold 和当前 predictions 均为 `libuv-linux-clang`。表中使用
+> profile 对齐后的 Linux 结果，详见
+> `validation/results/libuv/linux-profile/baseline/report.md`。
 
 | 项目 | libuv v1.50.0 | Redis 7.2.4 |
 |---|---:|---:|
@@ -13,15 +16,18 @@
 | 候选 F1 | 100% | 96.71% |
 | TP 证据命中率 | 100% | 100% |
 | 同步关系标注 | 32 | 22 |
-| 同步 TP / FP / FN | 4 / 0 / 28 | 9 / 0 / 13 |
-| 同步 recall | 12.50% | 40.91% |
+| 同步 TP / FP / FN | 32 / 0 / 0 | 9 / 0 / 13 |
+| 同步 recall | 100% | 40.91% |
 | 资源操作标注 | 17 confirmed | 未标注 |
-| 资源操作 recall | 64.71% | N/A |
+| 资源操作 recall | 100% | N/A |
 
 这些是**标注范围内**的结果。libuv 原调用标签与预测图同源，Redis 是本轮独立源码
 标注；样本组成不同，不能把上表解释成 libuv 比 Redis 更容易分析或总体准确率差异。
 FP=0 仅表示所列负例/identity 未命中误报，其余未标注输出没有完整真值。
 Redis 1342 条去重预测位于标注范围之外，未计入 precision。
+
+当前有效 libuv 同步结果为 `32 TP / 0 FP / 0 FN / 6 TN`，来自
+`libuv-linux-clang`，required evidence 命中率为 100%。
 
 libuv 资源流已排除 20 个 `pending` 资源候选，只使用 confirmed /
 confirmed-with-condition 的 17 条操作作为当前 Gold。历史表中的 62 条不应继续作为

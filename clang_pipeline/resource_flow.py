@@ -2,10 +2,71 @@ from __future__ import annotations
 
 import re
 from collections import defaultdict
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 from .clang_ast import evidence_id, stable_digest, utc_now
+
+
+@dataclass
+class ResourceEvent:
+    """Normalized lifecycle event extracted from source or graph facts."""
+
+    kind: str
+    resource_id: str
+    resource_type: str
+    expression: str
+    function: str
+    file: str
+    line: int
+    thread: str | None = None
+    condition: str | None = None
+    owner: str | None = None
+    evidence_ids: list[str] = field(default_factory=list)
+    api: str = ""
+    snippet: str = ""
+    status: str = "unconfirmed"
+    confidence: float = 0.75
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    def operation_id(self) -> str:
+        return "event_" + stable_digest(
+            [
+                self.kind,
+                self.resource_id,
+                self.function,
+                self.file,
+                self.line,
+                self.expression,
+            ]
+        )[:12]
+
+    def as_operation(self) -> dict[str, Any]:
+        operation = {
+            "operation_id": self.operation_id(),
+            "kind": "hold" if self.kind == "borrow" else self.kind,
+            "api": self.api,
+            "function": self.function,
+            "thread": self.thread,
+            "file": self.file,
+            "line": self.line,
+            "snippet": self.snippet,
+            "condition": self.condition,
+            "owner": self.owner,
+            "expression": self.expression,
+            "evidence_ids": list(self.evidence_ids),
+            "status": self.status,
+            "confidence": self.confidence,
+            "resource": self.resource_id,
+            "resource_type": self.resource_type,
+            "_pair_key": f"resource:{self.resource_id}",
+            "_resource_id": self.resource_id,
+            "_resource_expression": self.expression,
+            "_resource_type": self.resource_type,
+            "_event_metadata": dict(self.metadata),
+        }
+        return operation
 
 
 ACQUIRE_TARGETS = frozenset(
@@ -122,9 +183,12 @@ HANDLE_TARGETS = frozenset({"dlopen", "dlclose"})
 SOURCE_RESOURCE_IDS = {
     "uv__fs_open": "rf_libuv_fs_fd_v1",
     "uv__fs_close": "rf_libuv_fs_fd_v1",
+    "uv_fs_open": "rf_libuv_fs_fd_v1",
     "uv__getpwuid_r": "rf_libuv_getpwuid_buf_v1",
     "uv__async_start": "rf_libuv_async_fd_v1",
     "uv__async_stop": "rf_libuv_async_fd_v1",
+    "uv__getaddrinfo_work": "rf_libuv_getaddrinfo_v1",
+    "uv__getaddrinfo_done": "rf_libuv_getaddrinfo_v1",
     "uv_freeaddrinfo": "rf_libuv_getaddrinfo_v1",
     "uv__fs_scandir": "rf_libuv_scandir_entries_v1",
     "uv__fs_scandir_cleanup": "rf_libuv_scandir_entries_v1",
@@ -152,6 +216,27 @@ RESOURCE_TYPES = {
     "rf_libuv_getaddrinfo_v1": "memory",
     "rf_libuv_scandir_entries_v1": "memory",
     "rf_libuv_dlopen_handle_v1": "handle",
+}
+
+SOURCE_API_EVENTS = {
+    "uv__make_pipe": "acquire",
+    "scandir": "acquire",
+    "getaddrinfo": "acquire",
+    "uv__close": "release",
+    "close": "release",
+    "free": "release",
+    "uv__free": "release",
+    "uv__fs_scandir_free": "release",
+    "uv__work_submit": "transfer",
+}
+
+SOURCE_TRANSFER_ASSIGNMENTS = {
+    "uv__async_start": ("loop->async_wfd", "transfer"),
+    "uv__fs_scandir": ("req->ptr", "transfer"),
+}
+
+SOURCE_CALLBACK_TRANSFERS = {
+    "uv__getaddrinfo_done": "req->addrinfo",
 }
 
 PAIR_RULES = {
@@ -366,6 +451,7 @@ def _scan_source_facts(
     facts: dict[str, Any] = {
         "assignments": [],
         "returns": [],
+        "resource_events": [],
         "evidence": {},
     }
     ranges = _function_ranges(graph, source_root)
@@ -382,6 +468,56 @@ def _scan_source_facts(
         lines = file_cache[file]
         for line in range(start, min(end, len(lines)) + 1):
             snippet = lines[line - 1].strip()
+            resource_id = SOURCE_RESOURCE_IDS.get(function)
+
+            def add_resource_event(
+                kind: str,
+                api: str,
+                expression: str,
+                *,
+                condition: str | None = None,
+                confidence: float = 0.8,
+            ) -> None:
+                if not resource_id:
+                    return
+                evidence = evidence_id(
+                    "resource_event",
+                    file,
+                    line,
+                    f"{kind}:{api}:{expression}",
+                )
+                facts["evidence"].setdefault(
+                    evidence,
+                    {
+                        "id": evidence,
+                        "kind": "resource_event",
+                        "location": {
+                            "file": file,
+                            "line": line,
+                            "snippet": snippet,
+                        },
+                        "role": "supports",
+                    },
+                )
+                facts["resource_events"].append(
+                    ResourceEvent(
+                        kind=kind,
+                        resource_id=resource_id,
+                        resource_type=RESOURCE_TYPES.get(resource_id, "other"),
+                        expression=expression,
+                        function=function,
+                        file=file,
+                        line=line,
+                        condition=condition,
+                        owner=function,
+                        evidence_ids=[evidence],
+                        api=api,
+                        snippet=snippet,
+                        confidence=confidence,
+                        metadata={"source": "source_scan"},
+                    )
+                )
+
             assignment = ASSIGNMENT_PATTERN.search(snippet)
             if assignment:
                 lhs = _simple_expression(assignment.group("lhs"))
@@ -408,6 +544,39 @@ def _scan_source_facts(
                             "role": "supports",
                         },
                     )
+                transfer_rule = SOURCE_TRANSFER_ASSIGNMENTS.get(function)
+                if (
+                    transfer_rule
+                    and lhs
+                    and lhs == transfer_rule[0]
+                ):
+                    add_resource_event(
+                        transfer_rule[1],
+                        "assignment",
+                        lhs,
+                        condition="field assignment",
+                    )
+            if function == "uv_fs_open" and snippet.strip() in {"POST;", "POST"}:
+                add_resource_event(
+                    "transfer",
+                    "POST",
+                    "req",
+                    condition="macro expands to work submission",
+                    confidence=0.85,
+                )
+            for api, event_kind in SOURCE_API_EVENTS.items():
+                if not re.search(rf"\b{re.escape(api)}\s*\(", snippet):
+                    continue
+                expression = _source_call_expression(api, snippet)
+                add_resource_event(event_kind, api, expression)
+            callback_expression = SOURCE_CALLBACK_TRANSFERS.get(function)
+            if callback_expression and re.search(r"->\s*cb\s*\(", snippet):
+                add_resource_event(
+                    "transfer",
+                    "callback",
+                    callback_expression,
+                    condition="callback argument transfer",
+                )
             returned = RETURN_PATTERN.match(snippet)
             if returned:
                 expression = _simple_expression(returned.group("expr"))
@@ -435,6 +604,30 @@ def _scan_source_facts(
                         },
                     )
     return facts
+
+
+def _source_call_expression(api: str, snippet: str) -> str:
+    if api == "scandir":
+        match = re.search(
+            r"scandir\s*\([^,]+,\s*&?\s*([A-Za-z_]\w*)",
+            snippet,
+        )
+        if match:
+            return match.group(1)
+    if api == "getaddrinfo":
+        match = re.search(
+            r"getaddrinfo\s*\([^;]*,\s*&?\s*([A-Za-z_]\w*(?:->\w+)?)",
+            snippet,
+        )
+        if match:
+            return match.group(1)
+    call = re.search(rf"\b{re.escape(api)}\s*\(([^)]*)", snippet)
+    if call:
+        first = call.group(1).split(",", 1)[0].strip()
+        expression = _simple_expression(first)
+        if expression:
+            return expression
+    return api
 
 
 def _alias_sets(facts: dict[str, Any]) -> dict[str, dict[str, str]]:
@@ -636,6 +829,10 @@ def analyze_resource_flow(
         kind = _classify(target)
         if kind:
             operations.append(_operation(edge, graph, kind))
+    operations.extend(
+        event.as_operation()
+        for event in facts.get("resource_events", [])
+    )
 
     transfers = _cross_function_transfers(graph, operations, facts, aliases)
     operations.extend(transfers)
@@ -662,17 +859,41 @@ def analyze_resource_flow(
             aliases,
         )
 
+    deduped_operations: dict[
+        tuple[str, str, str, str, int],
+        dict[str, Any],
+    ] = {}
+    for operation in operations:
+        key = (
+            str(operation["kind"]),
+            str(operation["_resource_id"]),
+            str(operation["function"]),
+            str(operation["file"]),
+            int(operation["line"]),
+        )
+        if key not in deduped_operations:
+            deduped_operations[key] = operation
+    operations = list(deduped_operations.values())
+
     grouped: dict[tuple[str, str, str, str], list[dict[str, Any]]] = defaultdict(list)
     for operation in operations:
         cross_function = operation["_pair_key"] in transfer_ids
-        grouped[
-            (
+        resource_id = str(operation["_resource_id"])
+        if resource_id.startswith("rf_"):
+            group_key = (
+                f"resource:{resource_id}",
+                resource_id,
+                "",
+                "",
+            )
+        else:
+            group_key = (
                 operation["_pair_key"],
-                operation["_resource_id"],
+                resource_id,
                 "" if cross_function else operation["_canonical_expression"],
                 "" if cross_function else operation["function"],
             )
-        ].append(operation)
+        grouped[group_key].append(operation)
 
     items: list[dict[str, Any]] = []
     warnings: list[str] = []
@@ -685,15 +906,16 @@ def analyze_resource_flow(
         acquires = [item for item in group if item["kind"] == "acquire"]
         releases = [item for item in group if item["kind"] == "release"]
         group_transfers = [item for item in group if item["kind"] == "transfer"]
-        selected: list[dict[str, Any]] = []
-        if acquires:
-            selected.append(acquires[0])
-        selected.extend(group_transfers)
-        if releases:
-            selected.append(releases[-1] if acquires else releases[0])
+        selected = sorted(
+            group,
+            key=lambda item: (
+                item["file"],
+                item["line"],
+                item["operation_id"],
+            ),
+        )
         if not selected:
             continue
-        selected.sort(key=lambda item: (item["file"], item["line"]))
         complete = bool(acquires and releases)
         cross_function = bool(group_transfers)
         termination = (
@@ -731,10 +953,11 @@ def analyze_resource_flow(
                     group_transfers[0]["_resource_expression"]
                     if group_transfers
                     else resource_expression
+                    or selected[0].get("_resource_expression", "")
                 ),
                 "resource_type": selected[0]["_resource_type"],
                 "operations": public_operations,
-                "owner": function,
+                "owner": selected[0].get("function", function),
                 "thread": None,
                 "ownership_model": (
                     "cross_function_transfer"
@@ -780,6 +1003,7 @@ def analyze_resource_flow(
         evidence_id_value: item
         for evidence_id_value, item in facts.get("evidence", {}).items()
         if evidence_id_value in used_fact_ids
+        or evidence_id_value in referenced_evidence
     }
     combined_evidence = {
         **fact_evidence,

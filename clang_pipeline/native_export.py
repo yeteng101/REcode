@@ -5,6 +5,7 @@ from typing import Any
 
 from .clang_ast import read_json, write_json
 from .compiler_facts import extract_build_profile, optimized_ir_facts
+from .function_targets import enrich_call_graph
 from .knowledge_graph import build_knowledge_graph
 from .log_facts import collect_log_facts
 from .race_detector import analyze_race_source
@@ -31,6 +32,8 @@ def run_native_export(
     if request_path.exists():
         source_root = read_json(request_path).get("source_root")
     request = read_json(request_path) if request_path.exists() else {}
+    if source_root:
+        graph = enrich_call_graph(graph, source_root)
     resource_flow = analyze_resource_flow(graph, source_root=source_root)
     sync_relations = analyze_sync_relations(graph, source_root=source_root)
     race_analysis = (

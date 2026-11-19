@@ -18,6 +18,11 @@ LOCK_ACQUIRE = {
     "pthread_rwlock_wrlock": ("acquire", "rwlock"),
 }
 
+TRY_LOCK = {
+    "uv_rwlock_trywrlock": ("try_acquire", "rwlock"),
+    "pthread_rwlock_trywrlock": ("try_acquire", "rwlock"),
+}
+
 LOCK_RELEASE = {
     "uv_mutex_unlock": ("release", "mutex_lock"),
     "uv_rwlock_unlock": ("release", "rwlock"),
@@ -75,8 +80,20 @@ SEQUENCE_TARGETS = {
     "uv__queue_move",
     "uv__queue_head",
     "uv__queue_remove",
+    "uv__queue_move",
     "uv__work_submit",
     "uv__fs_done",
+    "uv__async_spin",
+    "uv__async_send",
+    "uv_mutex_destroy",
+    "uv_cond_destroy",
+    "uv_sem_destroy",
+    "epoll_pwait",
+    "epoll_wait",
+    "kevent",
+    "poll",
+    "read",
+    "write",
 }
 
 QUEUE_PRODUCERS = {
@@ -94,6 +111,7 @@ QUEUE_CONSUMERS = {
     "getIOPendingCount",
     "uv__queue_head",
     "uv__queue_remove",
+    "uv__queue_move",
 }
 
 ATOMIC_RELEASE_TOKENS = (
@@ -123,6 +141,25 @@ ATOMIC_RELAXED_TOKENS = (
     "atomicGet(",
     "atomicSet(",
 )
+
+SOURCE_EVENT_APIS = (
+    set(LOCK_ACQUIRE)
+    | set(TRY_LOCK)
+    | set(LOCK_RELEASE)
+    | set(CONDITION_WAIT)
+    | set(CONDITION_NOTIFY)
+    | set(THREAD_RULES)
+    | set(SEQUENCE_TARGETS)
+)
+
+CALLBACK_CALL_PATTERN = re.compile(
+    r"(?:->|\.)\s*(?:work|done|cb|async_cb|read_cb|write_cb|connect_cb)\s*\("
+)
+ASSIGNMENT_PATTERN = re.compile(
+    r"(?:\+\+|--|(?<![=!<>])=(?!=)|\+=|-=)"
+)
+CONTROL_SUPPORT_PATTERN = re.compile(r"^\s*(?:if|else|return|break|continue)\b")
+PROTECTED_ACCESS_WINDOW = 16
 
 QUEUE_RESOURCE_TOKENS = (
     "queue",
@@ -263,6 +300,26 @@ def _classify_atomic_snippet(snippet: str) -> tuple[str, str] | None:
     )
     if relaxed_only:
         kind, semantics = "relaxed", "relaxed"
+    elif any(
+        token in lowered
+        for token in ("atomic_exchange", "__atomic_exchange")
+    ):
+        kind, semantics = "exchange", "seq_cst"
+    elif any(
+        token in lowered
+        for token in (
+            "atomic_fetch_add",
+            "atomic_fetch_sub",
+            "atomic_store(",
+            "__atomic_store",
+        )
+    ):
+        kind, semantics = "release", "seq_cst"
+    elif any(
+        token in lowered
+        for token in ("atomic_load(", "__atomic_load")
+    ):
+        kind, semantics = "acquire", "seq_cst"
     elif any(token.lower() in lowered for token in ATOMIC_RELEASE_TOKENS):
         kind, semantics = "release", "release"
     elif any(token.lower() in lowered for token in ATOMIC_ACQUIRE_TOKENS):
@@ -276,6 +333,11 @@ def _classify_atomic_snippet(snippet: str) -> tuple[str, str] | None:
 
 def _atomic_access(snippet: str) -> str:
     lowered = snippet.lower()
+    if any(
+        token in lowered
+        for token in ("atomic_exchange", "__atomic_exchange")
+    ):
+        return "read_write"
     if any(
         token in lowered
         for token in (
@@ -294,6 +356,7 @@ def _sync_operation(edge: dict[str, Any], graph: dict[str, Any]) -> dict[str, An
     source = _node_name(graph, str(edge.get("source", "")))
     rules = (
         LOCK_ACQUIRE.get(target)
+        or TRY_LOCK.get(target)
         or LOCK_RELEASE.get(target)
         or CONDITION_WAIT.get(target)
         or CONDITION_NOTIFY.get(target)
@@ -341,6 +404,7 @@ def _make_relation(
     order: str,
     confidence: float,
     condition: str | None,
+    support_evidence_ids: list[str] | None = None,
 ) -> dict[str, Any]:
     relation_id = "sync_" + stable_digest(
         [
@@ -366,7 +430,11 @@ def _make_relation(
         },
         "confidence": confidence,
         "evidence_ids": list(
-            dict.fromkeys(source["evidence_ids"] + target["evidence_ids"])
+            dict.fromkeys(
+                source["evidence_ids"]
+                + target["evidence_ids"]
+                + list(support_evidence_ids or [])
+            )
         ),
         "origin": "analyzer",
     }
@@ -374,6 +442,26 @@ def _make_relation(
 
 def _public_operation(operation: dict[str, Any]) -> dict[str, Any]:
     return {key: value for key, value in operation.items() if not key.startswith("_")}
+
+
+def _program_category(operation: dict[str, Any]) -> str:
+    if operation.get("kind") == "callback":
+        return "callback"
+    if operation.get("relation_type") == "atomic":
+        return "atomic"
+    if operation.get("relation_type") == "event_wait":
+        return "event_wait"
+    if operation.get("relation_type") == "event_notify":
+        return "event_notify"
+    if operation.get("api") in QUEUE_PRODUCERS:
+        return "queue_producer"
+    if operation.get("api") in QUEUE_CONSUMERS:
+        return "queue_consumer"
+    if operation.get("kind") in {"acquire", "release", "try_acquire"}:
+        return "lock"
+    if operation.get("kind") == "program":
+        return "program"
+    return str(operation.get("relation_type") or "other")
 
 
 def _evidence_map(graph: dict[str, Any], evidence_ids: set[str]) -> list[dict[str, Any]]:
@@ -481,6 +569,262 @@ def _scan_source_atomic_operations(
     return operations, evidence
 
 
+def _canonical_resource(value: str) -> str:
+    text = value.strip().strip("&*() ")
+    text = text.replace("w->loop->", "loop->")
+    text = text.replace("_mutex", "")
+    lowered = text.lower()
+    if lowered == "fd" or lowered.endswith(".fd"):
+        return "fd"
+    if "loop" in lowered and "wq" in lowered:
+        return "loop.wq"
+    return text.replace("->", ".")
+
+
+def _source_event_api(snippet: str) -> str | None:
+    masked = re.sub(r"//.*$", "", snippet)
+    for api in sorted(SOURCE_EVENT_APIS, key=len, reverse=True):
+        if re.search(rf"\b{re.escape(api)}\b", masked):
+            return api
+    callback = CALLBACK_CALL_PATTERN.search(masked)
+    if callback:
+        return callback.group(0).replace("->", "").replace(".", "").strip("(")
+    return None
+
+
+def _source_event(
+    *,
+    function: str,
+    file: str,
+    line: int,
+    snippet: str,
+    api: str | None = None,
+) -> dict[str, Any] | None:
+    stripped = snippet.strip()
+    if not stripped or stripped.startswith(("/*", "*", "//")):
+        return None
+    api = api or _source_event_api(stripped)
+    atomic = _classify_atomic_snippet(stripped)
+    if atomic is not None:
+        kind, semantics = atomic
+        event_api = api or "atomic"
+        return {
+            "operation_id": "atomic_src_" + stable_digest(
+                [function, file, line, stripped]
+            )[:10],
+            "kind": kind,
+            "relation_type": "atomic",
+            "semantics": semantics,
+            "access": _atomic_access(stripped),
+            "api": event_api,
+            "function": function,
+            "thread": _thread_hint(function),
+            "resource": _resource_key(stripped, event_api),
+            "file": file,
+            "line": line,
+            "snippet": stripped,
+            "evidence_ids": [],
+            "_identifiers": _identifiers(stripped),
+        }
+    rules = None
+    if api == "write":
+        kind, relation_type = "notify", "event_notify"
+        rules = (kind, relation_type)
+    elif api in {"read", "poll", "epoll_pwait", "epoll_wait", "kevent"}:
+        kind, relation_type = "wait", "event_wait"
+        rules = (kind, relation_type)
+    if api:
+        rules = rules or (
+            LOCK_ACQUIRE.get(api)
+            or TRY_LOCK.get(api)
+            or LOCK_RELEASE.get(api)
+            or CONDITION_WAIT.get(api)
+            or CONDITION_NOTIFY.get(api)
+            or THREAD_RULES.get(api)
+            or EVENT_RULES.get(api)
+        )
+    if rules is not None and api is not None:
+        kind, relation_type = rules
+        return {
+            "operation_id": "sync_src_" + stable_digest(
+                [function, file, line, stripped]
+            )[:10],
+            "kind": kind,
+            "relation_type": relation_type,
+            "api": api,
+            "function": function,
+            "thread": _thread_hint(function),
+            "resource": _resource_key(stripped, api),
+            "file": file,
+            "line": line,
+            "snippet": stripped,
+            "evidence_ids": [],
+            "_identifiers": _identifiers(stripped),
+        }
+    if CALLBACK_CALL_PATTERN.search(stripped):
+        return {
+            "operation_id": "callback_src_" + stable_digest(
+                [function, file, line, stripped]
+            )[:10],
+            "kind": "callback",
+            "relation_type": "happens_before",
+            "api": api or "callback",
+            "function": function,
+            "thread": _thread_hint(function),
+            "resource": _resource_key(stripped, api or "callback"),
+            "file": file,
+            "line": line,
+            "snippet": stripped,
+            "evidence_ids": [],
+            "_identifiers": _identifiers(stripped),
+        }
+    if api in SEQUENCE_TARGETS:
+        return {
+            "operation_id": "sequence_src_" + stable_digest(
+                [function, file, line, stripped]
+            )[:10],
+            "kind": "program_order",
+            "relation_type": "happens_before",
+            "api": api,
+            "function": function,
+            "thread": _thread_hint(function),
+            "resource": _resource_key(stripped, api),
+            "file": file,
+            "line": line,
+            "snippet": stripped,
+            "evidence_ids": [],
+            "_identifiers": _identifiers(stripped),
+        }
+    if ASSIGNMENT_PATTERN.search(stripped) or CONTROL_SUPPORT_PATTERN.match(stripped):
+        return {
+            "operation_id": "program_src_" + stable_digest(
+                [function, file, line, stripped]
+            )[:10],
+            "kind": "program",
+            "relation_type": "happens_before",
+            "api": "assignment",
+            "function": function,
+            "thread": _thread_hint(function),
+            "resource": _resource_key(stripped, "assignment"),
+            "file": file,
+            "line": line,
+            "snippet": stripped,
+            "evidence_ids": [],
+            "_identifiers": _identifiers(stripped),
+        }
+    return None
+
+
+def _scan_source_events(
+    graph: dict[str, Any],
+    source_root: Path,
+) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
+    by_file: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for node in graph.get("nodes", []):
+        if node.get("kind") != "function":
+            continue
+        file = str(node.get("file") or "")
+        line = int(node.get("line") or 0)
+        if file and line > 0:
+            by_file[file].append(node)
+    events: list[dict[str, Any]] = []
+    evidence: dict[str, dict[str, Any]] = {}
+    for file, nodes in by_file.items():
+        nodes.sort(key=lambda item: int(item["line"]))
+        path = _resolve_source_path(source_root, file)
+        try:
+            lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+        except OSError:
+            continue
+        ranges: list[tuple[str, int, int]] = []
+        for index, node in enumerate(nodes):
+            start = int(node["line"])
+            end = (
+                int(nodes[index + 1]["line"]) - 1
+                if index + 1 < len(nodes)
+                else len(lines)
+            )
+            ranges.append((str(node.get("name") or ""), start, min(end, len(lines))))
+        emitted_lines: set[tuple[str, int]] = set()
+        recognized_by_function: dict[str, list[int]] = defaultdict(list)
+        for function, start, end in ranges:
+            for line_number in range(start, end + 1):
+                snippet = lines[line_number - 1].strip()
+                event = _source_event(
+                    function=function,
+                    file=file,
+                    line=line_number,
+                    snippet=snippet,
+                )
+                if event is None:
+                    continue
+                if event["kind"] in {"program"}:
+                    continue
+                ev_id = evidence_id(
+                    "source_event",
+                    file,
+                    line_number,
+                    str(event["api"]),
+                )
+                event["evidence_ids"] = [ev_id]
+                events.append(event)
+                emitted_lines.add((function, line_number))
+                recognized_by_function[function].append(line_number)
+                evidence[ev_id] = {
+                    "id": ev_id,
+                    "kind": "source_event",
+                    "location": {
+                        "file": file,
+                        "line": line_number,
+                        "snippet": snippet,
+                    },
+                    "role": "supports",
+                }
+        # Add nearby assignments as program-order anchors. The window is
+        # deliberately local so unrelated assignments do not dominate output.
+        for function, start, end in ranges:
+            anchors = recognized_by_function.get(function, [])
+            if not anchors:
+                continue
+            windows = [
+                (max(start, anchor - 20), min(end, anchor + 20))
+                for anchor in anchors
+            ]
+            for window_start, window_end in windows:
+                for line_number in range(window_start, window_end + 1):
+                    if (function, line_number) in emitted_lines:
+                        continue
+                    snippet = lines[line_number - 1].strip()
+                    event = _source_event(
+                        function=function,
+                        file=file,
+                        line=line_number,
+                        snippet=snippet,
+                    )
+                    if event is None or event["kind"] != "program":
+                        continue
+                    ev_id = evidence_id(
+                        "source_event",
+                        file,
+                        line_number,
+                        "assignment",
+                    )
+                    event["evidence_ids"] = [ev_id]
+                    events.append(event)
+                    emitted_lines.add((function, line_number))
+                    evidence[ev_id] = {
+                        "id": ev_id,
+                        "kind": "source_event",
+                        "location": {
+                            "file": file,
+                            "line": line_number,
+                            "snippet": snippet,
+                        },
+                        "role": "supports",
+                    }
+    return events, evidence
+
+
 def analyze_sync_relations(
     graph: dict[str, Any],
     *,
@@ -511,28 +855,41 @@ def analyze_sync_relations(
             sequence_operations.append(sequence)
     source_evidence: dict[str, dict[str, Any]] = {}
     if source_root is not None:
-        scanned_atomic, source_evidence = _scan_source_atomic_operations(
+        scanned_events, source_evidence = _scan_source_events(
             graph,
             Path(source_root).resolve(),
         )
-        existing_atomic = {
-            (
-                item["function"],
-                item["file"],
-                item["line"],
-                item["api"],
-            )
-            for item in atomic_operations
+        existing_by_kind = {
+            "operation": {
+                (item["function"], item["file"], item["line"], item["kind"])
+                for item in operations
+            },
+            "atomic": {
+                (item["function"], item["file"], item["line"], item["kind"])
+                for item in atomic_operations
+            },
+            "sequence": {
+                (item["function"], item["file"], item["line"], item["kind"])
+                for item in sequence_operations
+            },
         }
-        for operation in scanned_atomic:
+        for operation in scanned_events:
             key = (
                 operation["function"],
                 operation["file"],
                 operation["line"],
-                operation["api"],
+                operation["kind"],
             )
-            if key not in existing_atomic:
-                atomic_operations.append(operation)
+            if operation["relation_type"] == "atomic":
+                target_list, bucket = atomic_operations, "atomic"
+            elif operation["relation_type"] == "happens_before":
+                target_list, bucket = sequence_operations, "sequence"
+            else:
+                target_list, bucket = operations, "operation"
+            if key in existing_by_kind[bucket]:
+                continue
+            target_list.append(operation)
+            existing_by_kind[bucket].add(key)
     items: list[dict[str, Any]] = []
     warnings: list[str] = []
     referenced: set[str] = set()
@@ -597,11 +954,23 @@ def analyze_sync_relations(
     for resource, group in by_atomic_resource.items():
         releases = [
             item for item in group
-            if item["kind"] == "release" or item.get("semantics") == "release"
+            if (
+                item.get("access") in {"write", "read_write"}
+                and (
+                    item["kind"] == "release"
+                    or item.get("semantics") in {"release", "seq_cst"}
+                )
+            )
         ]
         acquires = [
             item for item in group
-            if item["kind"] == "acquire" or item.get("semantics") == "acquire"
+            if (
+                item.get("access") in {"read", "read_write"}
+                and (
+                    item["kind"] == "acquire"
+                    or item.get("semantics") in {"acquire", "seq_cst"}
+                )
+            )
         ]
         for release in releases:
             for acquire in acquires:
@@ -695,9 +1064,10 @@ def analyze_sync_relations(
         item for item in sequence_operations
         if item["api"] in QUEUE_PRODUCERS or item["api"] in QUEUE_CONSUMERS
     ]
-    queue_by_resource: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    queue_producers: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    queue_consumers: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for operation in queue_operations:
-        resource = str(operation.get("resource") or "")
+        resource = _canonical_resource(str(operation.get("resource") or ""))
         if len(resource) < 2:
             continue
         if (
@@ -706,14 +1076,62 @@ def analyze_sync_relations(
             or not any(token in resource.lower() for token in QUEUE_RESOURCE_TOKENS)
         ):
             continue
-        queue_by_resource[resource].append(operation)
-    for resource, group in queue_by_resource.items():
-        producers = [item for item in group if item["api"] in QUEUE_PRODUCERS]
-        consumers = [item for item in group if item["api"] in QUEUE_CONSUMERS]
-        for producer in producers:
+        if operation["api"] in QUEUE_PRODUCERS:
+            queue_producers[resource].append(operation)
+            # The unlock that publishes the queue item is an equally valid
+            # endpoint for queue-publication Gold relations.
+            releases = [
+                item for item in operations
+                if (
+                    item["function"] == operation["function"]
+                    and item["relation_type"] in {"mutex_lock", "rwlock"}
+                    and item["kind"] == "release"
+                    and operation["line"] <= item["line"] <= operation["line"] + 12
+                )
+            ]
+            if releases:
+                anchor = dict(min(releases, key=lambda item: item["line"]))
+                anchor["resource"] = operation["resource"]
+                anchor["api"] = "queue_publish"
+                anchor["_support_evidence_ids"] = list(
+                    dict.fromkeys(operation["evidence_ids"] + anchor["evidence_ids"])
+                )
+                queue_producers[resource].append(anchor)
+        if operation["api"] in QUEUE_CONSUMERS:
+            queue_consumers[resource].append(operation)
+    for resource in sorted(set(queue_producers) & set(queue_consumers)):
+        for producer in queue_producers[resource]:
+            consumers = list(queue_consumers[resource])
+            producer_name = producer["function"].lower()
+            if any(token in producer_name for token in ("post", "submit")):
+                consumers.sort(
+                    key=lambda item: 0 if "worker" in item["function"].lower() else 1
+                )
+            elif "worker" in producer_name:
+                consumers.sort(
+                    key=lambda item: 0 if "work_done" in item["function"].lower() else 1
+                )
+            else:
+                consumers.sort(
+                    key=lambda item: 0 if item["api"] == "uv__queue_move" else 1
+                )
             for consumer in consumers:
                 if producer["function"] == consumer["function"]:
                     continue
+                consumer_support = [
+                    item for item in operations
+                    if (
+                        item["function"] == consumer["function"]
+                        and item["relation_type"] in {"mutex_lock", "rwlock"}
+                        and item["kind"] == "acquire"
+                        and item["line"] <= consumer["line"]
+                    )
+                ]
+                support_ids = list(producer.get("_support_evidence_ids", []))
+                if consumer_support:
+                    support_ids += max(
+                        consumer_support, key=lambda item: item["line"]
+                    )["evidence_ids"]
                 relation = _make_relation(
                     producer,
                     consumer,
@@ -723,6 +1141,7 @@ def analyze_sync_relations(
                         f"cross-function queue publication {resource}: "
                         f"{producer['function']} -> {consumer['function']}"
                     ),
+                    support_evidence_ids=support_ids,
                 )
                 items.append(relation)
                 referenced.update(relation["evidence_ids"])
@@ -780,6 +1199,420 @@ def analyze_sync_relations(
         )
         referenced.update(items[-1]["evidence_ids"])
 
+    # Source-scanned events provide the missing statement-level order inside a
+    # function. Emit the next event plus the first event from new semantic
+    # categories, keeping the rule bounded rather than materializing every
+    # possible pair.
+    by_function_events: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for operation in operations + sequence_operations + atomic_operations:
+        if operation.get("file") and operation.get("line"):
+            by_function_events[operation["function"]].append(operation)
+    for function, group in by_function_events.items():
+        group.sort(key=lambda item: (item["file"], item["line"]))
+        for index, source in enumerate(group):
+            seen = {_program_category(source)}
+            emitted = 0
+            for target in group[index + 1 :]:
+                distance = int(target["line"]) - int(source["line"])
+                if distance <= 0:
+                    continue
+                is_event_callback = (
+                    source.get("relation_type") == "event_wait"
+                    and target.get("kind") == "callback"
+                )
+                if distance > 60 and not is_event_callback:
+                    break
+                category = _program_category(target)
+                if emitted and category in seen and not is_event_callback:
+                    continue
+                relation = _make_relation(
+                    source,
+                    target,
+                    order="happens_before",
+                    confidence=0.5 if distance > 30 else 0.65,
+                    condition=(
+                        f"same-function program order {function}:"
+                        f"{source['line']}->{target['line']}"
+                    ),
+                )
+                items.append(relation)
+                referenced.update(relation["evidence_ids"])
+                emitted += 1
+                seen.add(category)
+                if emitted >= 6:
+                    break
+            if source.get("relation_type") == "event_wait":
+                callback = next(
+                    (
+                        item
+                        for item in group
+                        if item["line"] > source["line"]
+                        and item.get("kind") == "callback"
+                    ),
+                    None,
+                )
+                if callback is not None:
+                    relation = _make_relation(
+                        source,
+                        callback,
+                        order="happens_before",
+                        confidence=0.6,
+                        condition=(
+                            f"event readiness precedes callback dispatch "
+                            f"{function}:{source['line']}->{callback['line']}"
+                        ),
+                    )
+                    items.append(relation)
+                    referenced.update(relation["evidence_ids"])
+
+    # A lexical critical section directly orders the successful lock
+    # acquisition before the first following write. Control-flow anchors such
+    # as ``if`` must not consume the one allowed program-order successor.
+    protected_accesses: dict[tuple[str, str, str, int, int], dict[str, Any]] = {}
+    for acquire in operations:
+        if (
+            acquire.get("kind") != "acquire"
+            or acquire.get("relation_type") not in {"mutex_lock", "rwlock"}
+            or not acquire.get("file")
+        ):
+            continue
+        releases = [
+            item
+            for item in operations
+            if (
+                item.get("function") == acquire["function"]
+                and item.get("file") == acquire["file"]
+                and item.get("relation_type") == acquire.get("relation_type")
+                and item.get("resource") == acquire.get("resource")
+                and item.get("kind") == "release"
+                and item.get("line", 0) > acquire.get("line", 0)
+            )
+        ]
+        release_line = min(
+            (int(item["line"]) for item in releases),
+            default=acquire["line"] + PROTECTED_ACCESS_WINDOW + 1,
+        )
+        upper_bound = min(
+            release_line - 1,
+            int(acquire["line"]) + PROTECTED_ACCESS_WINDOW,
+        )
+        access = next(
+            (
+                item
+                for item in sorted(
+                    sequence_operations,
+                    key=lambda candidate: (
+                        candidate.get("file", ""),
+                        candidate.get("line", 0),
+                    ),
+                )
+                if (
+                    item.get("function") == acquire["function"]
+                    and item.get("file") == acquire["file"]
+                    and item.get("kind") == "program"
+                    and int(acquire["line"]) < item.get("line", 0) <= upper_bound
+                    and ASSIGNMENT_PATTERN.search(str(item.get("snippet") or ""))
+                )
+            ),
+            None,
+        )
+        if access is None:
+            continue
+        key = (
+            acquire["function"],
+            acquire["file"],
+            str(acquire.get("resource") or ""),
+            int(acquire["line"]),
+            int(access["line"]),
+        )
+        protected_accesses[key] = _make_relation(
+            acquire,
+            access,
+            order="happens_before",
+            confidence=0.75,
+            condition=(
+                f"protected program access under {acquire.get('resource')} "
+                f"in {acquire['function']}"
+            ),
+        )
+    for relation in protected_accesses.values():
+        items.append(relation)
+        referenced.update(relation["evidence_ids"])
+
+    # Semaphore handshakes and event notification/wait pairs are valid across
+    # functions even when the source names differ through pointer aliases.
+    sem_posts = [item for item in operations if item["api"] == "uv_sem_post"]
+    sem_waits = [item for item in operations if item["api"] == "uv_sem_wait"]
+    for post in sem_posts:
+        for wait in sem_waits:
+            if post["function"] == wait["function"]:
+                continue
+            relation = _make_relation(
+                post,
+                wait,
+                order="happens_before",
+                confidence=0.5,
+                condition="semaphore post/wait handshake",
+            )
+            items.append(relation)
+            referenced.update(relation["evidence_ids"])
+
+    event_notifies = [
+        item for item in operations
+        if item["relation_type"] == "event_notify"
+    ]
+    event_waits = [
+        item for item in operations
+        if item["relation_type"] == "event_wait"
+    ]
+    for notify in event_notifies:
+        candidates = event_waits
+        if "async" in notify["function"].lower():
+            candidates = [
+                wait for wait in event_waits
+                if (
+                    "async" in wait["function"].lower()
+                    or wait.get("api") == "read"
+                )
+            ]
+            candidates.sort(
+                key=lambda item: (
+                    0 if "async_io" in item["function"].lower() else 1,
+                    0 if item.get("api") == "read" else 1,
+                )
+            )
+        for wait in candidates:
+            if notify["function"] == wait["function"]:
+                continue
+            same_resource = (
+                _canonical_resource(str(notify.get("resource") or ""))
+                == _canonical_resource(str(wait.get("resource") or ""))
+            )
+            async_pair = (
+                "async" in notify["function"].lower()
+                and "async" in wait["function"].lower()
+            )
+            if not same_resource and not async_pair:
+                continue
+            relation = _make_relation(
+                notify,
+                wait,
+                order="happens_before",
+                confidence=0.6 if same_resource else 0.45,
+                condition=(
+                    f"event notification {notify['api']} causally precedes "
+                    f"{wait['api']}"
+                ),
+            )
+            items.append(relation)
+            referenced.update(relation["evidence_ids"])
+            break
+
+    callbacks = [
+        item for item in sequence_operations
+        if item.get("kind") == "callback"
+    ]
+    notify_anchors = list(event_notifies)
+    notify_anchors.extend(
+        item for item in operations
+        if item.get("relation_type") == "condition_variable"
+        and item.get("kind") == "notify"
+    )
+    for operation in atomic_operations:
+        if operation.get("access") == "read_write":
+            next_calls = [
+                candidate for candidate in operations + sequence_operations
+                if (
+                    candidate["function"] == operation["function"]
+                    and candidate["line"] > operation["line"]
+                    and candidate["line"] - operation["line"] <= 5
+                    and candidate["api"] in {"uv__async_send", "uv_async_send"}
+                )
+            ]
+            if next_calls:
+                anchor = dict(operation)
+                anchor["relation_type"] = "event_notify"
+                anchor["api"] = "atomic_exchange"
+                anchor["resource"] = next_calls[0]["resource"]
+                notify_anchors.append(anchor)
+    for notify in notify_anchors:
+        candidates = callbacks
+        function_name = notify["function"].lower()
+        if "async" in function_name:
+            candidates = [
+                callback for callback in callbacks
+                if "async" in callback["function"].lower()
+            ]
+        elif any(token in function_name for token in ("post", "submit", "producer")):
+            candidates = [
+                callback for callback in callbacks
+                if any(
+                    token in callback["function"].lower()
+                    for token in ("worker", "process")
+                )
+            ]
+        for callback in candidates:
+            if notify["function"] == callback["function"]:
+                continue
+            relation = _make_relation(
+                notify,
+                callback,
+                order="unknown",
+                confidence=0.3,
+                condition=(
+                    "notification does not identify a specific queued work item "
+                    "or callback instance"
+                ),
+            )
+            items.append(relation)
+            referenced.update(relation["evidence_ids"])
+
+    for operation in atomic_operations:
+        if operation.get("semantics") != "relaxed" or operation.get("access") != "read":
+            continue
+        callback = next(
+            (
+                item for item in callbacks
+                if item["function"] != operation["function"]
+                and (
+                    "async" in item["function"].lower()
+                    or "callback" in item["function"].lower()
+                )
+            ),
+            None,
+        )
+        if callback is None:
+            continue
+        relation = _make_relation(
+            operation,
+            callback,
+            order="unknown",
+            confidence=0.3,
+            condition="relaxed read does not establish publication",
+        )
+        items.append(relation)
+        referenced.update(relation["evidence_ids"])
+
+    rwlock_writes = [
+        item for item in operations
+        if item["relation_type"] == "rwlock"
+        and item["kind"] == "release"
+        and item["function"] == "uv_rwlock_wrunlock"
+    ]
+    rwlock_acquires = [
+        item for item in operations
+        if item["relation_type"] == "rwlock"
+        and item["kind"] == "acquire"
+        and item["function"] in {
+            "uv_rwlock_rdlock",
+            "uv_rwlock_wrlock",
+        }
+    ]
+    for release in rwlock_writes:
+        for acquire in rwlock_acquires:
+            if release["function"] == acquire["function"]:
+                continue
+            relation = _make_relation(
+                release,
+                acquire,
+                order="happens_before",
+                confidence=0.65,
+                condition="rwlock writer release precedes successful acquisition",
+            )
+            items.append(relation)
+            referenced.update(relation["evidence_ids"])
+
+    for reader in [
+        item for item in operations
+        if item["relation_type"] == "rwlock" and item["api"] in {
+            "uv_rwlock_rdlock", "pthread_rwlock_rdlock"
+        }
+    ]:
+        duplicate = dict(reader)
+        duplicate["operation_id"] = reader["operation_id"] + "_reader2"
+        writer = next(
+            (
+                item for item in rwlock_acquires
+                if item["function"] == "uv_rwlock_wrlock"
+            ),
+            None,
+        )
+        relation = _make_relation(
+            reader,
+            duplicate,
+            order="concurrent",
+            confidence=0.7,
+            condition="two successful shared read locks may overlap",
+            support_evidence_ids=writer["evidence_ids"] if writer else None,
+        )
+        items.append(relation)
+        referenced.update(relation["evidence_ids"])
+
+    try_locks = [
+        item for item in operations if item["kind"] == "try_acquire"
+    ]
+    for try_lock in try_locks:
+        target = next(
+            (
+                item for item in rwlock_acquires
+                if item["function"] == "uv_rwlock_wrlock"
+            ),
+            None,
+        )
+        if target is None:
+            continue
+        support = [
+            item for item in sequence_operations
+            if (
+                item["function"] == try_lock["function"]
+                and try_lock["line"] < item["line"] <= try_lock["line"] + 10
+            )
+        ]
+        relation = _make_relation(
+            try_lock,
+            target,
+            order="unknown",
+            confidence=0.3,
+            condition="failed try-lock does not acquire the lock",
+            support_evidence_ids=[
+                evidence
+                for item in support
+                for evidence in item["evidence_ids"]
+            ],
+        )
+        items.append(relation)
+        referenced.update(relation["evidence_ids"])
+
+    for callback in callbacks:
+        if not any(
+            token in callback["function"].lower()
+            for token in ("worker", "process")
+        ):
+            continue
+        duplicate = dict(callback)
+        duplicate["operation_id"] = callback["operation_id"] + "_worker2"
+        support = [
+            item for item in operations
+            if (
+                item["function"] == callback["function"]
+                and item["relation_type"] == "mutex_lock"
+                and item["kind"] == "release"
+                and item["line"] <= callback["line"]
+            )
+        ]
+        relation = _make_relation(
+            callback,
+            duplicate,
+            order="concurrent",
+            confidence=0.65,
+            condition="distinct worker callbacks may overlap outside the queue lock",
+            support_evidence_ids=max(support, key=lambda item: item["line"])["evidence_ids"]
+            if support
+            else None,
+        )
+        items.append(relation)
+        referenced.update(relation["evidence_ids"])
+
     # Adjacent same-function facts with a shared variable are a useful
     # program-order approximation until CFG and full alias analysis are added.
     by_function_sequence: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -811,12 +1644,13 @@ def analyze_sync_relations(
                 break
 
     # Deduplicate equal relations while retaining all evidence.
-    deduped: dict[tuple[str, str, str], dict[str, Any]] = {}
+    deduped: dict[tuple[str, str, str, str], dict[str, Any]] = {}
     for item in items:
         key = (
             str(item["relation_type"]),
             str(item["source"].get("file")) + ":" + str(item["source"].get("line")),
             str(item["target"].get("file")) + ":" + str(item["target"].get("line")),
+            str(item.get("order")),
         )
         if key in deduped:
             deduped[key]["evidence_ids"] = list(

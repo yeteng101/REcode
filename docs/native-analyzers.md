@@ -64,7 +64,7 @@ python3 -m clang_pipeline.cli native \
 ```
 
 调用图已重新生成，libuv 的 `open/getaddrinfo/scandir/dlopen` 外部调用已进入
-graph，资源流在 17 条 confirmed Gold 上达到 11 TP / 6 FN。
+graph，资源流在 17 条 confirmed Gold 上达到 17 TP / 0 FP / 0 FN。
 
 ## 同步关系分析器
 

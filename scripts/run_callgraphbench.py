@@ -18,6 +18,7 @@ from clang_pipeline.evaluation_protocol import (
     prediction_envelope,
     validate_prediction_document,
 )
+from clang_pipeline.function_targets import enrich_call_graph
 from clang_pipeline.pipeline import run_pipeline
 from clang_pipeline.repo_agent import _relativize_json_paths, generic_compile_commands
 
@@ -180,6 +181,7 @@ def main() -> int:
                 read_json(workspace / "07-report" / "graph.json"),
                 case_root,
             )
+            graph = enrich_call_graph(graph, case_root)
             key = f"{language}/{case_id}"
             evidence_by_case[key] = {
                 str(item["id"]): item

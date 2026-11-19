@@ -21,7 +21,7 @@ python -m pip install -r validation/sync-relations/requirements.txt
 python scripts/prepare_validation_truth.py
 python scripts/check_benchmark_sources.py --benchmark validation/benchmarks/libuv
 python scripts/check_benchmark_sources.py --benchmark validation/benchmarks/redis
-python scripts/evaluate_validation.py --ground-truth validation/benchmarks/libuv/ground-truth.json --predictions validation/results/libuv/predictions --output validation/results/libuv/baseline
+python scripts/evaluate_validation.py --ground-truth validation/benchmarks/libuv/ground-truth.json --predictions validation/results/libuv/linux-profile/predictions --output validation/results/libuv/linux-profile/baseline
 python scripts/evaluate_validation.py --ground-truth validation/benchmarks/redis/ground-truth.json --predictions validation/results/redis/predictions --output validation/results/redis/baseline
 python -m unittest discover -s validation/tests -v
 ```
@@ -41,8 +41,9 @@ checker 验证实际 HEAD、固定源码文件哈希、所有证据行与片段�
 
 资源流 identity 的 resource ID 是调用方统一的资源标识，不是随机输出 finding ID。
 调用链符号使用 `fn:name` 等稳定标识；节点映射可通过 `node.symbol` 提供。
-必须使用同一 repository 和 commit；平台差异需要在报告解释，不能把 Linux
-同步标签声称为 macOS 运行验证。
+必须使用同一 repository、commit 和 build profile；不能把 Linux 同步标签和
+macOS graph 放在同一个 P/R 分母里。profile 不匹配的 case 会标记为
+`not_applicable`。
 
 - TP：存在的预测与正标注完全相符；FN：正标注未被预测。
 - FP：预测命中明确负例，或已标注 identity 上的类型/顺序错误；TN：负命题未被预测。
@@ -74,11 +75,11 @@ python scripts/export_validation.py --graph demo/redis/graph.json --verification
 
 `predictions/` 严格保留分析器现状：资源流和同步关系已接入 v1 原生分析器，
 通过 `--native` 输出真实 predictions；不能再用 Ground Truth 补齐。
-当前 libuv 原生输出为资源流 237 项、同步关系 188 项。资源流已使用精确 API
-匹配和稳定资源 ID，在 17 条 confirmed 操作上得到 11 TP / 6 FN；剩余 FN 主要
-来自 transfer 和平台条件位置差异。同步关系使用端点 + order 作为评分 identity，
-condition 保留为必要证据。增加跨函数队列、atomic release/acquire 和
-thread join 后，Redis 同步关系达到 9 TP / 13 FN，recall 40.91%、F1 58.06%。
+当前 Linux-profile libuv 原生输出为资源流 137 项、同步关系 3,493 项。资源流在
+17 条 confirmed 操作上达到 17 TP / 0 FP / 0 FN；同步关系在 32 条正例和
+6 条负例上达到 32 TP / 0 FP / 0 FN / 6 TN，required evidence 命中率 100%。
+同步关系仍使用端点 + order 作为评分 identity，condition 保留为必要证据。
+Redis 同步关系当前为 9 TP / 13 FN，recall 40.91%、F1 58.06%。
 `reviewed/` 用于人工查看已标注的资源操作、同步关系，明确标记
 `origin=reviewed_annotations_not_analyzer_predictions`，**不得拿来发布 baseline 分数**。
 不导出 ground_truth.classification 的 leak/race 等最终缺陷结论。

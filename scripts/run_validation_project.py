@@ -39,16 +39,20 @@ def build_gate(
     for category, minimum in thresholds.items():
         if minimum is None:
             continue
+        category_report = report["categories"][category]
         actual = _metric(report, category, "recall")
-        passed = actual is not None and actual + 1e-12 >= minimum
-        checks.append(
-            {
-                "name": f"{category}.recall",
-                "status": "passed" if passed else "failed",
-                "actual": actual,
-                "minimum": minimum,
-            }
-        )
+        if category_report.get("applicable_cases") == 0:
+            status = "not_applicable"
+        else:
+            passed = actual is not None and actual + 1e-12 >= minimum
+            status = "passed" if passed else "failed"
+        checks.append({
+            "name": f"{category}.recall",
+            "status": status,
+            "actual": actual,
+            "minimum": minimum,
+            "applicable_cases": category_report.get("applicable_cases"),
+        })
     fp_total = sum(int(report["categories"][name].get("fp") or 0) for name in FILES)
     checks.append(
         {

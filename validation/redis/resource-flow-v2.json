@@ -1,0 +1,358 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "redis-7.2.4-resource-flow-v2",
+  "repository": "redis/redis",
+  "commit": "d2c8a4b91e8c0e6aefd1f5bc0bf582cddbe046b7",
+  "review": {
+    "human_review": "pending",
+    "method": "source_reviewed_v2_resource_facts",
+    "limitation": "Selected source anchors; final human review is pending."
+  },
+  "resources": [
+    {
+      "id": "redis_adlist_list_v2",
+      "family": "memory",
+      "operations": [
+        {
+          "operation_id": "list_acquire",
+          "kind": "acquire",
+          "api": "zmalloc",
+          "function": "listCreate",
+          "location": {
+            "file": "third_party/redis/src/adlist.c",
+            "line": 46,
+            "snippet": "if ((list = zmalloc(sizeof(*list))) == NULL)"
+          }
+        },
+        {
+          "operation_id": "list_node_release",
+          "kind": "release",
+          "api": "zfree",
+          "function": "listEmpty",
+          "location": {
+            "file": "third_party/redis/src/adlist.c",
+            "line": 67,
+            "snippet": "zfree(current);"
+          }
+        },
+        {
+          "operation_id": "list_release",
+          "kind": "release",
+          "api": "zfree",
+          "function": "listRelease",
+          "location": {
+            "file": "third_party/redis/src/adlist.c",
+            "line": 80,
+            "snippet": "zfree(list);"
+          }
+        }
+      ]
+    },
+    {
+      "id": "redis_adlist_iterator_v2",
+      "family": "memory",
+      "operations": [
+        {
+          "operation_id": "iter_acquire",
+          "kind": "acquire",
+          "api": "zmalloc",
+          "function": "listGetIterator",
+          "location": {
+            "file": "third_party/redis/src/adlist.c",
+            "line": 216,
+            "snippet": "if ((iter = zmalloc(sizeof(*iter))) == NULL) return NULL;"
+          }
+        },
+        {
+          "operation_id": "iter_release",
+          "kind": "release",
+          "api": "zfree",
+          "function": "listReleaseIterator",
+          "location": {
+            "file": "third_party/redis/src/adlist.c",
+            "line": 227,
+            "snippet": "zfree(iter);"
+          }
+        }
+      ]
+    },
+    {
+      "id": "redis_dict_lifecycle_v2",
+      "family": "memory",
+      "operations": [
+        {
+          "operation_id": "dict_acquire",
+          "kind": "acquire",
+          "api": "zmalloc",
+          "function": "dictCreate",
+          "location": {
+            "file": "third_party/redis/src/dict.c",
+            "line": 188,
+            "snippet": "dict *d = zmalloc(sizeof(*d) + metasize);"
+          }
+        },
+        {
+          "operation_id": "dict_release",
+          "kind": "release",
+          "api": "zfree",
+          "function": "dictRelease",
+          "location": {
+            "file": "third_party/redis/src/dict.c",
+            "line": 665,
+            "snippet": "zfree(d);"
+          }
+        }
+      ]
+    },
+    {
+      "id": "redis_ae_event_loop_v2",
+      "family": "memory",
+      "operations": [
+        {
+          "operation_id": "loop_acquire",
+          "kind": "acquire",
+          "api": "zmalloc",
+          "function": "aeCreateEventLoop",
+          "location": {
+            "file": "third_party/redis/src/ae.c",
+            "line": 73,
+            "snippet": "if ((eventLoop = zmalloc(sizeof(*eventLoop))) == NULL) goto err;"
+          }
+        },
+        {
+          "operation_id": "events_acquire",
+          "kind": "acquire",
+          "api": "zmalloc",
+          "function": "aeCreateEventLoop",
+          "location": {
+            "file": "third_party/redis/src/ae.c",
+            "line": 74,
+            "snippet": "eventLoop->events = zmalloc(sizeof(aeFileEvent)*setsize);"
+          }
+        },
+        {
+          "operation_id": "fired_acquire",
+          "kind": "acquire",
+          "api": "zmalloc",
+          "function": "aeCreateEventLoop",
+          "location": {
+            "file": "third_party/redis/src/ae.c",
+            "line": 75,
+            "snippet": "eventLoop->fired = zmalloc(sizeof(aeFiredEvent)*setsize);"
+          }
+        },
+        {
+          "operation_id": "events_release",
+          "kind": "release",
+          "api": "zfree",
+          "function": "aeDeleteEventLoop",
+          "location": {
+            "file": "third_party/redis/src/ae.c",
+            "line": 145,
+            "snippet": "zfree(eventLoop->events);"
+          }
+        },
+        {
+          "operation_id": "fired_release",
+          "kind": "release",
+          "api": "zfree",
+          "function": "aeDeleteEventLoop",
+          "location": {
+            "file": "third_party/redis/src/ae.c",
+            "line": 146,
+            "snippet": "zfree(eventLoop->fired);"
+          }
+        },
+        {
+          "operation_id": "loop_release",
+          "kind": "release",
+          "api": "zfree",
+          "function": "aeDeleteEventLoop",
+          "location": {
+            "file": "third_party/redis/src/ae.c",
+            "line": 155,
+            "snippet": "zfree(eventLoop);"
+          }
+        }
+      ]
+    },
+    {
+      "id": "redis_client_querybuf_v2",
+      "family": "memory",
+      "operations": [
+        {
+          "operation_id": "querybuf_acquire",
+          "kind": "acquire",
+          "api": "sdsempty",
+          "function": "createClient",
+          "location": {
+            "file": "third_party/redis/src/networking.c",
+            "line": 154,
+            "snippet": "c->querybuf = sdsempty();"
+          }
+        },
+        {
+          "operation_id": "querybuf_release",
+          "kind": "release",
+          "api": "sdsfree",
+          "function": "freeClient",
+          "location": {
+            "file": "third_party/redis/src/networking.c",
+            "line": 1600,
+            "snippet": "sdsfree(c->querybuf);"
+          }
+        }
+      ]
+    },
+    {
+      "id": "redis_process_inline_argv_v2",
+      "family": "memory",
+      "operations": [
+        {
+          "operation_id": "split_args_acquire",
+          "kind": "acquire",
+          "api": "sdssplitargs",
+          "function": "processInlineBuffer",
+          "location": {
+            "file": "third_party/redis/src/networking.c",
+            "line": 2160,
+            "snippet": "argv = sdssplitargs(aux,&argc);"
+          }
+        },
+        {
+          "operation_id": "split_args_release",
+          "kind": "release",
+          "api": "sdsfreesplitres",
+          "function": "processInlineBuffer",
+          "location": {
+            "file": "third_party/redis/src/networking.c",
+            "line": 2182,
+            "snippet": "sdsfreesplitres(argv,argc);"
+          }
+        },
+        {
+          "operation_id": "client_argv_acquire",
+          "kind": "acquire",
+          "api": "zmalloc",
+          "function": "processInlineBuffer",
+          "location": {
+            "file": "third_party/redis/src/networking.c",
+            "line": 2195,
+            "snippet": "c->argv = zmalloc(sizeof(robj*)*c->argv_len);"
+          }
+        },
+        {
+          "operation_id": "client_argv_release",
+          "kind": "release",
+          "api": "zfree",
+          "function": "freeClientArgv",
+          "location": {
+            "file": "third_party/redis/src/networking.c",
+            "line": 1394,
+            "snippet": "zfree(c->argv);"
+          }
+        }
+      ]
+    },
+    {
+      "id": "redis_getkeys_result_v2",
+      "family": "memory",
+      "operations": [
+        {
+          "operation_id": "keys_realloc",
+          "kind": "acquire",
+          "api": "zrealloc",
+          "function": "getKeysPrepareResult",
+          "location": {
+            "file": "third_party/redis/src/db.c",
+            "line": 1842,
+            "snippet": "result->keys = zrealloc(result->keys, numkeys * sizeof(keyReference));"
+          }
+        },
+        {
+          "operation_id": "keys_malloc",
+          "kind": "acquire",
+          "api": "zmalloc",
+          "function": "getKeysPrepareResult",
+          "location": {
+            "file": "third_party/redis/src/db.c",
+            "line": 1845,
+            "snippet": "result->keys = zmalloc(numkeys * sizeof(keyReference));"
+          }
+        },
+        {
+          "operation_id": "keys_release",
+          "kind": "release",
+          "api": "zfree",
+          "function": "getKeysFreeResult",
+          "location": {
+            "file": "third_party/redis/src/db.c",
+            "line": 2187,
+            "snippet": "zfree(result->keys);"
+          }
+        }
+      ]
+    },
+    {
+      "id": "redis_bio_job_v2",
+      "family": "memory",
+      "operations": [
+        {
+          "operation_id": "lazy_job_acquire",
+          "kind": "acquire",
+          "api": "zmalloc",
+          "function": "bioCreateLazyFreeJob",
+          "location": {
+            "file": "third_party/redis/src/bio.c",
+            "line": 166,
+            "snippet": "bio_job *job = zmalloc(sizeof(*job) + sizeof(void *) * (arg_count));"
+          }
+        },
+        {
+          "operation_id": "close_job_acquire",
+          "kind": "acquire",
+          "api": "zmalloc",
+          "function": "bioCreateCloseJob",
+          "location": {
+            "file": "third_party/redis/src/bio.c",
+            "line": 178,
+            "snippet": "bio_job *job = zmalloc(sizeof(*job));"
+          }
+        },
+        {
+          "operation_id": "close_aof_job_acquire",
+          "kind": "acquire",
+          "api": "zmalloc",
+          "function": "bioCreateCloseAofJob",
+          "location": {
+            "file": "third_party/redis/src/bio.c",
+            "line": 187,
+            "snippet": "bio_job *job = zmalloc(sizeof(*job));"
+          }
+        },
+        {
+          "operation_id": "fsync_job_acquire",
+          "kind": "acquire",
+          "api": "zmalloc",
+          "function": "bioCreateFsyncJob",
+          "location": {
+            "file": "third_party/redis/src/bio.c",
+            "line": 197,
+            "snippet": "bio_job *job = zmalloc(sizeof(*job));"
+          }
+        },
+        {
+          "operation_id": "job_release",
+          "kind": "release",
+          "api": "zfree",
+          "function": "bioProcessBackgroundJobs",
+          "location": {
+            "file": "third_party/redis/src/bio.c",
+            "line": 291,
+            "snippet": "zfree(job);"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -73,7 +73,7 @@
           "snippet": "uv__queue_insert_tail(&wq, q);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_002_idle_before_wait",
@@ -123,7 +123,7 @@
           "snippet": "uv_cond_wait(&cond, &mutex);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_003_wait_reacquire",
@@ -173,7 +173,7 @@
           "snippet": "idle_threads -= 1;"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_004_signal_not_dispatch",
@@ -221,7 +221,7 @@
           "snippet": "w->work(w);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_005_slow_counter_increment",
@@ -269,7 +269,7 @@
           "snippet": "uv_mutex_unlock(&mutex);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_006_slow_counter_decrement",
@@ -319,7 +319,7 @@
           "snippet": "slow_io_work_running--;"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_007_callback_outside_mutex",
@@ -365,7 +365,7 @@
           "snippet": "w->work(w);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_008_worker_callbacks_overlap",
@@ -417,7 +417,7 @@
           "snippet": "uv_mutex_unlock(&mutex);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_009_work_before_completion",
@@ -465,7 +465,7 @@
           "snippet": "uv__queue_insert_tail(&w->loop->wq, &w->wq);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_010_completion_lock",
@@ -515,7 +515,7 @@
           "snippet": "w->work = NULL;  /* Signal uv_cancel() that the work req is done"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_011_completion_notify",
@@ -565,7 +565,7 @@
           "snippet": "uv_async_send(&w->loop->wq_async);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_012_completion_transfer",
@@ -619,7 +619,7 @@
           "snippet": "uv_mutex_lock(&loop->wq_mutex);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_013_done_outside_mutex",
@@ -665,7 +665,7 @@
           "snippet": "w->done(w, err);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_014_cancel_lock_order",
@@ -716,7 +716,7 @@
           "snippet": "uv_mutex_lock(&w->loop->wq_mutex);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_015_cancel_unlock_order",
@@ -764,7 +764,7 @@
           "snippet": "uv_mutex_unlock(&mutex);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_016_cancel_publication",
@@ -814,7 +814,7 @@
           "snippet": "uv_async_send(&loop->wq_async);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_017_join_before_destroy",
@@ -860,7 +860,7 @@
           "snippet": "uv_mutex_destroy(&mutex);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_018_startup_handshake",
@@ -906,7 +906,7 @@
           "snippet": "uv_sem_wait(&sem);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_019_pending_publish",
@@ -952,7 +952,7 @@
           "snippet": "if (atomic_exchange(pending, 0) == 0)"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_020_relaxed_not_publication",
@@ -998,7 +998,7 @@
           "snippet": "h->async_cb(h);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_021_busy_before_send",
@@ -1044,7 +1044,7 @@
           "snippet": "if (atomic_exchange(pending, 1) == 0)"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_022_notify_before_not_busy",
@@ -1090,7 +1090,7 @@
           "snippet": "atomic_fetch_add(busy, -1);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_023_busy_drain",
@@ -1136,7 +1136,7 @@
           "snippet": "if (atomic_load(busy) == 0)"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_024_spin_before_remove",
@@ -1182,7 +1182,7 @@
           "snippet": "uv__queue_remove(&handle->queue);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_025_pending_before_callback",
@@ -1228,7 +1228,7 @@
           "snippet": "h->async_cb(h);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_026_send_callback_not_bijection",
@@ -1274,7 +1274,7 @@
           "snippet": "h->async_cb(h);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_027_epoll_dispatch",
@@ -1320,7 +1320,7 @@
           "snippet": "w->cb(loop, w, pe->events);"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_028_eventfd_wakeup",
@@ -1366,7 +1366,7 @@
           "snippet": "r = read(w->fd, buf, sizeof(buf));"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_029_rw_writer_to_reader",
@@ -1414,7 +1414,7 @@
           "snippet": "if (pthread_rwlock_rdlock(rwlock))"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_030_rw_writer_to_writer",
@@ -1462,7 +1462,7 @@
           "snippet": "if (pthread_rwlock_wrlock(rwlock))"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_031_rw_readers_overlap",
@@ -1518,7 +1518,7 @@
           "snippet": "if (pthread_rwlock_wrlock(rwlock))"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     },
     {
       "id": "sync_032_failed_trylock",
@@ -1578,7 +1578,7 @@
           "snippet": "return UV_EBUSY;"
         }
       ],
-      "build_profile": "linux-posix-static-source"
+      "build_profile": "libuv-linux-clang"
     }
   ]
 }

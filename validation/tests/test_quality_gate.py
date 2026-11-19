@@ -11,9 +11,9 @@ class QualityGateTests(unittest.TestCase):
         return {
             "review": {"human_review": "pending"},
             "categories": {
-                "call_chain": {"recall": call_recall, "fp": fp},
-                "resource_flow": {"recall": resource_recall, "fp": 0},
-                "sync_relation": {"recall": sync_recall, "fp": 0},
+                "call_chain": {"recall": call_recall, "fp": fp, "applicable_cases": 1},
+                "resource_flow": {"recall": resource_recall, "fp": 0, "applicable_cases": 1},
+                "sync_relation": {"recall": sync_recall, "fp": 0, "applicable_cases": 1},
             },
         }
 
@@ -50,6 +50,14 @@ class QualityGateTests(unittest.TestCase):
         self.assertEqual(result["status"], "failed")
         review = next(item for item in result["checks"] if item["name"] == "human_review")
         self.assertEqual(review["status"], "failed")
+
+    def test_profile_mismatch_is_not_applicable_not_failed(self):
+        report = self.report(sync_recall=None)
+        report["categories"]["sync_relation"]["applicable_cases"] = 0
+        result = self.gate(report)
+        self.assertEqual(result["status"], "passed")
+        check = next(item for item in result["checks"] if item["name"] == "sync_relation.recall")
+        self.assertEqual(check["status"], "not_applicable")
 
     def test_review_status_is_confirmed_only_when_all_datasets_are_confirmed(self):
         pending = {"review": {"human_review": "pending", "method": "ai"}}

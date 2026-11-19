@@ -143,6 +143,12 @@ def _fact_in_scope(fact, paths, functions):
     return True
 
 
+def _case_applicable(case, document):
+    case_profile = str(case.get("build_profile") or "")
+    document_profile = str((document.get("source") or {}).get("build_profile") or "")
+    return not case_profile or not document_profile or case_profile == document_profile
+
+
 def evaluate(truth, documents):
     Draft202012Validator(read(ROOT / "schemas/validation-benchmark.schema.json")).validate(truth)
     if truth.get("schema_version") != "1.0" or not isinstance(truth.get("cases"), list):
@@ -180,7 +186,17 @@ def evaluate(truth, documents):
             raise ValueError("prediction commit differs from ground truth")
         if doc.get("source", {}).get("repository") != truth["repository"]:
             raise ValueError("prediction repository differs from ground truth")
-        cases = {k: c for k, c in known.items() if c["category"] == category}
+        cases = {
+            k: c
+            for k, c in known.items()
+            if c["category"] == category and _case_applicable(c, doc)
+        }
+        not_applicable_cases = {
+            k: c
+            for k, c in known.items()
+            if c["category"] == category and not _case_applicable(c, doc)
+        }
+        not_applicable = [c["id"] for c in not_applicable_cases.values()]
         raw = flatten(doc, category, identity_profile)
         pred = {}
         for fact in raw:
@@ -229,16 +245,36 @@ def evaluate(truth, documents):
         for k in sorted(scoped - set(cases), key=str):
             details.append({"case_id": None, "verdict": "fp", "evidence_hit": False,
                             "kind": k[2], "identity": list(k[1]), "notes": "wrong type/order on annotated identity"})
+        for k in sorted(not_applicable_cases, key=str):
+            case = not_applicable_cases[k]
+            details.append({
+                "case_id": case["id"],
+                "verdict": "not_applicable",
+                "evidence_hit": False,
+                "kind": case["kind"],
+                "identity": case["identity"],
+                "notes": (
+                    f"build profile mismatch: case={case.get('build_profile', '')} "
+                    f"prediction={doc.get('source', {}).get('build_profile', '')}"
+                ),
+            })
         cp, cr = ratio(len(confirmed & positives), len(confirmed)), ratio(len(confirmed & positives), len(positives))
         report["categories"][category] = {
             "input_status": doc["status"], "gold_positive": len(positives), "gold_negative": len(negatives),
+            "document_build_profile": (doc.get("source") or {}).get("build_profile", ""),
+            "applicable_cases": len(cases),
+            "not_applicable_cases": sorted(not_applicable),
             "tp": len(tp), "fp": len(fp), "fn": len(fn), "tn": len(negatives - scoped),
             "precision": p, "recall": r,
             "f1": 2 * len(tp) / (2 * len(tp) + len(fp) + len(fn)) if 2 * len(tp) + len(fp) + len(fn) else None,
             "type_accuracy": ratio(len(tp), len(typed_predictions)),
             "evidence_hit_rate": ratio(evidence_hits, len(tp)),
             "coverage": ratio(len({k[:2] for k in positives} & matching_identities), len({k[:2] for k in positives})),
-            "unconfirmed_ratio": ratio(sum(f["status"] != "confirmed" for f in pred.values()), len(pred)),
+            "unconfirmed_ratio": (
+                ratio(sum(f["status"] != "confirmed" for f in pred.values()), len(pred))
+                if cases
+                else None
+            ),
             "unlabelled_predictions": 0 if closed_world else len(out_of_scope),
             "out_of_scope_predictions": len(out_of_scope),
             "prediction_count": len(pred),
@@ -261,4 +297,12 @@ def markdown(report):
         values = [category, str(m["tp"]), str(m["fp"]), str(m["fn"])]
         values += [fmt(m[k]) for k in ["precision", "recall", "f1", "type_accuracy", "evidence_hit_rate", "coverage", "unconfirmed_ratio"]]
         lines.append("| " + " | ".join(values) + " |")
+    lines += ["", "## Profile applicability", "",
+              "| Category | Prediction profile | Applicable cases | Not applicable cases |",
+              "|---|---|---:|---:|"]
+    for category, m in report["categories"].items():
+        lines.append(
+            f"| {category} | {m.get('document_build_profile') or 'unspecified'} | "
+            f"{m.get('applicable_cases', 'N/A')} | {len(m.get('not_applicable_cases', []))} |"
+        )
     return "\n".join(lines) + "\n"

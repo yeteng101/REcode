@@ -10,4 +10,12 @@ Unavailable/zero-denominator metrics are N/A. No quality gate is implied.
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | call_chain | 16 | 0 | 0 | 100.00% | 100.00% | 100.00% | 100.00% | 100.00% | 100.00% | 100.00% |
 | resource_flow | 11 | 0 | 6 | 100.00% | 64.71% | 78.57% | 100.00% | 100.00% | 64.71% | 100.00% |
-| sync_relation | 4 | 0 | 28 | 100.00% | 12.50% | 22.22% | 100.00% | 100.00% | 12.50% | 100.00% |
+| sync_relation | 0 | 0 | 0 | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+
+## Profile applicability
+
+| Category | Prediction profile | Applicable cases | Not applicable cases |
+|---|---|---:|---:|
+| call_chain | libuv-macos-clang | 27 | 0 |
+| resource_flow | libuv-macos-clang | 17 | 0 |
+| sync_relation | libuv-macos-clang | 0 | 38 |

@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "status": "passed",
+  "human_review": "pending",
+  "strict_review": false,
+  "checks": [
+    {
+      "name": "false_positives",
+      "status": "passed",
+      "actual": 0,
+      "maximum": 0
+    },
+    {
+      "name": "human_review",
+      "status": "informational",
+      "actual": "pending"
+    }
+  ],
+  "project_check": {
+    "project_id": "redis-v2",
+    "name": "Redis target v2",
+    "status": "passed",
+    "project_status": "pending_review",
+    "human_review": "pending",
+    "cases": 150,
+    "errors": [],
+    "warnings": [
+      "legacy project is pending human review unless all pending labels are resolved"
+    ]
+  }
+}

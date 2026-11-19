@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "status": "passed",
+  "human_review": "confirmed",
+  "strict_review": true,
+  "checks": [
+    {
+      "name": "call_chain.recall",
+      "status": "passed",
+      "actual": 1.0,
+      "minimum": 1.0,
+      "applicable_cases": 27
+    },
+    {
+      "name": "resource_flow.recall",
+      "status": "passed",
+      "actual": 1.0,
+      "minimum": 1.0,
+      "applicable_cases": 17
+    },
+    {
+      "name": "sync_relation.recall",
+      "status": "passed",
+      "actual": 1.0,
+      "minimum": 1.0,
+      "applicable_cases": 38
+    },
+    {
+      "name": "false_positives",
+      "status": "passed",
+      "actual": 0,
+      "maximum": 0
+    },
+    {
+      "name": "human_review",
+      "status": "passed",
+      "actual": "confirmed",
+      "required": "confirmed"
+    }
+  ],
+  "project_check": {
+    "project_id": "libuv",
+    "name": "libuv",
+    "status": "passed",
+    "project_status": "ready",
+    "human_review": "confirmed",
+    "cases": 32,
+    "errors": [],
+    "warnings": []
+  }
+}

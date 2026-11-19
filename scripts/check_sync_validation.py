@@ -17,7 +17,19 @@ REQUIRED_TYPES = {"mutex_lock", "rwlock", "atomic", "condition_variable",
                   "event_wait", "event_notify", "thread_join", "happens_before"}
 
 
-def check_dataset(dataset: Path, root: Path = ROOT) -> tuple[dict, list[str]]:
+def find_source_base(root: Path) -> Path | None:
+    """Find the workspace containing third_party/libuv."""
+    for candidate in (root, *root.parents):
+        if (candidate / "third_party/libuv").is_dir():
+            return candidate
+    return None
+
+
+def check_dataset(
+    dataset: Path,
+    root: Path = ROOT,
+    source_root: Path | None = None,
+) -> tuple[dict, list[str]]:
     errors: list[str] = []
     summary = {"samples": 0, "orders": {}, "labels": {}, "relation_types": {}}
     try:
@@ -27,17 +39,34 @@ def check_dataset(dataset: Path, root: Path = ROOT) -> tuple[dict, list[str]]:
                       for e in Draft202012Validator(schema).iter_errors(data))
         if errors:
             return {**summary, "status": "failed", "errors": errors}, errors
-        source_root = (root / "third_party/libuv").resolve()
+        if source_root is None:
+            source_base = find_source_base(root)
+            checkout = source_base / "third_party/libuv" if source_base else None
+        else:
+            checkout = source_root.resolve()
+            source_base = (
+                checkout.parent.parent
+                if checkout.parent.name == "third_party"
+                else checkout.parent
+            )
+        if checkout is None:
+            errors.append("libuv checkout missing or HEAD does not match pinned commit")
+            checkout = root / "third_party/libuv"
+        else:
+            checkout = checkout.resolve()
         result = subprocess.run(
-            ["git", "-C", str(source_root), "rev-parse", "HEAD"],
+            ["git", "-C", str(checkout), "rev-parse", "HEAD"],
             capture_output=True, text=True, check=False,
         )
         if result.returncode or result.stdout.strip() != data["commit"]:
             errors.append("libuv checkout missing or HEAD does not match pinned commit")
         sources = {}
         for name, expected in data["source_files"].items():
-            path = (root / name).resolve()
-            if not path.is_relative_to(source_root):
+            if source_base is None:
+                errors.append(f"missing source: {name}")
+                continue
+            path = (source_base / name).resolve()
+            if not path.is_relative_to(checkout):
                 errors.append(f"source outside pinned checkout: {name}")
                 continue
             if not path.is_file():
@@ -104,9 +133,14 @@ def check_dataset(dataset: Path, root: Path = ROOT) -> tuple[dict, list[str]]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset", type=Path, default=ROOT / "validation/sync-relations/dataset.json")
+    parser.add_argument(
+        "--source-root",
+        type=Path,
+        help="path to the pinned third_party/libuv checkout; auto-detected when omitted",
+    )
     parser.add_argument("--report", type=Path)
     args = parser.parse_args()
-    summary, errors = check_dataset(args.dataset)
+    summary, errors = check_dataset(args.dataset, source_root=args.source_root)
     text = json.dumps(summary, ensure_ascii=False, indent=2) + "\n"
     print(text, end="")
     if args.report:

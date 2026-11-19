@@ -35,11 +35,11 @@ python3 scripts/prepare_validation_truth.py
 python3 scripts/run_validation_project.py \
   --project-id libuv \
   --ground-truth validation/benchmarks/libuv/ground-truth.json \
-  --predictions validation/results/libuv/predictions \
-  --output validation/results/libuv/quality-gate \
+  --predictions validation/results/libuv/linux-profile/predictions \
+  --output validation/results/libuv/linux-profile/quality-gate \
   --min-call-recall 1.0 \
-  --min-resource-recall 0.64 \
-  --min-sync-recall 0.12 \
+  --min-resource-recall 1.0 \
+  --min-sync-recall 1.0 \
   --strict-review \
   --max-fp 0
 python3 scripts/run_validation_project.py \

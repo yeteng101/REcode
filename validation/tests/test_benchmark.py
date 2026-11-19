@@ -223,6 +223,26 @@ class BenchmarkTests(unittest.TestCase):
                 m = evaluate(truth, self.docs)["categories"][category]
                 self.assertEqual((m["tp"], m["fp"], m["fn"], m["evidence_hit_rate"]), (1, 0, 0, 1))
 
+    def test_sync_cases_are_filtered_by_build_profile(self):
+        doc = self.docs["sync_relation"]
+        reviewed_sync(read(ROOT / "validation/sync-relations/dataset.json"), doc)
+        fact = flatten(doc, "sync_relation")[0]
+        case = {
+            "id": "profile-scoped-sync",
+            "category": "sync_relation",
+            "identity": fact["identity"],
+            "kind": fact["kind"],
+            "expected_exists": True,
+            "build_profile": "linux-posix-static-source",
+            "evidence": [e.get("location", e) for e in fact["evidence"]],
+        }
+        truth = {**self.truth, "cases": [case]}
+        doc["source"]["build_profile"] = "libuv-macos-clang"
+        metrics = evaluate(truth, self.docs)["categories"]["sync_relation"]
+        self.assertEqual(metrics["applicable_cases"], 0)
+        self.assertEqual((metrics["tp"], metrics["fp"], metrics["fn"]), (0, 0, 0))
+        self.assertEqual(metrics["not_applicable_cases"], ["profile-scoped-sync"])
+
     def test_external_call_nodes_use_stable_symbols_for_scoring(self):
         graph = copy.deepcopy(self.graph)
         external_id = "ext:external_memset"

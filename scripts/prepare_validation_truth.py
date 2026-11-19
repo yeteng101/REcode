@@ -44,6 +44,8 @@ def sync_cases(data):
         base = {"id": s["id"], "category": "sync_relation", "identity": identity,
                 "kind": s["order"], "expected_exists": True, "evidence": s["evidence"],
                 "notes": s["reason"], "condition": s["condition"]}
+        if s.get("build_profile"):
+            base["build_profile"] = s["build_profile"]
         cases.append(base)
         if s["claim_order"] != s["order"]:
             cases.append({**base, "id": s["id"] + "_rejected_claim", "kind": s["claim_order"], "expected_exists": False})

@@ -13,7 +13,8 @@
         "resource_flow": "validation/resource-flow/dataset.json",
         "sync_relation": "validation/sync-relations/dataset.json"
       },
-      "results": "validation/results/libuv",
+      "build_profile": "libuv-linux-clang",
+      "results": "validation/results/libuv/linux-profile",
       "status": "ready",
       "human_review": "confirmed"
     },
@@ -27,8 +28,24 @@
         "sync_relation": "validation/redis/sync-relations.json"
       },
       "results": "validation/results/redis",
-      "status": "ready",
-      "human_review": "confirmed"
+      "status": "deprecated",
+      "human_review": "confirmed",
+      "superseded_by": "redis-v2"
+    },
+    {
+      "id": "redis-v2",
+      "name": "Redis target v2",
+      "repository": "redis/redis",
+      "commit": "d2c8a4b91e8c0e6aefd1f5bc0bf582cddbe046b7",
+      "datasets": {
+        "call_chain": "validation/redis/call-chains.json",
+        "resource_flow": "validation/redis/resource-flow-v2.json",
+        "sync_relation": "validation/redis/sync-relations.json"
+      },
+      "ground_truth": "validation/benchmarks/redis/ground-truth-v2.json",
+      "results": "validation/results/redis-v2",
+      "status": "pending_review",
+      "human_review": "pending"
     }
   ]
 }

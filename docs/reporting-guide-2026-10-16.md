@@ -22,11 +22,11 @@
 
 | 指标 | 当前值 |
 |---|---:|
-| libuv 资源流 recall | 64.71% |
-| libuv 资源流 F1 | 78.57% |
+| libuv 资源流 recall | 100% |
+| libuv 资源流 F1 | 100% |
 | Redis 调用链 recall | 93.64% |
 | Redis 调用链 F1 | 96.71% |
-| libuv 同步关系 recall | 12.50% |
+| libuv 同步关系 recall | 100%（`libuv-linux-clang`） |
 | Redis 同步关系 recall | 40.91% |
 | 当前 FP | 0 |
 

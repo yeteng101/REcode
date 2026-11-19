@@ -25,6 +25,14 @@ from scripts.prepare_validation_truth import sync_cases
 
 
 ROOT = Path(__file__).resolve().parents[1]
+SOURCE_BASE = next(
+    (
+        candidate
+        for candidate in (ROOT, *ROOT.parents)
+        if (candidate / "third_party/libuv").is_dir()
+    ),
+    ROOT,
+)
 REVIEWER = "codex-simulated-review-2026-10-16"
 OUTPUT_DATE = "2026-10-16"
 REMOTE_REPOSITORIES = {
@@ -75,7 +83,7 @@ def evidence_ok(evidence: dict[str, Any]) -> tuple[bool, str]:
     file = str(evidence.get("file", ""))
     line = evidence.get("line")
     snippet = str(evidence.get("snippet", ""))
-    path = ROOT / file
+    path = SOURCE_BASE / file
     if not path.is_file():
         return False, f"missing source: {file}"
     lines = path.read_text(encoding="utf-8", errors="replace").splitlines()

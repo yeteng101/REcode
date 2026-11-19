@@ -32,10 +32,44 @@ python scripts/check_sync_validation.py --report validation/sync-relations/check
 python -m unittest discover -s validation/tests -v
 ```
 
+校验器会从当前目录向上查找包含 `third_party/libuv` 的工作区，因此从
+`visualization-agent/` 运行也能复用父目录中的固定 checkout。也可以显式指定：
+
+```sh
+python scripts/check_sync_validation.py \
+  --source-root ../third_party/libuv \
+  --report validation/sync-relations/check-report.json
+```
+
 校验器执行 `schemas/sync-validation.schema.json` 的 Draft 2020-12 检查，
 要求至少 30 条样本及三类 order。缺少源码、版本不符、文件修改、缺失字段、
 重复 ID、悬空 evidence 引用、错行、错 snippet、标注自相矛盾均返回非零。
 新增的 GitHub Actions `sync-validation` job 执行相同命令并保存报告。
+
+## 构建 profile 与适用边界
+
+当前 32 条样本全部标注为 `libuv-linux-clang`。分析结果带有
+`source.build_profile` 时，评测器只统计 profile 匹配的分类样本。macOS
+`libuv-macos-clang` 生成的 graph 不会和 Linux 专属 Gold 强行比较，而是把相关
+同步样本报告为 `not_applicable`。要得到同步关系的真实 precision/recall，
+必须用 Linux profile 重新生成 libuv graph 和 sync predictions。
+
+已使用 Ubuntu 24.04 + Clang 18 完成 `libuv-linux-clang` 重跑。结果位于：
+
+```text
+validation/results/libuv/linux-profile/baseline/report.md
+validation/results/libuv/linux-profile/quality-gate/gate.json
+```
+
+当前有效同步指标为 `32 TP / 0 FP / 0 FN / 6 TN`，Precision、Recall 和 F1
+均为 100%，32 个 TP 的 required evidence 全部命中。同步分析器现已实现源码级
+队列发布与消费、条件变量和信号量顺序、thread create/join、seq_cst atomic、
+relaxed/unknown 边界、rwlock 读写边界、eventfd write/read 因果和锁作用域内的
+受保护写操作。
+
+这仍然是一个开放世界验证集：100% 表示冻结 Gold 中的正例 identity 和 6 个负例
+全部匹配，不表示仓库中全部 3,493 条同步输出都已经获得全仓真值。未标注输出不进入
+Precision，不能据此宣称“全仓同步关系准确率 100%”。
 
 ## 标注约定
 

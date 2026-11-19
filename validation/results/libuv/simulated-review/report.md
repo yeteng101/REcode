@@ -1,5 +1,10 @@
 # Validation report
 
+> Historical snapshot. Its libuv sync result used a macOS graph against Linux-profile
+> Gold and is not a valid current metric. See
+> `validation/results/libuv/linux-profile/baseline/report.md` for the profile-matched
+> Linux result.
+
 annotated facts only; unlabelled predictions excluded from precision
 
 candidate facts including unconfirmed; confirmed-only metrics reported separately

@@ -408,6 +408,53 @@
       font-family: var(--mono);
       font-size: 11px;
     }
+    .footer-right {
+      display: flex;
+      justify-self: end;
+      align-items: center;
+      gap: 14px;
+    }
+    .notes-button {
+      min-height: 30px;
+      padding: 4px 10px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+    .notes-button[aria-pressed="true"] {
+      border-color: var(--teal);
+      color: var(--teal);
+      background: var(--teal-soft);
+    }
+    .speaker-notes {
+      position: fixed;
+      right: 42px;
+      bottom: 82px;
+      z-index: 6;
+      width: min(460px, calc(100% - 84px));
+      max-height: 44vh;
+      overflow: auto;
+      padding: 18px 20px;
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+    }
+    .speaker-notes h3 {
+      margin: 0 0 10px;
+      color: var(--teal);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .08em;
+    }
+    .speaker-notes p {
+      margin: 0;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.75;
+    }
 
     .dashboard-map {
       display: grid;
@@ -473,6 +520,8 @@
       .matrix { grid-template-columns: 1fr; gap: 22px; }
       .footer-inner { padding: 11px 20px; grid-template-columns: 1fr auto; }
       .hint { display: none; }
+      .footer-right { grid-column: 1 / -1; justify-self: stretch; justify-content: flex-end; }
+      .speaker-notes { right: 14px; bottom: 86px; width: calc(100% - 28px); max-height: 38vh; }
       .statement { font-size: 22px; }
       .table { font-size: 12px; }
       .table th, .table td { padding-right: 8px; }
@@ -821,9 +870,16 @@
           <button class="control" type="button" id="prev" aria-label="上一页">← 上一页</button>
           <button class="control next" type="button" id="next" aria-label="下一页">下一页 →</button>
         </div>
-        <div class="hint">← → / Space 翻页</div>
+        <div class="footer-right">
+          <button class="notes-button" id="notes-toggle" type="button" aria-pressed="false">讲稿</button>
+          <div class="hint">← → / Space 翻页 · N 讲稿</div>
+        </div>
       </div>
     </footer>
+    <aside class="speaker-notes" id="speaker-notes" hidden aria-live="polite">
+      <h3>SPEAKER NOTES</h3>
+      <p id="speaker-notes-copy"></p>
+    </aside>
   </main>
 
   <script>
@@ -834,6 +890,23 @@
       const progress = document.getElementById("progress-bar");
       const prev = document.getElementById("prev");
       const next = document.getElementById("next");
+      const notesToggle = document.getElementById("notes-toggle");
+      const notesPanel = document.getElementById("speaker-notes");
+      const notesCopy = document.getElementById("speaker-notes-copy");
+      const speakerNotes = [
+        "各位老师好，本周我主要汇报生产任务系统、沙箱安全，以及下一阶段的工作安排。这周的重点不是继续扩充验证集，而是把已有的代码分析能力往可运行、可恢复、可审计的生产形态推进。",
+        "之前分析任务主要在当前 Python 进程里执行，任务队列和状态放在内存里，服务一旦重启，正在运行和排队中的任务就可能丢失。现在把任务执行改成了持久化模式：API 接收和写入任务，Worker 独立领取并执行。",
+        "API 负责接收和分析请求，写入 SQLite 任务账本；独立 Worker 领取任务执行。每个任务保存状态、执行次数、重试时间、取消请求和生命周期记录。Worker 通过租约和心跳表示自己正在处理任务，崩溃后租约过期，其他 Worker 可以重新接管。",
+        "系统增加了幂等提交，同一请求重复提交不会启动两次分析。临时失败可以重试；源码不存在、参数错误、仓库超限等永久错误不会无意义重试。用户取消后，迟到 Worker 的结果也不能覆盖 cancelled。结果写入对象存储并上传成功后才发布。",
+        "目前选择 SQLite 单主机方案。它适合一台服务器、多个 API 和 Worker 进程，部署简单，也足够支撑现阶段内部试用。以后任务量和并发量上升，需要多台服务器共同消费时，再迁移到 PostgreSQL 和 Redis 这类多主机队列。",
+        "沙箱分析对象是不可信的代码仓库，不能让仓库代码直接接触宿主机。当前沙箱默认使用 Docker，只接收公开 GitHub HTTPS 仓库，并限制为固定 commit 或受限分支。归档导入前检查路径穿越、符号链接、特殊文件和文件大小。",
+        "容器运行时没有网络，不挂载宿主目录和 Docker socket，根文件系统只读，使用非 root 用户，并去掉所有 Linux capabilities。无 capabilities 指不能修改文件所有权、绑定低端口、挂载文件系统、修改网络配置或加载内核模块。再配合 CPU、内存、磁盘和进程数限制，降低对宿主机的风险。",
+        "编译阶段使用 safe-generic 策略，不使用仓库自带的 CMake、compile_commands 或 shell 命令，避免仓库内容直接控制构建过程。Prompt Injection 方面，生产分析链默认不调用大模型，仓库注释、README 和日志不会被当作指令；开发环境的 Agent 问答入口默认关闭。源码读取限制在仓库根目录内，所有结论必须带 evidence，没有 evidence 标记为 partial。",
+        "当前版本合并了共享作者的持久化任务和沙箱改动，并修复了跨平台路径测试问题。本机核心测试 93 项，除 2 项需要 Linux Docker 的真实容器测试被跳过外，其余全部通过。Docker 沙箱、实际 S3/MinIO 和告警接收通道还没有在目标部署环境完成最终验收，所以当前是基础实现完成、生产验收待执行。",
+        "下一阶段第一项是可观测性生产化，把 Dashboard、Trace、指标口径、告警通道、日志保留和审计真正接起来，让每个失败任务都能定位到具体阶段。",
+        "第二项是发布工程，完成镜像和依赖固定、SBOM、CI/CD、Staging、Shadow、Canary 和自动回滚。第三项是 Agent 产品质量，继续提升函数指针、虚调用、跨函数资源所有权、别名和 atomic happens-before 的能力。第四项是产品闭环，提供 URL 提交页面、任务进度、结果下载、失败原因展示、unknown 人工复核和用户配额。",
+        "整体上，本周完成了从本地能跑分析，到任务可持久化、执行有隔离、过程有 Trace 的基础转变。下一阶段的重点不是增加功能数量，而是把可观测性、发布、分析质量和产品使用流程串成一条可以验收的上线路径。谢谢各位老师。"
+      ];
       let index = 0;
 
       total.textContent = String(slides.length).padStart(2, "0");
@@ -846,6 +919,7 @@
         });
         current.textContent = String(index + 1).padStart(2, "0");
         progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+        notesCopy.textContent = speakerNotes[index] || "";
         prev.disabled = index === 0;
         next.disabled = index === slides.length - 1;
         history.replaceState(null, "", `#${index + 1}`);
@@ -866,8 +940,15 @@
         render();
       }
 
+      function toggleNotes() {
+        const visible = notesPanel.hidden;
+        notesPanel.hidden = !visible;
+        notesToggle.setAttribute("aria-pressed", String(visible));
+      }
+
       prev.addEventListener("click", () => go(-1));
       next.addEventListener("click", () => go(1));
+      notesToggle.addEventListener("click", toggleNotes);
       document.addEventListener("keydown", (event) => {
         if (["ArrowRight", "PageDown", " "].includes(event.key)) {
           event.preventDefault();
@@ -886,6 +967,10 @@
           event.preventDefault();
           index = slides.length - 1;
           render();
+        }
+        if (event.key.toLowerCase() === "n") {
+          event.preventDefault();
+          toggleNotes();
         }
       });
       window.addEventListener("hashchange", goToHash);

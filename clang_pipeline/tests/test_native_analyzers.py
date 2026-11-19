@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import json
+import tempfile
 import unittest
 from pathlib import Path
 
-from clang_pipeline.resource_flow import analyze_resource_flow
+from clang_pipeline.resource_flow import ResourceEvent, analyze_resource_flow
 from clang_pipeline.sync_flow import analyze_sync_relations
 
 
@@ -31,6 +32,52 @@ class NativeAnalyzerTests(unittest.TestCase):
                 self.assertTrue(operation["evidence_ids"])
                 self.assertIn("status", operation)
                 self.assertIsInstance(operation["confidence"], (int, float))
+
+    def test_resource_event_keeps_normalized_lifecycle_fields(self) -> None:
+        event = ResourceEvent(
+            kind="borrow",
+            resource_id="rf_test_v1",
+            resource_type="memory",
+            expression="buffer",
+            function="load",
+            file="src/load.c",
+            line=12,
+            condition="non-owning call",
+            owner="caller",
+            evidence_ids=["ev-load"],
+            api="inspect",
+        )
+        operation = event.as_operation()
+        self.assertEqual("hold", operation["kind"])
+        self.assertEqual("rf_test_v1", operation["_resource_id"])
+        self.assertEqual("buffer", operation["expression"])
+        self.assertEqual("non-owning call", operation["condition"])
+
+    @unittest.skipUnless(
+        (ROOT.parent / "third_party/libuv").is_dir(),
+        "libuv source checkout required",
+    )
+    def test_resource_source_events_cover_libuv_lifecycle(self) -> None:
+        result = analyze_resource_flow(self.graph, source_root=ROOT.parent)
+        operations = {
+            (
+                operation["function"],
+                operation["line"],
+                operation["kind"],
+            )
+            for item in result["items"]
+            for operation in item.get("operations", [])
+        }
+        self.assertTrue(
+            {
+                ("uv__async_start", 306, "acquire"),
+                ("uv__async_start", 313, "transfer"),
+                ("uv_fs_open", 2028, "transfer"),
+                ("uv__getaddrinfo_done", 134, "transfer"),
+                ("uv__fs_scandir", 600, "transfer"),
+                ("uv__fs_scandir_cleanup", 728, "release"),
+            }.issubset(operations)
+        )
 
     def test_resource_flow_uses_exact_apis_and_stable_resource_ids(self) -> None:
         graph = {
@@ -123,6 +170,197 @@ class NativeAnalyzerTests(unittest.TestCase):
             self.assertEqual("unconfirmed", item["status"])
             self.assertTrue(item["evidence_ids"])
             self.assertIn(item["order"], {"happens_before", "happens_after", "concurrent", "unknown"})
+
+    def test_source_scan_links_lock_to_protected_write_across_control_flow(self) -> None:
+        graph = {
+            "run_id": "sync-protected-access-test",
+            "meta": {"repository": "fixture/repo", "commit": "a" * 40},
+            "nodes": [
+                {
+                    "id": "fn:worker",
+                    "kind": "function",
+                    "name": "worker",
+                    "file": "src/counter.c",
+                    "line": 1,
+                }
+            ],
+            "edges": [],
+            "evidence": [],
+        }
+        source = """\
+static unsigned int running;
+static void worker(void) {
+  uv_mutex_lock(&mutex);
+  if (ready)
+    running--;
+  uv_mutex_unlock(&mutex);
+}
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            source_path = Path(directory) / "src" / "counter.c"
+            source_path.parent.mkdir(parents=True)
+            source_path.write_text(source, encoding="utf-8")
+            result = analyze_sync_relations(graph, source_root=directory)
+
+        relation = next(
+            (
+                item
+                for item in result["items"]
+                if (
+                    item["source"]["function"] == "worker"
+                    and item["source"]["line"] == 3
+                    and item["target"]["line"] == 5
+                )
+            ),
+            None,
+        )
+        self.assertIsNotNone(relation)
+        self.assertEqual("mutex_lock", relation["relation_type"])
+        self.assertEqual("happens_before", relation["order"])
+        self.assertEqual(2, len(relation["evidence_ids"]))
+
+    def test_source_scan_covers_queue_rwlock_eventfd_and_atomic_evidence(self) -> None:
+        graph = {
+            "run_id": "sync-source-coverage-test",
+            "meta": {"repository": "fixture/repo", "commit": "a" * 40},
+            "nodes": [
+                {
+                    "id": "fn:post",
+                    "kind": "function",
+                    "name": "post",
+                    "file": "src/sync.c",
+                    "line": 2,
+                },
+                {
+                    "id": "fn:worker",
+                    "kind": "function",
+                    "name": "worker",
+                    "file": "src/sync.c",
+                    "line": 7,
+                },
+                {
+                    "id": "fn:uv_rwlock_wrunlock",
+                    "kind": "function",
+                    "name": "uv_rwlock_wrunlock",
+                    "file": "src/sync.c",
+                    "line": 12,
+                },
+                {
+                    "id": "fn:uv_rwlock_rdlock",
+                    "kind": "function",
+                    "name": "uv_rwlock_rdlock",
+                    "file": "src/sync.c",
+                    "line": 15,
+                },
+                {
+                    "id": "fn:uv_rwlock_wrlock",
+                    "kind": "function",
+                    "name": "uv_rwlock_wrlock",
+                    "file": "src/sync.c",
+                    "line": 18,
+                },
+                {
+                    "id": "fn:uv_rwlock_trywrlock",
+                    "kind": "function",
+                    "name": "uv_rwlock_trywrlock",
+                    "file": "src/sync.c",
+                    "line": 21,
+                },
+                {
+                    "id": "fn:async_sender",
+                    "kind": "function",
+                    "name": "async_sender",
+                    "file": "src/sync.c",
+                    "line": 25,
+                },
+                {
+                    "id": "fn:async_reader",
+                    "kind": "function",
+                    "name": "async_reader",
+                    "file": "src/sync.c",
+                    "line": 29,
+                },
+            ],
+            "edges": [],
+            "evidence": [],
+        }
+        source = """\
+int produced;
+void post(void) {
+  uv_mutex_lock(&queue_mutex);
+  uv__queue_insert_tail(&work_queue, item);
+  uv_mutex_unlock(&queue_mutex);
+}
+void worker(void) {
+  uv_mutex_lock(&queue_mutex);
+  item = uv__queue_head(&work_queue);
+  uv_mutex_unlock(&queue_mutex);
+}
+void uv_rwlock_wrunlock(uv_rwlock_t* rwlock) {
+  if (pthread_rwlock_unlock(rwlock)) return;
+}
+void uv_rwlock_rdlock(uv_rwlock_t* rwlock) {
+  if (pthread_rwlock_rdlock(rwlock)) return;
+}
+void uv_rwlock_wrlock(uv_rwlock_t* rwlock) {
+  if (pthread_rwlock_wrlock(rwlock)) return;
+}
+void uv_rwlock_trywrlock(uv_rwlock_t* rwlock) {
+  err = pthread_rwlock_trywrlock(rwlock);
+  if (err) return UV_EBUSY;
+}
+void async_sender(void) {
+  if (atomic_exchange(&pending, 1) == 0)
+    (void) write(event_fd, &one, sizeof(one));
+}
+void async_reader(void) {
+  (void) read(event_fd, &one, sizeof(one));
+  h->async_cb(h);
+}
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            source_path = Path(directory) / "src" / "sync.c"
+            source_path.parent.mkdir(parents=True)
+            source_path.write_text(source, encoding="utf-8")
+            result = analyze_sync_relations(graph, source_root=directory)
+
+        queue_relation = next(
+            (
+                item
+                for item in result["items"]
+                if "cross-function queue publication" in str(item["condition"])
+            ),
+            None,
+        )
+        self.assertIsNotNone(queue_relation)
+        self.assertGreaterEqual(len(queue_relation["evidence_ids"]), 4)
+
+        self.assertTrue(any(
+            item["condition"] == "rwlock writer release precedes successful acquisition"
+            and item["target"]["function"] == "uv_rwlock_rdlock"
+            for item in result["items"]
+        ))
+        self.assertTrue(any(
+            item["order"] == "concurrent"
+            and item["source"]["function"] == "uv_rwlock_rdlock"
+            and item["target"]["function"] == "uv_rwlock_rdlock"
+            for item in result["items"]
+        ))
+        self.assertTrue(any(
+            item["order"] == "unknown"
+            and item["source"]["function"] == "uv_rwlock_trywrlock"
+            for item in result["items"]
+        ))
+        self.assertTrue(any(
+            item["order"] == "happens_before"
+            and item["source"]["snippet"] == "(void) write(event_fd, &one, sizeof(one));"
+            and item["target"]["snippet"] == "(void) read(event_fd, &one, sizeof(one));"
+            for item in result["items"]
+        ))
+        self.assertTrue(any(
+            "atomic_exchange" in item["source"]["snippet"]
+            for item in result["items"]
+        ))
 
     def test_cross_function_queue_atomic_and_thread_join_relations(self) -> None:
         graph = {

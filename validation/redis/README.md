@@ -26,3 +26,25 @@ Bear 捕获全部编译命令，再分析 8 个真实 translation units。选定
 
 使用同一评测器和外部 schema，具体命令、指标定义与跨项目局限见
 [`../benchmarks/README.md`](../benchmarks/README.md)。
+
+## Target Gold v2
+
+The previous `redis-7.2.4-baseline-v1` file is retained only as history and is
+marked `deprecated` in the project registry. New target-repository evaluation
+uses:
+
+- `validation/redis/resource-flow-v2.json`
+- `validation/benchmarks/redis/ground-truth-v2.json`
+- `validation/benchmarks/redis/source-check-v2.json`
+
+The v2 set contains 120 call-chain cases, 27 source-anchored Redis resource
+operations, and 25 synchronization assertions. Call and synchronization
+annotations remain the source-reviewed facts; the new resource facts are
+source-backed but their final human review is `pending`. Do not describe v2
+resource metrics as human-confirmed until that review is completed.
+
+Build the v2 target Gold with:
+
+```bash
+python3 scripts/build_redis_target_truth_v2.py
+```
