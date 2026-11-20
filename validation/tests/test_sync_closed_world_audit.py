@@ -80,6 +80,29 @@ class SyncClosedWorldAuditTests(unittest.TestCase):
         self.assertEqual("rejected", decision)
         self.assertIn("no shared resource", reason)
 
+    def test_queue_notification_callback_requires_support_evidence(self) -> None:
+        candidate = item(
+            source_line=10,
+            target_line=20,
+            order="unknown",
+            source_function="post",
+            target_function="worker",
+            target_snippet="w->work(w);",
+            condition=(
+                "queue notification boundary wq: post -> worker; "
+                "specific item instance remains unknown"
+            ),
+        )
+        candidate["evidence_ids"] = ["source", "queue", "consumer"]
+        decision, reason = classify_prediction(
+            candidate,
+            evidence_ok=True,
+            evidence_reason="",
+            gold_state="none",
+        )
+        self.assertEqual("accepted", decision)
+        self.assertIn("queue publication", reason)
+
 
 if __name__ == "__main__":
     unittest.main()

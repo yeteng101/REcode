@@ -40,4 +40,4 @@ Redis target v2 用来验证跨仓迁移。调用链是 108 TP、0 FP、2 FN、1
 
 ## 第 8 页：总结与下一步
 
-总结一下：FunctionTargetResolver 把 CallGraphBench 的 13 个 FN 收口到当前候选 31/0/0；ResourceEvent 把 libuv 资源流从 11/0/6 收到 17/0/0；同步分析器把 Linux profile 下的真实结果从 4/0/28/6 收到 32/0/0/6，required evidence 命中率 100%。100% 只覆盖冻结 Gold 的 32 个正例和 6 个负例，不覆盖仓库内 3,429 条未标注同步输出。后续动作是扩大独立 Gold 和 closed-world scope，再进入 external-v2 冻结。
+总结一下：FunctionTargetResolver 把 CallGraphBench 的 13 个 FN 收口到当前候选 31/0/0；ResourceEvent 把 libuv 资源流从 11/0/6 收到 17/0/0；同步分析器把 Linux profile 下的真实结果从 4/0/28/6 收到 32/0/0/6，required evidence 命中率 100%。四文件 closed-world 审计现在覆盖 1,282 条预测，源码规则通过率 100%，无 witness 的 condition/event notification 到 callback 配对已移除。100% 仍只覆盖冻结 Gold 的 32 个正例和 6 个负例，不覆盖仓库内 2,955 条未标注同步输出。

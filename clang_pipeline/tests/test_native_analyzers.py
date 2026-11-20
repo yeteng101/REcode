@@ -362,6 +362,98 @@ void async_reader(void) {
             for item in result["items"]
         ))
 
+    def test_notification_callback_requires_queue_or_async_witness(self) -> None:
+        graph = {
+            "run_id": "sync-notification-witness-test",
+            "meta": {"repository": "fixture/repo", "commit": "a" * 40},
+            "nodes": [
+                {
+                    "id": "fn:post",
+                    "kind": "function",
+                    "name": "post",
+                    "file": "src/notify.c",
+                    "line": 1,
+                },
+                {
+                    "id": "fn:worker",
+                    "kind": "function",
+                    "name": "worker",
+                    "file": "src/notify.c",
+                    "line": 7,
+                },
+                {
+                    "id": "fn:signal_only",
+                    "kind": "function",
+                    "name": "signal_only",
+                    "file": "src/notify.c",
+                    "line": 13,
+                },
+                {
+                    "id": "fn:unrelated",
+                    "kind": "function",
+                    "name": "unrelated",
+                    "file": "src/notify.c",
+                    "line": 16,
+                },
+            ],
+            "edges": [],
+            "evidence": [],
+        }
+        source = """\
+void post(void) {
+  uv_mutex_lock(&queue_mutex);
+  uv__queue_insert_tail(&work_queue, item);
+  uv_mutex_unlock(&queue_mutex);
+  uv_cond_signal(&queue_ready);
+}
+void worker(void) {
+  uv_mutex_lock(&queue_mutex);
+  item = uv__queue_head(&work_queue);
+  uv_mutex_unlock(&queue_mutex);
+  w->work(w);
+}
+void signal_only(void) {
+  uv_cond_signal(&queue_ready);
+}
+void unrelated(void) {
+  h->async_cb(h);
+}
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            source_path = Path(directory) / "src" / "notify.c"
+            source_path.parent.mkdir(parents=True)
+            source_path.write_text(source, encoding="utf-8")
+            result = analyze_sync_relations(graph, source_root=directory)
+
+        queue_notification = next(
+            (
+                item
+                for item in result["items"]
+                if (
+                    item["source"]["function"] == "post"
+                    and item["source"]["line"] == 5
+                    and item["target"]["function"] == "worker"
+                    and item["target"]["line"] == 11
+                    and item["order"] == "unknown"
+                )
+            ),
+            None,
+        )
+        self.assertIsNotNone(queue_notification)
+        self.assertIn(
+            "queue notification boundary",
+            str(queue_notification["condition"]),
+        )
+        self.assertFalse(any(
+            item["source"]["function"] == "signal_only"
+            and item["target"]["function"] == "unrelated"
+            for item in result["items"]
+        ))
+        self.assertFalse(any(
+            "notification does not identify" in str(item.get("condition"))
+            for item in result["items"]
+        ))
+
     def test_cross_function_queue_atomic_and_thread_join_relations(self) -> None:
         graph = {
             "run_id": "sync-enhancement-test",

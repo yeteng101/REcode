@@ -159,6 +159,11 @@ ASSIGNMENT_PATTERN = re.compile(
     r"(?:\+\+|--|(?<![=!<>])=(?!=)|\+=|-=)"
 )
 CONTROL_SUPPORT_PATTERN = re.compile(r"^\s*(?:if|else|return|break|continue)\b")
+FUNCTION_DEFINITION_PATTERN = re.compile(
+    r"^\s*(?:static\s+|inline\s+)*"
+    r"(?:[A-Za-z_][A-Za-z0-9_]*[\s*&]+)+"
+    r"[A-Za-z_][A-Za-z0-9_]*\s*\([^;]*\)\s*\{\s*$"
+)
 PROTECTED_ACCESS_WINDOW = 16
 
 QUEUE_RESOURCE_TOKENS = (
@@ -195,6 +200,13 @@ def _node_name(graph: dict[str, Any], node_id: str) -> str:
         if node.get("id") == node_id:
             return str(node.get("name") or _tail(node_id))
     return _tail(node_id)
+
+
+def _node_kind(graph: dict[str, Any], node_id: str) -> str:
+    for node in graph.get("nodes", []):
+        if node.get("id") == node_id:
+            return str(node.get("kind") or "")
+    return ""
 
 
 def _resource_key(snippet: str, fallback: str) -> str:
@@ -236,6 +248,8 @@ def _sequence_operation(
     edge: dict[str, Any],
     graph: dict[str, Any],
 ) -> dict[str, Any] | None:
+    if _node_kind(graph, str(edge.get("source", ""))) != "function":
+        return None
     target = _node_name(graph, str(edge.get("target", "")))
     if target not in SEQUENCE_TARGETS and edge.get("kind") != "callback_edge":
         return None
@@ -263,6 +277,8 @@ def _atomic_operation(
     edge: dict[str, Any],
     graph: dict[str, Any],
 ) -> dict[str, Any] | None:
+    if _node_kind(graph, str(edge.get("source", ""))) != "function":
+        return None
     site = edge.get("call_site") or {}
     snippet = str(site.get("snippet") or "")
     classification = _classify_atomic_snippet(snippet)
@@ -352,6 +368,8 @@ def _atomic_access(snippet: str) -> str:
 
 
 def _sync_operation(edge: dict[str, Any], graph: dict[str, Any]) -> dict[str, Any] | None:
+    if _node_kind(graph, str(edge.get("source", ""))) != "function":
+        return None
     target = _node_name(graph, str(edge.get("target", "")))
     source = _node_name(graph, str(edge.get("source", "")))
     rules = (
@@ -602,6 +620,8 @@ def _source_event(
 ) -> dict[str, Any] | None:
     stripped = snippet.strip()
     if not stripped or stripped.startswith(("/*", "*", "//")):
+        return None
+    if FUNCTION_DEFINITION_PATTERN.match(stripped):
         return None
     api = api or _source_event_api(stripped)
     atomic = _classify_atomic_snippet(stripped)
@@ -1099,6 +1119,9 @@ def analyze_sync_relations(
                 queue_producers[resource].append(anchor)
         if operation["api"] in QUEUE_CONSUMERS:
             queue_consumers[resource].append(operation)
+    queue_callback_witnesses: dict[
+        tuple[str, str], list[tuple[str, list[str]]]
+    ] = defaultdict(list)
     for resource in sorted(set(queue_producers) & set(queue_consumers)):
         for producer in queue_producers[resource]:
             consumers = list(queue_consumers[resource])
@@ -1145,6 +1168,15 @@ def analyze_sync_relations(
                 )
                 items.append(relation)
                 referenced.update(relation["evidence_ids"])
+                key = (producer["function"], consumer["function"])
+                evidence_ids = list(
+                    dict.fromkeys(
+                        support_ids
+                        + producer["evidence_ids"]
+                        + consumer["evidence_ids"]
+                    )
+                )
+                queue_callback_witnesses[key].append((resource, evidence_ids))
                 break
 
     # Condition notification -> wait uses the same condition object when the
@@ -1176,28 +1208,6 @@ def analyze_sync_relations(
                     items.append(relation)
                     referenced.update(relation["evidence_ids"])
                     break
-
-    # Event-loop wakeup is a native but lower-confidence causal relation when
-    # the graph contains both a notify and a wait implementation.
-    notify = next(
-        (item for item in operations if item["relation_type"] == "event_notify"),
-        None,
-    )
-    wait = next(
-        (item for item in operations if item["relation_type"] == "event_wait"),
-        None,
-    )
-    if notify is not None and wait is not None:
-        items.append(
-            _make_relation(
-                notify,
-                wait,
-                order="unknown",
-                confidence=0.4,
-                condition="same event loop wakeup must be consumed",
-            )
-        )
-        referenced.update(items[-1]["evidence_ids"])
 
     # Source-scanned events provide the missing statement-level order inside a
     # function. Emit the next event plus the first event from new semantic
@@ -1412,12 +1422,19 @@ def analyze_sync_relations(
         item for item in sequence_operations
         if item.get("kind") == "callback"
     ]
+    callbacks_by_function: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for callback in callbacks:
+        callbacks_by_function[callback["function"]].append(callback)
+    for callback_group in callbacks_by_function.values():
+        callback_group.sort(key=lambda item: (item["file"], item["line"]))
+
     notify_anchors = list(event_notifies)
     notify_anchors.extend(
         item for item in operations
         if item.get("relation_type") == "condition_variable"
         and item.get("kind") == "notify"
     )
+    async_notify_anchors: list[dict[str, Any]] = []
     for operation in atomic_operations:
         if operation.get("access") == "read_write":
             next_calls = [
@@ -1434,38 +1451,79 @@ def analyze_sync_relations(
                 anchor["relation_type"] = "event_notify"
                 anchor["api"] = "atomic_exchange"
                 anchor["resource"] = next_calls[0]["resource"]
-                notify_anchors.append(anchor)
+                async_notify_anchors.append(anchor)
+
+    # A notification may be paired to a callback only when an existing queue
+    # publication links the producer function to the consumer function.
     for notify in notify_anchors:
-        candidates = callbacks
-        function_name = notify["function"].lower()
-        if "async" in function_name:
-            candidates = [
-                callback for callback in callbacks
-                if "async" in callback["function"].lower()
-            ]
-        elif any(token in function_name for token in ("post", "submit", "producer")):
-            candidates = [
-                callback for callback in callbacks
-                if any(
-                    token in callback["function"].lower()
-                    for token in ("worker", "process")
-                )
-            ]
-        for callback in candidates:
-            if notify["function"] == callback["function"]:
+        links_by_consumer: dict[
+            str, list[tuple[str, list[str]]]
+        ] = defaultdict(list)
+        for (producer_function, consumer_function), witnesses in sorted(
+            queue_callback_witnesses.items()
+        ):
+            if producer_function == notify["function"]:
+                links_by_consumer[consumer_function].extend(witnesses)
+        for consumer_function, witnesses in sorted(links_by_consumer.items()):
+            callback_group = callbacks_by_function.get(consumer_function, [])
+            callback = next(
+                (
+                    item
+                    for item in callback_group
+                    if CALLBACK_CALL_PATTERN.search(str(item.get("snippet") or ""))
+                ),
+                None,
+            )
+            if callback is None:
                 continue
+            resources = ",".join(sorted({resource for resource, _ in witnesses}))
+            support_ids = list(
+                dict.fromkeys(
+                    evidence_id
+                    for _, evidence_ids in witnesses
+                    for evidence_id in evidence_ids
+                )
+            )
             relation = _make_relation(
                 notify,
                 callback,
                 order="unknown",
-                confidence=0.3,
+                confidence=0.4,
                 condition=(
-                    "notification does not identify a specific queued work item "
-                    "or callback instance"
+                    f"queue notification boundary queues={resources}: "
+                    f"{notify['function']} -> {consumer_function}; "
+                    "specific item instance remains unknown"
                 ),
+                support_evidence_ids=support_ids,
             )
             items.append(relation)
             referenced.update(relation["evidence_ids"])
+
+    # Atomic async publication may be coalesced. Preserve one explicit
+    # same-file async boundary without pairing every send to every callback.
+    for notify in async_notify_anchors:
+        if notify.get("api") != "atomic_exchange":
+            continue
+        async_callbacks = [
+            callback
+            for callback in callbacks_by_function.get("uv__async_io", [])
+            if callback.get("file") == notify.get("file")
+            and "async_cb" in str(callback.get("snippet") or "")
+        ]
+        if not async_callbacks:
+            continue
+        relation = _make_relation(
+            notify,
+            async_callbacks[0],
+            order="unknown",
+            confidence=0.35,
+            condition=(
+                "async notification may be coalesced and does not identify "
+                "one callback instance"
+            ),
+        )
+        items.append(relation)
+        referenced.update(relation["evidence_ids"])
 
     for operation in atomic_operations:
         if operation.get("semantics") != "relaxed" or operation.get("access") != "read":
@@ -1474,10 +1532,8 @@ def analyze_sync_relations(
             (
                 item for item in callbacks
                 if item["function"] != operation["function"]
-                and (
-                    "async" in item["function"].lower()
-                    or "callback" in item["function"].lower()
-                )
+                and item["file"] == operation["file"]
+                and "async" in item["function"].lower()
             ),
             None,
         )

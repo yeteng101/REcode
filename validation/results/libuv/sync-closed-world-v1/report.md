@@ -8,7 +8,7 @@ This is an independent source-rule audit of predictions originating in the selec
 - Commit: `8fb9cb919489a48880680a56efecff6a7dfb4504`
 - Build profile: `libuv-linux-clang`
 - Source files: 4
-- In-scope predictions: 1554
+- In-scope predictions: 1282
 
 ## Gold regression
 
@@ -20,11 +20,11 @@ This is an independent source-rule audit of predictions originating in the selec
 
 | Decision | Count | Share |
 |---|---:|---:|
-| accepted | 1370 | 88.16% |
-| rejected | 184 | 11.84% |
+| accepted | 1282 | 100.00% |
+| rejected | 0 | 0.00% |
 | needs_review | 0 | 0.00% |
 
-- Rule-audit pass rate: 88.16%
+- Rule-audit pass rate: 100.00%
 - Decided share: 100.00%
 - Unresolved after source rules: 0
 
@@ -32,43 +32,37 @@ This is an independent source-rule audit of predictions originating in the selec
 
 | File | Accepted | Rejected | Needs review |
 |---|---:|---:|---:|
-| `third_party/libuv/src/threadpool.c` | 397 | 87 | 0 |
-| `third_party/libuv/src/unix/async.c` | 270 | 4 | 0 |
-| `third_party/libuv/src/unix/thread.c` | 202 | 89 | 0 |
-| `third_party/libuv/src/unix/linux.c` | 501 | 4 | 0 |
+| `third_party/libuv/src/threadpool.c` | 399 | 0 | 0 |
+| `third_party/libuv/src/unix/async.c` | 263 | 0 | 0 |
+| `third_party/libuv/src/unix/thread.c` | 119 | 0 | 0 |
+| `third_party/libuv/src/unix/linux.c` | 501 | 0 | 0 |
 
 ## By relation type
 
 | Relation type | Accepted | Rejected | Needs review |
 |---|---:|---:|---:|
-| `atomic` | 48 | 3 | 0 |
-| `condition_variable` | 39 | 131 | 0 |
-| `event_notify` | 15 | 47 | 0 |
-| `event_wait` | 28 | 1 | 0 |
-| `happens_before` | 1100 | 2 | 0 |
-| `mutex_lock` | 107 | 0 | 0 |
-| `rwlock` | 19 | 0 | 0 |
-| `thread_join` | 14 | 0 | 0 |
+| `atomic` | 48 | 0 | 0 |
+| `condition_variable` | 33 | 0 | 0 |
+| `event_notify` | 12 | 0 | 0 |
+| `event_wait` | 28 | 0 | 0 |
+| `happens_before` | 1053 | 0 | 0 |
+| `mutex_lock` | 92 | 0 | 0 |
+| `rwlock` | 5 | 0 | 0 |
+| `thread_join` | 11 | 0 | 0 |
 
 ## Audit reasons
 
 | Reason | Count |
 |---|---:|
-| same-function source order is consistent | 1293 |
-| generic notification/callback pair has no shared resource witness | 177 |
+| same-function source order is consistent | 1220 |
 | matches a frozen positive Gold identity and order | 32 |
 | queue producer, consumer and protected queue witness agree | 10 |
-| semaphore post/wait direction verified | 10 |
-| condition notification/wait endpoints share the declared resource | 7 |
-| rwlock release/acquire direction verified | 6 |
+| condition notification/wait endpoints share the declared resource | 6 |
 | atomic release/acquire uses the same resource token | 5 |
-| endpoint is not backed by one of the item's evidence anchors | 3 |
-| relaxed atomic boundary lacks a shared async/resource witness | 3 |
+| queue publication supplies the notification/callback witness | 4 |
 | thread create/join direction verified | 3 |
-| async notification/wait endpoint direction verified | 2 |
-| event-loop pair does not contain notify then wait endpoints | 1 |
-| failed try-lock unknown boundary verified | 1 |
-| specific same-function concurrency boundary | 1 |
+| async notification/wait endpoint direction verified | 1 |
+| semaphore post/wait direction verified | 1 |
 
 ## Interpretation
 

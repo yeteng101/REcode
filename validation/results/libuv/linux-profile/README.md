@@ -22,7 +22,7 @@ causality and protected writes inside a lexical critical section.
 This is an open-world benchmark result: it means every labelled Gold identity
 and negative case in the frozen dataset is matched. It does not mean every
 emitted relation in the whole repository has been proven globally correct;
-3,429 synchronization predictions currently fall outside the labelled set.
+2,955 synchronization predictions currently fall outside the labelled set.
 
 ## Closed-world source audit
 
@@ -32,14 +32,14 @@ source endpoint is in `threadpool.c`, `unix/async.c`, `unix/thread.c` or
 
 | Decision | Count | Share |
 |---|---:|---:|
-| source-rule accepted | 1,370 | 88.16% |
-| rejected | 184 | 11.84% |
+| source-rule accepted | 1,282 | 100.00% |
+| rejected | 0 | 0.00% |
 | needs review | 0 | 0.00% |
 
-The frozen Gold regression remains `32 TP / 0 FP / 0 FN`. The largest defect
-group is 177 generic condition/event notification-to-callback pairs without a
-shared resource witness. Three further predictions have endpoint evidence that
-does not resolve to the claimed source anchor.
+The frozen Gold regression remains `32 TP / 0 FP / 0 FN`. Generic
+condition/event notification-to-callback pairs without a shared queue or async
+witness are no longer emitted. The remaining notification callback boundaries
+are explicitly tied to a queue publication witness or the same async flow.
 
 This is a reproducible machine audit, not a human-confirmed expansion of Gold.
 See `validation/results/libuv/sync-closed-world-v1/report.md` and `review.csv`.

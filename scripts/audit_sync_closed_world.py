@@ -54,6 +54,15 @@ EVENT_WAIT_TOKENS = (
     "kevent",
     "uv__async_io",
 )
+CALLBACK_FRAGMENTS = (
+    "->work(",
+    "->done(",
+    "->cb(",
+    "->async_cb(",
+    "->read_cb(",
+    "->write_cb(",
+    "->connect_cb(",
+)
 
 
 def read_json(path: Path) -> dict[str, Any]:
@@ -245,6 +254,14 @@ def classify_prediction(
             return "accepted", "queue producer, consumer and protected queue witness agree"
         return "needs_review", "queue publication lacks a producer/consumer witness pair"
 
+    if condition.startswith("queue notification boundary "):
+        if len(item.get("evidence_ids", [])) >= 3 and any(
+            fragment in target_snippet
+            for fragment in CALLBACK_FRAGMENTS
+        ):
+            return "accepted", "queue publication supplies the notification/callback witness"
+        return "needs_review", "queue notification lacks a queue witness or callback endpoint"
+
     if condition == "semaphore post/wait handshake":
         if "sem_post" in source_snippet and "sem_wait" in target_snippet:
             return "accepted", "semaphore post/wait direction verified"
@@ -292,6 +309,17 @@ def classify_prediction(
         ):
             return "accepted", "event-loop notify/wait pair is a specific unknown boundary"
         return "rejected", "event-loop pair does not contain notify then wait endpoints"
+
+    if condition == "async notification may be coalesced and does not identify one callback instance":
+        if (
+            same_file
+            and has_token(source_snippet, ATOMIC_TOKENS)
+            and "async" in str(source.get("function", "")).lower()
+            and "async" in str(target.get("function", "")).lower()
+            and "async_cb" in target_snippet
+        ):
+            return "accepted", "same async path supplies the callback-boundary witness"
+        return "needs_review", "async callback boundary lacks a same-resource witness"
 
     if condition.startswith("visible notification for shared resource "):
         if "cond_" in source_snippet and "cond_wait" in target_snippet:
