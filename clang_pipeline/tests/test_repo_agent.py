@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
 import tempfile
 import unittest
 from argparse import Namespace
@@ -9,10 +11,15 @@ from pathlib import Path
 from unittest.mock import patch
 
 from clang_pipeline.cli import command_repo
-from clang_pipeline.execution import RepositoryNotFoundError, RepositoryTooLargeError
+from clang_pipeline.execution import (
+    RepositoryCheckoutError,
+    RepositoryNotFoundError,
+    RepositoryTooLargeError,
+)
 from clang_pipeline.repo_agent import (
     build_compile_commands,
     _relativize_json_paths,
+    checkout_repository,
     repository_identity,
     run_repo_analysis,
 )
@@ -85,6 +92,58 @@ class RepoAgentTests(unittest.TestCase):
             repository_identity("/Users/andye/Documents/ChatGPT/8.18huawei/demo/sample"),
             "sample",
         )
+
+    def test_remote_checkout_fetches_pinned_history(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source"
+            source.mkdir()
+
+            def git(*args: str) -> str:
+                return subprocess.check_output(
+                    [
+                        "git", "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+                        "-c", "commit.gpgsign=false", *args,
+                    ],
+                    cwd=source,
+                    text=True,
+                ).strip()
+
+            git("init", "--quiet", "--initial-branch=main")
+            source_file = source / "main.c"
+            source_file.write_text("int main(void) { return 0; }\n", encoding="utf-8")
+            git("add", "main.c")
+            git("commit", "--quiet", "-m", "Historical source")
+            historical_sha = git("rev-parse", "HEAD")
+            source_file.write_text("int main(void) { return 1; }\n", encoding="utf-8")
+            git("commit", "--quiet", "-am", "Current source")
+            tip_sha = git("rev-parse", "HEAD")
+
+            remote = "https://example.invalid/fixture/source.git"
+            with patch.dict(os.environ, {
+                "GIT_CONFIG_COUNT": "1",
+                "GIT_CONFIG_KEY_0": f"url.{source.as_uri()}.insteadOf",
+                "GIT_CONFIG_VALUE_0": remote,
+            }):
+                for branch in (None, "main"):
+                    with self.subTest(branch=branch):
+                        checkout, resolved, _ = checkout_repository(
+                            remote, branch=branch, commit=historical_sha.upper(),
+                            work_root=root / (branch or "default"),
+                        )
+                        self.assertEqual(historical_sha, resolved)
+                        self.assertIn("return 0", (checkout / "main.c").read_text(encoding="utf-8"))
+                        self.assertTrue((checkout / ".git" / "shallow").is_file())
+
+                _, resolved, _ = checkout_repository(remote, work_root=root / "tip")
+                self.assertEqual(tip_sha, resolved)
+
+                failed_root = root / "missing"
+                missing_sha = "f" * 40
+                with self.assertRaises(RepositoryCheckoutError) as error:
+                    checkout_repository(remote, commit=missing_sha, work_root=failed_root)
+                self.assertEqual(missing_sha, error.exception.details["commit"])
+                self.assertEqual([], list(failed_root.iterdir()))
 
     def test_relativizes_workspace_relative_source_paths(self) -> None:
         relative_file = (

@@ -4,6 +4,8 @@
 
 ## 对齐入口
 
+- [REcode 远端历史提交检出](pinned-checkout-2026-11-24.md)记录浅克隆补取固定 SHA 的修复与验证。
+
 - [Memory 有界生命周期路径证明](memory-path-proof-2026-11-19.md)记录原生证据契约以及取消、正常和健康版的复测结果。
 
 - [Memory 资源流对象与路径修复](resource-flow-fixes-2026-11-19.md)记录原生导出的误绑定、修复准则和 Memory 接收验证。

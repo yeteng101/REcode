@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import shutil
+import stat
 import subprocess
 import tempfile
 import time
@@ -64,6 +66,18 @@ def _git(args: list[str], cwd: Path) -> str:
     return completed.stdout.strip()
 
 
+def _remove_failed_checkout(target: Path) -> None:
+    def retry_readonly_file(remove, path, error):
+        if os.name == "nt" and remove is os.unlink and isinstance(error[1], PermissionError):
+            try:
+                os.chmod(path, stat.S_IWRITE)
+                remove(path)
+            except OSError:
+                pass
+
+    shutil.rmtree(target, onerror=retry_readonly_file)
+
+
 def checkout_repository(
     repository_url: str,
     *,
@@ -71,6 +85,7 @@ def checkout_repository(
     commit: str | None = None,
     work_root: str | Path | None = None,
 ) -> tuple[Path, str, str]:
+    commit = normalize_commit_sha(commit)
     parsed = urlparse(repository_url)
     root = Path(work_root or Path(tempfile.gettempdir()) / "code-reverse-subagent").resolve()
     root.mkdir(parents=True, exist_ok=True)
@@ -100,17 +115,26 @@ def checkout_repository(
             )
         resolved_commit = "local"
     else:
+        pinned = commit is not None and re.fullmatch(r"[0-9a-f]{40}", commit) is not None
         clone_args = ["clone", "--depth", "1"]
+        if pinned:
+            clone_args.append("--no-checkout")
         if branch:
             clone_args += ["--branch", branch]
         clone_args += [repository_url, str(target)]
         try:
             _git(clone_args, root)
-            if commit:
+            if pinned:
+                if _git(["rev-parse", "--revs-only", "HEAD"], target) != commit:
+                    _git(["fetch", "--depth", "1", "--no-tags", "origin", commit], target)
+                _git(["checkout", "--detach", commit], target)
+            elif commit:
                 _git(["checkout", commit], target)
             resolved_commit = _git(["rev-parse", "HEAD"], target)
+            if pinned and resolved_commit != commit:
+                raise RuntimeError(f"requested commit {commit} resolved to {resolved_commit}")
         except (RuntimeError, subprocess.TimeoutExpired) as exc:
-            shutil.rmtree(target, ignore_errors=True)
+            _remove_failed_checkout(target)
             raise RepositoryCheckoutError(
                 f"仓库检出失败: {exc}",
                 stage="checkout",
