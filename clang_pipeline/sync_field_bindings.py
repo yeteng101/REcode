@@ -5,6 +5,7 @@ import re
 from collections import Counter
 
 from .clang_ast import iter_nodes, stable_digest
+from .sync_field_calls import DirectFieldCalls, field_object_id
 from .sync_source_observations import atomic_opcode, expression_access
 
 
@@ -69,13 +70,16 @@ def _site(location):
 
 
 class FunctionBindings:
-    def __init__(self, analyzer, tu, function, fields, add):
+    def __init__(self, analyzer, tu, unit, function, fields, add, direct_calls):
         self.analyzer = analyzer
         self.tu = tu
+        self.identity = (unit, analyzer.function_references[tu, function["id"]])
         self.function = function
         self.fields = fields
         self.add = add
-        self.locals = {p["id"]: p for p in function.get("inner", []) if p.get("kind") == "ParmVarDecl"}
+        self.direct_calls = direct_calls
+        self.parameters = [node for node in function.get("inner", []) if node.get("kind") == "ParmVarDecl"]
+        self.locals = {parameter["id"]: parameter for parameter in self.parameters}
         self.writes = Counter()
         self.escaped = set()
 
@@ -104,10 +108,42 @@ class FunctionBindings:
                 target = _reference(node["inner"][0])
                 if target:
                     self.escaped.add(target)
-        self.visit(body, {})
+        origins = {}
+        for index, parameter in enumerate(self.parameters):
+            identity = parameter["id"]
+            if not self.stable_pointer(identity, 0):
+                continue
+            location = self.location(parameter)
+            if location and parameter.get("name"):
+                origins[identity] = {"kind": "parameter_pointer", "name": parameter["name"],
+                                     "parameter_index": index, "declaration": location, "alias_steps": []}
+        self.visit(body, {}, origins)
         return True
 
-    def field_address(self, node):
+    def storage(self, identity):
+        local = self.locals.get(identity)
+        if local and local.get("storageClass") not in {"extern", "static"}:
+            declaration = self.location(local)
+            if declaration:
+                return {"kind": "automatic_storage", "name": local["name"], "declaration": declaration}
+        global_id = self.analyzer.global_references.get((self.tu, identity))
+        obj = self.analyzer.objects.get(global_id)
+        if obj and global_id not in self.analyzer.global_binding_exclusions:
+            return {"kind": "global_storage", "name": obj["name"],
+                    "declaration": _site(obj["declaration"]), "object_id": global_id}
+        return None
+
+    def origin(self, expression, origins):
+        node = _pointer_expression(expression)
+        if not _pointee(node):
+            return None
+        if node.get("kind") == "UnaryOperator" and node.get("opcode") == "&":
+            identity = _reference(node["inner"][0])
+            storage = self.storage(identity) if identity else None
+            return dict(storage, alias_steps=[]) if storage else None
+        return origins.get(_reference(node))
+
+    def field_address(self, node, origins):
         children = node.get("inner", [])
         if node.get("kind") != "MemberExpr" or len(children) != 1:
             return None
@@ -118,6 +154,7 @@ class FunctionBindings:
             return None
 
         local = self.locals.get(base_id)
+        origin = None
         if node.get("isArrow"):
             if not local or local.get("storageClass") in {"extern", "static"}:
                 return None
@@ -126,42 +163,56 @@ class FunctionBindings:
             if not declaration:
                 return None
             receiver = {"kind": kind, "name": local["name"], "declaration": declaration, "capture": capture}
-        elif local and local.get("storageClass") not in {"extern", "static"}:
-            declaration = self.location(local)
-            if not declaration:
-                return None
-            receiver = {"kind": "automatic_storage", "name": local["name"], "declaration": declaration}
+            origin = origins.get(base_id)
         else:
-            global_id = self.analyzer.global_references.get((self.tu, base_id))
-            obj = self.analyzer.objects.get(global_id)
-            if not obj or global_id in self.analyzer.global_binding_exclusions:
+            receiver = self.storage(base_id)
+            if not receiver:
                 return None
-            receiver = {"kind": "global_storage", "name": obj["name"],
-                        "declaration": _site(obj["declaration"]), "object_id": global_id}
-        return field, receiver, capture, ()
+        return field, receiver, capture, (), origin
 
-    def address(self, expression, aliases):
+    def address(self, expression, aliases, origins):
         node = _pointer_expression(expression)
         if node.get("kind") == "UnaryOperator" and node.get("opcode") == "&":
             member = node["inner"][0]
             while member.get("kind") == "ParenExpr":
                 member = member["inner"][0]
-            return self.field_address(member)
+            return self.field_address(member, origins)
         return aliases.get(_reference(node))
 
-    def define(self, identity, expression, statement, aliases):
+    def stable_pointer(self, identity, writes):
         local = self.locals.get(identity)
-        if (not local or local.get("kind") != "VarDecl" or local.get("storageClass") in {"extern", "static"}
-                or identity in self.escaped or self.writes[identity] != 1
-                or "volatile" in _type(local).split() or not _pointee(local)):
-            return
-        binding = self.address(expression, aliases)
-        location = self.location(statement)
-        if binding and location and len(binding[3]) < MAX_ALIAS_STEPS:
-            field, receiver, capture, steps = binding
-            aliases[identity] = (field, receiver, capture, (*steps, location))
+        return (local and local.get("storageClass") not in {"extern", "static"}
+                and identity not in self.escaped and self.writes[identity] == writes
+                and "volatile" not in _type(local).split() and _pointee(local))
 
-    def visit(self, node, aliases, parents=None):
+    def define(self, identity, expression, statement, aliases, origins):
+        if not self.stable_pointer(identity, 1) or self.locals[identity].get("kind") != "VarDecl":
+            return
+        location = self.location(statement)
+        if not location:
+            return
+        binding = self.address(expression, aliases, origins)
+        if binding and len(binding[3]) < MAX_ALIAS_STEPS:
+            field, receiver, capture, steps, origin = binding
+            aliases[identity] = (field, receiver, capture, (*steps, location), origin)
+        source = self.origin(expression, origins)
+        if source and len(source["alias_steps"]) < MAX_ALIAS_STEPS:
+            origins[identity] = dict(source, alias_steps=[*source["alias_steps"], location])
+
+    def record_call(self, children, location, origins):
+        target = self.analyzer.function_target(children[0], self.tu)
+        if not target:
+            return
+        arguments = []
+        for index, expression in enumerate(children[1:]):
+            source = self.origin(expression, origins)
+            argument_location = self.location(expression)
+            if source and argument_location:
+                arguments.append((index, argument_location, source))
+        if arguments:
+            self.direct_calls.calls.append((self.identity, target, location, arguments))
+
+    def visit(self, node, aliases, origins, parents=None):
         kind = node.get("kind")
         children = node.get("inner", [])
         if kind in SKIP_EXPRESSIONS:
@@ -169,45 +220,50 @@ class FunctionBindings:
         if kind == "CompoundStmt":
             # Definitions in a conditional or loop body stay within that body.
             aliases = dict(aliases)
+            origins = dict(origins)
             for statement in children:
                 if statement.get("kind") == "DeclStmt":
                     for declaration in statement.get("inner", []):
-                        self.visit(declaration, aliases, (statement, (node, parents)))
+                        self.visit(declaration, aliases, origins, (statement, (node, parents)))
                         initializer = _initializer(declaration)
                         if initializer is not None:
-                            self.define(declaration["id"], initializer, declaration, aliases)
+                            self.define(declaration["id"], initializer, declaration, aliases, origins)
                 else:
-                    self.visit(statement, aliases, (node, parents))
+                    self.visit(statement, aliases, origins, (node, parents))
                     if _assignment(statement):
                         left, right = statement["inner"]
-                        self.define(_reference(left), right, statement, aliases)
+                        self.define(_reference(left), right, statement, aliases, origins)
             return
 
-        location = self.location(node) if kind in {"AtomicExpr", "UnaryOperator"} else None
+        location = self.location(node) if kind in {"AtomicExpr", "UnaryOperator", "CallExpr"} else None
         if location and children:
             if kind == "AtomicExpr":
                 _, operation = atomic_opcode(node, location, self.analyzer.sources)
                 if operation:
-                    self.record(children[0], aliases, location, "atomic_target", operation)
+                    self.record(children[0], aliases, origins, location, "atomic_target", operation)
+            elif kind == "CallExpr":
+                self.record_call(children, location, origins)
             elif node.get("opcode") == "*":
                 access = expression_access(node, parents)
                 if access in {"read", "write", "read_write"}:
-                    self.record(children[0], aliases, location, access)
+                    self.record(children[0], aliases, origins, location, access)
         for child in children:
-            self.visit(child, aliases, (node, parents))
+            self.visit(child, aliases, origins, (node, parents))
 
-    def record(self, expression, aliases, location, access, operation=None):
-        binding = self.address(expression, aliases)
+    def record(self, expression, aliases, origins, location, access, operation=None):
+        binding = self.address(expression, aliases, origins)
         if not binding:
             return
-        field, receiver, capture, steps = binding
+        field, receiver, capture, steps, origin = binding
         item = {"function": self.function["name"], "location": location, "access": access,
                 "field": field, "receiver": receiver, "address_formation": capture, "alias_steps": list(steps)}
         if receiver["kind"] == "global_storage":
-            item["field_object_id"] = "sync_field_" + stable_digest([receiver["object_id"], field["id"]])[:20]
+            item["field_object_id"] = field_object_id(receiver["object_id"], field["id"])
         if operation:
             item["operation"] = operation
-        self.add(item)
+        access_id = self.add(item)
+        if access_id and origin and origin["kind"] == "parameter_pointer":
+            self.direct_calls.seeds.append((access_id, self.identity, origin))
 
 
 def collect_field_bindings(asts, analyzer):
@@ -215,12 +271,13 @@ def collect_field_bindings(asts, analyzer):
     counts = Counter()
     skipped = set()
     truncated = False
+    direct_calls = DirectFieldCalls()
 
     def add(item):
         nonlocal truncated
         identity = "sync_field_access_" + stable_digest(item)[:20]
         if identity in records:
-            return
+            return identity
         path = item["location"]["file"]
         if counts[path] >= MAX_PER_FILE or len(records) >= MAX_BINDINGS:
             truncated = True
@@ -235,8 +292,9 @@ def collect_field_bindings(asts, analyzer):
             ids.append(key)
         records[identity] = dict(item, id=identity, evidence_ids=ids)
         counts[path] += 1
+        return identity
 
-    for tu, ast in asts:
+    for unit, (tu, ast) in enumerate(asts):
         if not tu.endswith(".c"):
             continue
         fields = {}
@@ -250,17 +308,22 @@ def collect_field_bindings(asts, analyzer):
                     if location:
                         field = {"name": child["name"], "type": _type(child), "declaration": _site(location)}
                         fields[child["id"]] = dict(field, id="sync_field_decl_" + stable_digest(field)[:20])
-            elif node.get("kind") == "FunctionDecl" and analyzer.location(node, tu):
+            elif node.get("kind") == "FunctionDecl":
                 body = next((child for child in node.get("inner", []) if child.get("kind") == "CompoundStmt"), None)
-                if body is not None:
+                identity = analyzer.function_references[tu, node["id"]]
+                available = body is not None and analyzer.location(node, tu) is not None
+                attrs = {child.get("kind") for child in node.get("inner", [])}
+                direct_calls.declare(unit, identity, node.get("name"), available, attrs)
+                if available:
                     functions.append((node, body))
-        if fields:
-            for function, body in functions:
-                if not FunctionBindings(analyzer, tu, function, fields, add).collect(body):
-                    location = analyzer.location(function, tu)
-                    skipped.add((location["file"], location["line"], function["name"]))
+        for function, body in functions:
+            if not FunctionBindings(analyzer, tu, unit, function, fields, add, direct_calls).collect(body):
+                location = analyzer.location(function, tu)
+                skipped.add((location["file"], location["line"], function["name"]))
+    call_facts = direct_calls.collect(records, evidence)
     return {"schema_version": "sync-field-bindings/1", "analysis_basis": "intraprocedural-clang-json",
             "accesses": list(records.values()), "evidence": list(evidence.values()),
+            "direct_calls": call_facts,
             "coverage": {"scope": "single-definition local pointers in structured C function bodies",
                          "functions_skipped_for_jumps_or_asm": len(skipped), "truncated": truncated,
                          "limits": {"accesses": MAX_BINDINGS, "per_file": MAX_PER_FILE, "alias_steps": MAX_ALIAS_STEPS}}}
