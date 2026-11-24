@@ -4,6 +4,7 @@ import shutil
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from clang_pipeline.clang_ast import run_clang_ast
 from clang_pipeline.semantic_sync import SemanticSyncAnalyzer
@@ -40,7 +41,7 @@ LIBRARY_SOURCE = SOURCE.replace("int main(int argc, char **argv)", "int library_
 
 @unittest.skipUnless(shutil.which("clang"), "real Clang compiler required")
 class SemanticSyncTests(unittest.TestCase):
-    def analyze(self, source=SOURCE, files=None, *, entry_symbols=(), **limits):
+    def analyze(self, source=SOURCE, files=None, *, entry_symbols=(), compiler_options=(), **limits):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             sources = {"workers.c": source, **(files or {})}
@@ -51,7 +52,8 @@ class SemanticSyncTests(unittest.TestCase):
                 if not name.endswith((".c", ".cpp")):
                     continue
                 unit = {"file": str(root / name), "directory": str(root),
-                        "arguments": ["clang++" if name.endswith(".cpp") else "clang", "-pthread", "-I", str(root), "-c", str(root / name)]}
+                        "arguments": ["clang++" if name.endswith(".cpp") else "clang", "-pthread", "-I", str(root),
+                                      *compiler_options, "-c", str(root / name)]}
                 units.append(unit)
                 asts.append((name, run_clang_ast(unit, root)))
             analyzer = SemanticSyncAnalyzer(root, units, **limits)
@@ -77,10 +79,6 @@ class SemanticSyncTests(unittest.TestCase):
         self.assertTrue(all(first["context_id"] in a["execution_context"]["cannot_run_concurrently_with"] for a in main_reads))
 
     def test_library_entry_exposes_existing_thread_facts_with_partial_coverage(self):
-        baseline = self.analyze(LIBRARY_SOURCE)
-        self.assertIn("unique_main_entry_unavailable", baseline["coverage"]["gaps"])
-        self.assertEqual([], self.accesses(baseline))
-
         result = self.analyze(LIBRARY_SOURCE, entry_symbols=["library_tick", "library_tick"])
         self.assertFalse(result["coverage"]["complete"])
         self.assertIn("external_library_callers_unmodeled", result["coverage"]["gaps"])
@@ -93,6 +91,57 @@ class SemanticSyncTests(unittest.TestCase):
             self.assertEqual([], access["must_lockset"])
             self.assertEqual([], access["execution_context"]["cannot_run_concurrently_with"])
             self.assertNotIn("reentrant", access["execution_context"])
+
+    def test_automatic_library_entry_uses_build_visibility(self):
+        source = '''int counter;
+        __attribute__((visibility("default"))) void exported(void) { counter++; }
+        __attribute__((visibility("hidden"))) void hidden(void) { counter++; }
+        void unmarked(void) { counter++; }
+        static void internal(void) { counter++; }
+        '''
+        result = self.analyze(source, compiler_options=["-fvisibility=hidden"])
+        self.assertEqual([("exported", "explicit_symbol_visibility")],
+                         [(entry["name"], entry["basis"]) for entry in result["entry_points"]])
+        self.assertEqual({"exported"}, {access["function"] for access in self.accesses(result)})
+        self.assertFalse(result["coverage"]["complete"])
+        self.assertNotIn("unique_main_entry_unavailable", result["coverage"]["gaps"])
+        self.assertEqual("automatic", result["entry_selection"]["mode"])
+
+    def test_library_visibility_falls_back_to_bound_attribute_spelling(self):
+        source = '''#include "api.h"
+        int counter;
+        void api(void) { counter++; }
+        void hidden(void) { counter++; }
+        '''
+        headers = {"api.h": '#define API __attribute__((visibility("default")))\n'
+                            'API void api(void);\n__attribute__((visibility("hidden"))) void hidden(void);\n'}
+        visibility = SemanticSyncAnalyzer._attribute_visibility
+
+        def range_only(analyzer, attr, location):
+            return visibility(analyzer, {key: value for key, value in attr.items() if key != "visibility"}, location)
+
+        with patch.object(SemanticSyncAnalyzer, "_attribute_visibility", range_only):
+            result = self.analyze(source, headers, compiler_options=["-fvisibility=hidden"])
+        self.assertEqual(["api"], [entry["name"] for entry in result["entry_points"]])
+
+    def test_no_externally_visible_c_definition_keeps_the_entry_gap(self):
+        result = self.analyze("static void helper(void) {}\n")
+        self.assertIn("automatic_library_entry_unavailable", result["coverage"]["gaps"])
+        self.assertIn("unique_main_entry_unavailable", result["coverage"]["gaps"])
+        self.assertEqual([], self.accesses(result))
+        self.assertEqual(0, result["entry_selection"]["candidate_count"])
+
+    def test_automatic_entries_prefer_explicit_visibility_and_respect_budget(self):
+        source = '''int counter;
+        void first(void) { counter++; }
+        __attribute__((visibility("default"))) void second(void) { counter++; }
+        '''
+        with patch("clang_pipeline.semantic_sync.MAX_AUTOMATIC_LIBRARY_ENTRIES", 1):
+            result = self.analyze(source)
+        self.assertEqual(["second"], [entry["name"] for entry in result["entry_points"]])
+        self.assertEqual({"mode": "automatic", "candidate_count": 2, "started_count": 1, "limit": 1},
+                         result["entry_selection"])
+        self.assertIn("automatic_library_entry_limit_reached", result["coverage"]["gaps"])
 
     def test_unresolved_library_entries_cannot_start_analysis(self):
         source = "int counter; void tick(void) { counter++; }\n"

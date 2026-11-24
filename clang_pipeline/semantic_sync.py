@@ -7,6 +7,8 @@ are exported as gaps, and prevent negative concurrency/protection proofs.
 from __future__ import annotations
 
 import copy
+import re
+import shlex
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -22,6 +24,8 @@ TERMINATE_APIS = {"abort", "exit", "_Exit", "_exit", "__assert_fail"}
 ALLOCATION_APIS = {"malloc", "calloc", "realloc", "free"}
 WRAPPERS = {"ImplicitCastExpr", "CStyleCastExpr", "ParenExpr", "ExprWithCleanups", "ConstantExpr", "FullExpr"}
 NONZERO = ("nonzero",)
+MAX_AUTOMATIC_LIBRARY_ENTRIES = 64
+LIBRARY_EXCLUDED_ATTRS = {"AliasAttr", "IFuncAttr", "WeakAttr", "WeakRefAttr", "ConstructorAttr", "DestructorAttr", "DLLImportAttr"}
 
 
 @dataclass
@@ -53,6 +57,7 @@ class SemanticSyncAnalyzer:
         self.sources = {}
         self.declarations = {}
         self.functions = {}
+        self.function_visibility = {}
         self.function_references = {}
         self.global_references = {}
         self.objects = {}
@@ -153,6 +158,12 @@ class SemanticSyncAnalyzer:
             self.function_references[(tu, node.get("id"))] = key
             location = self.location(node, tu)
             body = next((c for c in node.get("inner", []) if c.get("kind") == "CompoundStmt"), None)
+            if kind == "FunctionDecl" and location:
+                for attr in node.get("inner", []):
+                    if attr.get("kind") == "VisibilityAttr":
+                        self.function_visibility.setdefault(key, set()).add(self._attribute_visibility(attr, location))
+                    elif attr.get("kind") == "DLLExportAttr":
+                        self.function_visibility.setdefault(key, set()).add("default")
             if body is not None and location:
                 if key in self.functions and self.functions[key]["location"] != location:
                     self.call_gaps.add("ambiguous_function_definition:" + key)
@@ -602,6 +613,61 @@ class SemanticSyncAnalyzer:
             entries.append({"name": symbol, "node_id": key, "location": record["location"]})
         return entries
 
+    def _attribute_visibility(self, attr, location):
+        if "visibility" in attr:
+            return attr["visibility"]
+        # Older Clang JSON may expose only the source range of this attribute.
+        bounds = attr.get("range", {})
+        begin, end = bounds.get("begin", {}), bounds.get("end", {})
+        begin, end = begin.get("spellingLoc", begin), end.get("spellingLoc", end)
+        file = begin.get("file", location["file"])
+        start, stop = begin.get("offset"), end.get("offset")
+        if type(start) is not int or type(stop) is not int or end.get("file", file) != file:
+            return "unknown"
+        try:
+            relative = (self.root / file).resolve().relative_to(self.root).as_posix()
+        except (OSError, ValueError):
+            return "unknown"
+        data = self.sources.get(relative, b"")
+        fragment = data[start:stop + end.get("tokLen", 1)]
+        match = re.fullmatch(rb'visibility\s*\(\s*"(default|protected|hidden|internal)"\s*\)', fragment)
+        return match[1].decode("ascii") if match else "unknown"
+
+    def _automatic_library_entries(self):
+        visible_units = set()
+        for unit in self.units:
+            arguments = unit.get("arguments") or shlex.split(unit.get("command", ""))
+            visibility = "default"
+            for argument in arguments:
+                if argument.startswith("-fvisibility="):
+                    visibility = argument.partition("=")[2]
+            if visibility in {"default", "protected"}:
+                path = _unit_source_path(unit, self.root)
+                if path.is_relative_to(self.root):
+                    visible_units.add(path.relative_to(self.root).as_posix())
+
+        entries = []
+        for key, function in self.functions.items():
+            node, location = function["node"], function["location"]
+            if (not function["tu"].endswith(".c") or not location["file"].endswith(".c")
+                    or node.get("kind") != "FunctionDecl" or node.get("storageClass") == "static" or node.get("inline")
+                    or "ambiguous_function_definition:" + key in self.call_gaps
+                    or any(child.get("kind") in LIBRARY_EXCLUDED_ATTRS for child in node.get("inner", []))):
+                continue
+            visibility = self.function_visibility.get(key, set())
+            if visibility & {"hidden", "internal", "unknown"}:
+                continue
+            if visibility & {"default", "protected"}:
+                basis = "explicit_symbol_visibility"
+            elif function["tu"] in visible_units:
+                basis = "external_c_linkage"
+            else:
+                continue
+            entries.append({"name": function["name"], "node_id": key, "location": location, "basis": basis})
+        entries.sort(key=lambda entry: (entry["basis"] != "explicit_symbol_visibility", entry["name"],
+                                        entry["location"]["file"], entry["location"]["line"]))
+        return entries
+
     def analyze(self, asts, *, entry_symbols=()):
         for tu, _ in asts:
             if not tu.endswith(".c"):
@@ -612,7 +678,14 @@ class SemanticSyncAnalyzer:
                 self.gap("C_plus_plus_compilation_unsupported")
         self.index(asts)
         mains = [key for key, value in self.functions.items() if value["name"] == "main"]
-        entry_points = self._library_entry_points(entry_symbols) if not mains else []
+        automatic = not mains and not entry_symbols
+        candidates = self._automatic_library_entries() if automatic else []
+        entry_points = candidates[:MAX_AUTOMATIC_LIBRARY_ENTRIES] if automatic else (
+            self._library_entry_points(entry_symbols) if not mains else [])
+        if automatic and not candidates:
+            self.gap("automatic_library_entry_unavailable")
+        if len(candidates) > len(entry_points):
+            self.gap("automatic_library_entry_limit_reached")
         if len(mains) == 1:
             roots = [(mains[0], "main")]
         else:
@@ -622,9 +695,14 @@ class SemanticSyncAnalyzer:
         if entry_points:
             self.gap("external_library_callers_unmodeled")
         initialized = {key for key, value in self.locks.items() if value["statically_initialized"]}
+        started_roots = 0
         for function, instance in roots:
+            if automatic and self.steps >= self.max_steps:
+                self.gap("step_budget_exhausted")
+                break
             initial = PathState(instance=instance, initialized=set(initialized))
             self.invoke(function, initial, [], [])
+            started_roots += 1
         for instance, spawn in list(self.spawns.items()):
             worker = PathState(instance=instance, is_root=False, initialized=set(spawn["initialized"]))
             paths = self.invoke(spawn["function"], worker, [spawn["argument"]], [])
@@ -671,9 +749,19 @@ class SemanticSyncAnalyzer:
                 "limits": {"max_paths": self.max_paths, "max_call_depth": self.max_call_depth, "max_steps": self.max_steps},
                 "api_model": "POSIX default initialized nonrecursive mutex and bounded rwlock operations; thread API success/failure paths"}
         if entry_points:
-            result["scope"] = "Explicit C library entries and directly created threads, global scalar objects and default POSIX locks"
-            result["entry_points"] = entry_points
+            result["scope"] = "Selected C library entries and directly created threads, global scalar objects and default POSIX locks"
+            result["entry_points"] = entry_points[:started_roots]
+        if automatic:
+            result["entry_selection"] = {"mode": "automatic", "candidate_count": len(candidates),
+                                         "started_count": started_roots, "limit": MAX_AUTOMATIC_LIBRARY_ENTRIES}
         return result
+
+
+def _unit_source_path(unit, root: Path) -> Path:
+    path = Path(unit["file"])
+    if not path.is_absolute():
+        path = Path(unit.get("directory", str(root))) / path
+    return path.resolve()
 
 
 def load_semantic_asts(workspace: str | Path, source_root: str | Path):
@@ -685,11 +773,8 @@ def load_semantic_asts(workspace: str | Path, source_root: str | Path):
     asts, bindings, errors = [], [], []
     for unit in units:
         filename = str(unit["file"])
-        path = Path(filename)
-        if not path.is_absolute():
-            path = Path(unit.get("directory", str(root))) / path
         try:
-            relative = path.resolve().relative_to(root.resolve()).as_posix()
+            relative = _unit_source_path(unit, root).relative_to(root.resolve()).as_posix()
             cached = paths.get(relative)
             ast = read_json(cached) if cached and cached.exists() else None
             # Compact libclang ASTs omit storage classes and some operators.

@@ -1,8 +1,8 @@
-# REcode 同步分析的显式库入口
+# REcode 同步分析的库入口
 
 - 基线 `group3` 的 `3ae5a438eb8f239d778312a8a4edf249767c1f78`
 - 工作分支 `library-sync-entry`
-- 状态 显式入口验收通过，2026-11-24
+- 状态 显式及自动入口验收通过，2026-11-24
 
 ## 已确认的问题
 
@@ -42,3 +42,20 @@ REcode 的 CLI `--entry` 与 HTTP `entry_symbols` 已传入分析请求，也已
 HPR-048 在选中入口后仍导出零个语义共享对象，覆盖为 `partial`。实际执行路径新增了未解析内存引用、成员表达式、循环和原子表达式的诊断。此轮验收到入口选择和第一组静态导出，第三组候选与后续修复阶段未重新运行。
 
 本地证据位于 `D:/AgentProject/scratch/recode-library-sync-entry-validation/`，包括 `baseline-suite.log`、`updated-suite.log`、`cli-entry-summary.json` 和 `hpr048-entry-summary.json`。第三组自动提交目前只传仓库、SHA 和构建配置，联调时可直接通过 REcode CLI 或现有 HTTP `entry_symbols` 验证显式入口。
+
+## 无 `main` 时的自动入口
+
+现有第三组请求提供仓库、提交和构建配置。REcode 在没有 `main` 且请求未提供 `entry_symbols` 时，从已编译的 C 定义里选取入口候选。选择依据是 Clang 可见性和编译命令中的默认可见性。显式可见的符号优先，默认可见的外部 C 函数随后。静态函数、内联定义、显式隐藏符号和重名定义会排除。只有源码范围的可见性属性可按同一源码文件的明确拼写核对。
+
+默认最多启动 64 个入口，并受现有步数预算约束。产物记录候选数、已启动入口、各入口的选取依据及截断原因。没有合适入口时，继续报告入口缺口。调用者、可重入性和不同入口间的执行顺序保持未知，覆盖仍为 `partial`。有 `main` 或显式请求入口时走对应的既有选择规则。
+
+### 自动入口验收结果
+
+| 验证 | 实际结果 |
+| --- | --- |
+| 小型 C 库，真实 CLI，缺省请求 | 无需 `--entry`，自动从 `library_tick` 开始，输出 `counter` 的访问事实。显式入口对照仍通过。 |
+| HPR-048，固定 head，缺省请求 | 70 个编译单元全部取得 AST。候选入口 317 个，受入口上限和共享步数预算限制，实际启动 4 个，其中包括 `uv_async_send`。`unique_main_entry_unavailable` 消失。同步覆盖仍为 `partial`，导出零共享对象。 |
+| 定向回归 | 同步与 Memory 路径合计 35 项通过，覆盖入口优先级、可见性、入口上限、无候选时的诊断和旧 AST 可见性表示。 |
+| Clang 全量对照 | 自动入口分支 151 项，148 通过、2 跳过、1 失败。显式入口基线复跑 147 项，144 通过、2 跳过、1 失败。失败均为既有 `report_ready` 断言。基线首跑还出现一次告警迁移断言失败，复跑通过。 |
+
+本轮证据位于 `D:/AgentProject/scratch/recode-library-auto-entry-validation/`，包括 `hpr048-automatic-summary.json`、`cli-entry-summary.json` 和两轮回归日志。验收限于第一组的静态取证，第三组继续使用现有请求字段。
