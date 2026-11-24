@@ -15,6 +15,7 @@ from typing import Any
 
 from .clang_ast import read_json, run_clang_ast, stable_digest, unwrap_expr
 from .sync_field_bindings import collect_field_bindings
+from .sync_queue_provenance import collect_queue_provenance
 from .sync_source_observations import collect_source_observations
 
 
@@ -745,11 +746,13 @@ class SemanticSyncAnalyzer:
                    "locks": list(self.locks.values()), "lock_order_edges": [], "confidence": 1.0,
                    "callbacks_and_async_boundaries": list(self.thread_events.values()),
                    "evidence_ids": sorted(self.evidence)}
+        field_bindings = collect_field_bindings(asts, self)
+        field_bindings["queue_provenance"] = collect_queue_provenance(asts, self, field_bindings)
         result = {"schema_version": "bounded-ast-sync/1", "analysis_basis": "clang-json-ast-paths",
                 "scope": "Closed C executable, main and directly created threads, global scalar objects and default POSIX locks",
                 "findings": [finding], "evidence": list(self.evidence.values()),
                 "source_observations": collect_source_observations(asts, self.location, self.sources),
-                "field_bindings": collect_field_bindings(asts, self),
+                "field_bindings": field_bindings,
                 "call_graph": {"nodes": list(self.call_nodes.values()), "edges": list(self.call_edges.values())},
                 "coverage": {"complete": complete, "gaps": sorted(self.gaps)},
                 "call_coverage": {"complete": not self.call_gaps, "gaps": sorted(self.call_gaps)},
