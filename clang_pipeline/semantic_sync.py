@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 from .clang_ast import read_json, run_clang_ast, stable_digest, unwrap_expr
+from .sync_source_observations import collect_source_observations
 
 
 CREATE_APIS = {"pthread_create": 2, "thrd_create": 1}
@@ -742,6 +743,7 @@ class SemanticSyncAnalyzer:
         result = {"schema_version": "bounded-ast-sync/1", "analysis_basis": "clang-json-ast-paths",
                 "scope": "Closed C executable, main and directly created threads, global scalar objects and default POSIX locks",
                 "findings": [finding], "evidence": list(self.evidence.values()),
+                "source_observations": collect_source_observations(asts, self.location, self.sources),
                 "call_graph": {"nodes": list(self.call_nodes.values()), "edges": list(self.call_edges.values())},
                 "coverage": {"complete": complete, "gaps": sorted(self.gaps)},
                 "call_coverage": {"complete": not self.call_gaps, "gaps": sorted(self.call_gaps)},
