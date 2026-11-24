@@ -72,6 +72,7 @@ class QueueFunction:
     def __init__(self, shapes, node, parameters, access_sites, add_registration, add_recovery, limits):
         self.shapes, self.function = shapes, node
         self.locals = {param["id"]: param for param in parameters}
+        self.parameter_indices = {param["id"]: index for index, param in enumerate(parameters)}
         self.access_sites = access_sites
         self.add_registration, self.add_recovery = add_registration, add_recovery
         self.limits = limits
@@ -164,11 +165,17 @@ class QueueFunction:
         embedded_location = self.shapes.location(addressed)
         if not root or not embedded_location:
             return
-        _, receiver_kind, declaration, name = root
+        receiver_identity, receiver_kind, declaration, name = root
+        receiver = {"kind": receiver_kind, "name": name, "declaration": declaration}
+        if receiver_kind == "parameter_member":
+            receiver["parameter_index"] = self.parameter_indices[base]
+        if receiver_kind == "global_storage":
+            receiver["object_id"] = receiver_identity[1]
         item = {"function": self.function["name"], "call": location, "definition": operation.definition,
+                "function_definition": self.shapes.location(self.function),
                 "queue": slot.site, "queue_storage": slot.kind, "embedded_address": embedded_location,
                 "embedded_member": member.name, "member_declaration": member.declaration,
-                "receiver": {"kind": receiver_kind, "name": name, "declaration": declaration}}
+                "receiver": receiver}
         key = slot.key, operation.link, member.owner, member.name
         if slot.kind == "automatic_storage":
             registrations = scope.registrations.get(key, {})
@@ -367,7 +374,8 @@ def collect_queue_provenance(asts, analyzer, field_bindings):
             if len(results) >= MAX_RESULTS or counts[access["id"]] >= MAX_PER_ACCESS:
                 limits.add("binding_count")
                 continue
-            sites = [("registration_" + kind, source[kind]) for kind in ("call", "definition", "queue", "embedded_address", "member_declaration")]
+            sites = [("registration_" + kind, source[kind]) for kind in
+                     ("call", "definition", "function_definition", "queue", "embedded_address", "member_declaration")]
             sites.append(("registered_receiver", source["receiver"]["declaration"]))
             for transfer in read.transfers:
                 sites.extend(("transfer_" + role, location) for role, location in transfer.items())

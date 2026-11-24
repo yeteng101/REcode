@@ -5,7 +5,7 @@ import re
 from collections import Counter
 
 from .clang_ast import iter_nodes, stable_digest
-from .sync_field_calls import DirectFieldCalls, field_object_id
+from .sync_field_calls import field_object_id
 from .sync_source_observations import atomic_opcode, expression_access
 
 
@@ -266,12 +266,11 @@ class FunctionBindings:
             self.direct_calls.seeds.append((access_id, self.identity, origin))
 
 
-def collect_field_bindings(asts, analyzer):
+def collect_field_bindings(asts, analyzer, direct_calls):
     records, evidence = {}, {}
     counts = Counter()
     skipped = set()
     truncated = False
-    direct_calls = DirectFieldCalls()
 
     def add(item):
         nonlocal truncated
@@ -311,15 +310,16 @@ def collect_field_bindings(asts, analyzer):
             elif node.get("kind") == "FunctionDecl":
                 body = next((child for child in node.get("inner", []) if child.get("kind") == "CompoundStmt"), None)
                 identity = analyzer.function_references[tu, node["id"]]
-                available = body is not None and analyzer.location(node, tu) is not None
+                location = analyzer.location(node, tu) if body is not None else None
                 attrs = {child.get("kind") for child in node.get("inner", [])}
-                direct_calls.declare(unit, identity, node.get("name"), available, attrs)
-                if available:
+                direct_calls.declare(unit, identity, node.get("name"), _site(location) if location else None, attrs)
+                if location:
                     functions.append((node, body))
         for function, body in functions:
             if not FunctionBindings(analyzer, tu, unit, function, fields, add, direct_calls).collect(body):
                 location = analyzer.location(function, tu)
                 skipped.add((location["file"], location["line"], function["name"]))
+    direct_calls.build()
     call_facts = direct_calls.collect(records, evidence)
     return {"schema_version": "sync-field-bindings/1", "analysis_basis": "intraprocedural-clang-json",
             "accesses": list(records.values()), "evidence": list(evidence.values()),
