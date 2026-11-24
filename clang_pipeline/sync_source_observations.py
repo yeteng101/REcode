@@ -19,7 +19,7 @@ ATOMIC_OPERATIONS = {
 }
 
 
-def _member_access(node, parents):
+def expression_access(node, parents):
     while parents:
         parent, parents = parents
         kind, opcode = parent.get("kind"), parent.get("opcode")
@@ -57,7 +57,7 @@ def _order_value(node, enum_values):
     return None
 
 
-def _atomic_operation(node, enum_values, location, sources):
+def atomic_opcode(node, location, sources):
     operator = node.get("name")
     if not operator:
         # Older JSON dumps omit the opcode. Use a directly written compiler
@@ -74,7 +74,11 @@ def _atomic_operation(node, enum_values, location, sources):
         if operator and operator.startswith(prefix):
             operation = ATOMIC_OPERATIONS.get(operator[len(prefix):])
             break
+    return operator, operation
 
+
+def _atomic_operation(node, enum_values, location, sources):
+    operator, operation = atomic_opcode(node, location, sources)
     children = node.get("inner", [])
     order = MEMORY_ORDERS.get(_order_value(children[1], enum_values)) if operation and len(children) > 1 else None
     observation = {"operator": operator, "operation": operation, "memory_order": order}
@@ -114,7 +118,7 @@ def collect_source_observations(asts, location_for, sources):
                 if not node.get("name"):
                     continue
                 key = "member_accesses"
-                details = {"member": node["name"], "access": _member_access(node, parents)}
+                details = {"member": node["name"], "access": expression_access(node, parents)}
             else:
                 key = "atomic_operations"
                 details = _atomic_operation(node, enum_values, location, sources)

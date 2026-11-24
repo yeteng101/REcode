@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 from .clang_ast import read_json, run_clang_ast, stable_digest, unwrap_expr
+from .sync_field_bindings import collect_field_bindings
 from .sync_source_observations import collect_source_observations
 
 
@@ -61,6 +62,7 @@ class SemanticSyncAnalyzer:
         self.function_visibility = {}
         self.function_references = {}
         self.global_references = {}
+        self.global_binding_exclusions = set()
         self.objects = {}
         self.locks = {}
         self.evidence = {}
@@ -177,6 +179,9 @@ class SemanticSyncAnalyzer:
         elif kind == "VarDecl" and owner is None:
             key = self.canonical(node, tu, "object_ast_")
             self.global_references[(tu, node.get("id"))] = key
+            if any(c.get("kind") in {"AliasAttr", "WeakAttr", "WeakRefAttr", "AsmLabelAttr", "IFuncAttr"}
+                   for c in node.get("inner", [])):
+                self.global_binding_exclusions.add(key)
             if self.location(node, tu):
                 globals_by_key.setdefault(key, []).append((tu, node))
             if self.location(node, tu) and any(c.get("kind") in {"AliasAttr", "WeakAttr"} for c in node.get("inner", [])):
@@ -744,6 +749,7 @@ class SemanticSyncAnalyzer:
                 "scope": "Closed C executable, main and directly created threads, global scalar objects and default POSIX locks",
                 "findings": [finding], "evidence": list(self.evidence.values()),
                 "source_observations": collect_source_observations(asts, self.location, self.sources),
+                "field_bindings": collect_field_bindings(asts, self),
                 "call_graph": {"nodes": list(self.call_nodes.values()), "edges": list(self.call_edges.values())},
                 "coverage": {"complete": complete, "gaps": sorted(self.gaps)},
                 "call_coverage": {"complete": not self.call_gaps, "gaps": sorted(self.call_gaps)},
