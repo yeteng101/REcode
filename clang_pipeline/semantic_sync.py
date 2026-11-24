@@ -31,6 +31,7 @@ class PathState:
     initialized: set = field(default_factory=set)
     active: set = field(default_factory=set)
     instance: str = "main"
+    is_root: bool = True
     phase: tuple = ()
     returned: bool = False
     result: Any = None
@@ -217,7 +218,7 @@ class SemanticSyncAnalyzer:
 
     def context(self, state):
         identity = state.instance
-        if identity == "main":
+        if state.is_root:
             identity += ":" + stable_digest(state.phase)[:12]
         self.contexts.add(identity)
         for active in state.active:
@@ -530,7 +531,7 @@ class SemanticSyncAnalyzer:
         evidence = self.evidence_for("ast_thread_event", location, event_id)
         self.thread_events[event_id] = {"id": event_id, "api": name, "location": location,
                                        "function": self.functions[stack[-1]]["name"], "evidence_ids": evidence}
-        if state.instance != "main":
+        if not state.is_root:
             self.gap("nested_thread_creation_or_join", node, tu)
             return [(state, None)]
         success, failure = state.clone(), state.clone()
@@ -583,7 +584,25 @@ class SemanticSyncAnalyzer:
                         failure.environment[destination[1]] = None
         return [(success, 0), (failure, NONZERO)]
 
-    def analyze(self, asts):
+    def _library_entry_points(self, entry_symbols):
+        entries = []
+        for symbol in sorted(set(entry_symbols)):
+            matches = [key for key, record in self.functions.items() if record["name"] == symbol]
+            if not matches:
+                self.gap("library_entry_not_found:" + symbol)
+                continue
+            if len(matches) > 1 or "ambiguous_function_definition:" + matches[0] in self.call_gaps:
+                self.gap("library_entry_ambiguous:" + symbol)
+                continue
+            key = matches[0]
+            record = self.functions[key]
+            if not record["tu"].endswith(".c") or record["node"].get("kind") != "FunctionDecl":
+                self.gap("library_entry_requires_c_function:" + symbol)
+                continue
+            entries.append({"name": symbol, "node_id": key, "location": record["location"]})
+        return entries
+
+    def analyze(self, asts, *, entry_symbols=()):
         for tu, _ in asts:
             if not tu.endswith(".c"):
                 self.gap("C_plus_plus_implicit_execution_unsupported:" + tu)
@@ -593,16 +612,24 @@ class SemanticSyncAnalyzer:
                 self.gap("C_plus_plus_compilation_unsupported")
         self.index(asts)
         mains = [key for key, value in self.functions.items() if value["name"] == "main"]
-        if len(mains) != 1:
-            self.gap("unique_main_entry_unavailable")
+        entry_points = self._library_entry_points(entry_symbols) if not mains else []
+        if len(mains) == 1:
+            roots = [(mains[0], "main")]
         else:
-            initial = PathState(initialized={key for key, value in self.locks.items() if value["statically_initialized"]})
-            self.invoke(mains[0], initial, [], [])
-            for instance, spawn in list(self.spawns.items()):
-                worker = PathState(instance=instance, initialized=set(spawn["initialized"]))
-                paths = self.invoke(spawn["function"], worker, [spawn["argument"]], [])
-                if any(path.held for path, _ in paths):
-                    self.gap("thread_returns_holding_lock:" + instance)
+            roots = [(item["node_id"], "library-entry:" + item["node_id"]) for item in entry_points]
+        if not roots:
+            self.gap("unique_main_entry_unavailable")
+        if entry_points:
+            self.gap("external_library_callers_unmodeled")
+        initialized = {key for key, value in self.locks.items() if value["statically_initialized"]}
+        for function, instance in roots:
+            initial = PathState(instance=instance, initialized=set(initialized))
+            self.invoke(function, initial, [], [])
+        for instance, spawn in list(self.spawns.items()):
+            worker = PathState(instance=instance, is_root=False, initialized=set(spawn["initialized"]))
+            paths = self.invoke(spawn["function"], worker, [spawn["argument"]], [])
+            if any(path.held for path, _ in paths):
+                self.gap("thread_returns_holding_lock:" + instance)
         complete = not self.gaps
         public_objects = []
         for key, obj in self.objects.items():
@@ -615,8 +642,10 @@ class SemanticSyncAnalyzer:
                 possible = [other for other in self.contexts if other != context_id and tuple(sorted((context_id, other))) in self.overlaps]
                 excluded = [other for other in self.contexts if other != context_id and other not in possible] if complete else []
                 creation = self.spawns.get(context_id)
-                access["execution_context"] = {"context_id": context_id, "reentrant": False,
+                access["execution_context"] = {"context_id": context_id,
                     "may_run_concurrently_with": sorted(possible), "cannot_run_concurrently_with": sorted(excluded)}
+                if not entry_points:
+                    access["execution_context"]["reentrant"] = False
                 if creation:
                     access["execution_context"]["creation_site"] = creation["creation"]
                     access["evidence_ids"] = sorted(set(access["evidence_ids"] + creation["evidence_ids"]))
@@ -632,7 +661,7 @@ class SemanticSyncAnalyzer:
                    "locks": list(self.locks.values()), "lock_order_edges": [], "confidence": 1.0,
                    "callbacks_and_async_boundaries": list(self.thread_events.values()),
                    "evidence_ids": sorted(self.evidence)}
-        return {"schema_version": "bounded-ast-sync/1", "analysis_basis": "clang-json-ast-paths",
+        result = {"schema_version": "bounded-ast-sync/1", "analysis_basis": "clang-json-ast-paths",
                 "scope": "Closed C executable, main and directly created threads, global scalar objects and default POSIX locks",
                 "findings": [finding], "evidence": list(self.evidence.values()),
                 "call_graph": {"nodes": list(self.call_nodes.values()), "edges": list(self.call_edges.values())},
@@ -641,6 +670,10 @@ class SemanticSyncAnalyzer:
                 "translation_units": self.translation_units,
                 "limits": {"max_paths": self.max_paths, "max_call_depth": self.max_call_depth, "max_steps": self.max_steps},
                 "api_model": "POSIX default initialized nonrecursive mutex and bounded rwlock operations; thread API success/failure paths"}
+        if entry_points:
+            result["scope"] = "Explicit C library entries and directly created threads, global scalar objects and default POSIX locks"
+            result["entry_points"] = entry_points
+        return result
 
 
 def load_semantic_asts(workspace: str | Path, source_root: str | Path):
@@ -670,7 +703,7 @@ def load_semantic_asts(workspace: str | Path, source_root: str | Path):
     return units, asts, bindings, errors
 
 
-def analyze_semantic_sync(workspace: str | Path, source_root: str | Path, *, prepared=None) -> dict:
+def analyze_semantic_sync(workspace: str | Path, source_root: str | Path, *, prepared=None, entry_symbols=()) -> dict:
     units, asts, bindings, errors = prepared if prepared is not None else load_semantic_asts(workspace, source_root)
     analyzer = SemanticSyncAnalyzer(Path(source_root), units)
     analyzer.translation_units = bindings
@@ -680,4 +713,4 @@ def analyze_semantic_sync(workspace: str | Path, source_root: str | Path, *, pre
     if not units:
         analyzer.gap("compile_commands_unavailable")
         analyzer.call_gaps.add("compile_commands_unavailable")
-    return analyzer.analyze(asts)
+    return analyzer.analyze(asts, entry_symbols=entry_symbols)

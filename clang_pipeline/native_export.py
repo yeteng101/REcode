@@ -58,7 +58,9 @@ def run_native_export(
     if source_root and compile_commands:
         try:
             prepared = load_semantic_asts(workspace_path, source_root)
-            semantic_sync = analyze_semantic_sync(workspace_path, source_root, prepared=prepared)
+            semantic_sync = analyze_semantic_sync(
+                workspace_path, source_root, prepared=prepared, entry_symbols=request.get("entry_symbols") or (),
+            )
             race_analysis["semantic_sync"] = {key: value for key, value in semantic_sync.items() if key != "evidence"}
             race_analysis["evidence"].extend(semantic_sync["evidence"])
         except (OSError, ValueError, KeyError, TypeError, RecursionError) as exc:

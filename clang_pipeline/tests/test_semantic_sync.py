@@ -35,10 +35,12 @@ int main(int argc, char **argv) {
 }
 """
 
+LIBRARY_SOURCE = SOURCE.replace("int main(int argc, char **argv)", "int library_tick(void)")
+
 
 @unittest.skipUnless(shutil.which("clang"), "real Clang compiler required")
 class SemanticSyncTests(unittest.TestCase):
-    def analyze(self, source=SOURCE, files=None, **limits):
+    def analyze(self, source=SOURCE, files=None, *, entry_symbols=(), **limits):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             sources = {"workers.c": source, **(files or {})}
@@ -53,7 +55,7 @@ class SemanticSyncTests(unittest.TestCase):
                 units.append(unit)
                 asts.append((name, run_clang_ast(unit, root)))
             analyzer = SemanticSyncAnalyzer(root, units, **limits)
-            return analyzer.analyze(asts)
+            return analyzer.analyze(asts, entry_symbols=entry_symbols)
 
     def accesses(self, result, name="counter"):
         return [a for obj in result["findings"][0]["shared_objects"] if obj["name"] == name for a in obj["accesses"]]
@@ -73,6 +75,52 @@ class SemanticSyncTests(unittest.TestCase):
         main_reads = [a for a in self.accesses(result) if a["function"] == "main"]
         self.assertTrue(main_reads)
         self.assertTrue(all(first["context_id"] in a["execution_context"]["cannot_run_concurrently_with"] for a in main_reads))
+
+    def test_library_entry_exposes_existing_thread_facts_with_partial_coverage(self):
+        baseline = self.analyze(LIBRARY_SOURCE)
+        self.assertIn("unique_main_entry_unavailable", baseline["coverage"]["gaps"])
+        self.assertEqual([], self.accesses(baseline))
+
+        result = self.analyze(LIBRARY_SOURCE, entry_symbols=["library_tick", "library_tick"])
+        self.assertFalse(result["coverage"]["complete"])
+        self.assertIn("external_library_callers_unmodeled", result["coverage"]["gaps"])
+        self.assertNotIn("unique_main_entry_unavailable", result["coverage"]["gaps"])
+        self.assertEqual(["library_tick"], [entry["name"] for entry in result["entry_points"]])
+        self.assertEqual("workers.c", result["entry_points"][0]["location"]["file"])
+        first, second = self.worker_accesses(result)
+        self.assertIn(second["execution_context"]["context_id"], first["execution_context"]["may_run_concurrently_with"])
+        for access in self.accesses(result):
+            self.assertEqual([], access["must_lockset"])
+            self.assertEqual([], access["execution_context"]["cannot_run_concurrently_with"])
+            self.assertNotIn("reentrant", access["execution_context"])
+
+    def test_unresolved_library_entries_cannot_start_analysis(self):
+        source = "int counter; void tick(void) { counter++; }\n"
+        result = self.analyze(source, entry_symbols=["missing"])
+        self.assertIn("library_entry_not_found:missing", result["coverage"]["gaps"])
+        self.assertIn("unique_main_entry_unavailable", result["coverage"]["gaps"])
+        self.assertEqual([], self.accesses(result))
+
+        peer = "extern int counter; void tick(void) { counter++; }\n"
+        for linkage in ("", "static "):
+            with self.subTest(linkage=linkage):
+                result = self.analyze(source.replace("void tick", linkage + "void tick"),
+                                      {"other.c": peer.replace("void tick", linkage + "void tick")},
+                                      entry_symbols=["tick"])
+                self.assertIn("library_entry_ambiguous:tick", result["coverage"]["gaps"])
+                self.assertIn("unique_main_entry_unavailable", result["coverage"]["gaps"])
+                self.assertEqual([], self.accesses(result))
+
+    def test_explicit_entries_have_distinct_contexts_and_preserve_main_precedence(self):
+        source = "int counter; void tick(void) { counter++; } void other(void) { counter++; }\n"
+        result = self.analyze(source, entry_symbols=["tick", "other"])
+        accesses = self.accesses(result)
+        self.assertEqual({"tick", "other"}, {access["function"] for access in accesses})
+        self.assertEqual(2, len({access["execution_context"]["context_id"] for access in accesses}))
+
+        result = self.analyze(source + "int main(void) { tick(); return 0; }\n", entry_symbols=["other"])
+        self.assertTrue(result["coverage"]["complete"])
+        self.assertEqual({"tick"}, {access["function"] for access in self.accesses(result)})
 
     def test_distinct_locks_remain_distinct(self):
         before, worker = SOURCE.split("void *writer_b", 1)
