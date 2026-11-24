@@ -35,16 +35,19 @@ class DirectFieldCalls:
             self.names[key] = name
             self.sites[name, stable_digest(location)].append(key)
 
+    def resolve(self, caller, target):
+        if target in self.excluded:
+            return None
+        definitions = self.definitions.get(target, [])
+        local = [definition for definition in definitions if definition[0] == caller[0]]
+        choices = local or definitions
+        return choices[0] if len(choices) == 1 else None
+
     def build(self):
         for caller, target, location, arguments in self.calls:
-            if target in self.excluded:
+            callee = self.resolve(caller, target)
+            if callee is None:
                 continue
-            definitions = self.definitions.get(target, [])
-            local = [definition for definition in definitions if definition[0] == caller[0]]
-            choices = local or definitions
-            if len(choices) != 1:
-                continue
-            callee = choices[0]
             for index, argument_location, origin in arguments:
                 self.incoming[callee, index].append((caller, location, argument_location, origin))
 
