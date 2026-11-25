@@ -160,7 +160,7 @@ struct allocator {
     void *(*allocate)(size_t);
     void (*release)(void *);
 };
-static const struct allocator table = {malloc, free};
+const struct allocator table = {malloc, free};
 int entry(int fail) {
     void *p = table.allocate(8);
     if (!p) return -1;
@@ -200,17 +200,81 @@ int entry(int code) {
 """
 
 
+POINTER_WRITE_SOURCE = """#include <stddef.h>
+#include <stdlib.h>
+struct allocator {
+    void *(*allocate)(size_t);
+    void (*release)(void *);
+};
+static struct allocator table = {malloc, free};
+void install(void *(*fn)(size_t)) {
+    void *(**slot)(size_t) = &table.allocate;
+    *slot = fn;
+}
+int entry(void) {
+    void *p = table.allocate(8);
+    if (!p) return -1;
+    table.release(p);
+    return 0;
+}
+"""
+
+
+TABLE_DEFINITION_UNIT = """#include <stddef.h>
+#include <stdlib.h>
+struct allocator {
+    void *(*allocate)(size_t);
+    void (*release)(void *);
+};
+struct allocator table = {malloc, free};
+"""
+
+
+TABLE_WRITER_UNIT = """#include <stddef.h>
+struct allocator {
+    void *(*allocate)(size_t);
+    void (*release)(void *);
+};
+extern struct allocator table;
+void install(void *(*fn)(size_t)) {
+    table.allocate = fn;
+}
+"""
+
+
+TABLE_READER_UNIT = """#include <stddef.h>
+struct allocator {
+    void *(*allocate)(size_t);
+    void (*release)(void *);
+};
+extern struct allocator table;
+int entry(void) {
+    void *p = table.allocate(8);
+    if (!p) return -1;
+    table.release(p);
+    return 0;
+}
+"""
+
+
 @unittest.skipUnless(shutil.which("clang"), "real Clang compiler required")
 class MemoryPathTests(unittest.TestCase):
     def analyze(self, source, entry="entry"):
+        return self.analyze_files({"case.c": source}, entry)
+
+    def analyze_files(self, sources, entry="entry"):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            file = root / "case.c"
-            file.write_text(source, encoding="utf-8")
-            unit = {"file": str(file), "directory": str(root),
-                    "arguments": ["clang", "-std=c11", "-c", str(file)]}
-            ast = run_clang_ast(unit, root)
-            return analyze_memory_paths(root, ([unit], [(file.name, ast)], [], []), {}, [entry])
+            units, asts = [], []
+            for name, text in sources.items():
+                file = root / name
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.write_text(text, encoding="utf-8")
+                unit = {"file": str(file), "directory": str(root),
+                        "arguments": ["clang", "-std=c11", "-c", str(file)]}
+                units.append(unit)
+                asts.append((name, run_clang_ast(unit, root)))
+            return analyze_memory_paths(root, (units, asts, [], []), {}, [entry])
 
     def test_cancel_retains_owned_pointer_and_callback_releases_same_instance(self):
         result, evidence = self.analyze(SOURCE)
@@ -425,12 +489,32 @@ cleanup:
     def test_mutable_table_entry_is_not_resolved_to_the_default(self):
         result, _ = self.analyze(MUTABLE_TABLE_SOURCE)
         self.assertEqual([], result["traces"])
-        gap = next(item for item in result["gaps"] if "mutable_table_target" in item)
-        self.assertIn("table.allocate", gap)
+        gap = next(item for item in result["gaps"] if "table_stability_unverified:table.allocate" in item)
         write_line = MUTABLE_TABLE_SOURCE.splitlines().index("    table.allocate = fn;") + 1
         self.assertIn(f"written_at:case.c:{write_line}", gap)
-        self.assertTrue(any(item.startswith("mutable_table_reachable:table.allocate")
-                            for item in result["gaps"]))
+        self.assertFalse(any(event.get("target") == "malloc"
+                             for trace in result["traces"] for event in trace["events"]))
+
+    def test_pointer_write_to_table_entry_keeps_the_target_unverified(self):
+        result, _ = self.analyze(POINTER_WRITE_SOURCE)
+        self.assertEqual([], result["traces"])
+        gap = next(item for item in result["gaps"]
+                   if "table_stability_unverified:table.allocate" in item)
+        escape_line = POINTER_WRITE_SOURCE.splitlines().index(
+            "    void *(**slot)(size_t) = &table.allocate;") + 1
+        self.assertIn(f"address_taken:case.c:{escape_line}", gap)
+        self.assertFalse(any(event.get("target") == "malloc"
+                             for trace in result["traces"] for event in trace["events"]))
+
+    def test_extern_write_in_another_unit_keeps_the_target_unverified(self):
+        result, _ = self.analyze_files({"table.c": TABLE_DEFINITION_UNIT,
+                                        "install.c": TABLE_WRITER_UNIT,
+                                        "use.c": TABLE_READER_UNIT})
+        self.assertEqual([], result["traces"])
+        gap = next(item for item in result["gaps"]
+                   if "table_stability_unverified:table.allocate" in item)
+        write_line = TABLE_WRITER_UNIT.splitlines().index("    table.allocate = fn;") + 1
+        self.assertIn(f"install.c:{write_line}", gap)
         self.assertFalse(any(event.get("target") == "malloc"
                              for trace in result["traces"] for event in trace["events"]))
 

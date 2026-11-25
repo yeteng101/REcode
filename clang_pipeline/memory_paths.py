@@ -240,41 +240,97 @@ class MemoryPaths(SemanticSyncAnalyzer):
         suffix = (":" + location["file"] + ":" + str(location["line"])) if location else ""
         self.function_gaps.setdefault(owner, set()).add(reason + suffix)
 
-    def _table_reference(self, node, tu, member=True):
+    def _table_target(self, node, tu):
+        """Resolve a table access to ``(record id, field or None)``."""
         node = unwrap_expr(node)
         if node is None:
             return None
-        if node.get("kind") == "MemberExpr" and member:
+        if node.get("kind") == "MemberExpr":
             base = node.get("inner", [])
-            return self._table_reference(base[0], tu, member=False) if len(base) == 1 else None
+            if len(base) != 1:
+                return None
+            owner = self._table_target(base[0], tu)
+            return (owner[0], str(node.get("name"))) if owner and owner[1] is None else None
         if node.get("kind") == "DeclRefExpr":
             declaration = node.get("referencedDecl") or {}
             if declaration.get("kind") == "VarDecl":
-                return self.global_records.get((tu, declaration.get("id")))
+                record = self.global_records.get((tu, declaration.get("id")))
+                if record:
+                    return (record, None)
         return None
 
     def _scan_table_writes(self, node, tu):
         kind, children = node.get("kind"), node.get("inner", [])
+        written = escaped = None
         if kind == "BinaryOperator" and node.get("opcode") == "=" and children:
-            record = self._table_reference(children[0], tu)
+            written = self._table_target(children[0], tu)
         elif kind == "UnaryOperator" and node.get("opcode") == "&" and children:
-            record = self._table_reference(children[0], tu, member=False)
-        elif kind == "CallExpr":
-            record = next((found for found in
-                           (self._table_reference(argument, tu, member=False) for argument in children[1:])
-                           if found), None)
-        else:
-            record = None
-        if record:
-            self.mutated_records.setdefault(record, self.location(node, tu))
+            # Taking the address of the table or one of its fields lets any
+            # callee rebind the entry through the pointer.
+            escaped = self._table_target(children[0], tu)
+        location = self.location(node, tu)
+        if written:
+            self._mark_table(self.mutated_fields, self.mutated_tables, written, location)
+        if escaped:
+            self._mark_table(self.escaped_fields, self.escaped_tables, escaped, location)
         for child in children:
             self._scan_table_writes(child, tu)
 
+    @staticmethod
+    def _mark_table(fields, tables, target, location):
+        record, field = target
+        if field is None:
+            tables.setdefault(record, location)
+        else:
+            fields.setdefault((record, field), location)
+
+    def _link_extern_tables(self):
+        """Bind ``extern`` declarations to the table defined in another unit."""
+        for symbol, identity in self.table_symbols.items():
+            table = self.records[identity]
+            for tu, declaration_id, qualified in self.extern_decls.get(symbol, []):
+                if self._record_of_type(tu, qualified) == table["record"]:
+                    self.global_records[(tu, declaration_id)] = identity
+                    self.external_globals.pop((tu, declaration_id), None)
+
     def _seal_tables(self):
         for identity, record in self.records.items():
-            site = self.mutated_records.get(identity)
-            record["mutable"] = bool(site) and not record["const"]
-            record["write_site"] = site
+            writes = {field: site for (record_id, field), site in self.mutated_fields.items()
+                      if record_id == identity}
+            escapes = {field: site for (record_id, field), site in self.escaped_fields.items()
+                       if record_id == identity}
+            # A table configured at runtime is not read-only as a whole, even
+            # when only one field was observed.
+            table_write = self.mutated_tables.get(identity) or self._first_site(writes.values())
+            table_escape = self.escaped_tables.get(identity) or self._first_site(escapes.values())
+            reasons = {}
+            for field in record["fields"]:
+                written = writes.get(field, table_write)
+                escaped = escapes.get(field, table_escape)
+                if written:
+                    reasons[field] = "written_at:" + self._site_suffix(written)
+                elif escaped:
+                    reasons[field] = "address_taken:" + self._site_suffix(escaped)
+                elif not record["const"] and not record["static"]:
+                    reasons[field] = "external_linkage"
+                else:
+                    reasons[field] = None
+            record["reasons"] = reasons
+
+    @staticmethod
+    def _first_site(sites):
+        present = [site for site in sites if site]
+        return min(present, key=lambda site: (str(site.get("file")), site.get("line") or 0)) if present else None
+
+    @staticmethod
+    def _site_suffix(location):
+        if not location:
+            return "unknown"
+        return str(location.get("file")) + ":" + str(location.get("line"))
+
+    @staticmethod
+    def _instability(table, field, reason):
+        return "table_stability_unverified:" + table["name"] + "." + field + ":" + reason
 
     def _record_of_type(self, tu, type_name):
         value = type_name.replace("const ", "").strip()
@@ -295,10 +351,12 @@ class MemoryPaths(SemanticSyncAnalyzer):
         key = (tu, node.get("id"))
         declaration = node.get("type", {})
         qualified = declaration.get("desugaredQualType", declaration.get("qualType", ""))
+        symbol = self.canonical(node, tu, "object_ast_")
         initializer = next((child for child in node.get("inner", []) if child.get("kind") == "InitListExpr"), None)
         if initializer is None:
             if node.get("storageClass") != "extern":
                 return
+            self.extern_decls.setdefault(symbol, []).append((tu, node.get("id"), qualified))
             # A declaration without a definition keeps caller-provided
             # contents. It stays a named opaque pointer instead of aborting
             # the whole entry point.
@@ -323,9 +381,11 @@ class MemoryPaths(SemanticSyncAnalyzer):
         identity = "ast_record_" + stable_digest([tu, node.get("name")])[:20]
         self.records[identity] = {"id": identity, "name": node.get("name", ""), "record": record,
                                   "fields": values, "location": self.location(node, tu),
-                                  "const": qualified.startswith("const "), "mutable": False,
-                                  "write_site": None}
+                                  "const": qualified.startswith("const "),
+                                  "static": node.get("storageClass") == "static",
+                                  "reasons": {}}
         self.global_records[key] = identity
+        self.table_symbols[symbol] = identity
 
     def _table_values(self, initializer, tu, fields):
         entries = initializer.get("inner", [])
@@ -461,13 +521,11 @@ class MemoryPaths(SemanticSyncAnalyzer):
                     field = node["name"]
                     if table is None or field not in table["fields"]:
                         raise UnsupportedPath("unmodeled_record_field:" + str(field))
-                    if table["mutable"]:
-                        # Another function can rebind the entry, so the
-                        # initializer is a candidate rather than the target.
-                        site = table["write_site"] or {}
-                        raise UnsupportedPath("mutable_table_target:" + table["name"] + "." + field
-                                              + ":written_at:" + str(site.get("file"))
-                                              + ":" + str(site.get("line")))
+                    reason = table["reasons"].get(field)
+                    if reason:
+                        # The binding is not verifiably read-only, so the
+                        # initializer stays a candidate, not the target.
+                        raise UnsupportedPath(self._instability(table, field, reason))
                     result.append((path, table["fields"][field]))
                     continue
                 key = (index, node["name"])
@@ -880,16 +938,19 @@ class MemoryPaths(SemanticSyncAnalyzer):
                                    "evidence_ids": self.evidence_for("ast_memory_caller_input", location, stable_digest(data))})
 
     def _table_uses(self):
-        """Mutable table fields each indexed function reads from its own body."""
+        """Fields of unstable tables that each indexed function reads."""
         uses = {}
         for key, record in self.functions.items():
             found, stack = set(), [record["body"]]
             while stack:
                 node = stack.pop()
                 if node.get("kind") == "MemberExpr" and len(node.get("inner", [])) == 1:
-                    target = self._table_reference(node["inner"][0], record["tu"], member=False)
-                    if target and self.records[target]["mutable"]:
-                        found.add(self.records[target]["name"] + "." + str(node.get("name")))
+                    target = self._table_target(node["inner"][0], record["tu"])
+                    if target and target[1] is None:
+                        table = self.records[target[0]]
+                        reason = table["reasons"].get(str(node.get("name")))
+                        if reason:
+                            found.add(self._instability(table, str(node.get("name")), reason))
                 stack.extend(node.get("inner", []))
             if found:
                 uses[key] = sorted(found)
@@ -911,13 +972,16 @@ class MemoryPaths(SemanticSyncAnalyzer):
         self.typedef_sites, self.anonymous_sites = {}, {}
         self.anonymous_ranges = {}
         self.external_names = {}
-        self.mutated_records = {}
+        self.mutated_fields, self.mutated_tables = {}, {}
+        self.escaped_fields, self.escaped_tables = {}, {}
+        self.table_symbols, self.extern_decls = {}, {}
         self.function_gaps = {}
         self.index(asts)
         for tu, ast_data in asts:
             self._index_fields(ast_data, tu)
             self._link_typedefs(tu)
             self._index_globals(ast_data, tu)
+        self._link_extern_tables()
         for tu, ast_data in asts:
             self._scan_table_writes(ast_data, tu)
         self._seal_tables()
@@ -942,8 +1006,8 @@ class MemoryPaths(SemanticSyncAnalyzer):
                         "input_record": (CALLER_INPUT,), "external": (CALLER_POINTER,)}[kind]
                        for kind in kinds]
             reachable = self._reachable(key, adjacency)
-            for field in sorted({name for callee in reachable for name in uses.get(callee, [])}):
-                gaps.append("mutable_table_reachable:" + field)
+            for found in sorted({gap for callee in reachable for gap in uses.get(callee, [])}):
+                gaps.append(found)
             for args in product(*domains):
                 slots = {str(i): OutputSlot(param_types[i][:-1].rstrip()) for i, kind in enumerate(kinds)
                          if kind == "output"}

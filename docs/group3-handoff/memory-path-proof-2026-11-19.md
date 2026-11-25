@@ -33,7 +33,7 @@ libuv `2480b615` 的 Memory 全流程产物出现了 13 个审查候选，但 `m
 
 ### 取证边界（补修）
 
-- 表项稳定性：只有在记录整体 `const` 限定，或索引到的全部函数都没有写入该表（赋值、取地址、按引用传参都算写入）时，字段才算稳定。否则字段读取报 `mutable_table_target:<表>.<字段>:written_at:<文件>:<行>`，入口另外报 `mutable_table_reachable:<表>.<字段>`。初始化列表只作为候选绑定，不再被当作唯一调用目标。
+- 表项稳定性：只有具备可核验只读依据的表才解析表项，即记录整体 `const` 限定，或记录为 `static`（内部链接）且索引到的全部编译单元既没有写入、也没有取过表或字段的地址。`extern` 声明按符号绑定到定义表，跨编译单元的写入同样会让表失效。失效时字段读取报 `table_stability_unverified:<表>.<字段>:<依据>`，依据取 `written_at:文件:行`、`address_taken:文件:行` 或 `external_linkage`；入口按可达函数补同一条缺口。初始化列表只作为候选绑定，不再被当作唯一调用目标。
 - 退出归属：只有仍未释放的调用方区域才把字段中的分配转交调用方。区域已经释放时，子对象不再从调用方可达，按 `live_roots` 记为泄漏；`release_container` 只说明容器释放时成员仍然存活。
 - errno 初始状态：首次读取没有可核验的值，报 `uninitialized_cell_read:errno`，不假设 0；先写入再读取时按写入值分析。
 
@@ -44,9 +44,9 @@ libuv `2480b615` 的 Memory 全流程产物出现了 13 个审查候选，但 `m
 | 入口及参数 | 原生路径结果 |
 | --- | --- |
 | `uv_os_free_environ(caller_input, 0)` | 缺口 `uninitialized_cell_read:errno`；`uv__free` 在 `uv-common.c:87` 首次读取 `errno`，补修后不导出路径。 |
-| `uv_os_free_environ(caller_input, 1)` | 同上；另外入口带 `mutable_table_reachable:uv__allocator.local_free`，`uv_replace_allocator` 在 `uv-common.c:112`-`115` 可改写该表。 |
+| `uv_os_free_environ(caller_input, 1)` | 同上；另外入口带 `table_stability_unverified:uv__allocator.local_free:written_at:src/uv-common.c:115`，`uv_replace_allocator` 在 `uv-common.c:112`-`115` 分别改写四个字段。 |
 | `uv_os_environ(output_slot, output_slot)` | 缺口 `external_value_extent_unmodeled:environ`；`environ[i]` 的长度无法从源码确定，不导出路径。 |
 
-真实案例因此回到 0 条路径：上一轮的两条清理路径依赖“分配器表保持初始绑定”和“`errno` 可当作已知值”，两点都不成立。受控夹具（`static const` 分配器表）导出 10 条路径，覆盖正常清理、容器释放后子对象仍存活、错误返回时的泄漏，以及调用方区域存活/已释放两种归属。
+真实案例因此回到 0 条路径：上一轮的两条清理路径依赖“分配器表保持初始绑定”和“`errno` 可当作已知值”，两点都不成立。受控夹具导出 10 条路径：`static const` 表上的调用仍解析为 `malloc`/`free`，覆盖正常清理、容器释放后子对象仍存活、错误返回时的泄漏，以及调用方区域存活/已释放两种归属；同一夹具里被取址的 `pluggable` 表按 `address_taken:src/case.c:15` 拒绝解析。
 
-定向回归覆盖表项被另一函数改写时不解析默认目标、`const` 表仍解析、区域存活与释放两种子对象归属、`errno` 首次读取与写入后读取，以及未知分配器仍报 `unmodeled_call`。剩余缺口：外部全局数组的规模需要入口级假设契约；`strchr`、`realloc` 等 libc 调用未建模；`uv_os_environ` 的错误路径需要先确定 `environ` 长度，`uv__free` 路径需要可核验的 `errno` 初值或分配器表配置。
+定向回归覆盖：同一编译单元取表项地址后经指针改写、另一编译单元用 `extern` 声明改写（缺口定位到 `install.c` 的写入行）、同单元直接改写、`const` 表仍解析、区域存活与释放两种子对象归属、`errno` 首次读取与写入后读取，以及未知分配器仍报 `unmodeled_call`。剩余缺口：外部全局数组的规模需要入口级假设契约；`strchr`、`realloc` 等 libc 调用未建模；`uv_os_environ` 的错误路径需要先确定 `environ` 长度，`uv__free` 路径需要可核验的 `errno` 初值或分配器表配置。
