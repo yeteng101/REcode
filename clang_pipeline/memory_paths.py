@@ -1039,8 +1039,10 @@ class MemoryPaths(SemanticSyncAnalyzer):
 
     def _table_export(self, proofs):
         """Publish read-only table bindings referenced by an exported call."""
+        # A direct call carries ``callback: null``; only table routes declare
+        # a record receiver.
         used = {event["callback"]["container"] for proof in proofs for event in proof["events"]
-                if event["kind"] == "call" and event.get("callback", {}).get("kind") == "record"}
+                if event["kind"] == "call" and (event.get("callback") or {}).get("kind") == "record"}
         tables = []
         for identity in sorted(used):
             record = self.records.get(identity)
@@ -1048,9 +1050,13 @@ class MemoryPaths(SemanticSyncAnalyzer):
                 continue
             fields = {field: value.key for field, value in record["fields"].items()
                       if isinstance(value, Reference)}
-            tables.append({"table_id": identity, "name": record["name"],
-                           "stability": "const" if record["const"] else "read_only",
-                           "location": record["location"], "fields": fields})
+            stability = "const" if record["const"] else "read_only"
+            basis = "const_qualifier" if record["const"] else "static_without_write_or_address_escape"
+            binding = {"table_id": identity, "name": record["name"],
+                       "stability": stability, "basis": basis, "fields": fields}
+            evidence = self.evidence_for("ast_memory_table_declaration", record["location"],
+                                         stable_digest(binding))
+            tables.append({**binding, "location": record["location"], "evidence_ids": evidence})
         return tables
 
     def _record_exit(self, path, frame):
@@ -1102,4 +1108,5 @@ def analyze_memory_paths(source_root, prepared, binding, entries):
         gaps = sorted(set(result["gaps"]) | {f"ast_index_incomplete:{len(index_gaps)}"})
         return {**no_paths, "gaps": gaps}, []
     ids = {identity for trace in result["traces"] for ev in trace["events"] for identity in ev["evidence_ids"]}
+    ids.update(identity for table in result["tables"] for identity in table["evidence_ids"])
     return result, [analyzer.evidence[identity] for identity in sorted(ids)]

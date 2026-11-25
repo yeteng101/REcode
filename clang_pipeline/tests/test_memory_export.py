@@ -17,9 +17,13 @@ struct allocator {
     void (*release)(void *);
 };
 static struct allocator table = {malloc, free};
+static void keep(void *p) {
+    (void)p;
+}
 int entry(int fail) {
     void *p = table.allocate(8);
     if (!p) return -1;
+    keep(p);
     if (fail) return -2;
     table.release(p);
     return 0;
@@ -41,7 +45,8 @@ class MemoryExportTests(unittest.TestCase):
         self.assertLessEqual(len(payload["traces"]), 128)
         self.assertLessEqual(len(payload["tables"]), 32)
         for table in payload["tables"]:
-            self.assertEqual({"table_id", "name", "stability", "location", "fields"}, set(table))
+            self.assertEqual({"table_id", "name", "stability", "basis", "location", "fields",
+                              "evidence_ids"}, set(table))
             self.assertIn(table["stability"], {"const", "read_only"})
             self.assertTrue(table["fields"])
             for target in table["fields"].values():
@@ -88,6 +93,13 @@ class MemoryExportTests(unittest.TestCase):
                               "build_profile": "repository-auto", "run_id": "run_memory_export"},
                              proofs["binding"])
             self.assertEqual([], proofs["gaps"])
+            calls = [event for trace in proofs["traces"] for event in trace["events"]
+                     if event["kind"] == "call"]
+            self.assertTrue(any(event["callback"] is None and event["indirect"] is False for event in calls))
+            self.assertTrue(any((event["callback"] or {}).get("kind") == "record" for event in calls))
+            self.assertEqual(1, len(proofs["tables"]))
+            self.assertEqual({"allocate": "malloc", "release": "free"}, proofs["tables"][0]["fields"])
+            self.assertEqual("static_without_write_or_address_escape", proofs["tables"][0]["basis"])
             exits = {trace["events"][-1]["location"]["snippet"]: trace["events"][-1]
                      for trace in proofs["traces"]}
             self.assertEqual([], exits["return 0;"]["live_roots"])
@@ -98,6 +110,9 @@ class MemoryExportTests(unittest.TestCase):
                         for event in trace["events"] if event["kind"] == "release"}
             self.assertEqual(set(leaked[0]["live_roots"]), released)
             evidence = {item["id"]: item for item in payload["evidence"]}
+            self.assertTrue(set(proofs["tables"][0]["evidence_ids"]) <= set(evidence))
+            self.assertEqual("ast_memory_table_declaration",
+                             evidence[proofs["tables"][0]["evidence_ids"][0]]["kind"])
             for trace in proofs["traces"]:
                 self.assertEqual("src/case.c", trace["entry"]["file"])
                 for event in trace["events"]:
