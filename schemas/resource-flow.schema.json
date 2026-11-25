@@ -74,6 +74,22 @@
           },
           "additionalProperties": false
         },
+        "tables": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "required": ["table_id", "name", "stability", "fields"],
+            "additionalProperties": false,
+            "properties": {
+              "table_id": {"type": "string"},
+              "name": {"type": "string"},
+              "stability": {"enum": ["const", "read_only"]},
+              "location": {"$ref": "#/$defs/memoryProofLocation"},
+              "fields": {"type": "object", "additionalProperties": {"type": "string"}}
+            }
+          }
+        },
         "traces": {
           "type": "array",
           "maxItems": 128,

@@ -918,8 +918,10 @@ class MemoryPaths(SemanticSyncAnalyzer):
                 values.append(Reference("heap", identity))
                 regions.append((identity, index))
             elif kind == "external":
-                reference = Reference("external",
-                                      "ast_pointer_" + stable_digest([record["location"], index])[:20])
+                # The argument index stays readable so a consumer can bind an
+                # external release back to the declared slot.
+                reference = Reference("external", "ast_pointer_" + str(index) + "_"
+                                      + stable_digest([record["location"], index])[:16])
                 self.external_names[reference.key] = record["parameters"][index].get("name") or "caller_pointer"
                 values.append(reference)
             else:
@@ -1033,7 +1035,23 @@ class MemoryPaths(SemanticSyncAnalyzer):
                 except (UnsupportedPath, RecursionError) as exc:
                     gaps.append(f"{entry}:{args}:{exc}")
         return {"schema_version": VERSION, "basis": "clang-json-ast-paths", "binding": binding,
-                "traces": proofs, "gaps": sorted(set(gaps))}
+                "traces": proofs, "tables": self._table_export(proofs), "gaps": sorted(set(gaps))}
+
+    def _table_export(self, proofs):
+        """Publish read-only table bindings referenced by an exported call."""
+        used = {event["callback"]["container"] for proof in proofs for event in proof["events"]
+                if event["kind"] == "call" and event.get("callback", {}).get("kind") == "record"}
+        tables = []
+        for identity in sorted(used):
+            record = self.records.get(identity)
+            if record is None or any(reason is not None for reason in record["reasons"].values()):
+                continue
+            fields = {field: value.key for field, value in record["fields"].items()
+                      if isinstance(value, Reference)}
+            tables.append({"table_id": identity, "name": record["name"],
+                           "stability": "const" if record["const"] else "read_only",
+                           "location": record["location"], "fields": fields})
+        return tables
 
     def _record_exit(self, path, frame):
         if len(path.events) >= MAX_TRACE_EVENTS:

@@ -34,11 +34,18 @@ ARGUMENTS = {0, 1, "output_slot", "caller_input", "caller_pointer"}
 @unittest.skipUnless(shutil.which("clang"), "real Clang compiler required")
 class MemoryExportTests(unittest.TestCase):
     def assert_contract(self, payload):
-        self.assertEqual({"schema_version", "basis", "binding", "traces", "gaps"}, set(payload))
+        self.assertEqual({"schema_version", "basis", "binding", "traces", "tables", "gaps"}, set(payload))
         self.assertEqual("recode-memory-path/1", payload["schema_version"])
         self.assertEqual("clang-json-ast-paths", payload["basis"])
         self.assertEqual({"repository", "commit", "build_profile", "run_id"}, set(payload["binding"]))
         self.assertLessEqual(len(payload["traces"]), 128)
+        self.assertLessEqual(len(payload["tables"]), 32)
+        for table in payload["tables"]:
+            self.assertEqual({"table_id", "name", "stability", "location", "fields"}, set(table))
+            self.assertIn(table["stability"], {"const", "read_only"})
+            self.assertTrue(table["fields"])
+            for target in table["fields"].values():
+                self.assertTrue(target == "malloc" or target == "free" or target.startswith("fn_ast_"))
         for trace in payload["traces"]:
             self.assertEqual({"entry", "arguments", "events"}, set(trace))
             self.assertLessEqual(len(trace["arguments"]), 2)
