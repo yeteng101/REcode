@@ -51,9 +51,93 @@ int entry(struct Result **out, int *count) {
 """
 
 
+TABLE_SOURCE = """#include <stddef.h>
+#include <stdlib.h>
+struct allocator {
+    void *(*allocate)(size_t);
+    void (*release)(void *);
+};
+static struct allocator table = {malloc, free};
+int entry(int fail) {
+    void *p = table.allocate(8);
+    if (!p) return -1;
+    if (fail) return -2;
+    table.release(p);
+    return 0;
+}
+"""
+
+
+CLEANUP_SOURCE = """#include <stdlib.h>
+struct item {
+    char *name;
+    char *value;
+};
+void cleanup(struct item *items, int count) {
+    int i;
+    for (i = 0; i < count; i++)
+        free(items[i].name);
+    free(items);
+}
+"""
+
+
+EXTERNAL_SOURCE = """#include <stddef.h>
+extern char **environ;
+int entry(void) {
+    return environ[0] != NULL;
+}
+"""
+
+
+CONTAINER_SOURCE = """#include <stdlib.h>
+struct item {
+    char *name;
+    char *value;
+};
+int entry(void) {
+    struct item *items = calloc(2, sizeof(struct item));
+    if (!items) return -1;
+    char *first = malloc(4);
+    if (!first) {
+        free(items);
+        return -1;
+    }
+    items[0].name = first;
+    char *second = malloc(4);
+    if (!second) {
+        free(items);
+        return -1;
+    }
+    items[1].name = second;
+    free(second);
+    free(first);
+    free(items);
+    return 0;
+}
+"""
+
+
+UNKNOWN_TABLE_SOURCE = """#include <stddef.h>
+#include <stdlib.h>
+struct allocator {
+    void *(*allocate)(size_t);
+    void (*release)(void *);
+};
+extern void *external_alloc(size_t);
+static struct allocator table = {external_alloc, free};
+int entry(int size) {
+    void *p = table.allocate(size);
+    if (!p) return -1;
+    table.release(p);
+    return 0;
+}
+"""
+
+
 @unittest.skipUnless(shutil.which("clang"), "real Clang compiler required")
 class MemoryPathTests(unittest.TestCase):
-    def analyze(self, source):
+    def analyze(self, source, entry="entry"):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             file = root / "case.c"
@@ -61,7 +145,7 @@ class MemoryPathTests(unittest.TestCase):
             unit = {"file": str(file), "directory": str(root),
                     "arguments": ["clang", "-std=c11", "-c", str(file)]}
             ast = run_clang_ast(unit, root)
-            return analyze_memory_paths(root, ([unit], [(file.name, ast)], [], []), {}, ["entry"])
+            return analyze_memory_paths(root, ([unit], [(file.name, ast)], [], []), {}, [entry])
 
     def test_cancel_retains_owned_pointer_and_callback_releases_same_instance(self):
         result, evidence = self.analyze(SOURCE)
@@ -205,3 +289,72 @@ cleanup:
         backward, _ = self.analyze("int entry(void) { again: goto again; return 0; }\n")
         self.assertEqual([], backward["traces"])
         self.assertTrue(any("unresolved_control_transfer" in gap for gap in backward["gaps"]))
+
+    def test_allocator_table_binds_indirect_builtins_and_reports_leaks(self):
+        result, evidence = self.analyze(TABLE_SOURCE)
+        self.assertEqual([], result["gaps"])
+        normal = next(trace for trace in result["traces"]
+                      if trace["events"][-1]["location"]["snippet"] == "return 0;")
+        failure = next(trace for trace in result["traces"]
+                       if "return -2;" in trace["events"][-1]["location"]["snippet"])
+        acquire = next(event for event in normal["events"] if event["kind"] == "acquire")
+        release = next(event for event in normal["events"] if event["kind"] == "release")
+        self.assertEqual(acquire["resource_instance_id"], release["resource_instance_id"])
+        self.assertEqual([], normal["events"][-1]["live_roots"])
+        # The error return keeps the same object live for the caller to see.
+        self.assertEqual([acquire["resource_instance_id"]], failure["events"][-1]["live_roots"])
+        call = next(event for event in normal["events"]
+                    if event["kind"] == "call" and event.get("target") == "malloc")
+        self.assertTrue(call["indirect"])
+        self.assertEqual("allocate", call["callback"]["field"])
+        self.assertEqual("record", call["callback"]["kind"])
+        self.assertEqual(acquire["location"], call["location"])
+        self.assertEqual(1, len(release["evidence_ids"]))
+        ids = {item["id"] for item in evidence}
+        self.assertTrue(all(set(event["evidence_ids"]) <= ids
+                            for trace in result["traces"] for event in trace["events"]))
+
+    def test_cleanup_entry_tracks_caller_region_until_release(self):
+        result, _ = self.analyze(CLEANUP_SOURCE, entry="cleanup")
+        self.assertEqual([], result["gaps"])
+        self.assertEqual(2, len(result["traces"]))
+        empty, one = sorted(result["traces"], key=lambda trace: trace["arguments"][1])
+        self.assertEqual(["caller_input", 0], empty["arguments"])
+        self.assertEqual("caller_input", empty["events"][0]["kind"])
+        self.assertEqual("caller_input", empty["events"][0]["api"])
+        self.assertEqual([], empty["events"][-1]["live_roots"])
+        releases = [event for event in one["events"] if event["kind"] == "release"]
+        self.assertEqual(2, len(releases))
+        self.assertTrue(any(event.get("external") for event in releases))
+        self.assertEqual([], one["events"][-1]["live_roots"])
+
+    def test_external_global_reports_an_extent_gap(self):
+        result, _ = self.analyze(EXTERNAL_SOURCE)
+        self.assertEqual([], result["traces"])
+        self.assertTrue(any("external_value_extent_unmodeled:environ" in gap for gap in result["gaps"]))
+
+    def test_unknown_allocator_entry_keeps_the_call_gap(self):
+        result, _ = self.analyze(UNKNOWN_TABLE_SOURCE)
+        self.assertEqual([], result["traces"])
+        self.assertTrue(any("unmodeled_call:external_alloc" in gap for gap in result["gaps"]))
+
+    def test_container_release_without_child_release_is_a_live_root(self):
+        result, _ = self.analyze(CONTAINER_SOURCE)
+        self.assertEqual([], result["gaps"])
+        normal = next(trace for trace in result["traces"]
+                      if trace["events"][-1]["location"]["snippet"] == "return 0;")
+        self.assertEqual([], normal["events"][-1]["live_roots"])
+        leaked = [trace for trace in result["traces"]
+                  if trace["events"][-1]["live_roots"]]
+        self.assertEqual(1, len(leaked))
+        roots = leaked[0]["events"][-1]["live_roots"]
+        acquire = next(event for event in leaked[0]["events"]
+                       if event["kind"] == "acquire" and event["resource_instance_id"] in roots)
+        self.assertEqual(1, len(roots))
+        self.assertFalse(any(event["kind"] == "release" and event["resource_instance_id"] == roots[0]
+                             for event in leaked[0]["events"]))
+        self.assertTrue(any(event["kind"] == "release_container" and event["resource_instance_id"] == roots[0]
+                            for event in leaked[0]["events"]))
+        self.assertIn("first = malloc", acquire["location"]["snippet"])
+
+

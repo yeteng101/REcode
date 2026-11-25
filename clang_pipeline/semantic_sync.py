@@ -84,6 +84,10 @@ class SemanticSyncAnalyzer:
         suffix = (":" + location["file"] + ":" + str(location["line"])) if location else ""
         self.gaps.add(reason + suffix)
 
+    def scoped_gap(self, reason, node=None, tu=None, owner=None):
+        """Index gap whose effect is confined to one function body."""
+        self.gap(reason, node, tu)
+
     def location(self, node, tu):
         return self.locations.get((tu, id(node)))
 
@@ -189,12 +193,12 @@ class SemanticSyncAnalyzer:
             if self.location(node, tu):
                 globals_by_key.setdefault(key, []).append((tu, node))
             if self.location(node, tu) and any(c.get("kind") in {"AliasAttr", "WeakAttr"} for c in node.get("inner", [])):
-                self.gap("aliased_or_weak_storage_unsupported", node, tu)
+                self.scoped_gap("aliased_or_weak_storage_unsupported", node, tu, owner)
         elif kind == "VarDecl" and node.get("storageClass") == "static" and self.location(node, tu):
-            self.gap("static_local_storage_unsupported", node, tu)
+            self.scoped_gap("static_local_storage_unsupported", node, tu, owner)
         for child in node.get("inner", []):
             if child.get("kind") in {"ConstructorAttr", "DestructorAttr", "AliasAttr", "IFuncAttr"} and self.location(node, tu):
-                self.gap("implicit_entry_or_symbol_alias_unsupported", node, tu)
+                self.scoped_gap("implicit_entry_or_symbol_alias_unsupported", node, tu, owner)
             self.index_declarations(child, tu, globals_by_key, owner)
 
     def source_fragment(self, node, tu):
