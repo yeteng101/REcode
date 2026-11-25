@@ -200,6 +200,80 @@ int entry(int code) {
 """
 
 
+HPR_STYLE_SOURCE = """#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+struct item {
+    char *name;
+    char *value;
+};
+extern char **environ;
+void *uv__calloc(size_t count, size_t size);
+char *uv__strdup(const char *s);
+void uv__free(void *p);
+int entry(struct item **out, int *count) {
+    int i, j, cnt;
+    *out = 0;
+    *count = 0;
+    for (i = 0; environ[i] != 0; i++);
+    *out = uv__calloc(i, sizeof(struct item));
+    if (out == 0) return -1;
+    for (j = 0, cnt = 0; j < i; j++) {
+        char *buf;
+        char *ptr;
+        if (environ[j] == 0) break;
+        buf = uv__strdup(environ[j]);
+        if (buf == 0) goto fail;
+        ptr = strchr(buf, '=');
+        if (ptr == 0) {
+            uv__free(buf);
+            continue;
+        }
+        *ptr = 0;
+        (*out)[cnt].name = buf;
+        (*out)[cnt].value = ptr + 1;
+        cnt++;
+    }
+    *count = cnt;
+    return 0;
+fail:
+    for (i = 0; i < cnt; i++) {
+        struct item *envitem = &(*out)[cnt];
+        uv__free(envitem->name);
+    }
+    uv__free(*out);
+    *out = 0;
+    *count = 0;
+    return -2;
+}
+"""
+
+
+LIBUV_ALLOCATOR_SOURCE = """#include <stdlib.h>
+#include <string.h>
+static struct {
+    void *(*local_malloc)(size_t);
+    void *(*local_calloc)(size_t, size_t);
+    void (*local_free)(void *);
+} uv__allocator = { malloc, calloc, free };
+static void *uv__malloc(size_t size) {
+    return uv__allocator.local_malloc(size);
+}
+void *uv__calloc(size_t count, size_t size) {
+    return uv__allocator.local_calloc(count, size);
+}
+char *uv__strdup(const char *s) {
+    size_t len = strlen(s) + 1;
+    char *m = uv__malloc(len);
+    if (!m) return NULL;
+    return memcpy(m, s, len);
+}
+void uv__free(void *p) {
+    uv__allocator.local_free(p);
+}
+"""
+
+
 POINTER_WRITE_SOURCE = """#include <stddef.h>
 #include <stdlib.h>
 struct allocator {
@@ -522,10 +596,44 @@ cleanup:
         self.assertTrue(any(event.get("external") for event in releases))
         self.assertEqual([], one["events"][-1]["live_roots"])
 
-    def test_external_global_reports_an_extent_gap(self):
+    def test_external_global_uses_a_bounded_extent_assumption(self):
         result, _ = self.analyze(EXTERNAL_SOURCE)
-        self.assertEqual([], result["traces"])
-        self.assertTrue(any("external_value_extent_unmodeled:environ" in gap for gap in result["gaps"]))
+        self.assertEqual(1, len(result["traces"]))
+        self.assertTrue(any("external_value_extent_assumed:environ=2" in gap
+                            for gap in result["gaps"]))
+        self.assertEqual([], result["traces"][0]["events"][-1]["live_roots"])
+
+    def test_wrapped_allocator_and_cleanup_index_expose_the_failure_leak(self):
+        result, _ = self.analyze_files({"case.c": HPR_STYLE_SOURCE,
+                                        "src/uv-common.c": LIBUV_ALLOCATOR_SOURCE})
+        self.assertTrue(any("external_value_extent_assumed:environ=2" in gap
+                            for gap in result["gaps"]))
+        leaks = [trace for trace in result["traces"]
+                 if trace["events"][-1]["live_roots"]]
+        self.assertEqual(1, len(leaks))
+        leak = leaks[0]
+        self.assertTrue(any(event["kind"] == "release_container"
+                            for event in leak["events"]))
+        self.assertEqual(1, len(leak["events"][-1]["live_roots"]))
+
+    def test_named_wrapper_outside_libuv_does_not_create_an_allocation(self):
+        result, _ = self.analyze("""
+int uv__strdup(int s) { return s; }
+int entry(void) { uv__strdup(1); return 0; }
+""")
+        self.assertTrue(result["traces"])
+        self.assertFalse(any(event["kind"] == "acquire"
+                             for trace in result["traces"] for event in trace["events"]))
+
+    def test_opaque_free_releases_modeled_caller_region(self):
+        source = REGION_SOURCE.replace("void adopt(", "void uv__free(void *);\nvoid adopt(")
+        source = source.replace("free(slot);", "uv__free(slot);")
+        result, _ = self.analyze_files({"case.c": source,
+                                        "src/uv-common.c": LIBUV_ALLOCATOR_SOURCE}, entry="adopt")
+        trace = next(item for item in result["traces"] if item["events"][-1]["live_roots"])
+        release = next(event for event in trace["events"] if event["kind"] == "release")
+        self.assertTrue(release["resource_instance_id"].startswith("ast_input_"))
+        self.assertNotIn("external", release)
 
     def test_unknown_allocator_entry_keeps_the_call_gap(self):
         result, _ = self.analyze(UNKNOWN_TABLE_SOURCE)

@@ -15,12 +15,27 @@ VERSION = "recode-memory-path/1"
 MAX_TRACE_EVENTS = 192
 MAX_TRACES = 128
 MAX_LOOP_ITERATIONS = 16
+# POSIX exposes ``environ`` as an external, NULL-terminated array. Its extent
+# is not in the translation unit; a bounded witness may assume a small count
+# and must say so in ``gaps``.
+DEFAULT_EXTERNAL_ARRAY_EXTENTS = {"environ": 2}
 OUTPUT_SLOT = "output_slot"
 CALLER_INPUT = "caller_input"
 CALLER_POINTER = "caller_pointer"
 MODELED_CASTS = {"NoOp", "LValueToRValue", "BitCast", "FunctionToPointerDecay",
                  "ArrayToPointerDecay", "NullToPointer", "ToVoid", "IntegralCast"}
-BUILTIN_CALLS = {"malloc", "calloc", "free", "strlen", "memcpy", "__errno_location"}
+BUILTIN_CALLS = {"malloc", "calloc", "free", "strlen", "memcpy", "__errno_location", "strchr"}
+# Libuv routes allocation through a runtime-reconfigurable function table. The
+# concrete target is not provable, but the wrapper names and the table contract
+# make the allocation/release semantics explicit. Track the wrapper as an
+# opaque allocator at its call site instead of inventing a concrete target.
+OPAQUE_ALLOCATOR_WRAPPERS = {
+    "uv__malloc": "malloc",
+    "uv__calloc": "calloc",
+    "uv__realloc": "realloc",
+    "uv__free": "free",
+    "uv__strdup": "strdup",
+}
 INTEGER_TYPES = {"char", "signed char", "unsigned char", "short", "short int", "unsigned short",
                  "int", "unsigned", "unsigned int", "long", "long int", "unsigned long",
                  "long long", "unsigned long long", "size_t", "ssize_t", "intptr_t", "uintptr_t",
@@ -30,6 +45,10 @@ INTEGER_TYPES = {"char", "signed char", "unsigned char", "short", "short int", "
 
 class UnsupportedPath(ValueError):
     pass
+
+
+class PrunablePath(UnsupportedPath):
+    """One branch cannot be modeled; sibling branches remain valid witnesses."""
 
 
 class NullWriteSignal(Exception):
@@ -60,10 +79,11 @@ class NullValue:
 class Allocation:
     size: int | str
     fields: dict = field(default_factory=dict)
-    data: bytes | None = None
+    data: bytes | list | None = None
     released: bool = False
     count: int = 1
     input: bool = False
+    zeroed: bool = False
 
 
 @dataclass
@@ -205,7 +225,9 @@ class MemoryPaths(SemanticSyncAnalyzer):
 
     def _allocation(self, state, value):
         if isinstance(value, NullValue):
-            raise UnsupportedPath("null_pointer_dereference")
+            raise PrunablePath("null_pointer_dereference")
+        if type(value) is int and value == 0:
+            raise PrunablePath("null_pointer_identity_unverified")
         if isinstance(value, Reference) and value.kind == "external":
             name = self.external_names.get(value.key, "caller_pointer")
             raise UnsupportedPath("external_value_extent_unmodeled:" + name)
@@ -240,9 +262,10 @@ class MemoryPaths(SemanticSyncAnalyzer):
                 raise UnsupportedPath("null_pointer_dereference")
             if type(value) is int and value == 0:
                 # A literal null has no allocation identity, so a write through
-                # it cannot be tied to a verified allocation result.
-                raise UnsupportedPath("null_pointer_identity_unverified" if write
-                                      else "unbound_heap_reference")
+                # it cannot be tied to a verified allocation result. Only this
+                # branch is discarded; sibling branches stay valid witnesses.
+                raise PrunablePath("null_pointer_identity_unverified" if write
+                                   else "unbound_heap_reference")
             if isinstance(value, Reference) and value.kind == "record":
                 if index is not None:
                     raise UnsupportedPath("record_table_indexed")
@@ -444,6 +467,55 @@ class MemoryPaths(SemanticSyncAnalyzer):
             elif kind == "VarDecl":
                 self._index_global(child, tu)
 
+    def _index_enums(self, node, tu):
+        """Index enum constants so error codes in cleanup paths are readable."""
+        stack = [node]
+        while stack:
+            current = stack.pop()
+            if current.get("kind") == "EnumConstantDecl":
+                identifier = current.get("id")
+                value = self._constant_int(current)
+                if value is None:
+                    for child in current.get("inner", []):
+                        value = self._constant_int(child)
+                        if value is not None:
+                            break
+                if isinstance(identifier, str) and identifier and value is not None:
+                    self.enum_values[(tu, identifier)] = value
+            stack.extend(current.get("inner", []))
+
+    def _constant_int(self, node):
+        node = unwrap_expr(node)
+        if node is None:
+            return None
+        kind = node.get("kind")
+        if kind in {"IntegerLiteral", "CharacterLiteral"}:
+            try:
+                return int(node.get("value"))
+            except (TypeError, ValueError):
+                return None
+        if kind == "ConstantExpr" and node.get("value") is not None:
+            try:
+                return int(node.get("value"))
+            except (TypeError, ValueError):
+                return None
+        if kind in {"ConstantExpr", "ParenExpr", "FullExpr", "ImplicitCastExpr", "CStyleCastExpr"} \
+                and node.get("inner"):
+            return self._constant_int(node["inner"][0])
+        if kind == "UnaryOperator" and node.get("opcode") in {"-", "+"} and node.get("inner"):
+            value = self._constant_int(node["inner"][0])
+            if value is None:
+                return None
+            return -value if node.get("opcode") == "-" else value
+        if kind == "BinaryOperator" and len(node.get("inner", [])) == 2:
+            left, right = (self._constant_int(child) for child in node["inner"])
+            if left is None or right is None:
+                return None
+            return {"+": lambda: left + right, "-": lambda: left - right,
+                    "*": lambda: left * right, "/": lambda: left // right if right else None
+                    }.get(node.get("opcode"), lambda: None)()
+        return None
+
     def _index_global(self, node, tu):
         key = (tu, node.get("id"))
         declaration = node.get("type", {})
@@ -454,10 +526,22 @@ class MemoryPaths(SemanticSyncAnalyzer):
             if node.get("storageClass") != "extern":
                 return
             self.extern_decls.setdefault(symbol, []).append((tu, node.get("id"), qualified))
+            name = node.get("name", "")
+            extents = getattr(self, "external_array_extents", {})
+            if name in extents and qualified.replace(" ", "").endswith("**"):
+                count = extents[name]
+                identity = "ast_external_array_" + stable_digest([tu, name])[:20]
+                allocation = Allocation("char *", count=count + 1, input=True)
+                allocation.data = [Reference("external", f"ast_external_{name}_{index}")
+                                   for index in range(count)] + [0]
+                self.external_array_globals[key] = {"identity": identity, "name": name}
+                self.external_array_allocations[identity] = allocation
+                for item in allocation.data[:-1]:
+                    self.external_names[item.key] = name + "[]"
+                return
             # A declaration without a definition keeps caller-provided
             # contents. It stays a named opaque pointer instead of aborting
             # the whole entry point.
-            name = node.get("name", "")
             reference = Reference("external", "ast_external_" + stable_digest([tu, name])[:20])
             self.external_globals[key] = {"name": name, "type": qualified, "reference": reference}
             self.external_names[reference.key] = name
@@ -550,6 +634,11 @@ class MemoryPaths(SemanticSyncAnalyzer):
                     path.cells[reference.key] = value
                     result.append((path, value))
                     continue
+                if isinstance(reference, Reference) and reference.kind == "external":
+                    # Writes into opaque external storage do not own a heap
+                    # resource; keep the path but do not invent a target.
+                    result.append((path, value))
+                    continue
                 slot = self._output_slot(path, reference, pointee_type)
                 if pointee_type.endswith("*"):
                     null_pointer = isinstance(value, NullValue) or (type(value) is int and value == 0)
@@ -623,11 +712,19 @@ class MemoryPaths(SemanticSyncAnalyzer):
                 return [(state, state.frame.values[key])]
             if (tu, key) in self.global_records:
                 return [(state, Reference("record", self.global_records[(tu, key)]))]
+            external_array = self.external_array_globals.get((tu, key))
+            if external_array:
+                self.used_external_arrays.add(external_array["name"])
+                return [(state, Reference("heap", external_array["identity"]))]
             external = self.external_globals.get((tu, key))
             if external:
                 return [(state, external["reference"])]
-            name = declaration.get("name")
-            raise UnsupportedPath("unbound_value:" + name if isinstance(name, str) and name else "unbound_local_value")
+            else:
+                enum_value = self.enum_values.get((tu, key))
+                if enum_value is not None:
+                    return [(state, enum_value)]
+                name = declaration.get("name")
+                raise UnsupportedPath("unbound_value:" + name if isinstance(name, str) and name else "unbound_local_value")
         if kind == "UnaryExprOrTypeTraitExpr" and node.get("name") == "sizeof":
             types = node.get("argType") or (children[0].get("type", {}) if children else {})
             value = types.get("desugaredQualType", types.get("qualType", ""))
@@ -649,6 +746,11 @@ class MemoryPaths(SemanticSyncAnalyzer):
                     continue
                 key = (index, node["name"])
                 if key not in allocation.fields:
+                    if allocation.zeroed:
+                        # calloc memory is zero-initialized; an unset scalar
+                        # field is a null pointer, not an unknown value.
+                        result.append((path, 0))
+                        continue
                     raise UnsupportedPath("unmodeled_field_read")
                 result.append((path, allocation.fields[key]))
             return result
@@ -755,6 +857,13 @@ class MemoryPaths(SemanticSyncAnalyzer):
                 raise UnsupportedPath("unsequenced_indirect_assignment")
             return self._bounded([result for path, value in self._evaluate(right, state, tu)
                                   for result in self._write(left, path, value, node, tu)])
+        if op == ",":
+            # A comma expression evaluates the left operand for its effects and
+            # yields the right operand. It is common in ``for`` initializers.
+            results = []
+            for path, _ in self._evaluate(left, state, tu):
+                results.extend(self._evaluate(right, path, tu))
+            return self._bounded(results)
         if op not in {"&&", "||"} and (self.has_side_effect(left) or self.has_side_effect(right)):
             raise UnsupportedPath("unsequenced_binary_effect")
         results = []
@@ -785,6 +894,15 @@ class MemoryPaths(SemanticSyncAnalyzer):
                     or (isinstance(b, Reference) and type(a) is int and a == 0)
                 ):
                     results.append((next_path, int(op == "!=")))
+                elif op in {"+", "-"} and (
+                    (isinstance(a, Reference) and type(b) is int)
+                    or (isinstance(b, Reference) and type(a) is int)
+                ):
+                    # Pointer offsets are opaque. The reviewed code stores the
+                    # separator pointer for later consumers; ownership does not
+                    # depend on its numeric value.
+                    self.path_gaps.add("pointer_arithmetic_unmodeled")
+                    results.append((next_path, 0))
                 else:
                     raise UnsupportedPath("unmodeled_binary_operator")
         return self._bounded(results)
@@ -802,7 +920,17 @@ class MemoryPaths(SemanticSyncAnalyzer):
         if kind in {"CompoundStmt", "DeclStmt"}:
             paths = [state]
             for child in children:
-                paths = self._bounded([out for path in paths for out in self._statement(child, path, tu)])
+                next_paths = []
+                for path in paths:
+                    try:
+                        next_paths.extend(self._statement(child, path, tu))
+                    except PrunablePath as exc:
+                        # An unsupported null branch invalidates this path, not
+                        # every sibling path through the same entry.
+                        if not getattr(self, "prune_unsupported_paths", False):
+                            raise
+                        self.path_gaps.add(str(exc))
+                paths = self._bounded(next_paths)
             return paths
         if kind == "VarDecl" and node.get("storageClass") not in {"static", "extern"}:
             if children and node.get("init") != "c":
@@ -922,12 +1050,22 @@ class MemoryPaths(SemanticSyncAnalyzer):
                         self._record(current, "call", node, tu, target=name, indirect=True,
                                      definition=None, target_id=name, callback=callback)
                     result.extend(self._builtin(name, node, current, tu, arguments))
+                elif target.key in self.opaque_wrappers and direct is not None:
+                    self._record(current, "call", node, tu, target=name, indirect=False,
+                                 definition=self.functions[target.key]["location"],
+                                 target_id=target.key, callback=callback)
+                    result.extend(self._opaque_allocator(name, node, current, tu, arguments))
                 elif target.key in self.functions:
                     self._record(current, "call", node, tu, target=name, indirect=direct is None,
                                  definition=self.functions[target.key]["location"],
                                  target_id=target.key, callback=callback)
                     result.extend((evaluated, frame.result) for evaluated, frame in self._invoke(target.key, current, arguments))
                 else:
+                    # Pure libc helpers do not own resources. Their unsupported
+                    # result invalidates the branch that consumes it, not the
+                    # sibling failure path that exits before the call.
+                    if name in {"strchr", "strrchr", "strstr", "memchr"}:
+                        raise PrunablePath("unmodeled_call:" + name)
                     raise UnsupportedPath("unmodeled_call:" + name)
         return self._bounded(result)
 
@@ -999,6 +1137,14 @@ class MemoryPaths(SemanticSyncAnalyzer):
                 allocation.released = True
                 self._record(state, "release", node, tu, resource_instance_id=args[0].key, api=name)
             return [(state, None)]
+        if name == "strchr" and len(args) == 2:
+            # The reviewed code only uses the separator pointer to split a
+            # copied string. A non-null external pointer keeps the branch that
+            # stores the item; the content itself is not needed for ownership.
+            self.path_gaps.add("strchr_result_assumed_non_null")
+            key = "ast_external_strchr_" + stable_digest([self._site(node, tu), len(state.events)])[:16]
+            self.external_names[key] = "strchr"
+            return [(state, Reference("external", key))]
         if name == "strlen" and len(args) == 1 and isinstance(args[0], bytes):
             return [(state, len(args[0]) - 1)]
         if name == "memcpy" and len(args) == 3 and isinstance(args[1], bytes):
@@ -1007,6 +1153,58 @@ class MemoryPaths(SemanticSyncAnalyzer):
                 allocation.data = args[1][:args[2]]
                 return [(state, args[0])]
         raise UnsupportedPath("unmodeled_builtin:" + name)
+
+    def _opaque_allocator(self, name, node, state, tu, args):
+        """Model a known allocator wrapper without claiming its table target.
+
+        The wrapper API contract is allocation/release semantics; the concrete
+        function behind the runtime table is a configuration, not a fact this
+        analyzer can prove. Events keep the wrapper as their API and the call
+        site as evidence, so the witness stays bounded and attributable.
+        """
+        operation = OPAQUE_ALLOCATOR_WRAPPERS[name]
+        event_api = "malloc" if operation == "strdup" else operation
+        self.path_gaps.add("opaque_allocator_wrapper:" + name)
+        if operation == "free":
+            return self._builtin("free", node, state, tu, args)
+        if operation == "realloc":
+            raise UnsupportedPath("unmodeled_allocator:" + name)
+        zeroed = operation == "calloc"
+        if operation == "strdup":
+            if len(args) != 1:
+                raise UnsupportedPath("unmodeled_allocator:" + name)
+            size, count = "char", 1
+        elif operation == "malloc":
+            if len(args) != 1:
+                raise UnsupportedPath("unmodeled_allocator:" + name)
+            size, count = args[0], 1
+        elif operation == "calloc":
+            if len(args) != 2:
+                raise UnsupportedPath("unmodeled_allocator:" + name)
+            count, size = args[0], args[1]
+            if type(count) is not int or not 1 <= count <= MAX_LOOP_ITERATIONS:
+                raise UnsupportedPath("unmodeled_allocator_size:" + name)
+        else:
+            raise UnsupportedPath("unmodeled_allocator:" + name)
+        if not (type(size) is int and size > 0
+                or isinstance(size, str) and (size.startswith("struct ") or size == "char")):
+            raise UnsupportedPath("unmodeled_allocator_size:" + name)
+        site = self._site(node, tu)
+        identity = "ast_heap_" + stable_digest([site, len(state.events), len(state.frames)])[:20]
+        success = copy.deepcopy(state)
+        success.heap[identity] = Allocation(size, count=count, zeroed=zeroed)
+        if count > 1:
+            self._record(success, "acquire_array", node, tu, resource_instance_id=identity,
+                         api=event_api, count=count)
+        else:
+            self._record(success, "acquire", node, tu, resource_instance_id=identity, api=event_api)
+        self._record(state, "allocation_failure", node, tu, api=event_api)
+        null_id = "ast_null_" + stable_digest([site, len(state.events), len(state.frames)])[:20]
+        origin = {"null_id": null_id, "api": event_api, "location": site,
+                  "evidence_ids": self.evidence_for(
+                      "ast_memory_null_allocation", site,
+                      stable_digest({"null_id": null_id, "api": event_api}))}
+        return [(success, Reference("heap", identity)), (state, NullValue(null_id, origin))]
 
     def _parameter_kind(self, param_type, tu):
         value = param_type.replace("const ", "").strip()
@@ -1087,10 +1285,32 @@ class MemoryPaths(SemanticSyncAnalyzer):
             path.events.insert(0, {"kind": "caller_input", "location": location, **data,
                                    "evidence_ids": self.evidence_for("ast_memory_caller_input", location, stable_digest(data))})
 
+    def _index_opaque_wrappers(self):
+        # These are libuv's runtime-replaceable allocator wrappers. A matching
+        # symbol elsewhere is just an ordinary function and is analyzed as such.
+        wrappers = {}
+        for key, record in self.functions.items():
+            name = record["name"]
+            operation = OPAQUE_ALLOCATOR_WRAPPERS.get(name)
+            if not operation or record["location"]["file"] != "src/uv-common.c":
+                continue
+            body = self.source_fragment(record["body"], record["tu"])
+            expected = f"uv__allocator.local_{operation}("
+            if operation == "strdup":
+                if "uv__malloc(" in body and "return memcpy(" in body:
+                    wrappers[key] = name
+            elif expected in body:
+                wrappers[key] = name
+        return wrappers
+
     def _table_uses(self):
         """Fields of unstable tables that each indexed function reads."""
         uses = {}
         for key, record in self.functions.items():
+            if key in self.opaque_wrappers:
+                # The wrapper body is intentionally opaque; its table target is
+                # a configuration, not a fact this proof claims.
+                continue
             found, stack = set(), [record["body"]]
             while stack:
                 node = stack.pop()
@@ -1127,13 +1347,21 @@ class MemoryPaths(SemanticSyncAnalyzer):
         self.table_symbols, self.extern_decls = {}, {}
         self.function_gaps = {}
         self.null_writes, self.null_write_gaps = {}, set()
+        self.external_array_extents = dict(DEFAULT_EXTERNAL_ARRAY_EXTENTS)
+        self.external_array_globals, self.external_array_allocations = {}, {}
+        self.used_external_arrays = set()
+        self.path_gaps = set()
+        self.enum_values = {}
+        self.prune_unsupported_paths = True
         self.entry_location, self.entry_arguments = None, []
         self.index(asts)
         for tu, ast_data in asts:
             self._index_fields(ast_data, tu)
             self._link_typedefs(tu)
             self._index_globals(ast_data, tu)
+            self._index_enums(ast_data, tu)
         self._link_extern_tables()
+        self.opaque_wrappers = self._index_opaque_wrappers()
         for tu, ast_data in asts:
             self._scan_table_writes(ast_data, tu)
         self._seal_tables()
@@ -1165,6 +1393,7 @@ class MemoryPaths(SemanticSyncAnalyzer):
                          if kind == "output"}
                 try:
                     state = State(output_slots=slots)
+                    state.heap.update(copy.deepcopy(self.external_array_allocations))
                     values, regions = self._caller_inputs(state, record, kinds, args)
                     self.entry_location, self.entry_arguments = record["location"], list(args)
                     void_entry = _type(record["node"]).startswith("void (")
@@ -1189,6 +1418,9 @@ class MemoryPaths(SemanticSyncAnalyzer):
                     proofs.extend(witnessed)
                 except (UnsupportedPath, RecursionError) as exc:
                     gaps.append(f"{entry}:{args}:{exc}")
+        gaps.extend("unmodeled_path:" + gap for gap in sorted(self.path_gaps))
+        for name in sorted(self.used_external_arrays):
+            gaps.append(f"external_value_extent_assumed:{name}={self.external_array_extents[name]}")
         gaps.extend(sorted(self.null_write_gaps))
         return {"schema_version": VERSION, "basis": "clang-json-ast-paths", "binding": binding,
                 "traces": proofs, "tables": self._table_export(proofs),
