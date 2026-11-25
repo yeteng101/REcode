@@ -3,31 +3,82 @@
   "$id": "https://example.org/code-reverse-agent/schemas/resource-flow.schema.json",
   "title": "ResourceFlow（外部资源流结果）",
   "type": "object",
-  "required": ["schema_version", "run_id", "result_type", "status", "items", "evidence", "warnings"],
+  "required": [
+    "schema_version",
+    "run_id",
+    "result_type",
+    "status",
+    "items",
+    "evidence",
+    "warnings"
+  ],
   "properties": {
-    "schema_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+$"},
-    "run_id": {"type": "string"},
-    "result_type": {"const": "resource_flow"},
-    "status": {"type": "string", "enum": ["succeeded", "partial", "failed", "not_available"]},
-    "generated_at": {"type": "string"},
-    "source": {"type": "object"},
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "result_type": {
+      "const": "resource_flow"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "succeeded",
+        "partial",
+        "failed",
+        "not_available"
+      ]
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object"
+    },
     "items": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "resource", "resource_type", "operations", "confidence", "evidence_ids"],
+        "required": [
+          "id",
+          "resource",
+          "resource_type",
+          "operations",
+          "confidence",
+          "evidence_ids"
+        ],
         "properties": {
-          "id": {"type": "string"},
-          "resource": {"type": "string"},
+          "id": {
+            "type": "string"
+          },
+          "resource": {
+            "type": "string"
+          },
           "resource_type": {
             "type": "string",
-            "enum": ["file_descriptor", "memory", "lock", "connection", "handle", "reference", "other"]
+            "enum": [
+              "file_descriptor",
+              "memory",
+              "lock",
+              "connection",
+              "handle",
+              "reference",
+              "other"
+            ]
           },
           "operations": {
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["kind", "file", "line", "evidence_ids"],
+              "required": [
+                "kind",
+                "file",
+                "line",
+                "evidence_ids"
+              ],
               "properties": {
                 "kind": {
                   "type": "string",
@@ -41,36 +92,91 @@
                     "use_after_release_suspected"
                   ]
                 },
-                "file": {"type": "string"},
-                "line": {"type": "integer", "minimum": 1},
-                "snippet": {"type": "string"},
-                "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+                "file": {
+                  "type": "string"
+                },
+                "line": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "snippet": {
+                  "type": "string"
+                },
+                "evidence_ids": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  }
+                }
               },
               "additionalProperties": true
             }
           },
-          "owner": {"type": ["string", "null"]},
-          "thread": {"type": ["string", "null"]},
-          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
-          "evidence_ids": {"type": "array", "items": {"type": "string"}}
+          "owner": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "thread": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         },
         "additionalProperties": true
       }
     },
     "memory_path_proofs": {
       "type": "object",
-      "required": ["schema_version", "basis", "binding", "traces", "gaps"],
+      "required": [
+        "schema_version",
+        "basis",
+        "binding",
+        "traces",
+        "gaps"
+      ],
       "properties": {
-        "schema_version": {"const": "recode-memory-path/1"},
-        "basis": {"const": "clang-json-ast-paths"},
+        "schema_version": {
+          "const": "recode-memory-path/1"
+        },
+        "basis": {
+          "const": "clang-json-ast-paths"
+        },
         "binding": {
           "type": "object",
-          "required": ["repository", "commit", "build_profile", "run_id"],
+          "required": [
+            "repository",
+            "commit",
+            "build_profile",
+            "run_id"
+          ],
           "properties": {
-            "repository": {"type": "string"},
-            "commit": {"type": "string"},
-            "build_profile": {"type": "string"},
-            "run_id": {"type": "string"}
+            "repository": {
+              "type": "string"
+            },
+            "commit": {
+              "type": "string"
+            },
+            "build_profile": {
+              "type": "string"
+            },
+            "run_id": {
+              "type": "string"
+            }
           },
           "additionalProperties": false
         },
@@ -79,16 +185,47 @@
           "maxItems": 32,
           "items": {
             "type": "object",
-            "required": ["table_id", "name", "stability", "basis", "fields", "evidence_ids"],
+            "required": [
+              "table_id",
+              "name",
+              "stability",
+              "basis",
+              "fields",
+              "evidence_ids"
+            ],
             "additionalProperties": false,
             "properties": {
-              "table_id": {"type": "string"},
-              "name": {"type": "string"},
-              "stability": {"enum": ["const", "read_only"]},
-              "basis": {"type": "string"},
-              "location": {"$ref": "#/$defs/memoryProofLocation"},
-              "fields": {"type": "object", "additionalProperties": {"type": "string"}},
-              "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+              "table_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "stability": {
+                "enum": [
+                  "const",
+                  "read_only"
+                ]
+              },
+              "basis": {
+                "type": "string"
+              },
+              "location": {
+                "$ref": "#/$defs/memoryProofLocation"
+              },
+              "fields": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "evidence_ids": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                }
+              }
             }
           }
         },
@@ -97,22 +234,66 @@
           "maxItems": 128,
           "items": {
             "type": "object",
-            "required": ["entry", "arguments", "events"],
+            "required": [
+              "entry",
+              "arguments",
+              "events"
+            ],
             "properties": {
-              "entry": {"$ref": "#/$defs/memoryProofLocation"},
-              "arguments": {"type": "array", "maxItems": 2,
-                            "items": {"enum": [0, 1, "output_slot", "caller_input", "caller_pointer"]}},
+              "entry": {
+                "$ref": "#/$defs/memoryProofLocation"
+              },
+              "arguments": {
+                "type": "array",
+                "maxItems": 2,
+                "items": {
+                  "enum": [
+                    0,
+                    1,
+                    "output_slot",
+                    "caller_input",
+                    "caller_pointer"
+                  ]
+                }
+              },
               "events": {
                 "type": "array",
                 "minItems": 1,
                 "maxItems": 192,
                 "items": {
                   "type": "object",
-                  "required": ["kind", "location", "evidence_ids"],
+                  "required": [
+                    "kind",
+                    "location",
+                    "evidence_ids"
+                  ],
                   "properties": {
-                    "kind": {"enum": ["acquire", "acquire_array", "caller_input", "allocation_failure", "bind_field", "bind_array_field", "bind_output", "call", "branch", "release_container", "release", "exit"]},
-                    "location": {"$ref": "#/$defs/memoryProofLocation"},
-                    "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+                    "kind": {
+                      "enum": [
+                        "acquire",
+                        "acquire_array",
+                        "caller_input",
+                        "allocation_failure",
+                        "bind_field",
+                        "bind_array_field",
+                        "bind_output",
+                        "call",
+                        "branch",
+                        "release_container",
+                        "release",
+                        "exit"
+                      ]
+                    },
+                    "location": {
+                      "$ref": "#/$defs/memoryProofLocation"
+                    },
+                    "evidence_ids": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
                   }
                 }
               }
@@ -120,22 +301,236 @@
             "additionalProperties": false
           }
         },
-        "gaps": {"type": "array", "items": {"type": "string"}}
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "null_writes": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "type": "object",
+            "required": [
+              "null_write_id",
+              "entry",
+              "arguments",
+              "pointer",
+              "conditions",
+              "write"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "null_write_id": {
+                "type": "string",
+                "pattern": "^ast_nullwrite_[0-9a-f]{20}$"
+              },
+              "entry": {
+                "$ref": "#/$defs/memoryProofLocation"
+              },
+              "arguments": {
+                "type": "array",
+                "maxItems": 2,
+                "items": {
+                  "enum": [
+                    0,
+                    1,
+                    "output_slot",
+                    "caller_input",
+                    "caller_pointer"
+                  ]
+                }
+              },
+              "pointer": {
+                "type": "object",
+                "required": [
+                  "null_id",
+                  "allocation",
+                  "binding"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "null_id": {
+                    "type": "string",
+                    "pattern": "^ast_null_[0-9a-f]{20}$"
+                  },
+                  "allocation": {
+                    "type": "object",
+                    "required": [
+                      "null_id",
+                      "api",
+                      "location",
+                      "evidence_ids"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "null_id": {
+                        "type": "string",
+                        "pattern": "^ast_null_[0-9a-f]{20}$"
+                      },
+                      "api": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "$ref": "#/$defs/memoryProofLocation"
+                      },
+                      "evidence_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "binding": {
+                    "type": "object",
+                    "required": [
+                      "declaration",
+                      "location",
+                      "evidence_ids"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "declaration": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "$ref": "#/$defs/memoryProofLocation"
+                      },
+                      "evidence_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "conditions": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 32,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "kind",
+                    "operator",
+                    "location",
+                    "taken",
+                    "evidence_ids"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "kind": {
+                      "enum": [
+                        "allocation_failure",
+                        "branch",
+                        "comparison"
+                      ]
+                    },
+                    "operator": {
+                      "enum": [
+                        "allocation_failure",
+                        "!",
+                        "truth",
+                        "==",
+                        "!="
+                      ]
+                    },
+                    "location": {
+                      "$ref": "#/$defs/memoryProofLocation"
+                    },
+                    "taken": {
+                      "type": "boolean"
+                    },
+                    "evidence_ids": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "write": {
+                "type": "object",
+                "required": [
+                  "kind",
+                  "location",
+                  "evidence_ids"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "field",
+                      "dereference"
+                    ]
+                  },
+                  "field": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "$ref": "#/$defs/memoryProofLocation"
+                  },
+                  "evidence_ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "additionalProperties": false
     },
-    "evidence": {"type": "array", "items": {"type": "object"}},
-    "warnings": {"type": "array", "items": {"type": "string"}}
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
   },
   "$defs": {
     "memoryProofLocation": {
       "type": "object",
-      "required": ["file", "line", "snippet"],
+      "required": [
+        "file",
+        "line",
+        "snippet"
+      ],
       "properties": {
-        "file": {"type": "string", "minLength": 1},
-        "line": {"type": "integer", "minimum": 1},
-        "column": {"type": "integer", "minimum": 1},
-        "snippet": {"type": "string", "minLength": 1}
+        "file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snippet": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "additionalProperties": false
     }

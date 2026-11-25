@@ -32,11 +32,28 @@ class UnsupportedPath(ValueError):
     pass
 
 
+class NullWriteSignal(Exception):
+    """Carries the null value, write target and path out of member resolution."""
+
+    def __init__(self, value, node, path, tu):
+        super().__init__("null_pointer_write")
+        self.value = value
+        self.node = node
+        self.path = path
+        self.tu = tu
+
+
 @dataclass(frozen=True)
 class Reference:
     kind: str
     key: str
     index: int | None = None
+
+
+@dataclass(frozen=True)
+class NullValue:
+    null_id: str
+    origin: dict
 
 
 @dataclass
@@ -72,6 +89,9 @@ class State:
     events: list = field(default_factory=list)
     output_slots: dict[str, OutputSlot] = field(default_factory=dict)
     cells: dict = field(default_factory=dict)
+    null_bindings: dict = field(default_factory=dict)
+    null_conditions: dict = field(default_factory=dict)
+    null_write_aborted: bool = False
 
     @property
     def frame(self):
@@ -117,7 +137,75 @@ class MemoryPaths(SemanticSyncAnalyzer):
         event["evidence_ids"] = self.evidence_for("ast_memory_" + kind, location, stable_digest(data))
         state.events.append(event)
 
+    def _null_binding(self, node, tu, declaration, null_id):
+        location = self._site(node, tu)
+        data = {"null_id": null_id, "declaration": declaration}
+        return {"declaration": declaration, "location": location,
+                "evidence_ids": self.evidence_for("ast_memory_null_binding", location,
+                                                  stable_digest(data))}
+
+    def _record_null_condition(self, state, node, value, tu, taken, operator):
+        location = self._site(node, tu)
+        data = {"null_id": value.null_id, "taken": bool(taken), "operator": operator}
+        condition = {"kind": "allocation_failure" if operator == "allocation_failure" else
+                     ("comparison" if operator in {"==", "!="} else "branch"),
+                     "operator": operator, "location": location, "taken": bool(taken),
+                     "evidence_ids": self.evidence_for("ast_memory_null_condition", location,
+                                                       stable_digest(data))}
+        conditions = state.null_conditions.setdefault(value.null_id, [])
+        key = (condition["kind"], location["file"], location["line"], condition["taken"], operator)
+        if all((item["kind"], item["location"]["file"], item["location"]["line"],
+                item["taken"], item["operator"]) != key for item in conditions):
+            conditions.append(condition)
+
+    def _branch(self, state, node, value, tu, taken):
+        self._record(state, "branch", node, tu, taken=taken)
+        if isinstance(value, NullValue):
+            self._record_null_condition(state, node, value, tu, taken, "truth")
+
+    def _record_null_write(self, signal, left, node, tu):
+        value, state = signal.value, signal.path
+        binding = state.null_bindings.get(value.null_id)
+        if binding is None:
+            self.null_write_gaps.add("null_write_binding_unverified:" + value.null_id)
+            return False
+        try:
+            write_location = self._site(node, tu)
+        except UnsupportedPath:
+            self.null_write_gaps.add("null_write_location_unverified:" + value.null_id)
+            return False
+        origin_condition = {
+            "kind": "allocation_failure", "operator": "allocation_failure",
+            "location": value.origin["location"], "taken": True,
+            "evidence_ids": self.evidence_for(
+                "ast_memory_null_condition", value.origin["location"],
+                stable_digest({"null_id": value.null_id, "taken": True,
+                               "operator": "allocation_failure"})),
+        }
+        conditions = [origin_condition, *state.null_conditions.get(value.null_id, [])]
+        if left.get("kind") == "MemberExpr":
+            write_kind, field = "field", left["name"]
+        else:
+            write_kind, field = "dereference", None
+        write_data = {"null_id": value.null_id, "kind": write_kind, "field": field}
+        write = {"kind": write_kind, "location": write_location,
+                 "evidence_ids": self.evidence_for("ast_memory_null_write", write_location,
+                                                   stable_digest(write_data))}
+        if field is not None:
+            write["field"] = field
+        identity = stable_digest([self.entry_location, self.entry_arguments,
+                                  value.null_id, write_location])[:20]
+        record = {"null_write_id": "ast_nullwrite_" + identity,
+                  "entry": self.entry_location, "arguments": list(self.entry_arguments),
+                  "pointer": {"null_id": value.null_id, "allocation": value.origin,
+                              "binding": binding},
+                  "conditions": conditions, "write": write}
+        self.null_writes[record["null_write_id"]] = record
+        return True
+
     def _allocation(self, state, value):
+        if isinstance(value, NullValue):
+            raise UnsupportedPath("null_pointer_dereference")
         if isinstance(value, Reference) and value.kind == "external":
             name = self.external_names.get(value.key, "caller_pointer")
             raise UnsupportedPath("external_value_extent_unmodeled:" + name)
@@ -128,7 +216,7 @@ class MemoryPaths(SemanticSyncAnalyzer):
             raise UnsupportedPath("access_after_release")
         return allocation
 
-    def _member_owners(self, node, state, tu):
+    def _member_owners(self, node, state, tu, write=False):
         base = node.get("inner", [])
         if len(base) != 1 or not node.get("referencedMemberDecl"):
             raise UnsupportedPath("unmodeled_member")
@@ -146,6 +234,15 @@ class MemoryPaths(SemanticSyncAnalyzer):
         else:
             raise UnsupportedPath("unmodeled_member")
         for path, value, index in owners:
+            if isinstance(value, NullValue):
+                if write:
+                    raise NullWriteSignal(value, node, path, tu)
+                raise UnsupportedPath("null_pointer_dereference")
+            if type(value) is int and value == 0:
+                # A literal null has no allocation identity, so a write through
+                # it cannot be tied to a verified allocation result.
+                raise UnsupportedPath("null_pointer_identity_unverified" if write
+                                      else "unbound_heap_reference")
             if isinstance(value, Reference) and value.kind == "record":
                 if index is not None:
                     raise UnsupportedPath("record_table_indexed")
@@ -169,8 +266,8 @@ class MemoryPaths(SemanticSyncAnalyzer):
                 index = 0
             yield path, value, allocation, index
 
-    def _member(self, node, state, tu):
-        for path, value, allocation, index in self._member_owners(node, state, tu):
+    def _member(self, node, state, tu, write=False):
+        for path, value, allocation, index in self._member_owners(node, state, tu, write=write):
             if allocation is None:
                 raise UnsupportedPath("record_table_assignment_unmodeled")
             yield path, value, allocation, index
@@ -430,12 +527,23 @@ class MemoryPaths(SemanticSyncAnalyzer):
             key = (left.get("referencedDecl") or {}).get("id")
             if key not in state.frame.values:
                 raise UnsupportedPath("write_outside_frame")
+            if isinstance(value, NullValue):
+                declaration = (left.get("referencedDecl") or {}).get("name") or ""
+                state.null_bindings[value.null_id] = self._null_binding(
+                    left, tu, declaration, value.null_id)
             state.frame.values[key] = value
             return [(state, value)]
         if left.get("kind") == "UnaryOperator" and left.get("opcode") == "*":
             result = []
             pointee_type = _type(left)
             for path, reference in self._evaluate(left["inner"][0], state, tu):
+                if isinstance(reference, NullValue):
+                    if self._record_null_write(NullWriteSignal(reference, left, path, tu),
+                                               left, node, tu):
+                        path.null_write_aborted = True
+                        result.append((path, value))
+                        continue
+                    raise UnsupportedPath("null_pointer_write")
                 if isinstance(reference, Reference) and reference.kind == "cell":
                     if type(value) is not int:
                         raise UnsupportedPath("unmodeled_cell_value")
@@ -444,10 +552,13 @@ class MemoryPaths(SemanticSyncAnalyzer):
                     continue
                 slot = self._output_slot(path, reference, pointee_type)
                 if pointee_type.endswith("*"):
-                    if value != 0:
+                    null_pointer = isinstance(value, NullValue) or (type(value) is int and value == 0)
+                    if null_pointer:
+                        value = 0
+                    else:
                         self._allocation(path, value)
                     self._record(path, "bind_output", node, tu, slot=int(reference.key),
-                                 value=None if value == 0 else value.key)
+                                 value=None if null_pointer else value.key)
                 elif type(value) is not int:
                     raise UnsupportedPath("unmodeled_output_scalar")
                 slot.value = value
@@ -457,16 +568,24 @@ class MemoryPaths(SemanticSyncAnalyzer):
             if isinstance(value, Reference) and value.kind in {"output", "element"}:
                 raise UnsupportedPath("local_address_escapes")
             result = []
-            for path, owner, allocation, index in self._member(left, state, tu):
-                name = left["name"]
-                allocation.fields[(index, name)] = value
-                data = {"container": owner.key, "field": name,
-                        "value_kind": value.kind if isinstance(value, Reference) else "scalar",
-                        "value": value.key if isinstance(value, Reference) else None}
-                if index is not None:
-                    data["index"] = index
-                self._record(path, "bind_array_field" if index is not None else "bind_field", node, tu, **data)
-                result.append((path, value))
+            try:
+                for path, owner, allocation, index in self._member(left, state, tu, write=True):
+                    name = left["name"]
+                    allocation.fields[(index, name)] = value
+                    data = {"container": owner.key, "field": name,
+                            "value_kind": value.kind if isinstance(value, Reference) else "scalar",
+                            "value": value.key if isinstance(value, Reference) else None}
+                    if index is not None:
+                        data["index"] = index
+                    self._record(path, "bind_array_field" if index is not None else "bind_field",
+                                 node, tu, **data)
+                    result.append((path, value))
+            except NullWriteSignal as signal:
+                if self._record_null_write(signal, left, node, tu):
+                    signal.path.null_write_aborted = True
+                    result.append((signal.path, value))
+                    return result
+                raise UnsupportedPath("null_pointer_write")
             return result
         raise UnsupportedPath("unmodeled_assignment_target")
 
@@ -565,6 +684,8 @@ class MemoryPaths(SemanticSyncAnalyzer):
             result = []
             for path, value in self._evaluate(children[0], state, tu):
                 if node.get("opcode") == "!":
+                    if isinstance(value, NullValue):
+                        self._record_null_condition(path, node, value, tu, True, "!")
                     result.append((path, int(not self._truth(value))))
                 elif node.get("opcode") == "-" and type(value) is int and 0 <= value <= 127:
                     result.append((path, -value))
@@ -589,7 +710,7 @@ class MemoryPaths(SemanticSyncAnalyzer):
             result = []
             for path, condition in self._evaluate(children[0], state, tu):
                 choice = self._truth(condition)
-                self._record(path, "branch", children[0], tu, taken=choice)
+                self._branch(path, children[0], condition, tu, choice)
                 result.extend(self._evaluate(children[1 if choice else 2], path, tu))
             return self._bounded(result)
         if kind == "ArraySubscriptExpr" and len(children) == 2:
@@ -607,6 +728,8 @@ class MemoryPaths(SemanticSyncAnalyzer):
 
     @staticmethod
     def _truth(value):
+        if isinstance(value, NullValue):
+            return False
         if type(value) is int or isinstance(value, Reference):
             return bool(value)
         raise UnsupportedPath("undetermined_condition")
@@ -650,6 +773,14 @@ class MemoryPaths(SemanticSyncAnalyzer):
                         raise UnsupportedPath("unmodeled_integer_range")
                     results.append((next_path, value))
                 elif op in {"==", "!="} and (
+                    (isinstance(a, NullValue) and type(b) is int and b == 0)
+                    or (isinstance(b, NullValue) and type(a) is int and a == 0)
+                ):
+                    null_value = a if isinstance(a, NullValue) else b
+                    value = 1 if op == "==" else 0
+                    self._record_null_condition(next_path, node, null_value, tu, bool(value), op)
+                    results.append((next_path, value))
+                elif op in {"==", "!="} and (
                     (isinstance(a, Reference) and type(b) is int and b == 0)
                     or (isinstance(b, Reference) and type(a) is int and a == 0)
                 ):
@@ -660,7 +791,7 @@ class MemoryPaths(SemanticSyncAnalyzer):
 
     def _statement(self, node, state, tu):
         self._step()
-        if state.frame.returned or state.frame.loop_control:
+        if state.frame.returned or state.frame.loop_control or state.null_write_aborted:
             return [state]
         kind, children = node.get("kind"), node.get("inner", [])
         if state.frame.goto_label:
@@ -679,12 +810,15 @@ class MemoryPaths(SemanticSyncAnalyzer):
             paths = self._evaluate(children[-1], state, tu) if children else [(state, None)]
             for path, value in paths:
                 path.frame.values[node["id"]] = value
+                if isinstance(value, NullValue):
+                    path.null_bindings[value.null_id] = self._null_binding(
+                        node, tu, node.get("name") or "", value.null_id)
             return [path for path, _ in paths]
         if kind == "IfStmt" and not node.get("hasInit") and len(children) in {2, 3}:
             result = []
             for path, value in self._evaluate(children[0], state, tu):
                 choice = self._truth(value)
-                self._record(path, "branch", children[0], tu, taken=choice)
+                self._branch(path, children[0], value, tu, choice)
                 result.extend(self._statement(children[1 if choice else 2], path, tu)
                               if choice or len(children) == 3 else [path])
             return self._bounded(result)
@@ -702,7 +836,7 @@ class MemoryPaths(SemanticSyncAnalyzer):
                         continue
                     for tested, value in self._evaluate(condition, path, tu):
                         choice = self._truth(value)
-                        self._record(tested, "branch", condition, tu, taken=choice)
+                        self._branch(tested, condition, value, tu, choice)
                         if not choice:
                             finished.append(tested)
                         elif iteration == MAX_LOOP_ITERATIONS:
@@ -752,6 +886,11 @@ class MemoryPaths(SemanticSyncAnalyzer):
         result = []
         for path in self._statement(record["body"], state, record["tu"]):
             frame = path.frames.pop()
+            if path.null_write_aborted:
+                # The fact is recorded; the caller drops this path before it
+                # looks for a normal exit.
+                result.append((path, frame))
+                continue
             if frame.goto_label or frame.loop_control:
                 raise UnsupportedPath("unresolved_control_transfer")
             if not frame.returned and not record["node"].get("type", {}).get("qualType", "").startswith("void ("):
@@ -835,8 +974,17 @@ class MemoryPaths(SemanticSyncAnalyzer):
             else:
                 self._record(success, "acquire", node, tu, resource_instance_id=identity, api=name)
             self._record(state, "allocation_failure", node, tu, api=name)
-            return [(success, Reference("heap", identity)), (state, 0)]
+            null_id = "ast_null_" + stable_digest([site, len(state.events), len(state.frames)])[:20]
+            origin = {"null_id": null_id, "api": name, "location": site,
+                      "evidence_ids": self.evidence_for(
+                          "ast_memory_null_allocation", site,
+                          stable_digest({"null_id": null_id, "api": name}))}
+            return [(success, Reference("heap", identity)), (state, NullValue(null_id, origin))]
         if name == "free" and len(args) == 1:
+            if isinstance(args[0], NullValue):
+                # free(NULL) is a defined no-op; the failure branch does not
+                # own a heap instance to release.
+                return [(state, None)]
             if isinstance(args[0], Reference) and args[0].kind == "external":
                 # Caller-provided memory: the release is evidence of the
                 # cleanup site, and no witness owns the region.
@@ -978,6 +1126,8 @@ class MemoryPaths(SemanticSyncAnalyzer):
         self.escaped_fields, self.escaped_tables = {}, {}
         self.table_symbols, self.extern_decls = {}, {}
         self.function_gaps = {}
+        self.null_writes, self.null_write_gaps = {}, set()
+        self.entry_location, self.entry_arguments = None, []
         self.index(asts)
         for tu, ast_data in asts:
             self._index_fields(ast_data, tu)
@@ -1016,15 +1166,20 @@ class MemoryPaths(SemanticSyncAnalyzer):
                 try:
                     state = State(output_slots=slots)
                     values, regions = self._caller_inputs(state, record, kinds, args)
+                    self.entry_location, self.entry_arguments = record["location"], list(args)
                     void_entry = _type(record["node"]).startswith("void (")
                     witnessed = []
                     for path, frame in self._invoke(key, state, values):
+                        if path.null_write_aborted:
+                            # The null-write fact is already recorded; this
+                            # path cannot also witness a normal exit.
+                            continue
                         if frame.exit is None:
                             if not void_entry:
                                 raise UnsupportedPath("entry_exit_unmodeled")
                             frame.exit = self._end_site(record["body"], record["tu"])
                         if not (type(frame.result) is int or frame.result is None
-                                or isinstance(frame.result, (Reference, bytes))):
+                                or isinstance(frame.result, (Reference, NullValue, bytes))):
                             raise UnsupportedPath("entry_exit_unmodeled")
                         self._record_inputs(path, record, regions)
                         self._record_exit(path, frame)
@@ -1034,8 +1189,12 @@ class MemoryPaths(SemanticSyncAnalyzer):
                     proofs.extend(witnessed)
                 except (UnsupportedPath, RecursionError) as exc:
                     gaps.append(f"{entry}:{args}:{exc}")
+        gaps.extend(sorted(self.null_write_gaps))
         return {"schema_version": VERSION, "basis": "clang-json-ast-paths", "binding": binding,
-                "traces": proofs, "tables": self._table_export(proofs), "gaps": sorted(set(gaps))}
+                "traces": proofs, "tables": self._table_export(proofs),
+                "null_writes": sorted(self.null_writes.values(),
+                                      key=lambda item: item["null_write_id"]),
+                "gaps": sorted(set(gaps))}
 
     def _table_export(self, proofs):
         """Publish read-only table bindings referenced by an exported call."""
@@ -1094,7 +1253,8 @@ class MemoryPaths(SemanticSyncAnalyzer):
 
 def analyze_memory_paths(source_root, prepared, binding, entries):
     units, asts, _, errors = prepared
-    no_paths = {"schema_version": VERSION, "basis": "clang-json-ast-paths", "binding": binding, "traces": []}
+    no_paths = {"schema_version": VERSION, "basis": "clang-json-ast-paths", "binding": binding,
+                "traces": [], "null_writes": []}
     if errors or not asts:
         return {**no_paths, "gaps": ["clang_ast_incomplete"]}, []
     if any(not name.endswith(".c") for name, _ in asts) or any(
@@ -1109,4 +1269,10 @@ def analyze_memory_paths(source_root, prepared, binding, entries):
         return {**no_paths, "gaps": gaps}, []
     ids = {identity for trace in result["traces"] for ev in trace["events"] for identity in ev["evidence_ids"]}
     ids.update(identity for table in result["tables"] for identity in table["evidence_ids"])
+    for record in result.get("null_writes", []):
+        ids.update(record["pointer"]["allocation"]["evidence_ids"])
+        ids.update(record["pointer"]["binding"]["evidence_ids"])
+        for condition in record["conditions"]:
+            ids.update(condition["evidence_ids"])
+        ids.update(record["write"]["evidence_ids"])
     return result, [analyzer.evidence[identity] for identity in sorted(ids)]

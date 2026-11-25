@@ -38,12 +38,21 @@ ARGUMENTS = {0, 1, "output_slot", "caller_input", "caller_pointer"}
 @unittest.skipUnless(shutil.which("clang"), "real Clang compiler required")
 class MemoryExportTests(unittest.TestCase):
     def assert_contract(self, payload):
-        self.assertEqual({"schema_version", "basis", "binding", "traces", "tables", "gaps"}, set(payload))
+        self.assertEqual({"schema_version", "basis", "binding", "traces", "tables",
+                          "null_writes", "gaps"}, set(payload))
         self.assertEqual("recode-memory-path/1", payload["schema_version"])
         self.assertEqual("clang-json-ast-paths", payload["basis"])
         self.assertEqual({"repository", "commit", "build_profile", "run_id"}, set(payload["binding"]))
         self.assertLessEqual(len(payload["traces"]), 128)
         self.assertLessEqual(len(payload["tables"]), 32)
+        self.assertLessEqual(len(payload["null_writes"]), 128)
+        for record in payload["null_writes"]:
+            self.assertEqual({"null_write_id", "entry", "arguments", "pointer", "conditions", "write"},
+                             set(record))
+            self.assertTrue(record["conditions"])
+            self.assertEqual("allocation_failure", record["conditions"][0]["kind"])
+            self.assertTrue(record["conditions"][0]["taken"])
+            self.assertTrue(record["write"]["evidence_ids"])
         for table in payload["tables"]:
             self.assertEqual({"table_id", "name", "stability", "basis", "location", "fields",
                               "evidence_ids"}, set(table))
@@ -118,3 +127,53 @@ class MemoryExportTests(unittest.TestCase):
                 for event in trace["events"]:
                     self.assertTrue(set(event["evidence_ids"]) <= set(evidence))
                     self.assertEqual("src/case.c", evidence[event["evidence_ids"][0]]["location"]["file"])
+
+    def test_native_export_publishes_null_write_evidence(self):
+        source_text = """#include <stdlib.h>
+struct item { char *name; };
+int entry(void) {
+    struct item *p = malloc(sizeof(struct item));
+    if (!p) {
+        p->name = 0;
+        return -1;
+    }
+    free(p);
+    return 0;
+}
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "src" / "case.c"
+            source.parent.mkdir(parents=True)
+            source.write_text(source_text, encoding="utf-8")
+            workspace = root / "workspace"
+            workspace.mkdir()
+            write_json(workspace / "graph.json", {
+                "schema_version": "1.0", "run_id": "run_null_write",
+                "meta": {"repository": "example/null", "commit": "0" * 40,
+                         "build_profile": "repository-auto"},
+                "nodes": [], "edges": []})
+            write_json(workspace / "compile_commands.json", [{
+                "directory": str(root), "file": str(source),
+                "arguments": ["clang", "-std=c11", "-c", str(source)]}])
+            write_json(workspace / "request.json", {
+                "run_id": "run_null_write", "source_root": str(root),
+                "memory_entry_symbols": ["entry"], "entry_symbols": []})
+            self.assertEqual("succeeded", run_native_export(workspace)["status"])
+            payload = json.loads((workspace / "08-resource-flow" / "resource-flow.json").read_text(encoding="utf-8"))
+            proofs = payload["memory_path_proofs"]
+            self.assert_contract(proofs)
+            self.assertEqual(1, len(proofs["null_writes"]))
+            record = proofs["null_writes"][0]
+            self.assertEqual("p", record["pointer"]["binding"]["declaration"])
+            self.assertEqual("name", record["write"]["field"])
+            cited = {item["id"]: item for item in payload["evidence"]}
+            for key in (record["pointer"]["allocation"]["evidence_ids"]
+                        + record["pointer"]["binding"]["evidence_ids"]
+                        + [key for condition in record["conditions"] for key in condition["evidence_ids"]]
+                        + record["write"]["evidence_ids"]):
+                self.assertIn(key, cited)
+            self.assertEqual("ast_memory_null_allocation",
+                             cited[record["pointer"]["allocation"]["evidence_ids"][0]]["kind"])
+            self.assertEqual("ast_memory_null_write",
+                             cited[record["write"]["evidence_ids"][0]]["kind"])

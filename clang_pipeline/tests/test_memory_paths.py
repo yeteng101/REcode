@@ -257,6 +257,71 @@ int entry(void) {
 """
 
 
+NULL_WRITE_SOURCE = """#include <stdlib.h>
+struct item { char *name; };
+int entry(void) {
+    struct item *p = malloc(sizeof(struct item));
+    if (!p) {
+        p->name = 0;
+        return -1;
+    }
+    free(p);
+    return 0;
+}
+"""
+
+
+GUARDED_NULL_SOURCE = """#include <stdlib.h>
+struct item { char *name; };
+int entry(void) {
+    struct item *p = malloc(sizeof(struct item));
+    if (!p) return -1;
+    p->name = 0;
+    free(p);
+    return 0;
+}
+"""
+
+
+OTHER_NULL_SOURCE = """#include <stdlib.h>
+struct item { char *name; };
+int entry(void) {
+    struct item *p = malloc(sizeof(struct item));
+    struct item *q = malloc(sizeof(struct item));
+    if (!p) {
+        if (q) q->name = 0;
+        return -1;
+    }
+    free(p);
+    free(q);
+    return 0;
+}
+"""
+
+
+UNBOUND_NULL_SOURCE = """#include <stdlib.h>
+struct item { char *name; };
+int entry(void) {
+    ((struct item *)malloc(sizeof(struct item)))->name = 0;
+    return 0;
+}
+"""
+
+
+COMPARED_NULL_SOURCE = """#include <stdlib.h>
+struct item { char *name; };
+int entry(void) {
+    struct item *p = malloc(sizeof(struct item));
+    if (p == NULL) {
+        p->name = 0;
+        return -1;
+    }
+    free(p);
+    return 0;
+}
+"""
+
+
 @unittest.skipUnless(shutil.which("clang"), "real Clang compiler required")
 class MemoryPathTests(unittest.TestCase):
     def analyze(self, source, entry="entry"):
@@ -552,4 +617,49 @@ cleanup:
         self.assertEqual([], result["gaps"])
         self.assertEqual(2, len(result["traces"]))
 
+    def test_null_write_binds_allocation_binding_condition_and_write(self):
+        result, evidence = self.analyze(NULL_WRITE_SOURCE)
+        self.assertEqual(1, len(result["null_writes"]))
+        record = result["null_writes"][0]
+        self.assertRegex(record["null_write_id"], r"^ast_nullwrite_[0-9a-f]{20}$")
+        self.assertEqual(record["pointer"]["null_id"], record["pointer"]["allocation"]["null_id"])
+        self.assertEqual("malloc", record["pointer"]["allocation"]["api"])
+        self.assertEqual("p", record["pointer"]["binding"]["declaration"])
+        self.assertEqual([4, 5], [item["location"]["line"] for item in record["conditions"]])
+        self.assertEqual(["allocation_failure", "branch"], [item["kind"] for item in record["conditions"]])
+        self.assertTrue(all(item["taken"] is True for item in record["conditions"]))
+        self.assertEqual("name", record["write"]["field"])
+        self.assertEqual(6, record["write"]["location"]["line"])
+        cited = {item["id"]: item for item in evidence}
+        for key in (record["pointer"]["allocation"]["evidence_ids"]
+                    + record["pointer"]["binding"]["evidence_ids"]
+                    + [key for condition in record["conditions"] for key in condition["evidence_ids"]]
+                    + record["write"]["evidence_ids"]):
+            self.assertIn(key, cited)
+        self.assertIn("ast_memory_null_allocation", {item["kind"] for item in evidence})
+        self.assertIn("ast_memory_null_write", {item["kind"] for item in evidence})
 
+    def test_guard_branch_prevents_null_write(self):
+        result, _ = self.analyze(GUARDED_NULL_SOURCE)
+        self.assertEqual([], result["null_writes"])
+        self.assertTrue(result["traces"])
+        self.assertFalse(any("null_pointer" in gap for gap in result["gaps"]))
+
+    def test_write_through_another_pointer_is_not_null_write(self):
+        result, _ = self.analyze(OTHER_NULL_SOURCE)
+        self.assertEqual([], result["null_writes"])
+        self.assertTrue(result["traces"])
+        self.assertFalse(any("null_pointer" in gap for gap in result["gaps"]))
+
+    def test_unbound_null_write_reports_binding_gap(self):
+        result, _ = self.analyze(UNBOUND_NULL_SOURCE)
+        self.assertEqual([], result["null_writes"])
+        self.assertTrue(any("null_write_binding_unverified" in gap for gap in result["gaps"]))
+
+    def test_compared_null_write_records_comparison_condition(self):
+        result, _ = self.analyze(COMPARED_NULL_SOURCE)
+        self.assertEqual(1, len(result["null_writes"]))
+        comparison = next(item for item in result["null_writes"][0]["conditions"]
+                          if item["kind"] == "comparison")
+        self.assertEqual("==", comparison["operator"])
+        self.assertTrue(comparison["taken"])
