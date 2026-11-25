@@ -240,6 +240,42 @@ class MemoryPaths(SemanticSyncAnalyzer):
         suffix = (":" + location["file"] + ":" + str(location["line"])) if location else ""
         self.function_gaps.setdefault(owner, set()).add(reason + suffix)
 
+    def _table_reference(self, node, tu, member=True):
+        node = unwrap_expr(node)
+        if node is None:
+            return None
+        if node.get("kind") == "MemberExpr" and member:
+            base = node.get("inner", [])
+            return self._table_reference(base[0], tu, member=False) if len(base) == 1 else None
+        if node.get("kind") == "DeclRefExpr":
+            declaration = node.get("referencedDecl") or {}
+            if declaration.get("kind") == "VarDecl":
+                return self.global_records.get((tu, declaration.get("id")))
+        return None
+
+    def _scan_table_writes(self, node, tu):
+        kind, children = node.get("kind"), node.get("inner", [])
+        if kind == "BinaryOperator" and node.get("opcode") == "=" and children:
+            record = self._table_reference(children[0], tu)
+        elif kind == "UnaryOperator" and node.get("opcode") == "&" and children:
+            record = self._table_reference(children[0], tu, member=False)
+        elif kind == "CallExpr":
+            record = next((found for found in
+                           (self._table_reference(argument, tu, member=False) for argument in children[1:])
+                           if found), None)
+        else:
+            record = None
+        if record:
+            self.mutated_records.setdefault(record, self.location(node, tu))
+        for child in children:
+            self._scan_table_writes(child, tu)
+
+    def _seal_tables(self):
+        for identity, record in self.records.items():
+            site = self.mutated_records.get(identity)
+            record["mutable"] = bool(site) and not record["const"]
+            record["write_site"] = site
+
     def _record_of_type(self, tu, type_name):
         value = type_name.replace("const ", "").strip()
         for candidate in (value, self.record_aliases.get((tu, value))):
@@ -286,7 +322,9 @@ class MemoryPaths(SemanticSyncAnalyzer):
             return
         identity = "ast_record_" + stable_digest([tu, node.get("name")])[:20]
         self.records[identity] = {"id": identity, "name": node.get("name", ""), "record": record,
-                                  "fields": values, "location": self.location(node, tu)}
+                                  "fields": values, "location": self.location(node, tu),
+                                  "const": qualified.startswith("const "), "mutable": False,
+                                  "write_site": None}
         self.global_records[key] = identity
 
     def _table_values(self, initializer, tu, fields):
@@ -423,6 +461,13 @@ class MemoryPaths(SemanticSyncAnalyzer):
                     field = node["name"]
                     if table is None or field not in table["fields"]:
                         raise UnsupportedPath("unmodeled_record_field:" + str(field))
+                    if table["mutable"]:
+                        # Another function can rebind the entry, so the
+                        # initializer is a candidate rather than the target.
+                        site = table["write_site"] or {}
+                        raise UnsupportedPath("mutable_table_target:" + table["name"] + "." + field
+                                              + ":written_at:" + str(site.get("file"))
+                                              + ":" + str(site.get("line")))
                     result.append((path, table["fields"][field]))
                     continue
                 key = (index, node["name"])
@@ -467,7 +512,11 @@ class MemoryPaths(SemanticSyncAnalyzer):
                     result.append((path, -value))
                 elif node.get("opcode") == "*":
                     if isinstance(value, Reference) and value.kind == "cell":
-                        result.append((path, state.cells.get(value.key, 0)))
+                        if value.key not in state.cells:
+                            # The first read has no verified value; an
+                            # assumption here would silently pick a branch.
+                            raise UnsupportedPath("uninitialized_cell_read:" + value.key)
+                        result.append((path, state.cells[value.key]))
                         continue
                     slot = self._output_slot(path, value, _type(node))
                     if slot.value is None:
@@ -830,6 +879,31 @@ class MemoryPaths(SemanticSyncAnalyzer):
             path.events.insert(0, {"kind": "caller_input", "location": location, **data,
                                    "evidence_ids": self.evidence_for("ast_memory_caller_input", location, stable_digest(data))})
 
+    def _table_uses(self):
+        """Mutable table fields each indexed function reads from its own body."""
+        uses = {}
+        for key, record in self.functions.items():
+            found, stack = set(), [record["body"]]
+            while stack:
+                node = stack.pop()
+                if node.get("kind") == "MemberExpr" and len(node.get("inner", [])) == 1:
+                    target = self._table_reference(node["inner"][0], record["tu"], member=False)
+                    if target and self.records[target]["mutable"]:
+                        found.add(self.records[target]["name"] + "." + str(node.get("name")))
+                stack.extend(node.get("inner", []))
+            if found:
+                uses[key] = sorted(found)
+        return uses
+
+    def _reachable(self, key, adjacency):
+        seen, frontier = {key}, [key]
+        while frontier:
+            for target in adjacency.get(frontier.pop(), ()):
+                if target not in seen:
+                    seen.add(target)
+                    frontier.append(target)
+        return seen
+
     def prove(self, asts, binding, entries):
         self.member_records, self.record_aliases = {}, {}
         self.record_fields, self.records, self.global_records, self.external_globals = {}, {}, {}, {}
@@ -837,13 +911,21 @@ class MemoryPaths(SemanticSyncAnalyzer):
         self.typedef_sites, self.anonymous_sites = {}, {}
         self.anonymous_ranges = {}
         self.external_names = {}
+        self.mutated_records = {}
         self.function_gaps = {}
         self.index(asts)
         for tu, ast_data in asts:
             self._index_fields(ast_data, tu)
             self._link_typedefs(tu)
             self._index_globals(ast_data, tu)
+        for tu, ast_data in asts:
+            self._scan_table_writes(ast_data, tu)
+        self._seal_tables()
         proofs, gaps = [], []
+        uses = self._table_uses()
+        adjacency = {}
+        for edge in self.call_edges.values():
+            adjacency.setdefault(edge["source"], set()).add(edge["target"])
         for entry in sorted(set(entries)):
             matches = [key for key, record in self.functions.items() if record["name"] == entry]
             if len(matches) != 1:
@@ -859,6 +941,9 @@ class MemoryPaths(SemanticSyncAnalyzer):
             domains = [{"integer": (0, 1), "output": (OUTPUT_SLOT,),
                         "input_record": (CALLER_INPUT,), "external": (CALLER_POINTER,)}[kind]
                        for kind in kinds]
+            reachable = self._reachable(key, adjacency)
+            for field in sorted({name for callee in reachable for name in uses.get(callee, [])}):
+                gaps.append("mutable_table_reachable:" + field)
             for args in product(*domains):
                 slots = {str(i): OutputSlot(param_types[i][:-1].rstrip()) for i, kind in enumerate(kinds)
                          if kind == "output"}
@@ -898,7 +983,9 @@ class MemoryPaths(SemanticSyncAnalyzer):
             returned.add(frame.result.key)
             escaped.add(frame.result.key)
         for key, allocation in path.heap.items():
-            if allocation.input:
+            # Only a region the caller can still reach keeps its contents
+            # owned by the caller; a released region leaves them behind.
+            if allocation.input and not allocation.released:
                 escaped.update(ref.key for ref in allocation.fields.values()
                                if isinstance(ref, Reference) and ref.kind == "heap" and ref.key in live)
         frontier = list(escaped)

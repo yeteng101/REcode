@@ -135,6 +135,71 @@ int entry(int size) {
 """
 
 
+MUTABLE_TABLE_SOURCE = """#include <stddef.h>
+#include <stdlib.h>
+struct allocator {
+    void *(*allocate)(size_t);
+    void (*release)(void *);
+};
+static struct allocator table = {malloc, free};
+void install(void *(*fn)(size_t)) {
+    table.allocate = fn;
+}
+int entry(void) {
+    void *p = table.allocate(8);
+    if (!p) return -1;
+    table.release(p);
+    return 0;
+}
+"""
+
+
+CONST_TABLE_SOURCE = """#include <stddef.h>
+#include <stdlib.h>
+struct allocator {
+    void *(*allocate)(size_t);
+    void (*release)(void *);
+};
+static const struct allocator table = {malloc, free};
+int entry(int fail) {
+    void *p = table.allocate(8);
+    if (!p) return -1;
+    if (fail) return -2;
+    table.release(p);
+    return 0;
+}
+"""
+
+
+REGION_SOURCE = """#include <stdlib.h>
+struct item {
+    char *name;
+};
+void adopt(struct item *slot, int take) {
+    char *name = malloc(4);
+    if (!name) return;
+    slot->name = name;
+    if (take) free(slot);
+}
+"""
+
+
+ERRNO_FIRST_READ_SOURCE = """int *__errno_location(void);
+int entry(void) {
+    int saved = *__errno_location();
+    return saved;
+}
+"""
+
+
+ERRNO_WRITE_THEN_READ_SOURCE = """int *__errno_location(void);
+int entry(int code) {
+    *__errno_location() = code;
+    return *__errno_location();
+}
+"""
+
+
 @unittest.skipUnless(shutil.which("clang"), "real Clang compiler required")
 class MemoryPathTests(unittest.TestCase):
     def analyze(self, source, entry="entry"):
@@ -356,5 +421,51 @@ cleanup:
         self.assertTrue(any(event["kind"] == "release_container" and event["resource_instance_id"] == roots[0]
                             for event in leaked[0]["events"]))
         self.assertIn("first = malloc", acquire["location"]["snippet"])
+
+    def test_mutable_table_entry_is_not_resolved_to_the_default(self):
+        result, _ = self.analyze(MUTABLE_TABLE_SOURCE)
+        self.assertEqual([], result["traces"])
+        gap = next(item for item in result["gaps"] if "mutable_table_target" in item)
+        self.assertIn("table.allocate", gap)
+        write_line = MUTABLE_TABLE_SOURCE.splitlines().index("    table.allocate = fn;") + 1
+        self.assertIn(f"written_at:case.c:{write_line}", gap)
+        self.assertTrue(any(item.startswith("mutable_table_reachable:table.allocate")
+                            for item in result["gaps"]))
+        self.assertFalse(any(event.get("target") == "malloc"
+                             for trace in result["traces"] for event in trace["events"]))
+
+    def test_const_table_binding_stays_resolved(self):
+        result, _ = self.analyze(CONST_TABLE_SOURCE)
+        self.assertEqual([], result["gaps"])
+        normal = next(trace for trace in result["traces"]
+                      if trace["events"][-1]["location"]["snippet"] == "return 0;")
+        call = next(event for event in normal["events"]
+                    if event["kind"] == "call" and event.get("target") == "malloc")
+        self.assertTrue(call["indirect"])
+        self.assertEqual("record", call["callback"]["kind"])
+        self.assertEqual([], normal["events"][-1]["live_roots"])
+
+    def test_caller_region_release_moves_child_ownership(self):
+        result, _ = self.analyze(REGION_SOURCE, entry="adopt")
+        self.assertEqual([], result["gaps"])
+        allocated = [trace for trace in result["traces"]
+                     if any(event["kind"] == "acquire" for event in trace["events"])]
+        self.assertEqual(2, len(allocated))
+        kept, released = sorted(allocated, key=lambda trace: trace["arguments"][1])
+        self.assertEqual([], kept["events"][-1]["live_roots"])
+        self.assertEqual(1, len(released["events"][-1]["live_roots"]))
+        self.assertTrue(any(event["kind"] == "release_container"
+                            and event["resource_instance_id"] == released["events"][-1]["live_roots"][0]
+                            for event in released["events"]))
+
+    def test_errno_first_read_reports_unknown_state(self):
+        result, _ = self.analyze(ERRNO_FIRST_READ_SOURCE)
+        self.assertEqual([], result["traces"])
+        self.assertTrue(any("uninitialized_cell_read:errno" in gap for gap in result["gaps"]))
+
+    def test_errno_read_after_write_uses_the_written_value(self):
+        result, _ = self.analyze(ERRNO_WRITE_THEN_READ_SOURCE)
+        self.assertEqual([], result["gaps"])
+        self.assertEqual(2, len(result["traces"]))
 
 

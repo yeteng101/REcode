@@ -29,17 +29,24 @@ libuv `2480b615` 的 Memory 全流程产物出现了 13 个审查候选，但 `m
 - 静态记录表：文件作用域的记录变量若以函数指针列表初始化，按字段保存函数身份。`uv__allocator.local_malloc` 这类字段调用解析为具体分配器，`call` 事件带 `callback.container`、`callback.field` 和 `callback.kind=record`，即使目标是 libc 也保留表字段来源。匿名声明的 typedef 记录按声明区间归属，`uv__allocator_t` 和 `uv_env_item_t` 都能落到同一 TU 的记录声明。
 - 入口参数：整数类型（含 `size_t`）枚举 0、1；`T **` 与 `int *` 仍是 `output_slot`；指向记录的 `T *` 表示调用方提供的定长区域，事件序列以 `caller_input` 开头，字段初值是调用方值；`void *`、`char *` 等其余指针表示调用方不透明指针，参数取值为 `caller_pointer`。`arguments` 枚举相应扩展为 `0`、`1`、`output_slot`、`caller_input`、`caller_pointer`。
 - 外部全局：只有声明、没有定义的全局指针（如 `environ`）绑定为外部引用，不再让整个入口报 `unbound_value`。解引用或下标读取报告 `external_value_extent_unmodeled:<符号>`；作为释放对象时记录 `release` 并标记 `external=true`。
-- 退出判定：返回给调用方的分配记为 `returned` 并从 `live_roots` 中排除；调用方区域不计入本函数的存活根，但其字段中仍存活的分配按逃逸处理。
 - 索引缺口的生效范围收窄到函数体：静态局部变量、别名存储和符号别名只让调用该函数的入口失败（`index_gap_in_callee`），不再因为同一 TU 内无关函数而丢弃全部路径。歧义函数定义仍然全局生效。
+
+### 取证边界（补修）
+
+- 表项稳定性：只有在记录整体 `const` 限定，或索引到的全部函数都没有写入该表（赋值、取地址、按引用传参都算写入）时，字段才算稳定。否则字段读取报 `mutable_table_target:<表>.<字段>:written_at:<文件>:<行>`，入口另外报 `mutable_table_reachable:<表>.<字段>`。初始化列表只作为候选绑定，不再被当作唯一调用目标。
+- 退出归属：只有仍未释放的调用方区域才把字段中的分配转交调用方。区域已经释放时，子对象不再从调用方可达，按 `live_roots` 记为泄漏；`release_container` 只说明容器释放时成员仍然存活。
+- errno 初始状态：首次读取没有可核验的值，报 `uninitialized_cell_read:errno`，不假设 0；先写入再读取时按写入值分析。
 
 ### 验证
 
-在 `libuv/libuv@2480b615` 的 `src/uv-common.c` 与 `src/unix/core.c` 上用 Clang 19 导出，入口为影响域给出的 `uv_os_environ`、`uv_os_free_environ`。
+在 `libuv/libuv@2480b615` 的 `src/uv-common.c` 与 `src/unix/core.c` 上用 Clang 19 重新导出，入口为影响域给出的 `uv_os_environ`、`uv_os_free_environ`。
 
 | 入口及参数 | 原生路径结果 |
 | --- | --- |
-| `uv_os_free_environ(caller_input, 0)` | 调用方区域在 `uv-common.c:798` 释放，退出没有存活根。 |
-| `uv_os_free_environ(caller_input, 1)` | `uv-common.c:795` 释放 `envitems[0].name`，经 `uv-common.c:88` 的分配器表字段调用落到 `free`，退出没有存活根。 |
+| `uv_os_free_environ(caller_input, 0)` | 缺口 `uninitialized_cell_read:errno`；`uv__free` 在 `uv-common.c:87` 首次读取 `errno`，补修后不导出路径。 |
+| `uv_os_free_environ(caller_input, 1)` | 同上；另外入口带 `mutable_table_reachable:uv__allocator.local_free`，`uv_replace_allocator` 在 `uv-common.c:112`-`115` 可改写该表。 |
 | `uv_os_environ(output_slot, output_slot)` | 缺口 `external_value_extent_unmodeled:environ`；`environ[i]` 的长度无法从源码确定，不导出路径。 |
 
-定向回归覆盖分配器表间接调用、错误返回时同一对象的存活状态、容器释放后子对象仍存活、清理入口的调用方区域，以及未知分配器仍报 `unmodeled_call`。剩余缺口：外部全局数组的规模需要入口级假设契约；`strchr`、`realloc` 等 libc 调用未建模；`uv_os_environ` 的错误路径需要先确定 `environ` 长度才能取证。
+真实案例因此回到 0 条路径：上一轮的两条清理路径依赖“分配器表保持初始绑定”和“`errno` 可当作已知值”，两点都不成立。受控夹具（`static const` 分配器表）导出 10 条路径，覆盖正常清理、容器释放后子对象仍存活、错误返回时的泄漏，以及调用方区域存活/已释放两种归属。
+
+定向回归覆盖表项被另一函数改写时不解析默认目标、`const` 表仍解析、区域存活与释放两种子对象归属、`errno` 首次读取与写入后读取，以及未知分配器仍报 `unmodeled_call`。剩余缺口：外部全局数组的规模需要入口级假设契约；`strchr`、`realloc` 等 libc 调用未建模；`uv_os_environ` 的错误路径需要先确定 `environ` 长度，`uv__free` 路径需要可核验的 `errno` 初值或分配器表配置。
