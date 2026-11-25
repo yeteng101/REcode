@@ -69,6 +69,7 @@ class SemanticSyncAnalyzer:
         self.global_binding_exclusions = set()
         self.objects = {}
         self.locks = {}
+        self.lock_order_edges = {}
         self.evidence = {}
         self.accesses = {}
         self.spawns = {}
@@ -157,7 +158,8 @@ class SemanticSyncAnalyzer:
                 initializer = "PTHREAD_MUTEX_INITIALIZER" if type_name == "pthread_mutex_t" else "PTHREAD_RWLOCK_INITIALIZER"
                 self.locks[key] = {"lock_id": key, "name": node["name"],
                     "kind": "mutex" if type_name == "pthread_mutex_t" else "rwlock",
-                    "declaration": location, "statically_initialized": initializer in source,
+                    "declaration": location, "statically_initialized": bool(re.search(
+                        r"=\s*" + initializer + r"\s*$", source)),
                     "operations": [], "evidence_ids": obj["evidence_ids"]}
         for tu, ast in asts:
             self.index_calls(ast, tu, None)
@@ -292,7 +294,7 @@ class SemanticSyncAnalyzer:
             return
         context = self.context(state)
         key = "ast_access_" + stable_digest([target, location, kind, context, stack])[:20]
-        lockset = {identity: mode for identity, mode in state.held.items()}
+        lockset = {identity: mode for identity, (mode, _) in state.held.items()}
         ids = set(obj["evidence_ids"] + self.evidence_for("ast_shared_access", location, key))
         for lock in lockset:
             ids.update(self.locks[lock]["evidence_ids"])
@@ -529,6 +531,8 @@ class SemanticSyncAnalyzer:
         if kind == "initialize":
             if len(values) < 2 or values[1] != 0:
                 self.gap("nondefault_lock_attributes", node, tu)
+                state.initialized.discard(lock_id)
+                state.held.pop(lock_id, None)
                 return [(state, None)]
             success, failure = state.clone(), state.clone()
             success.initialized.add(lock_id)
@@ -541,9 +545,23 @@ class SemanticSyncAnalyzer:
                 self.gap("nested_lock_order_analysis_unavailable", node, tu)
             if lock_id in state.held:
                 self.gap("reentrant_lock_acquisition", node, tu)
-                state.held.pop(lock_id, None)
-            else:
-                state.held[lock_id] = ACQUIRE_APIS[name]
+                _, first_evidence = state.held.pop(lock_id)
+                if name == "pthread_mutex_lock":
+                    context = stable_digest([state.instance, state.phase])[:12]
+                    ids = sorted(set(first_evidence + operation["evidence_ids"]))
+                    edge_id = "ast_lock_order_" + stable_digest([lock_id, ids, context])[:16]
+                    self.lock_order_edges[edge_id] = {
+                        "edge_id": edge_id,
+                        "from_lock_id": lock_id,
+                        "to_lock_id": lock_id,
+                        "blocking": True,
+                        "observed_at": location,
+                        "execution_context": {"context_id": "semantic:" + context, "thread": "unknown"},
+                        "evidence_ids": ids,
+                    }
+                    state.terminated = True
+                return [(state, None)]
+            state.held[lock_id] = (ACQUIRE_APIS[name], operation["evidence_ids"])
         elif lock_id not in state.held:
             self.gap("unlock_without_proven_ownership", node, tu)
         else:
@@ -720,7 +738,7 @@ class SemanticSyncAnalyzer:
         for instance, spawn in list(self.spawns.items()):
             worker = PathState(instance=instance, is_root=False, initialized=set(spawn["initialized"]))
             paths = self.invoke(spawn["function"], worker, [spawn["argument"]], [])
-            if any(path.held for path, _ in paths):
+            if any(path.held and not path.terminated for path, _ in paths):
                 self.gap("thread_returns_holding_lock:" + instance)
         complete = not self.gaps
         public_objects = []
@@ -750,7 +768,7 @@ class SemanticSyncAnalyzer:
             if accesses:
                 public_objects.append(dict(obj, accesses=accesses))
         finding = {"id": "recode-ast-sync", "kind": "sync_flow", "shared_objects": public_objects,
-                   "locks": list(self.locks.values()), "lock_order_edges": [], "confidence": 1.0,
+                   "locks": list(self.locks.values()), "lock_order_edges": list(self.lock_order_edges.values()), "confidence": 1.0,
                    "callbacks_and_async_boundaries": list(self.thread_events.values()),
                    "evidence_ids": sorted(self.evidence)}
         direct_calls = DirectFieldCalls()

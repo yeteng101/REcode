@@ -324,6 +324,38 @@ class SemanticSyncTests(unittest.TestCase):
         self.assertFalse(result["coverage"]["complete"])
         self.assertTrue(any("nested_lock_order_analysis_unavailable" in gap for gap in result["coverage"]["gaps"]))
 
+    def test_default_mutex_self_edge_binds_both_acquisitions(self):
+        source = """#include <pthread.h>
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+int main(void) {
+    pthread_mutex_lock(&lock);
+    pthread_mutex_lock(&lock);
+    pthread_mutex_unlock(&lock);
+    return 0;
+}
+"""
+        result = self.analyze(source)
+        finding = result["findings"][0]
+        first, second = finding["locks"][0]["operations"]
+        edge, = finding["lock_order_edges"]
+        self.assertEqual(second["location"], edge["observed_at"])
+        self.assertCountEqual(first["evidence_ids"] + second["evidence_ids"], edge["evidence_ids"])
+        self.assertEqual(["reentrant_lock_acquisition:workers.c:5"], result["coverage"]["gaps"])
+
+    def test_repeated_read_lock_does_not_export_a_blocking_edge(self):
+        source = """#include <pthread.h>
+pthread_rwlock_t lock = PTHREAD_RWLOCK_INITIALIZER;
+int main(void) {
+    pthread_rwlock_rdlock(&lock);
+    pthread_rwlock_rdlock(&lock);
+    pthread_rwlock_unlock(&lock);
+    pthread_rwlock_unlock(&lock);
+    return 0;
+}
+"""
+        result = self.analyze(source)
+        self.assertEqual([], result["findings"][0]["lock_order_edges"])
+
     def test_pthread_join_output_is_a_shared_write(self):
         source = """#include <pthread.h>
 void *shared_result;
