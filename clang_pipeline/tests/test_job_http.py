@@ -67,6 +67,23 @@ class JobHTTPTests(unittest.TestCase):
     def test_missing_object_and_bad_options(self):
         self.assertEqual(self.request("/job_missing/result")[0], 404)
         self.assertEqual(self.request(body={"repository_url": URL, "entry_symbols": "not-a-list"})[0], 400)
+        self.assertEqual(self.request(body={"repository_url": URL, "memory_entry_symbols": [""]})[0], 400)
+
+    def test_memory_entry_symbols_are_normalized_and_part_of_job_identity(self):
+        headers = {"Idempotency-Key": "memory-entry-key"}
+        with patch.object(self.manager, "_runner", wraps=runner) as run:
+            status, raw, _ = self.request(body={"repository_url": URL, "memory_entry_symbols": ["read", " write ", "read"]},
+                                          headers=headers)
+            self.assertEqual(202, status)
+            job_id = json.loads(raw)["job_id"]
+            status, raw, _ = self.request(body={"repository_url": URL, "memory_entry_symbols": ["write", "read"]},
+                                          headers=headers)
+            self.assertEqual((202, job_id), (status, json.loads(raw)["job_id"]))
+            status, _, _ = self.request(body={"repository_url": URL, "memory_entry_symbols": ["read"]}, headers=headers)
+            self.assertEqual(409, status)
+            self.assertEqual("succeeded", wait_for(self.manager, job_id)["status"])
+            self.assertEqual(["read", "write"], run.call_args.kwargs["memory_entry_symbols"])
+            self.assertEqual([], run.call_args.kwargs["entry_symbols"])
 
     def test_configured_api_defaults_disable_local_paths(self):
         with tempfile.TemporaryDirectory() as root:

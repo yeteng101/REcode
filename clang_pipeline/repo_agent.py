@@ -603,6 +603,7 @@ def run_repo_analysis(
     commit: str | None = None,
     work_root: str | Path | None = None,
     entry_symbols: list[str] | None = None,
+    memory_entry_symbols: list[str] | None = None,
     build_profile: str | None = None,
     archive: bool = True,
     log_paths: list[str | Path] | None = None,
@@ -656,6 +657,7 @@ def run_repo_analysis(
                 "output_dir": str(target_output),
                 "build_profile": build_profile,
                 "entry_symbols": entry_symbols or [],
+                "memory_entry_symbols": memory_entry_symbols,
                 "optimized_ir": optimized_ir,
             },
         ) as root_span:
@@ -723,6 +725,7 @@ def run_repo_analysis(
                 publish_dir=target_output,
                 commit=resolved_commit,
                 entry_symbols=entry_symbols,
+                memory_entry_symbols=memory_entry_symbols,
                 repository=repository,
                 optimized_ir=optimized_ir,
                 cancel_token=cancel_token,

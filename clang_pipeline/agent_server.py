@@ -227,6 +227,7 @@ class AgentHandler(BaseHTTPRequestHandler):
                     commit=body.get("commit"),
                     build_profile=body.get("build_profile"),
                     entry_symbols=body.get("entry_symbols"),
+                    memory_entry_symbols=body.get("memory_entry_symbols"),
                     log_paths=body.get("logs"),
                     optimized_ir=bool(body.get("optimized_ir")),
                     idempotency_key=self.headers.get("Idempotency-Key") or body.get("idempotency_key"),

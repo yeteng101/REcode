@@ -32,6 +32,7 @@ def build_request(
     entry_symbols: list[str] | None = None,
     optimized_ir: bool = False,
     log_paths: list[str | Path] | None = None,
+    memory_entry_symbols: list[str] | None = None,
 ) -> dict[str, Any]:
     request = {
         "schema_version": "1.0",
@@ -48,6 +49,8 @@ def build_request(
     }
     if entry_symbols:
         request["entry_symbols"] = entry_symbols
+    if memory_entry_symbols is not None:
+        request["memory_entry_symbols"] = memory_entry_symbols
     return request
 
 
@@ -238,6 +241,7 @@ def run_pipeline(
     cancel_token: CancellationToken | None = None,
     trace: ToolTraceRecorder | None = None,
     stage_timeout: float = 1200,
+    memory_entry_symbols: list[str] | None = None,
 ) -> dict[str, Any]:
     if cancel_token is not None:
         cancel_token.check("pipeline")
@@ -258,6 +262,7 @@ def run_pipeline(
         repository=repository,
         commit=commit,
         entry_symbols=entry_symbols,
+        memory_entry_symbols=memory_entry_symbols,
         optimized_ir=optimized_ir,
         log_paths=copied_log_paths,
     )

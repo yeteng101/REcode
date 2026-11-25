@@ -53,6 +53,8 @@ Content-Type: application/json
 
 也支持请求体 `idempotency_key`。相同键和相同规范化参数返回原任务；相同键配不同参数返回 HTTP 409。不带键则创建新任务。键最长 200 字符，不能只含空白；当前键在整个服务内唯一，未来多租户鉴权必须增加租户作用域。需要可复现结果时固定 commit；分支会随时间变化。
 
+请求体可通过 `memory_entry_symbols` 单独指定有界 Memory 路径入口。该字段计入幂等指纹，省略时 Memory 沿用 `entry_symbols`。同步分析继续使用 `entry_symbols` 或原有的自动入口。
+
 - `GET /api/v1/agent/analyze/{job_id}`：持久状态、执行次数、生命周期事件、错误与对象描述。
 - `POST /api/v1/agent/analyze/{job_id}/cancel`：取消，可由另一 API/worker 进程处理。
 - `GET /api/v1/agent/analyze/{job_id}/result`：对象存储中的结果 JSON。

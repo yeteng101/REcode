@@ -27,7 +27,8 @@ def main():
             identity = {'repository_url': request['repository_url'], 'commit': request['commit']}
         result = run_repo_analysis('/work/repository', output_dir='/work/output',
             work_root='/work/checkout', archive=False, safe_mode=True, build_profile='safe-generic',
-            entry_symbols=request.get('entry_symbols'), optimized_ir=bool(request.get('optimized_ir')),
+            entry_symbols=request.get('entry_symbols'), memory_entry_symbols=request.get('memory_entry_symbols'),
+            optimized_ir=bool(request.get('optimized_ir')),
             snapshot_identity=identity,
             max_repository_files=request['max_repository_files'],
             max_repository_bytes=request['max_repository_bytes'])

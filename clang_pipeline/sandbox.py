@@ -141,7 +141,9 @@ class DockerSandboxRunner:
                         raise SecurityError('sandbox rejected archive: ' + error.decode(errors='replace')[:1000])
                     span.set_result({'status': 'imported'})
             request = dict(repository_url=repository_url, commit=options.get('commit'),
-                           entry_symbols=options.get('entry_symbols'), optimized_ir=options.get('optimized_ir'),
+                           entry_symbols=options.get('entry_symbols'),
+                           memory_entry_symbols=options.get('memory_entry_symbols'),
+                           optimized_ir=options.get('optimized_ir'),
                            max_repository_files=max_repository_files, max_repository_bytes=max_repository_bytes)
             with tempfile.TemporaryFile() as incoming, trace.span('sandbox.analyze', {}) as span:
                 incoming.write(json.dumps(request).encode())

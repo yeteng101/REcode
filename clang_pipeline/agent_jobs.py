@@ -99,7 +99,8 @@ class AnalysisJobManager:
 
     def submit(self, repository_url: str, *, branch: str | None = None,
                commit: str | None = None, build_profile: str | None = None,
-               entry_symbols: list[str] | None = None, log_paths: list[str] | None = None,
+               entry_symbols: list[str] | None = None, memory_entry_symbols: list[str] | None = None,
+               log_paths: list[str] | None = None,
                optimized_ir: bool = False, idempotency_key: str | None = None) -> dict[str, Any]:
         if self._stop.is_set():
             raise JobError("job manager is closed")
@@ -116,6 +117,12 @@ class AnalysisJobManager:
         commit = normalize_commit_sha(commit)
         options = dict(branch=branch, commit=commit, build_profile=build_profile,
                        entry_symbols=entry_symbols or [], log_paths=log_paths or [], optimized_ir=bool(optimized_ir))
+        if memory_entry_symbols is not None:
+            if not isinstance(memory_entry_symbols, list) or any(
+                not isinstance(symbol, str) or not symbol.strip() for symbol in memory_entry_symbols
+            ):
+                raise JobError("memory_entry_symbols must be a list of non-empty strings")
+            options["memory_entry_symbols"] = sorted({symbol.strip() for symbol in memory_entry_symbols})
         if hasattr(self._runner, "validate_submission"):
             self._runner.validate_submission(repository_url, options)
         request = {"repository_url": repository_url, "options": options}

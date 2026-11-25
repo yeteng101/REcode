@@ -56,6 +56,7 @@ def run_native_export(
         else []
     )
     if source_root and compile_commands:
+        prepared = None
         try:
             prepared = load_semantic_asts(workspace_path, source_root)
             semantic_sync = analyze_semantic_sync(
@@ -65,18 +66,17 @@ def run_native_export(
             race_analysis["evidence"].extend(semantic_sync["evidence"])
         except (OSError, ValueError, KeyError, TypeError, RecursionError) as exc:
             race_analysis["warnings"].append("semantic_sync_failed:" + type(exc).__name__ + ":" + str(exc))
-        else:
-            if request.get("entry_symbols"):
-                try:
-                    source = resource_flow["source"]
-                    binding = {key: source[key] for key in ("repository", "commit", "build_profile")}
-                    binding["run_id"] = resource_flow["run_id"]
-                    proofs, evidence = analyze_memory_paths(source_root, prepared, binding, request["entry_symbols"])
-                    if proofs is not None:
-                        resource_flow["memory_path_proofs"] = proofs
-                        resource_flow["evidence"].extend(evidence)
-                except (OSError, ValueError, KeyError, TypeError, RecursionError) as exc:
-                    resource_flow["warnings"].append("memory_path_analysis_failed:" + type(exc).__name__ + ":" + str(exc))
+        memory_entries = request.get("memory_entry_symbols", request.get("entry_symbols"))
+        if memory_entries and prepared is not None:
+            try:
+                source = resource_flow["source"]
+                binding = {key: source[key] for key in ("repository", "commit", "build_profile")}
+                binding["run_id"] = resource_flow["run_id"]
+                proofs, evidence = analyze_memory_paths(source_root, prepared, binding, memory_entries)
+                resource_flow["memory_path_proofs"] = proofs
+                resource_flow["evidence"].extend(evidence)
+            except (OSError, ValueError, KeyError, TypeError, RecursionError) as exc:
+                resource_flow["warnings"].append("memory_path_analysis_failed:" + type(exc).__name__ + ":" + str(exc))
     build_profile = extract_build_profile(
         compile_commands,
         source_root or request.get("repo_root") or Path.cwd(),
