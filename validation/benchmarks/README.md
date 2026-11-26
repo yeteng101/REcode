@@ -75,7 +75,7 @@ python scripts/export_validation.py --graph demo/redis/graph.json --verification
 
 `predictions/` 严格保留分析器现状：资源流和同步关系已接入 v1 原生分析器，
 通过 `--native` 输出真实 predictions；不能再用 Ground Truth 补齐。
-当前 Linux-profile libuv 原生输出为资源流 137 项、同步关系 2,987 项。资源流在
+当前 Linux-profile libuv 原生输出为资源流 137 项、同步关系 2,982 项。资源流在
 17 条 confirmed 操作上达到 17 TP / 0 FP / 0 FN；同步关系在 32 条正例和
 6 条负例上达到 32 TP / 0 FP / 0 FN / 6 TN，required evidence 命中率 100%。
 同步关系仍使用端点 + order 作为评分 identity，condition 保留为必要证据。

@@ -1,0 +1,72 @@
+{
+  "schema_version": "external-protocol-v2",
+  "protocol_id": "external-v2",
+  "status": "locked",
+  "created_at": "2026-11-26",
+  "predecessor": "external-v1",
+  "principles": {
+    "gold_is_read_only": true,
+    "agent_must_not_receive_gold": true,
+    "unknown_is_a_first_class_result": true,
+    "v1_results_remain_frozen": true,
+    "generator_changes_require_a_new_protocol_version": true
+  },
+  "datasets": {
+    "callgraphbench": {
+      "selection": "validation/external-v2/selections/callgraphbench-v2.json",
+      "unit": "call_edge",
+      "identity_fields": [
+        "caller",
+        "callee"
+      ],
+      "gold_source": "official CallGraphBench C/C++ manifests",
+      "generator": "clang_pipeline-native + FunctionTargetResolver v2",
+      "metrics": [
+        "precision",
+        "recall",
+        "f1"
+      ]
+    },
+    "svcomp-memsafety": {
+      "selection": "validation/external/selections/svcomp-memsafety-v1.json",
+      "unit": "task_property",
+      "identity_fields": [
+        "task_file",
+        "property_file",
+        "subproperty"
+      ],
+      "gold_source": "official SV-COMP task YAML property verdict",
+      "generator": "resource-flow-native lifecycle-state-v2",
+      "metrics": [
+        "precision",
+        "recall",
+        "coverage"
+      ]
+    },
+    "juliet-cwe401": {
+      "selection": "validation/external/selections/juliet-cwe401-v1.json",
+      "unit": "function",
+      "identity_fields": [
+        "case_id",
+        "source_file",
+        "function"
+      ],
+      "gold_source": "official Juliet bad/good function names for CWE-401",
+      "generator": "resource-flow-native lifecycle-state-v2",
+      "metrics": [
+        "precision",
+        "recall",
+        "coverage"
+      ]
+    }
+  },
+  "release_gates": {
+    "schema_validation_required": true,
+    "selection_hash_required": true,
+    "protocol_lock_required": true,
+    "minimum_precision": 1.0,
+    "minimum_recall": 1.0,
+    "maximum_callgraphbench_false_positives": 0
+  },
+  "scope_note": "external-v2 currently re-freezes CallGraphBench, Juliet CWE-401 and SV-COMP MemSafety. CG-Bench and race datasets remain on external-v1 until their own v2 runs are accepted."
+}

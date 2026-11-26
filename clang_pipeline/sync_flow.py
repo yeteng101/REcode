@@ -6,6 +6,11 @@ from pathlib import Path
 from typing import Any
 
 from .clang_ast import evidence_id, stable_digest, utc_now
+from .source_context import (
+    ControlRegion,
+    order_decision,
+    regions_for_file,
+)
 
 
 LOCK_ACQUIRE = {
@@ -164,6 +169,9 @@ FUNCTION_DEFINITION_PATTERN = re.compile(
     r"(?:[A-Za-z_][A-Za-z0-9_]*[\s*&]+)+"
     r"[A-Za-z_][A-Za-z0-9_]*\s*\([^;]*\)\s*\{\s*$"
 )
+ALIAS_ASSIGNMENT_PATTERN = re.compile(
+    r"(?<![=!<>])=(?!=)"
+)
 PROTECTED_ACCESS_WINDOW = 16
 
 QUEUE_RESOURCE_TOKENS = (
@@ -234,6 +242,111 @@ def _thread_hint(function: str) -> str | None:
         if token in lowered:
             return token
     return None
+
+
+def _known_sync_rule(api: str) -> tuple[str, str] | None:
+    return (
+        LOCK_ACQUIRE.get(api)
+        or TRY_LOCK.get(api)
+        or LOCK_RELEASE.get(api)
+        or CONDITION_WAIT.get(api)
+        or CONDITION_NOTIFY.get(api)
+        or THREAD_RULES.get(api)
+        or EVENT_RULES.get(api)
+    )
+
+
+def _infer_wrapper_summaries(
+    graph: dict[str, Any],
+    source_root: Path,
+) -> dict[str, dict[str, Any]]:
+    known_apis = (
+        set(LOCK_ACQUIRE)
+        | set(TRY_LOCK)
+        | set(LOCK_RELEASE)
+        | set(CONDITION_WAIT)
+        | set(CONDITION_NOTIFY)
+        | set(THREAD_RULES)
+        | set(EVENT_RULES)
+    )
+    nodes_by_file: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for node in graph.get("nodes", []):
+        if node.get("kind") != "function":
+            continue
+        file = str(node.get("file") or "")
+        line = int(node.get("line") or 0)
+        if file and line > 0:
+            nodes_by_file[file].append(node)
+
+    summaries: dict[str, dict[str, Any]] = {}
+    for file, nodes in nodes_by_file.items():
+        path = _resolve_source_path(source_root, file)
+        try:
+            lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+        except OSError:
+            continue
+        nodes.sort(key=lambda item: int(item["line"]))
+        for index, node in enumerate(nodes):
+            name = str(node.get("name") or "")
+            if not name or name in known_apis:
+                continue
+            start = int(node["line"])
+            end = (
+                int(nodes[index + 1]["line"]) - 1
+                if index + 1 < len(nodes)
+                else len(lines)
+            )
+            end = min(end, len(lines))
+            signature = " ".join(
+                _code_line(lines[line_number - 1])
+                for line_number in range(start, min(start + 5, end + 1))
+            )
+            parameter_match = re.search(r"\((.*)\)", signature)
+            if parameter_match is None:
+                continue
+            parameters = {
+                match.group(0)
+                for parameter in parameter_match.group(1).split(",")
+                if (
+                    match := re.search(
+                        r"[A-Za-z_][A-Za-z0-9_]*\s*$",
+                        parameter.strip().lstrip("*"),
+                    )
+                )
+            }
+            if not parameters:
+                continue
+            calls: list[tuple[str, str, str, str]] = []
+            for line_number in range(start + 1, end + 1):
+                snippet = _code_line(lines[line_number - 1]).strip()
+                api = _source_event_api(snippet)
+                if api is None or api == name:
+                    continue
+                rule = _known_sync_rule(api)
+                if rule is None:
+                    continue
+                resource = _resource_key(snippet, api)
+                if resource in parameters:
+                    calls.append((api, rule[0], rule[1], resource))
+            unique_calls = list(dict.fromkeys(calls))
+            if len(unique_calls) != 1:
+                continue
+            api, kind, relation_type, resource = unique_calls[0]
+            summaries[name] = {
+                "inner_api": api,
+                "kind": kind,
+                "relation_type": relation_type,
+                "resource_parameter": resource,
+                "file": file,
+                "line": start,
+            }
+    return summaries
+
+
+def _code_line(line: str) -> str:
+    line = re.sub(r"/\*.*?\*/", "", line)
+    line = re.sub(r"//.*$", "", line)
+    return line
 
 
 def _identifiers(text: str) -> set[str]:
@@ -500,6 +613,61 @@ def _resolve_source_path(source_root: Path, file: str) -> Path:
     return source_root / path
 
 
+def _control_regions_by_file(
+    graph: dict[str, Any],
+    source_root: Path,
+) -> dict[str, list[ControlRegion]]:
+    nodes_by_file: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for node in graph.get("nodes", []):
+        if node.get("kind") != "function":
+            continue
+        file = str(node.get("file") or "")
+        line = int(node.get("line") or 0)
+        if file and line > 0:
+            nodes_by_file[file].append(node)
+
+    regions_by_file: dict[str, list[ControlRegion]] = {}
+    for file, nodes in nodes_by_file.items():
+        path = _resolve_source_path(source_root, file)
+        try:
+            lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+        except OSError:
+            continue
+        nodes.sort(key=lambda item: int(item["line"]))
+        ranges = []
+        for index, node in enumerate(nodes):
+            start = int(node["line"])
+            end = (
+                int(nodes[index + 1]["line"]) - 1
+                if index + 1 < len(nodes)
+                else len(lines)
+            )
+            ranges.append((start, min(end, len(lines))))
+        regions_by_file[file] = regions_for_file(lines, ranges)
+    return regions_by_file
+
+
+def _attach_control_context(
+    events: list[dict[str, Any]],
+    regions_by_file: dict[str, list[ControlRegion]],
+) -> None:
+    for event in events:
+        file = str(event.get("file") or "")
+        if file in regions_by_file:
+            event["_control_regions"] = regions_by_file[file]
+
+
+def _same_function_order(
+    source: dict[str, Any],
+    target: dict[str, Any],
+) -> tuple[str, str]:
+    return order_decision(
+        source.get("_control_regions", ()),
+        int(source.get("line") or 0),
+        int(target.get("line") or 0),
+    )
+
+
 def _scan_source_atomic_operations(
     graph: dict[str, Any],
     source_root: Path,
@@ -599,6 +767,192 @@ def _canonical_resource(value: str) -> str:
     return text.replace("->", ".")
 
 
+class _AliasSet:
+    def __init__(self) -> None:
+        self.parent: dict[str, str] = {}
+
+    def find(self, value: str) -> str:
+        self.parent.setdefault(value, value)
+        while self.parent[value] != value:
+            self.parent[value] = self.parent[self.parent[value]]
+            value = self.parent[value]
+        return value
+
+    def union(self, left: str, right: str) -> None:
+        left_root = self.find(left)
+        right_root = self.find(right)
+        if left_root == right_root:
+            return
+        high, low = sorted((left_root, right_root))
+        self.parent[high] = low
+
+
+def _simple_alias_expression(value: str) -> str | None:
+    value = value.strip().lstrip("&*")
+    if not value or "(" in value or ")" in value:
+        return None
+    return value
+
+
+def _assignment_alias_pair(snippet: str) -> tuple[str, str] | None:
+    match = ALIAS_ASSIGNMENT_PATTERN.search(snippet)
+    if match is None:
+        return None
+    left_text = snippet[: match.start()].rstrip()
+    right_text = snippet[match.end() :].strip().rstrip(";").strip()
+    left_match = re.search(
+        r"([A-Za-z_][A-Za-z0-9_]*(?:->[A-Za-z_][A-Za-z0-9_]*|\.[A-Za-z_][A-Za-z0-9_]*|\[[^\]]+\])*)\s*$",
+        left_text,
+    )
+    if left_match is None:
+        return None
+    right_match = re.match(
+        r"(&?\*?\s*[A-Za-z_][A-Za-z0-9_]*(?:->[A-Za-z_][A-Za-z0-9_]*|\.[A-Za-z_][A-Za-z0-9_]*|\[[^\]]+\])*)",
+        right_text,
+    )
+    if right_match is None:
+        return None
+    left = _simple_alias_expression(left_match.group(1))
+    right = _simple_alias_expression(right_match.group(1))
+    return (left, right) if left and right else None
+
+
+def _apply_local_resource_aliases(
+    events: list[dict[str, Any]],
+    source_root: Path,
+) -> None:
+    by_file_function: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
+    for event in events:
+        if event.get("file") and event.get("function"):
+            by_file_function[(event["file"], event["function"])].append(event)
+
+    for (file, _), group in by_file_function.items():
+        path = _resolve_source_path(source_root, file)
+        try:
+            lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+        except OSError:
+            continue
+        aliases = _AliasSet()
+        for event in group:
+            line_number = int(event.get("line") or 0)
+            if not 1 <= line_number <= len(lines):
+                continue
+            snippet = _code_line(lines[line_number - 1])
+            pair = _assignment_alias_pair(snippet)
+            if pair and pair[0] != pair[1]:
+                left, right = pair
+                aliases.union(left, right)
+        for event in group:
+            resource = _simple_alias_expression(str(event.get("resource") or ""))
+            if resource and resource in aliases.parent:
+                event["_resource_expression"] = event.get("resource")
+                event["resource"] = aliases.find(resource)
+
+
+def _call_arguments(snippet: str, api: str | None = None) -> list[str]:
+    if api:
+        match = re.search(rf"\b{re.escape(api)}\s*\(", snippet)
+        start = match.end() - 1 if match else snippet.find("(")
+    else:
+        start = snippet.find("(")
+    depth = 0
+    end = -1
+    for index in range(start, len(snippet)):
+        if snippet[index] == "(":
+            depth += 1
+        elif snippet[index] == ")":
+            depth -= 1
+            if depth == 0:
+                end = index
+                break
+    if start < 0 or end <= start:
+        return []
+    body = snippet[start + 1 : end]
+    arguments = []
+    current = []
+    depth = 0
+    for character in body:
+        if character in "([{":
+            depth += 1
+        elif character in ")]}":
+            depth = max(depth - 1, 0)
+        if character == "," and depth == 0:
+            arguments.append("".join(current).strip())
+            current = []
+            continue
+        current.append(character)
+    if current:
+        arguments.append("".join(current).strip())
+    return arguments
+
+
+def _apply_thread_identity(
+    events: list[dict[str, Any]],
+    graph: dict[str, Any],
+) -> None:
+    function_names = {
+        str(node.get("name") or "")
+        for node in graph.get("nodes", [])
+        if node.get("kind") == "function"
+    }
+    labels: dict[str, str] = {}
+    for event in events:
+        if event.get("kind") != "create":
+            continue
+        arguments = _call_arguments(
+            str(event.get("snippet") or ""),
+            str(event.get("api") or ""),
+        )
+        callback_index = (
+            1
+            if event.get("api") in {"uv_thread_create", "pthread_create"}
+            else 2
+            if event.get("api") == "uv_thread_create_ex"
+            else -1
+        )
+        if callback_index < 0 or callback_index >= len(arguments):
+            continue
+        callback_match = re.search(
+            r"\b([A-Za-z_][A-Za-z0-9_]*)\b",
+            arguments[callback_index],
+        )
+        if callback_match is None:
+            continue
+        callback_name = callback_match.group(1)
+        if callback_name not in function_names:
+            continue
+        labels[callback_name] = (
+            "thread:" + _canonical_resource(str(event.get("resource") or ""))
+        )
+
+    direct_calls: dict[str, set[str]] = defaultdict(set)
+    node_names = {
+        str(node.get("id")): str(node.get("name") or "")
+        for node in graph.get("nodes", [])
+        if node.get("kind") == "function"
+    }
+    for edge in graph.get("edges", []):
+        source = node_names.get(str(edge.get("source") or ""))
+        target = node_names.get(str(edge.get("target") or ""))
+        if source and target:
+            direct_calls[source].add(target)
+
+    pending = list(labels)
+    while pending:
+        source = pending.pop()
+        for target in direct_calls.get(source, ()):
+            if target in labels:
+                continue
+            labels[target] = labels[source]
+            pending.append(target)
+
+    for event in events:
+        label = labels.get(str(event.get("function") or ""))
+        if label:
+            event["_thread_hint"] = event.get("thread")
+            event["thread"] = label
+
+
 def _source_event_api(snippet: str) -> str | None:
     masked = re.sub(r"//.*$", "", snippet)
     for api in sorted(SOURCE_EVENT_APIS, key=len, reverse=True):
@@ -617,6 +971,7 @@ def _source_event(
     line: int,
     snippet: str,
     api: str | None = None,
+    wrapper_summaries: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any] | None:
     stripped = snippet.strip()
     if not stripped or stripped.startswith(("/*", "*", "//")):
@@ -624,6 +979,32 @@ def _source_event(
     if FUNCTION_DEFINITION_PATTERN.match(stripped):
         return None
     api = api or _source_event_api(stripped)
+    for wrapper_name in sorted(wrapper_summaries or {}, key=len, reverse=True):
+        if not re.search(rf"\b{re.escape(wrapper_name)}\s*\(", stripped):
+            continue
+        summary = wrapper_summaries[wrapper_name]
+        resource = _resource_key(stripped, wrapper_name)
+        return {
+            "operation_id": "sync_wrapper_" + stable_digest(
+                [function, file, line, stripped, wrapper_name]
+            )[:10],
+            "kind": summary["kind"],
+            "relation_type": summary["relation_type"],
+            "api": wrapper_name,
+            "function": function,
+            "thread": _thread_hint(function),
+            "resource": resource,
+            "file": file,
+            "line": line,
+            "snippet": stripped,
+            "evidence_ids": [],
+            "_identifiers": _identifiers(stripped),
+            "_wrapper": {
+                "name": wrapper_name,
+                "inner_api": summary["inner_api"],
+                "resource_parameter": summary["resource_parameter"],
+            },
+        }
     atomic = _classify_atomic_snippet(stripped)
     if atomic is not None:
         kind, semantics = atomic
@@ -738,6 +1119,7 @@ def _source_event(
 def _scan_source_events(
     graph: dict[str, Any],
     source_root: Path,
+    wrapper_summaries: dict[str, dict[str, Any]] | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
     by_file: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for node in graph.get("nodes", []):
@@ -775,6 +1157,7 @@ def _scan_source_events(
                     file=file,
                     line=line_number,
                     snippet=snippet,
+                    wrapper_summaries=wrapper_summaries,
                 )
                 if event is None:
                     continue
@@ -820,6 +1203,7 @@ def _scan_source_events(
                         file=file,
                         line=line_number,
                         snippet=snippet,
+                        wrapper_summaries=wrapper_summaries,
                     )
                     if event is None or event["kind"] != "program":
                         continue
@@ -845,22 +1229,20 @@ def _scan_source_events(
     return events, evidence
 
 
-def analyze_sync_relations(
+def collect_sync_events(
     graph: dict[str, Any],
     *,
     source_root: str | Path | None = None,
-) -> dict[str, Any]:
-    """Extract first-pass synchronization relations from a Clang graph.
-
-    The extractor is deliberately conservative: lock pairs found in the same
-    function are emitted as happens-before relations. Cross-function condition
-    and event pairs are emitted with unknown or low-confidence order unless
-    there is a shared resource key and a visible notification/wait pair.
-    """
-
-    operations = []
-    atomic_operations = []
-    sequence_operations = []
+) -> tuple[
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    dict[str, dict[str, Any]],
+]:
+    """Collect native synchronization events without pairing them."""
+    operations: list[dict[str, Any]] = []
+    atomic_operations: list[dict[str, Any]] = []
+    sequence_operations: list[dict[str, Any]] = []
     for edge in graph.get("edges", []):
         operation = _sync_operation(edge, graph)
         if operation is not None:
@@ -875,9 +1257,14 @@ def analyze_sync_relations(
             sequence_operations.append(sequence)
     source_evidence: dict[str, dict[str, Any]] = {}
     if source_root is not None:
+        wrapper_summaries = _infer_wrapper_summaries(
+            graph,
+            Path(source_root).resolve(),
+        )
         scanned_events, source_evidence = _scan_source_events(
             graph,
             Path(source_root).resolve(),
+            wrapper_summaries=wrapper_summaries,
         )
         existing_by_kind = {
             "operation": {
@@ -910,10 +1297,20 @@ def analyze_sync_relations(
                 continue
             target_list.append(operation)
             existing_by_kind[bucket].add(key)
-    items: list[dict[str, Any]] = []
-    warnings: list[str] = []
-    referenced: set[str] = set()
-
+        all_events = operations + atomic_operations + sequence_operations
+        _apply_local_resource_aliases(
+            all_events,
+            Path(source_root).resolve(),
+        )
+        _apply_thread_identity(all_events, graph)
+        regions_by_file = _control_regions_by_file(
+            graph,
+            Path(source_root).resolve(),
+        )
+        _attach_control_context(
+            all_events,
+            regions_by_file,
+        )
     # Track the locks visible at each operation in source order. This is a
     # local program-order approximation; the condition records that boundary.
     lock_groups: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
@@ -929,6 +1326,27 @@ def analyze_sync_relations(
             operation["held_locks"] = sorted(active)
             if operation["kind"] == "release":
                 active.discard(lock_resource)
+    return operations, atomic_operations, sequence_operations, source_evidence
+
+
+def analyze_sync_relations(
+    graph: dict[str, Any],
+    *,
+    source_root: str | Path | None = None,
+) -> dict[str, Any]:
+    """Extract first-pass synchronization relations from a Clang graph.
+
+    The extractor is deliberately conservative: lock pairs found in the same
+    function are emitted as happens-before relations. Cross-function condition
+    and event pairs are emitted with unknown or low-confidence order unless
+    there is a shared resource key and a visible notification/wait pair.
+    """
+    operations, atomic_operations, sequence_operations, source_evidence = (
+        collect_sync_events(graph, source_root=source_root)
+    )
+    items: list[dict[str, Any]] = []
+    warnings: list[str] = []
+    referenced: set[str] = set()
 
     # Same-function lock pairs are the strongest evidence available in the
     # current graph: lock -> unlock in source order.
@@ -993,7 +1411,24 @@ def analyze_sync_relations(
             )
         ]
         for release in releases:
-            for acquire in acquires:
+            ordered_acquires = sorted(
+                acquires,
+                key=lambda item: (
+                    0
+                    if (
+                        item["file"] == release["file"]
+                        and item["line"] > release["line"]
+                    )
+                    else 1,
+                    abs(int(item["line"]) - int(release["line"])),
+                ),
+            )
+            for acquire in ordered_acquires:
+                if (
+                    acquire["file"] == release["file"]
+                    and acquire["line"] <= release["line"]
+                ):
+                    continue
                 if release["function"] == acquire["function"] and release["line"] >= acquire["line"]:
                     continue
                 if release["function"] == acquire["function"]:
@@ -1158,7 +1593,11 @@ def analyze_sync_relations(
                 relation = _make_relation(
                     producer,
                     consumer,
-                    order="happens_before",
+                    order=(
+                        "happens_before"
+                        if producer.get("_support_evidence_ids")
+                        else "unknown"
+                    ),
                     confidence=0.55,
                     condition=(
                         f"cross-function queue publication {resource}: "
@@ -1193,8 +1632,39 @@ def analyze_sync_relations(
             if item["relation_type"] == relation_type and item["kind"] == "notify"
         ]
         for notify in notifies:
+            matched = False
             for wait in waits:
-                if notify["resource"] and notify["resource"] == wait["resource"]:
+                if not notify["resource"] or notify["resource"] != wait["resource"]:
+                    continue
+                if relation_type == "condition_variable":
+                    if (
+                        notify["file"] != wait["file"]
+                        or "cond_wait" not in str(wait.get("snippet") or "")
+                        or "cond_wait" not in str(wait.get("function") or "")
+                    ):
+                        continue
+                    if (
+                        notify["function"] == wait["function"]
+                        and notify["line"] >= wait["line"]
+                    ):
+                        continue
+                    same_function = notify["function"] == wait["function"]
+                    relation = _make_relation(
+                        notify,
+                        wait,
+                        order="happens_before" if same_function else "unknown",
+                        confidence=0.6 if same_function else 0.4,
+                        condition=(
+                            f"condition notification/wait resource "
+                            f"{notify['resource']}; "
+                            + (
+                                "same-function wait follows notification"
+                                if same_function
+                                else "signal does not identify one waiter"
+                            )
+                        ),
+                    )
+                else:
                     relation = _make_relation(
                         notify,
                         wait,
@@ -1205,9 +1675,13 @@ def analyze_sync_relations(
                             f"{notify['resource']}"
                         ),
                     )
-                    items.append(relation)
-                    referenced.update(relation["evidence_ids"])
+                items.append(relation)
+                referenced.update(relation["evidence_ids"])
+                matched = True
+                if relation_type != "condition_variable":
                     break
+            if matched and relation_type != "condition_variable":
+                continue
 
     # Source-scanned events provide the missing statement-level order inside a
     # function. Emit the next event plus the first event from new semantic
@@ -1235,14 +1709,20 @@ def analyze_sync_relations(
                 category = _program_category(target)
                 if emitted and category in seen and not is_event_callback:
                     continue
+                order, order_condition = _same_function_order(source, target)
                 relation = _make_relation(
                     source,
                     target,
-                    order="happens_before",
-                    confidence=0.5 if distance > 30 else 0.65,
+                    order=order,
+                    confidence=(
+                        0.4
+                        if order == "unknown"
+                        else 0.5 if distance > 30 else 0.65
+                    ),
                     condition=(
                         f"same-function program order {function}:"
-                        f"{source['line']}->{target['line']}"
+                        f"{source['line']}->{target['line']}; "
+                        f"{order_condition}"
                     ),
                 )
                 items.append(relation)
@@ -1262,14 +1742,19 @@ def analyze_sync_relations(
                     None,
                 )
                 if callback is not None:
+                    order, order_condition = _same_function_order(
+                        source,
+                        callback,
+                    )
                     relation = _make_relation(
                         source,
                         callback,
-                        order="happens_before",
-                        confidence=0.6,
+                        order=order,
+                        confidence=0.4 if order == "unknown" else 0.6,
                         condition=(
                             f"event readiness precedes callback dispatch "
-                            f"{function}:{source['line']}->{callback['line']}"
+                            f"{function}:{source['line']}->{callback['line']}; "
+                            f"{order_condition}"
                         ),
                     )
                     items.append(relation)
@@ -1328,6 +1813,7 @@ def analyze_sync_relations(
         )
         if access is None:
             continue
+        order, order_condition = _same_function_order(acquire, access)
         key = (
             acquire["function"],
             acquire["file"],
@@ -1338,11 +1824,11 @@ def analyze_sync_relations(
         protected_accesses[key] = _make_relation(
             acquire,
             access,
-            order="happens_before",
-            confidence=0.75,
+            order=order,
+            confidence=0.5 if order == "unknown" else 0.75,
             condition=(
                 f"protected program access under {acquire.get('resource')} "
-                f"in {acquire['function']}"
+                f"in {acquire['function']}; {order_condition}"
             ),
         )
     for relation in protected_accesses.values():
@@ -1685,14 +2171,16 @@ def analyze_sync_relations(
                 )
                 if not shared:
                     continue
+                order, order_condition = _same_function_order(source, target)
                 relation = _make_relation(
                     source,
                     target,
-                    order="happens_before",
-                    confidence=0.55,
+                    order=order,
+                    confidence=0.4 if order == "unknown" else 0.55,
                     condition=(
                         f"program order {function}:"
-                        f"{','.join(sorted(shared)[:5])}"
+                        f"{','.join(sorted(shared)[:5])}; "
+                        f"{order_condition}"
                     ),
                 )
                 items.append(relation)

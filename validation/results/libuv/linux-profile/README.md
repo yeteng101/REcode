@@ -22,7 +22,7 @@ causality and protected writes inside a lexical critical section.
 This is an open-world benchmark result: it means every labelled Gold identity
 and negative case in the frozen dataset is matched. It does not mean every
 emitted relation in the whole repository has been proven globally correct;
-2,955 synchronization predictions currently fall outside the labelled set.
+2,950 synchronization predictions currently fall outside the labelled set.
 
 ## Closed-world source audit
 
@@ -32,9 +32,13 @@ source endpoint is in `threadpool.c`, `unix/async.c`, `unix/thread.c` or
 
 | Decision | Count | Share |
 |---|---:|---:|
-| source-rule accepted | 1,282 | 100.00% |
+| source-rule accepted | 1,277 | 100.00% |
 | rejected | 0 | 0.00% |
 | needs review | 0 | 0.00% |
+
+The generated mechanism universe contains `530` candidates. All `530` are
+covered by accepted predictions (`universe_recall=100%`). The universe is
+frozen in `validation/results/libuv/sync-closed-world-v1/universe.json`.
 
 The frozen Gold regression remains `32 TP / 0 FP / 0 FN`. Generic
 condition/event notification-to-callback pairs without a shared queue or async
@@ -49,6 +53,7 @@ Outputs:
 ```text
 baseline/report.md
 baseline/report.json
+graph.json
 quality-gate/gate.json
 predictions/call-chains.json
 predictions/resource-flow.json

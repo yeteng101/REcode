@@ -372,6 +372,47 @@ def _operation(edge: dict[str, Any], graph: dict[str, Any], kind: str) -> dict[s
     }
 
 
+def _operations_from_edge(
+    edge: dict[str, Any],
+    graph: dict[str, Any],
+    kind: str,
+) -> list[dict[str, Any]]:
+    base = _operation(edge, graph, kind)
+    target = _node_name(graph, str(edge.get("target", "")))
+    snippet = str((edge.get("call_site") or {}).get("snippet") or "")
+    expressions: list[str] = []
+    if target in RELEASE_TARGETS:
+        for match in re.finditer(
+            rf"\b{re.escape(target)}\s*\(([^()]*)\)",
+            snippet,
+        ):
+            first = match.group(1).split(",", 1)[0].strip().lstrip("&*").strip()
+            if first:
+                expressions.append(first)
+    elif target in ACQUIRE_TARGETS:
+        assignment = ASSIGNMENT_PATTERN.search(snippet)
+        if assignment:
+            lhs = _simple_expression(assignment.group("lhs"))
+            if lhs:
+                expressions.append(lhs)
+    expressions = list(dict.fromkeys(expressions))
+    if len(expressions) <= 1:
+        return [base]
+    operations = []
+    for expression in expressions:
+        operation = dict(base)
+        operation["operation_id"] = (
+            "op_"
+            + str(edge.get("id", ""))[-8:]
+            + "_"
+            + stable_digest([expression])[:6]
+        )
+        operation["_resource_id"] = expression
+        operation["_resource_expression"] = expression
+        operations.append(operation)
+    return operations
+
+
 def _pair_key(source: str, target: str) -> str:
     if source in SOURCE_PAIR_RULES:
         return f"family:{SOURCE_PAIR_RULES[source]}"
@@ -661,12 +702,15 @@ def _canonical_expression(
     aliases: dict[str, dict[str, str]],
 ) -> str:
     mapping = aliases.get(function, {})
-    if expression not in mapping:
-        return expression
     value = expression
-    while mapping.get(value, value) != value:
-        value = mapping[value]
-    return value
+    if expression in mapping:
+        while mapping.get(value, value) != value:
+            value = mapping[value]
+    arithmetic = re.fullmatch(
+        r"([A-Za-z_]\w*(?:(?:->|\.)[A-Za-z_]\w*|\[[^\]]+\])*)\s*[+-]\s*\d+",
+        value.strip(),
+    )
+    return arithmetic.group(1) if arithmetic else value
 
 
 def _assignment_chain(
@@ -828,7 +872,7 @@ def analyze_resource_flow(
         source = _node_name(graph, str(edge.get("source", "")))
         kind = _classify(target)
         if kind:
-            operations.append(_operation(edge, graph, kind))
+            operations.extend(_operations_from_edge(edge, graph, kind))
     operations.extend(
         event.as_operation()
         for event in facts.get("resource_events", [])
@@ -846,6 +890,11 @@ def analyze_resource_flow(
             operation["_resource_expression"],
             aliases,
         )
+        if (
+            not str(operation["_resource_id"]).startswith("rf_")
+            and operation["_canonical_expression"]
+        ):
+            operation["_resource_id"] = operation["_canonical_expression"]
         if (
             operation["kind"] != "transfer"
             and operation["_pair_key"] in transfer_ids
@@ -916,15 +965,28 @@ def analyze_resource_flow(
         )
         if not selected:
             continue
-        complete = bool(acquires and releases)
-        cross_function = bool(group_transfers)
-        termination = (
-            "release_found"
-            if complete
-            else "release_not_found"
-            if acquires
-            else "acquire_not_found"
+        acquire_count = len(acquires)
+        release_count = len(releases)
+        transfer_count = len(group_transfers)
+        complete = (
+            acquire_count > 0
+            and (release_count >= acquire_count or transfer_count > 0)
         )
+        cross_function = bool(group_transfers)
+        if acquire_count > 0 and release_count >= acquire_count:
+            termination = "release_found"
+            lifecycle_state = "released"
+            leak_classification = "no_leak"
+        elif acquire_count > 0:
+            termination = "release_not_found"
+            lifecycle_state = (
+                "transferred" if transfer_count > 0 else "possibly_owned"
+            )
+            leak_classification = "possible_leak"
+        else:
+            termination = "acquire_not_found"
+            lifecycle_state = "unknown"
+            leak_classification = "unknown"
 
         for operation in selected:
             referenced_evidence.update(operation["evidence_ids"])
@@ -957,6 +1019,8 @@ def analyze_resource_flow(
                 ),
                 "resource_type": selected[0]["_resource_type"],
                 "operations": public_operations,
+                "lifecycle_state": lifecycle_state,
+                "classification": leak_classification,
                 "owner": selected[0].get("function", function),
                 "thread": None,
                 "ownership_model": (
@@ -976,7 +1040,20 @@ def analyze_resource_flow(
                             item["operation_id"] for item in public_operations
                         ],
                         "complete": complete,
+                        "lifecycle_state": lifecycle_state,
+                        "classification": leak_classification,
                         "termination_reason": termination,
+                        "state_machine": [
+                            {
+                                "kind": operation["kind"],
+                                "operation_id": operation["operation_id"],
+                                "function": operation["function"],
+                                "file": operation["file"],
+                                "line": operation["line"],
+                                "evidence_ids": operation["evidence_ids"],
+                            }
+                            for operation in public_operations
+                        ],
                         "evidence_ids": [
                             evidence_id
                             for item in public_operations

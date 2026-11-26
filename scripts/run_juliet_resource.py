@@ -79,7 +79,7 @@ def analyze_case(case: dict, temp_root: Path, index: int) -> tuple[set[str], lis
         str(operation.get("function") or "")
         for item in flow.get("items", [])
         for path in item.get("paths", [])
-        if path.get("termination_reason") == "release_not_found"
+        if path.get("classification") == "possible_leak"
         for operation in item.get("operations", [])
     }
     evidence = [

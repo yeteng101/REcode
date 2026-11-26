@@ -175,7 +175,7 @@ rwlock 方面，writer unlock 和之后成功获取 read lock 或 write lock 的
 
 改进后的验收不只看 Recall 是否上升，还要检查四件事：每个漏检是否都能映射到一个具体机制；每条关系是否有线程身份、资源 identity、condition 和 evidence；新增规则是否引入新的 FP；unknown 和 concurrent 是否仍然被保留。不能在看到 Gold 后把 unknown 改成 HB 来提高分数。
 
-因此 100% 的含义是：32 条冻结正例和 6 条负例全部匹配，而且 32 条 TP 的 required evidence 全部命中。它不表示仓库内另外 2,955 条未标注同步输出已经得到全仓真值。四文件 closed-world 审计目前覆盖 1,282 条输出，全部通过源码规则检查；下一步是继续扩大独立 Gold 和 closed-world scope。
+因此 100% 的含义是：32 条冻结正例和 6 条负例全部匹配，而且 32 条 TP 的 required evidence 全部命中。它不表示仓库内另外 2,950 条未标注同步输出已经得到全仓真值。四文件 closed-world 审计目前覆盖 1,277 条输出，530 条候选 universe 全部覆盖；下一步是继续扩大跨仓独立 Gold。
 
 ## 第 8 页：总结与下一步
 
@@ -185,7 +185,7 @@ rwlock 方面，writer unlock 和之后成功获取 read lock 或 write lock 的
 
 资源流方面，ResourceEvent 和四步传播方案已经把 libuv 的 6 个 FN 收到 0，当前结果为 17 TP / 0 FP / 0 FN，required evidence 命中率 100%。
 
-同步关系方面，已经完成 Linux profile 对齐和真实 FN 修复；结果从 4 TP / 28 FN 提升到 32 TP / 0 FN，required evidence 命中率 100%。四文件 closed-world 审计覆盖 1,282 条预测，源码规则通过率 100%。下一步是扩大独立 Gold 和跨仓同步案例。
+同步关系方面，已经完成 Linux profile 对齐和真实 FN 修复；结果从 4 TP / 28 FN 提升到 32 TP / 0 FN，required evidence 命中率 100%。四文件 closed-world 审计覆盖 1,277 条预测，候选 universe recall 100%。下一步是扩大独立 Gold 和跨仓同步案例。
 
 Redis target v2 证明调用链和资源流能力可以迁移，但资源 Gold 仍需人工确认。最后所有分析器变化进入 external-v2，不覆盖已经冻结的 external-v1。
 

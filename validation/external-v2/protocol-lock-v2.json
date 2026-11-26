@@ -1,0 +1,28 @@
+{
+  "schema_version": "external-protocol-lock-v2",
+  "protocol_id": "external-v2",
+  "status": "locked",
+  "hash_algorithm": "sha256",
+  "files": {
+    "validation/external-v2/protocol-v2.json": "cc79f850f2368c5b37a6a89163e0ade70c5254bd7d17faf9ec139414e00d83b7",
+    "validation/external-v2/selections/callgraphbench-v2.json": "6c567a0943019f6e284c1e9d20ec808f37ac1717f7bded946e0d33885700c9dd",
+    "validation/external/prediction.schema.json": "e7af754363efef3a109c7f1845800286266c5e96fbb202dd3c913d2353c8f8f3",
+    "scripts/run_callgraphbench.py": "6073c1bffb6ac0bcd8d87ff89d141cfa5d7e3329a3629c144022cebe77abfff8",
+    "scripts/run_svcomp_memsafety.py": "56a32a100845cfa8063f633e57629fdf0cb1bf3942fad50fc8215041ea93a00d",
+    "scripts/run_juliet_resource.py": "106670b92dbeb3d441daa3d51c2de35cd6f12054bba0730f8ce3a06e51ec7dfd",
+    "clang_pipeline/function_targets.py": "580fffc4be666efe9cdbde9b35e2617f0074a0cc52ab3de9907bc6a7138b04f0",
+    "clang_pipeline/resource_flow.py": "4891529886d15f99645dfdf99dfe55e4b0800df96217ef996f4490bf0ff7fe0d",
+    "clang_pipeline/pipeline.py": "4b023667240f2c9413e26b6bf9857c679c680ef84453973df02e35a9069bd77f",
+    "clang_pipeline/clang_ast.py": "ee757ef8c1eb6b52d5ea2d6bd6fa0881bec028b80d1c12ebc188e7024669ce05",
+    "validation/external-v2/results/callgraphbench/predictions.json": "86e26366632c3fe57c4f9f7d4d13e62895100e01da1a06ef684590d742d7c47f",
+    "validation/external-v2/results/callgraphbench/summary.json": "e7e02b065e3074c21152b7bc0f80e842449a7cd0e3302ee6e0111f44b5e822b9",
+    "validation/external-v2/results/callgraphbench/report.md": "c2212a4b7476af44c64b13acdd0fc5049975d710d2f8053e3dd4e820a5520982",
+    "validation/external-v2/results/svcomp/memsafety/predictions.json": "7940cb627cd514483f22833c84228e0ce74a544f595e316f15f2a64b0152bb74",
+    "validation/external-v2/results/svcomp/memsafety/report.json": "02763f566efe556b62f8745f2bcc483cb6cf7f151cefc47d1d368e478aa1e5b3",
+    "validation/external-v2/results/svcomp/memsafety/report.md": "bf470683e2522d6a26536c73923ca230aede8e090f299db356de3fb4ee200676",
+    "validation/external-v2/results/juliet/predictions.json": "547162feb42bd2deba05cee723cc18e9d512a1f7caea5def6dd053897cbbf99a",
+    "validation/external-v2/results/juliet/report.json": "a3d93faadba7a60c30e449c99a001d8d098b3228802beff4480200d279d8ca34",
+    "validation/external-v2/results/juliet/report.md": "13406a82d51abbce04698de99049df5733db3843a27ed4d16c3031b9ee43559e"
+  },
+  "lock_digest": "bc492afc16122d90979e9f43323665221bc5f148dc60e290842172968c53cad1"
+}

@@ -159,6 +159,171 @@ class NativeAnalyzerTests(unittest.TestCase):
             operation["kind"] for operation in item["operations"]
         })
 
+    def test_resource_lifecycle_state_classifies_leak_candidates(self) -> None:
+        graph = {
+            "run_id": "resource-state-test",
+            "meta": {"repository": "fixture/repo", "commit": "a" * 40},
+            "nodes": [
+                {"id": "fn:worker", "kind": "function", "name": "worker"},
+                {"id": "fn:malloc", "kind": "external_function", "name": "malloc"},
+                {"id": "fn:free", "kind": "external_function", "name": "free"},
+            ],
+            "edges": [
+                {
+                    "id": "acquire",
+                    "source": "fn:worker",
+                    "target": "fn:malloc",
+                    "kind": "direct_call",
+                    "call_site": {
+                        "file": "src/state.c",
+                        "line": 10,
+                        "snippet": "buffer = malloc(32);",
+                    },
+                    "evidence_ids": ["ev-acquire"],
+                },
+                {
+                    "id": "release",
+                    "source": "fn:worker",
+                    "target": "fn:free",
+                    "kind": "direct_call",
+                    "call_site": {
+                        "file": "src/state.c",
+                        "line": 20,
+                        "snippet": "free(buffer);",
+                    },
+                    "evidence_ids": ["ev-release"],
+                },
+            ],
+            "evidence": [
+                {"id": "ev-acquire", "file": "src/state.c", "line": 10},
+                {"id": "ev-release", "file": "src/state.c", "line": 20},
+            ],
+        }
+        released = analyze_resource_flow(graph)
+        self.assertTrue(released["items"])
+        self.assertEqual(
+            "no_leak",
+            released["items"][0]["classification"],
+        )
+        self.assertEqual(
+            1,
+            sum(
+                path["classification"] == "no_leak"
+                for path in released["items"][0]["paths"]
+            ),
+        )
+        del graph["edges"][1]
+        leaking = analyze_resource_flow(graph)
+        self.assertTrue(leaking["items"])
+        self.assertEqual(
+            "possible_leak",
+            leaking["items"][0]["classification"],
+        )
+
+    def test_resource_pointer_arithmetic_release_matches_allocation(self) -> None:
+        graph = {
+            "run_id": "resource-pointer-state-test",
+            "meta": {"repository": "fixture/repo", "commit": "a" * 40},
+            "nodes": [
+                {"id": "fn:worker", "kind": "function", "name": "worker"},
+                {"id": "fn:malloc", "kind": "external_function", "name": "malloc"},
+                {"id": "fn:free", "kind": "external_function", "name": "free"},
+            ],
+            "edges": [
+                {
+                    "id": "acquire",
+                    "source": "fn:worker",
+                    "target": "fn:malloc",
+                    "kind": "direct_call",
+                    "call_site": {
+                        "file": "src/pointer.c",
+                        "line": 10,
+                        "snippet": "buffer = malloc(32);",
+                    },
+                    "evidence_ids": ["ev-acquire"],
+                },
+                {
+                    "id": "release",
+                    "source": "fn:worker",
+                    "target": "fn:free",
+                    "kind": "direct_call",
+                    "call_site": {
+                        "file": "src/pointer.c",
+                        "line": 20,
+                        "snippet": "free(buffer - 1);",
+                    },
+                    "evidence_ids": ["ev-release"],
+                },
+            ],
+            "evidence": [
+                {"id": "ev-acquire", "file": "src/pointer.c", "line": 10},
+                {"id": "ev-release", "file": "src/pointer.c", "line": 20},
+            ],
+        }
+        result = analyze_resource_flow(graph)
+        self.assertTrue(result["items"])
+        self.assertEqual("no_leak", result["items"][0]["classification"])
+
+    def test_multiple_release_calls_on_one_line_are_expanded(self) -> None:
+        graph = {
+            "run_id": "resource-multi-release-test",
+            "meta": {"repository": "fixture/repo", "commit": "a" * 40},
+            "nodes": [
+                {"id": "fn:worker", "kind": "function", "name": "worker"},
+                {"id": "fn:malloc", "kind": "external_function", "name": "malloc"},
+                {"id": "fn:free", "kind": "external_function", "name": "free"},
+            ],
+            "edges": [
+                {
+                    "id": "acquire-a",
+                    "source": "fn:worker",
+                    "target": "fn:malloc",
+                    "kind": "direct_call",
+                    "call_site": {
+                        "file": "src/multi.c",
+                        "line": 10,
+                        "snippet": "a = malloc(16);",
+                    },
+                    "evidence_ids": ["ev-a"],
+                },
+                {
+                    "id": "acquire-b",
+                    "source": "fn:worker",
+                    "target": "fn:malloc",
+                    "kind": "direct_call",
+                    "call_site": {
+                        "file": "src/multi.c",
+                        "line": 11,
+                        "snippet": "b = malloc(24);",
+                    },
+                    "evidence_ids": ["ev-b"],
+                },
+                {
+                    "id": "release",
+                    "source": "fn:worker",
+                    "target": "fn:free",
+                    "kind": "direct_call",
+                    "call_site": {
+                        "file": "src/multi.c",
+                        "line": 20,
+                        "snippet": "{ free(a); free(b); }",
+                    },
+                    "evidence_ids": ["ev-release"],
+                },
+            ],
+            "evidence": [
+                {"id": "ev-a", "file": "src/multi.c", "line": 10},
+                {"id": "ev-b", "file": "src/multi.c", "line": 11},
+                {"id": "ev-release", "file": "src/multi.c", "line": 20},
+            ],
+        }
+        result = analyze_resource_flow(graph)
+        self.assertTrue(result["items"])
+        self.assertTrue(all(
+            item["classification"] == "no_leak"
+            for item in result["items"]
+        ))
+
     def test_sync_relations_have_native_relations_and_evidence(self) -> None:
         result = analyze_sync_relations(self.graph)
         self.assertEqual("sync_relation", result["result_type"])
@@ -451,6 +616,200 @@ void unrelated(void) {
         ))
         self.assertFalse(any(
             "notification does not identify" in str(item.get("condition"))
+            for item in result["items"]
+        ))
+
+    def test_wrapper_summary_propagates_lock_semantics(self) -> None:
+        graph = {
+            "run_id": "sync-wrapper-test",
+            "meta": {"repository": "fixture/repo", "commit": "a" * 40},
+            "nodes": [
+                {
+                    "id": "fn:my_lock",
+                    "kind": "function",
+                    "name": "my_lock",
+                    "file": "src/wrapper.c",
+                    "line": 1,
+                },
+                {
+                    "id": "fn:my_unlock",
+                    "kind": "function",
+                    "name": "my_unlock",
+                    "file": "src/wrapper.c",
+                    "line": 5,
+                },
+                {
+                    "id": "fn:worker",
+                    "kind": "function",
+                    "name": "worker",
+                    "file": "src/wrapper.c",
+                    "line": 9,
+                },
+            ],
+            "edges": [],
+            "evidence": [],
+        }
+        source = """\
+void my_lock(uv_mutex_t* mutex) {
+  uv_mutex_lock(mutex);
+}
+
+void my_unlock(uv_mutex_t* mutex) {
+  uv_mutex_unlock(mutex);
+}
+
+void worker(void) {
+  my_lock(&guard);
+  counter++;
+  my_unlock(&guard);
+}
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            source_path = Path(directory) / "src" / "wrapper.c"
+            source_path.parent.mkdir(parents=True)
+            source_path.write_text(source, encoding="utf-8")
+            result = analyze_sync_relations(graph, source_root=directory)
+
+        self.assertTrue(any(
+            item["source"]["function"] == "worker"
+            and item["source"]["line"] == 10
+            and item["target"]["function"] == "worker"
+            and item["target"]["line"] == 12
+            and item["relation_type"] == "mutex_lock"
+            for item in result["items"]
+        ))
+
+    def test_local_pointer_alias_links_lock_resources(self) -> None:
+        graph = {
+            "run_id": "sync-alias-test",
+            "meta": {"repository": "fixture/repo", "commit": "a" * 40},
+            "nodes": [
+                {
+                    "id": "fn:worker",
+                    "kind": "function",
+                    "name": "worker",
+                    "file": "src/alias.c",
+                    "line": 1,
+                }
+            ],
+            "edges": [],
+            "evidence": [],
+        }
+        source = """\
+void worker(void) {
+  uv_mutex_t* local = &global_mutex;
+  uv_mutex_lock(local);
+  counter++;
+  uv_mutex_unlock(&global_mutex);
+}
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            source_path = Path(directory) / "src" / "alias.c"
+            source_path.parent.mkdir(parents=True)
+            source_path.write_text(source, encoding="utf-8")
+            result = analyze_sync_relations(graph, source_root=directory)
+
+        self.assertTrue(any(
+            item["source"]["line"] == 3
+            and item["target"]["line"] == 5
+            and item["relation_type"] == "mutex_lock"
+            for item in result["items"]
+        ))
+
+    def test_thread_create_propagates_thread_identity(self) -> None:
+        graph = {
+            "run_id": "sync-thread-identity-test",
+            "meta": {"repository": "fixture/repo", "commit": "a" * 40},
+            "nodes": [
+                {
+                    "id": "fn:main",
+                    "kind": "function",
+                    "name": "main",
+                    "file": "src/thread.c",
+                    "line": 1,
+                },
+                {
+                    "id": "fn:worker",
+                    "kind": "function",
+                    "name": "worker",
+                    "file": "src/thread.c",
+                    "line": 6,
+                },
+                {
+                    "id": "fn:uv_thread_create",
+                    "kind": "external_function",
+                    "name": "uv_thread_create",
+                },
+            ],
+            "edges": [
+                {
+                    "id": "create",
+                    "source": "fn:main",
+                    "target": "fn:uv_thread_create",
+                    "kind": "direct_call",
+                    "call_site": {
+                        "file": "src/thread.c",
+                        "line": 3,
+                        "snippet": "uv_thread_create(&worker_thread, worker, NULL);",
+                    },
+                    "evidence_ids": ["ev-create"],
+                }
+            ],
+            "evidence": [
+                {
+                    "id": "ev-create",
+                    "file": "src/thread.c",
+                    "line": 3,
+                    "snippet": "uv_thread_create(&worker_thread, worker, NULL);",
+                }
+            ],
+        }
+        source = """\
+void main(void) {
+  uv_thread_t worker_thread;
+  uv_thread_create(&worker_thread, worker, NULL);
+}
+
+void worker(void* arg) {
+  uv_mutex_lock(&guard);
+  counter++;
+  uv_mutex_unlock(&guard);
+}
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            source_path = Path(directory) / "src" / "thread.c"
+            source_path.parent.mkdir(parents=True)
+            source_path.write_text(source, encoding="utf-8")
+            result = analyze_sync_relations(graph, source_root=directory)
+
+        relation = next(
+            (
+                item
+                for item in result["items"]
+                if item["source"]["function"] == "worker"
+                and item["target"]["function"] == "worker"
+                and item["relation_type"] == "mutex_lock"
+            ),
+            None,
+        )
+        self.assertIsNotNone(relation)
+        self.assertEqual(
+            "thread:worker_thread",
+            relation["source"]["thread"],
+        )
+
+    @unittest.skipUnless(
+        (ROOT.parent / "third_party/libuv").is_dir(),
+        "libuv source checkout required",
+    )
+    def test_libuv_worker_gets_thread_handle_identity(self) -> None:
+        result = analyze_sync_relations(
+            self.graph,
+            source_root=ROOT.parent,
+        )
+        self.assertTrue(any(
+            "worker" in item["source"]["function"]
+            and str(item["source"]["thread"]).startswith("thread:")
             for item in result["items"]
         ))
 

@@ -703,7 +703,7 @@
 join 后建立 HB；seq_cst atomic 可建立 release/acquire；
 relaxed、合并通知和失败 trylock 输出 unknown；
 rwlock writer -&gt; reader/writer 可建立 HB，reader-reader 为 concurrent。</div>
-        <p class="footer-note">sync_006 的根因是锁和计数递减已识别，但中间 if 占用了旧规则的唯一后继。现在“锁获取到释放之间的首个受保护写”可独立建边，134 -&gt; 137 已命中。100% 仅覆盖冻结 Gold，不覆盖 2,955 条未标注输出。</p>
+        <p class="footer-note">sync_006 的根因是锁和计数递减已识别，但中间 if 占用了旧规则的唯一后继。现在“锁获取到释放之间的首个受保护写”可独立建边，134 -&gt; 137 已命中。100% 仅覆盖冻结 Gold，不覆盖 2,950 条未标注输出。</p>
       </section>
 
       <section class="slide" data-title="总结与下一步">
@@ -774,7 +774,7 @@ rwlock writer -&gt; reader/writer 可建立 HB，reader-reader 为 concurrent。
         "两个调用图外部集分工不同。CallGraphBench 评价 caller 到 callee 的调用边，检查边是否完整；CG-Bench 评价 callsite 到 target set，检查候选集合是否过宽、过窄以及是否应该输出 unknown。CallGraphBench 当前候选 31/0/0；CG-Bench 当前 P 67.60%、R 77.84%，有 41 个 unknown、197 个 FP、117 个 FN。后续分别用 resolver 加边级适配，以及候选生成、约束和 unknown 分层处理。",
         "Redis target v2 用来验证跨仓迁移。调用链是 108 TP、0 FP、2 FN、10 TN，Precision 100%、Recall 98.18%、F1 99.08%；剩余两条是 sigemptyset 和 sigaddset。资源流是 26 TP、0 FP、1 FN，Recall 96.30%、F1 98.11%，唯一漏项是 processInlineBuffer 到 sdssplitargs。target v2 共 172 条命题，source check 已验证，但资源事实人工复核仍为 pending。",
         "同步关系使用 libuv-linux-clang，在 Ubuntu 24.04、Clang 18 下重新生成 graph 和 predictions。修复前的真实基线是 4 TP、0 FP、28 FN、6 TN，Precision 100%、Recall 12.50%、F1 22.22%；这 28 条都是 Linux profile 下的真实漏检。随后逐个补齐队列发布、源码程序顺序、条件变量、thread join、atomic、rwlock、eventfd 和 unknown 边界，最终达到 32 TP、0 FP、0 FN、6 TN，P、R、F1 和 required evidence 命中率均为 100%。最后一轮 sync_006 的问题是锁和计数递减都识别到了，但中间的 if 条件占据了旧规则的唯一后继名额；新增“锁获取到释放之间的首个受保护写”规则后，threadpool.c 134 到 137 才被正确建立。",
-        "总结一下：FunctionTargetResolver 把 CallGraphBench 的 13 个 FN 收口到当前候选 31/0/0；ResourceEvent 把 libuv 资源流从 11/0/6 收到 17/0/0；同步分析器把 Linux profile 下的真实结果从 4/0/28/6 收到 32/0/0/6，required evidence 命中率 100%。四文件 closed-world 审计现在覆盖 1,282 条预测，源码规则通过率 100%，无 witness 的 condition/event notification 到 callback 配对已移除。100% 仍只覆盖冻结 Gold 的 32 个正例和 6 个负例，不覆盖仓库内 2,955 条未标注同步输出。"
+        "总结一下：FunctionTargetResolver 把 CallGraphBench 的 13 个 FN 收口到 external-v2 的 31/0/0；ResourceEvent 把 libuv 资源流从 11/0/6 收到 17/0/0；同步分析器把 Linux profile 下的真实结果从 4/0/28/6 收到 32/0/0/6，required evidence 命中率 100%。四文件 closed-world 审计现在覆盖 1,277 条预测，530 条候选 universe 全部覆盖。100% 仍只覆盖冻结 Gold 的 32 个正例和 6 个负例，不覆盖仓库内 2,950 条未标注同步输出。"
       ];
       let index = 0;
 

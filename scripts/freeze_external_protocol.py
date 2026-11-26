@@ -40,6 +40,11 @@ LOCKED_FILES = (
     "clang_pipeline/sync_flow.py",
     "schemas/race-analysis.schema.json",
 )
+ARTIFACT_FILES = tuple(
+    path
+    for path in LOCKED_FILES
+    if not path.startswith(("scripts/", "clang_pipeline/", "schemas/"))
+)
 
 
 def read_json(path: Path) -> dict[str, Any]:
@@ -72,7 +77,7 @@ def build_lock() -> dict[str, Any]:
     }
 
 
-def verify_lock() -> list[str]:
+def verify_lock(*, artifacts_only: bool = False) -> list[str]:
     if not LOCK_PATH.is_file():
         return ["protocol-lock.json does not exist"]
     lock = read_json(LOCK_PATH)
@@ -82,9 +87,10 @@ def verify_lock() -> list[str]:
     if lock.get("protocol_id") != "external-v1":
         errors.append("lock protocol_id is not external-v1")
     files = lock.get("files", {})
-    if set(files) != set(LOCKED_FILES):
+    expected_files = ARTIFACT_FILES if artifacts_only else LOCKED_FILES
+    if not artifacts_only and set(files) != set(LOCKED_FILES):
         errors.append("locked file list differs from freezer")
-    for path in LOCKED_FILES:
+    for path in expected_files:
         target = ROOT / path
         if not target.is_file():
             errors.append(f"missing locked file: {path}")
@@ -102,6 +108,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--write", action="store_true")
     parser.add_argument("--check", action="store_true")
+    parser.add_argument(
+        "--artifacts-only",
+        action="store_true",
+        help="verify frozen selections and reports without current generator code",
+    )
     args = parser.parse_args()
     if args.write:
         lock = build_lock()
@@ -121,7 +132,7 @@ def main() -> int:
             )
         )
         return 0
-    errors = verify_lock()
+    errors = verify_lock(artifacts_only=args.artifacts_only)
     if errors:
         raise SystemExit("\n".join(errors))
     print(json.dumps({"status": "ok", "path": str(LOCK_PATH.relative_to(ROOT))}))

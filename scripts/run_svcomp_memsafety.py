@@ -147,7 +147,7 @@ def main() -> int:
                 )
                 flow = analyze_resource_flow(graph, source_root=repo)
                 predicted_violation = any(
-                    path.get("termination_reason") == "release_not_found"
+                    path.get("classification") == "possible_leak"
                     for item in flow.get("items", [])
                     for path in item.get("paths", [])
                 )

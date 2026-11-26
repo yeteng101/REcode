@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "dataset": "CallGraphBench",
+  "commit": "fe003b9e9de38d06aa67cabb8643a55dbac7dcbf",
+  "scope": "official C and C++ cases",
+  "cases": {
+    "c/c_basic": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 0
+    },
+    "c/c_dynamic": {
+      "tp": 7,
+      "fp": 0,
+      "fn": 0
+    },
+    "c/c_multifile": {
+      "tp": 6,
+      "fp": 0,
+      "fn": 0
+    },
+    "cpp/cpp_basic": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 0
+    },
+    "cpp/cpp_dispatch": {
+      "tp": 5,
+      "fp": 0,
+      "fn": 0
+    },
+    "cpp/cpp_multifile": {
+      "tp": 5,
+      "fp": 0,
+      "fn": 0
+    }
+  },
+  "totals": {
+    "tp": 31,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  }
+}

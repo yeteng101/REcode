@@ -2,7 +2,12 @@ from __future__ import annotations
 
 import unittest
 
-from scripts.audit_sync_closed_world import classify_prediction, evidence_anchor
+from scripts.audit_sync_closed_world import (
+    build_gate,
+    classify_prediction,
+    evidence_anchor,
+    evaluate_universe,
+)
 
 
 def item(
@@ -102,6 +107,86 @@ class SyncClosedWorldAuditTests(unittest.TestCase):
         )
         self.assertEqual("accepted", decision)
         self.assertIn("queue publication", reason)
+
+    def test_audit_gate_rejects_regressions(self) -> None:
+        summary = {
+            "decisions": {"accepted": 90, "rejected": 2},
+            "needs_review": 1,
+            "gold_tp": 32,
+            "gold_fp": 0,
+            "gold_fn": 1,
+            "reasons": {
+                "generic notification/callback pair has no shared resource witness": 2
+            },
+        }
+        gate = build_gate(
+            summary,
+            max_rejected=0,
+            max_needs_review=0,
+            min_accepted=100,
+            min_gold_precision=1.0,
+            min_gold_recall=1.0,
+            min_universe_recall=None,
+            require_zero_generic_notification=True,
+        )
+        self.assertEqual("failed", gate["status"])
+        failed = {
+            check["name"]
+            for check in gate["checks"]
+            if check["status"] == "failed"
+        }
+        self.assertEqual(
+            {
+                "rejected",
+                "needs_review",
+                "accepted",
+                "gold_recall",
+                "generic_notification_pairs",
+            },
+            failed,
+        )
+
+    def test_universe_uses_same_function_path_coverage(self) -> None:
+        candidates = [
+            {
+                "source": {
+                    "function": "worker",
+                    "file": "src/worker.c",
+                    "line": 10,
+                },
+                "target": {
+                    "function": "worker",
+                    "file": "src/worker.c",
+                    "line": 30,
+                },
+                "order": "happens_before",
+            }
+        ]
+        records = [
+            {
+                "decision": "accepted",
+                "order": "happens_before",
+                "source_file": "src/worker.c",
+                "source_function": "worker",
+                "source_line": 10,
+                "target_file": "src/worker.c",
+                "target_function": "worker",
+                "target_line": 20,
+            },
+            {
+                "decision": "accepted",
+                "order": "happens_before",
+                "source_file": "src/worker.c",
+                "source_function": "worker",
+                "source_line": 20,
+                "target_file": "src/worker.c",
+                "target_function": "worker",
+                "target_line": 30,
+            },
+        ]
+        result = evaluate_universe(candidates, records)
+        self.assertEqual(1, result["covered"])
+        self.assertEqual(0, result["missing"])
 
 
 if __name__ == "__main__":

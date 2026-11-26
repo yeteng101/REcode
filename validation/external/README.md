@@ -99,3 +99,16 @@ validation/external/results/failure-audit.md
 
 The audit reads the existing Gold and prediction files for diagnosis; it does
 not alter `external-v1`, its selections, predictions, or lock file.
+
+## external-v2
+
+Generator improvements are frozen in `validation/external-v2/`, not written
+back into this v1 directory. Current v2 results:
+
+```text
+CallGraphBench:     31 TP / 0 FP / 0 FN
+SV-COMP MemSafety:  10 TP / 7 FP / 0 FN / 3 TN
+Juliet CWE-401:      5 TP / 0 FP / 0 FN / 23 TN
+```
+
+See `validation/external-v2/README.md` and `protocol-lock-v2.json`.

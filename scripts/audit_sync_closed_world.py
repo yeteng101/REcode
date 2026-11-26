@@ -10,7 +10,17 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import sys
 from typing import Any
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from clang_pipeline.sync_flow import (
+    QUEUE_CONSUMERS,
+    QUEUE_PRODUCERS,
+    collect_sync_events,
+)
+from clang_pipeline.source_context import order_decision
 
 
 SCOPE_FILES = (
@@ -63,6 +73,13 @@ CALLBACK_FRAGMENTS = (
     "->write_cb(",
     "->connect_cb(",
 )
+EVENT_CONSUMER_FUNCTIONS = {
+    "uv__async_io",
+    "uv__io_poll",
+    "uv__inotify_read",
+    "uv__poll_io_uring",
+}
+SAME_FUNCTION_WINDOW = 60
 
 
 def read_json(path: Path) -> dict[str, Any]:
@@ -181,6 +198,712 @@ def validate_endpoint(
     return True, "source anchor verified"
 
 
+def event_location(event: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "function": event.get("function", ""),
+        "thread": event.get("thread"),
+        "file": event.get("file", ""),
+        "line": event.get("line"),
+        "snippet": event.get("snippet", ""),
+        "held_locks": list(event.get("held_locks", [])),
+        "evidence_ids": list(event.get("evidence_ids", [])),
+    }
+
+
+def candidate_key(
+    source: dict[str, Any],
+    target: dict[str, Any],
+    order: str,
+) -> tuple[str, tuple[Any, ...]]:
+    return (
+        order,
+        (
+            source.get("function", ""),
+            target.get("function", ""),
+            source.get("file", ""),
+            source.get("line"),
+            target.get("file", ""),
+            target.get("line"),
+        ),
+    )
+
+
+def add_candidate(
+    candidates: dict[tuple[str, tuple[Any, ...]], dict[str, Any]],
+    *,
+    source: dict[str, Any],
+    target: dict[str, Any],
+    order: str,
+    origin: str,
+    condition: str,
+    support_evidence_ids: list[str] | None = None,
+) -> None:
+    source_location = event_location(source) if "operation_id" in source else source
+    target_location = event_location(target) if "operation_id" in target else target
+    key = candidate_key(source_location, target_location, order)
+    evidence_ids = list(
+        dict.fromkeys(
+            list(source_location.get("evidence_ids", []))
+            + list(target_location.get("evidence_ids", []))
+            + list(support_evidence_ids or [])
+        )
+    )
+    existing = candidates.get(key)
+    if existing is not None:
+        existing["origins"] = sorted(set(existing["origins"]) | {origin})
+        existing["evidence_ids"] = list(
+            dict.fromkeys(existing["evidence_ids"] + evidence_ids)
+        )
+        return
+    digest = hashlib.sha256(
+        json.dumps([order, key[1]], separators=(",", ":")).encode("utf-8")
+    ).hexdigest()[:12]
+    candidates[key] = {
+        "id": "universe_" + digest,
+        "relation_type": source.get("relation_type", "happens_before"),
+        "source": source_location,
+        "target": target_location,
+        "order": order,
+        "condition": condition,
+        "origins": [origin],
+        "evidence_ids": evidence_ids,
+        "expected_exists": True,
+    }
+
+
+def is_same_function_candidate(candidate: dict[str, Any]) -> bool:
+    source = candidate["source"]
+    target = candidate["target"]
+    return (
+        source.get("file") == target.get("file")
+        and source.get("function") == target.get("function")
+        and candidate.get("order") == "happens_before"
+    )
+
+
+def build_generated_universe(
+    graph: dict[str, Any],
+    source_root: Path,
+    gold_cases: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    operations, atomic_operations, sequence_operations, _ = collect_sync_events(
+        graph,
+        source_root=source_root,
+    )
+    in_scope = lambda event: str(event.get("file") or "") in SCOPE_FILES
+    operations = [event for event in operations if event.get("file")]
+    atomic_operations = [event for event in atomic_operations if event.get("file")]
+    sequence_operations = [event for event in sequence_operations if event.get("file")]
+    events = operations + atomic_operations + sequence_operations
+    candidates: dict[tuple[str, tuple[Any, ...]], dict[str, Any]] = {}
+
+    grouped_events: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
+    for event in events:
+        if in_scope(event):
+            grouped_events[(event["file"], event["function"])].append(event)
+    for (_, function), group in grouped_events.items():
+        group.sort(key=lambda event: (event["line"], event["operation_id"]))
+        last_line = -1
+        previous = None
+        for event in group:
+            line = int(event.get("line") or 0)
+            if line <= last_line:
+                continue
+            if (
+                previous is not None
+                and line > int(previous.get("line") or 0)
+                and line - int(previous.get("line") or 0) <= SAME_FUNCTION_WINDOW
+            ):
+                order, order_condition = order_decision(
+                    previous.get("_control_regions", ()),
+                    int(previous.get("line") or 0),
+                    line,
+                )
+                add_candidate(
+                    candidates,
+                    source=previous,
+                    target=event,
+                    order=order,
+                    origin="same_function_adjacent",
+                    condition=(
+                        f"same-thread event order {function}:"
+                        f"{previous.get('line')}->{line}; {order_condition}"
+                    ),
+                )
+            previous = event
+            last_line = line
+
+    lock_groups: dict[tuple[str, str, str, str], list[dict[str, Any]]] = defaultdict(list)
+    for operation in operations:
+        if (
+            in_scope(operation)
+            and operation.get("relation_type") in {"mutex_lock", "rwlock"}
+        ):
+            lock_groups[
+                (
+                    operation.get("file", ""),
+                    operation.get("function", ""),
+                    operation.get("relation_type", ""),
+                    operation.get("resource", ""),
+                )
+            ].append(operation)
+    for (_, function, _, resource), group in lock_groups.items():
+        group.sort(key=lambda operation: operation["line"])
+        releases = [
+            operation for operation in group if operation.get("kind") == "release"
+        ]
+        for acquire in (
+            operation
+            for operation in group
+            if operation.get("kind") == "acquire"
+        ):
+            release = next(
+                (
+                    operation
+                    for operation in releases
+                    if operation["line"] >= acquire["line"]
+                ),
+                None,
+            )
+            if release is not None:
+                order, order_condition = order_decision(
+                    acquire.get("_control_regions", ()),
+                    int(acquire.get("line") or 0),
+                    int(release.get("line") or 0),
+                )
+                add_candidate(
+                    candidates,
+                    source=acquire,
+                    target=release,
+                    order=order,
+                    origin="same_function_lock_pair",
+                    condition=(
+                        f"same lock/resource {function}:{resource}; "
+                        f"{order_condition}"
+                    ),
+                )
+
+    queue_producers: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    queue_consumers: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    queue_function_links: dict[
+        tuple[str, str], list[dict[str, Any]]
+    ] = defaultdict(list)
+    for event in sequence_operations:
+        if not in_scope(event):
+            continue
+        resource = canonical_resource(str(event.get("resource") or ""))
+        if len(resource) < 2:
+            continue
+        if not any(
+            token in resource.lower()
+            for token in ("queue", "wq", "jobs", "pending", "reply", "watcher", "ready")
+        ):
+            continue
+        if event.get("api") in QUEUE_PRODUCERS:
+            queue_producers[resource].append(event)
+        if event.get("api") in QUEUE_CONSUMERS:
+            if (
+                event.get("api") == "uv__queue_head"
+                and not re.search(
+                    r"(?<![=!<>])=(?!=)",
+                    str(event.get("snippet") or ""),
+                )
+            ):
+                continue
+            queue_consumers[resource].append(event)
+    for resource in sorted(set(queue_producers) & set(queue_consumers)):
+        for producer in queue_producers[resource]:
+            for consumer in queue_consumers[resource]:
+                if producer["function"] == consumer["function"]:
+                    continue
+                if (
+                    resource == "wq"
+                    and "worker" not in consumer["function"].lower()
+                ):
+                    continue
+                producer_releases = [
+                    event
+                    for event in operations
+                    if (
+                        event.get("function") == producer["function"]
+                        and event.get("kind") == "release"
+                        and producer["line"] <= event.get("line", 0) <= producer["line"] + 12
+                    )
+                ]
+                consumer_acquires = [
+                    event
+                    for event in operations
+                    if (
+                        event.get("function") == consumer["function"]
+                        and event.get("kind") == "acquire"
+                        and event.get("line", 0) <= consumer["line"]
+                    )
+                ]
+                support = [
+                    evidence_id
+                    for event in (
+                        producer_releases[-1:]
+                        + consumer_acquires[-1:]
+                    )
+                    for evidence_id in event.get("evidence_ids", [])
+                ]
+                order = "happens_before" if producer_releases and consumer_acquires else "unknown"
+                source_endpoint = producer_releases[-1] if producer_releases else producer
+                add_candidate(
+                    candidates,
+                    source=source_endpoint,
+                    target=consumer,
+                    order=order,
+                    origin="queue_producer_consumer",
+                    condition=f"queue {resource}: {producer['function']} -> {consumer['function']}",
+                    support_evidence_ids=support,
+                )
+                queue_function_links[
+                    (producer["function"], consumer["function"])
+                ].append(
+                    {
+                        "resource": resource,
+                        "source": producer,
+                        "target": consumer,
+                    }
+                )
+
+    by_atomic_resource: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for event in atomic_operations:
+        if in_scope(event):
+            by_atomic_resource[canonical_resource(str(event.get("resource") or ""))].append(
+                event
+            )
+    for resource, group in by_atomic_resource.items():
+        if not resource or any(character.isspace() for character in resource):
+            continue
+        releases = [
+            event
+            for event in group
+            if event.get("signature_kind") == "atomic"
+            or (
+                event.get("access") in {"write", "read_write"}
+                and (
+                    event.get("kind") == "release"
+                    or event.get("semantics") in {"release", "seq_cst"}
+                )
+            )
+        ]
+        acquires = [
+            event
+            for event in group
+            if event.get("access") in {"read", "read_write"}
+            and (
+                event.get("kind") == "acquire"
+                or event.get("semantics") in {"acquire", "seq_cst"}
+            )
+        ]
+        for release in releases:
+            for acquire in acquires:
+                if (
+                    release["file"] == acquire["file"]
+                    and acquire["line"] <= release["line"]
+                ):
+                    continue
+                if release["function"] == acquire["function"] and release["line"] >= acquire["line"]:
+                    continue
+                add_candidate(
+                    candidates,
+                    source=release,
+                    target=acquire,
+                    order="happens_before",
+                    origin="atomic_publish",
+                    condition=f"atomic {resource} release/acquire",
+                )
+        relaxed_writes = [
+            event
+            for event in group
+            if (
+                event.get("semantics") == "relaxed"
+                and event.get("access") in {"write", "read_write"}
+            )
+        ]
+        for source in relaxed_writes:
+            for target in group:
+                if (
+                    source["operation_id"] == target["operation_id"]
+                    or source.get("file") != target.get("file")
+                    or (
+                        source.get("function") == target.get("function")
+                        and int(source.get("line") or 0) >= int(target.get("line") or 0)
+                    )
+                ):
+                    continue
+                add_candidate(
+                    candidates,
+                    source=source,
+                    target=target,
+                    order="unknown",
+                    origin="atomic_relaxed",
+                    condition=f"atomic {resource} relaxed does not publish",
+                )
+                break
+
+    by_thread_handle: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for event in operations:
+        if in_scope(event) and event.get("relation_type") == "thread_join":
+            by_thread_handle[event.get("resource", "")].append(event)
+    for handle, group in by_thread_handle.items():
+        creates = [event for event in group if event.get("kind") == "create"]
+        joins = [event for event in group if event.get("kind") == "join"]
+        for create in creates:
+            for join in joins:
+                add_candidate(
+                    candidates,
+                    source=create,
+                    target=join,
+                    order="happens_before",
+                    origin="thread_join",
+                    condition=f"thread handle {handle} is joined",
+                )
+
+    condition_notifies = [
+        event
+        for event in operations
+        if (
+            in_scope(event)
+            and
+            event.get("relation_type") == "condition_variable"
+            and event.get("kind") == "notify"
+        )
+    ]
+    condition_waits = [
+        event
+        for event in operations
+        if (
+            in_scope(event)
+            and
+            event.get("relation_type") == "condition_variable"
+            and event.get("kind") == "wait"
+        )
+    ]
+    for notify in condition_notifies:
+        for wait in condition_waits:
+            if "cond_wait" not in str(wait.get("snippet") or ""):
+                continue
+            if "cond_wait" not in str(wait.get("function") or ""):
+                continue
+            if (
+                notify.get("function") == wait.get("function")
+                and int(notify.get("line") or 0) >= int(wait.get("line") or 0)
+            ):
+                continue
+            if (
+                notify.get("resource")
+                and notify.get("file") == wait.get("file")
+                and canonical_resource(str(notify["resource"]))
+                == canonical_resource(str(wait.get("resource") or ""))
+            ):
+                add_candidate(
+                    candidates,
+                    source=notify,
+                    target=wait,
+                    order=(
+                        "happens_before"
+                        if notify["function"] == wait["function"]
+                        else "unknown"
+                    ),
+                    origin="condition_notify_wait",
+                    condition=f"condition resource {notify['resource']}",
+                )
+
+    event_notifies = [
+        event
+        for event in operations
+        if in_scope(event) and event.get("relation_type") == "event_notify"
+    ]
+    event_waits = [
+        event for event in operations if event.get("relation_type") == "event_wait"
+    ]
+    for notify in event_notifies:
+        for wait in event_waits:
+            same_resource = (
+                notify.get("resource")
+                and canonical_resource(str(notify["resource"]))
+                == canonical_resource(str(wait.get("resource") or ""))
+            )
+            async_pair = (
+                "async" in notify.get("function", "").lower()
+                and "async" in wait.get("function", "").lower()
+            )
+            consumer_wait = has_token(
+                str(wait.get("snippet") or ""),
+                EVENT_WAIT_TOKENS,
+            )
+            if (
+                notify.get("file") == wait.get("file")
+                and wait.get("function") in EVENT_CONSUMER_FUNCTIONS
+                and consumer_wait
+                and (same_resource or async_pair)
+            ):
+                add_candidate(
+                    candidates,
+                    source=notify,
+                    target=wait,
+                    order="happens_before",
+                    origin="event_notify_wait",
+                    condition="event notification/wait witness",
+                )
+
+    rwlock_releases = [
+        event
+        for event in operations
+        if (
+            in_scope(event)
+            and
+            event.get("relation_type") == "rwlock"
+            and event.get("kind") == "release"
+            and "wrunlock" in (
+                str(event.get("api") or "") + str(event.get("function") or "")
+            )
+        )
+    ]
+    rwlock_acquires = [
+        event
+        for event in operations
+        if (
+            in_scope(event)
+            and
+            event.get("relation_type") == "rwlock"
+            and event.get("kind") == "acquire"
+            and any(
+                token in str(event.get("api") or "")
+                for token in ("rdlock", "wrlock")
+            )
+        )
+    ]
+    for release in rwlock_releases:
+        for acquire in rwlock_acquires:
+            if release["function"] == acquire["function"]:
+                continue
+            add_candidate(
+                candidates,
+                source=release,
+                target=acquire,
+                order="happens_before",
+                origin="rwlock_release_acquire",
+                condition="rwlock writer release precedes acquisition",
+            )
+
+    callbacks = [
+        event for event in sequence_operations if event.get("kind") == "callback"
+    ]
+    notify_events = condition_notifies + event_notifies
+    for notify in notify_events:
+        for (producer_function, consumer_function), links in queue_function_links.items():
+            if producer_function != notify["function"]:
+                continue
+            for callback in callbacks:
+                if callback["function"] != consumer_function:
+                    continue
+                support = [
+                    evidence_id
+                    for link in links
+                    for event in (link["source"], link["target"])
+                    for evidence_id in event.get("evidence_ids", [])
+                ]
+                add_candidate(
+                    candidates,
+                    source=notify,
+                    target=callback,
+                    order="unknown",
+                    origin="queue_notification_callback",
+                    condition=(
+                        f"queue notification callback {consumer_function}; "
+                        "specific item remains unknown"
+                    ),
+                    support_evidence_ids=support,
+                )
+
+    async_callbacks = [
+        callback
+        for callback in callbacks
+        if (
+            callback.get("function") == "uv__async_io"
+            and "async_cb" in str(callback.get("snippet") or "")
+        )
+    ]
+    for event in atomic_operations:
+        if (
+            not in_scope(event)
+            or
+            event.get("access") != "read_write"
+            or "async" not in event.get("function", "").lower()
+        ):
+            continue
+        for callback in async_callbacks:
+            if callback.get("file") != event.get("file"):
+                continue
+            add_candidate(
+                candidates,
+                source=event,
+                target=callback,
+                order=(
+                    "happens_before"
+                    if event.get("function") == callback.get("function")
+                    else "unknown"
+                ),
+                origin="async_atomic_callback",
+                condition="async atomic notification/callback boundary",
+            )
+
+    for gold_case in gold_cases:
+        if not gold_case.get("expected_exists"):
+            continue
+        source_evidence = gold_case.get("evidence", [])
+        if len(source_evidence) < 2:
+            continue
+        identity = gold_case["identity"]
+        source_item = next(
+            (
+                item
+                for item in source_evidence
+                if item.get("file") == identity[2]
+                and item.get("line") == identity[3]
+            ),
+            source_evidence[0],
+        )
+        target_item = next(
+            (
+                item
+                for item in source_evidence
+                if item.get("file") == identity[4]
+                and item.get("line") == identity[5]
+            ),
+            source_evidence[1],
+        )
+        source = {
+            "function": identity[0],
+            "file": identity[2],
+            "line": identity[3],
+            "snippet": source_item.get("snippet", ""),
+            "evidence_ids": [source_item.get("id", "")],
+        }
+        target = {
+            "function": identity[1],
+            "file": identity[4],
+            "line": identity[5],
+            "snippet": target_item.get("snippet", ""),
+            "evidence_ids": [target_item.get("id", "")],
+        }
+        add_candidate(
+            candidates,
+            source=source,
+            target=target,
+            order=gold_case["kind"],
+            origin="gold",
+            condition=gold_case.get("condition", "frozen Gold"),
+        )
+
+    values = sorted(
+        candidates.values(),
+        key=lambda item: (
+            item["source"].get("file", ""),
+            item["source"].get("line", 0),
+            item["target"].get("file", ""),
+            item["target"].get("line", 0),
+            item["order"],
+        ),
+    )
+    counts = Counter(
+        origin
+        for candidate in values
+        for origin in candidate.get("origins", [])
+    )
+    return values, {
+        "total": len(values),
+        "by_origin": dict(counts),
+        "same_function": sum(is_same_function_candidate(item) for item in values),
+    }
+
+
+def evaluate_universe(
+    candidates: list[dict[str, Any]],
+    records: list[dict[str, Any]],
+) -> dict[str, Any]:
+    accepted_keys = {
+        (
+            str(record["order"]),
+            (
+                record["source_function"],
+                record["target_function"],
+                record["source_file"],
+                record["source_line"],
+                record["target_file"],
+                record["target_line"],
+            ),
+        )
+        for record in records
+        if record["decision"] == "accepted"
+    }
+    adjacency: dict[tuple[str, str], dict[int, set[int]]] = defaultdict(
+        lambda: defaultdict(set)
+    )
+    for record in records:
+        if (
+            record["decision"] == "accepted"
+            and record["order"] == "happens_before"
+            and record["source_file"] == record["target_file"]
+            and record["source_function"] == record["target_function"]
+        ):
+            adjacency[(record["source_file"], record["source_function"])][
+                record["source_line"]
+            ].add(record["target_line"])
+
+    def reachable(key: tuple[str, str], start: int, goal: int) -> bool:
+        graph = adjacency.get(key, {})
+        stack = [start]
+        seen = set()
+        while stack:
+            current = stack.pop()
+            if current == goal:
+                return True
+            if current in seen:
+                continue
+            seen.add(current)
+            stack.extend(graph.get(current, ()))
+        return False
+
+    covered = []
+    missing = []
+    for candidate in candidates:
+        key = candidate_key(
+            candidate["source"],
+            candidate["target"],
+            candidate["order"],
+        )
+        hit = key in accepted_keys
+        if (
+            not hit
+            and is_same_function_candidate(candidate)
+        ):
+            hit = reachable(
+                (
+                    candidate["source"]["file"],
+                    candidate["source"]["function"],
+                ),
+                int(candidate["source"]["line"]),
+                int(candidate["target"]["line"]),
+            )
+        candidate["covered"] = hit
+        if hit:
+            covered.append(candidate)
+        else:
+            missing.append(candidate)
+    return {
+        "total": len(candidates),
+        "covered": len(covered),
+        "missing": len(missing),
+        "recall": len(covered) / len(candidates) if candidates else None,
+        "missing_candidates": missing,
+    }
+
+
 def classify_prediction(
     item: dict[str, Any],
     *,
@@ -211,6 +934,14 @@ def classify_prediction(
     target_line_value = int(target.get("line") or 0)
 
     if same_function and order == "happens_before":
+        if any(
+            token in condition
+            for token in (
+                "mutually exclusive control-flow",
+                "loop back-edge",
+            )
+        ):
+            return "rejected", "control-flow evidence contradicts claimed order"
         if 0 < source_line_value < target_line_value:
             return "accepted", "same-function source order is consistent"
         if source_line_value == target_line_value:
@@ -237,6 +968,8 @@ def classify_prediction(
                 "relaxed",
                 "does not identify",
                 "not establish",
+                "mutually exclusive control-flow",
+                "loop back-edge",
             )
         ):
             return "accepted", "specific same-function unknown boundary"
@@ -326,6 +1059,11 @@ def classify_prediction(
             return "accepted", "condition notification/wait endpoints share the declared resource"
         return "rejected", "condition notification target is not a wait operation"
 
+    if condition.startswith("condition notification/wait resource "):
+        if "cond_" in source_snippet and "cond_wait" in target_snippet:
+            return "accepted", "condition notification/wait resource verified"
+        return "rejected", "condition notification target is not a wait operation"
+
     if condition == "two successful shared read locks may overlap":
         if "rdlock" in source_snippet and "rdlock" in target_snippet:
             return "accepted", "reader/reader overlap boundary verified"
@@ -389,6 +1127,7 @@ def write_csv(path: Path, items: list[dict[str, Any]]) -> None:
 
 def markdown(report: dict[str, Any]) -> str:
     summary = report["summary"]
+    gate = report.get("gate") or {}
     lines = [
         "# Libuv synchronization closed-world audit",
         "",
@@ -402,6 +1141,7 @@ def markdown(report: dict[str, Any]) -> str:
         f"- Build profile: `{report['scope']['build_profile']}`",
         f"- Source files: {len(report['scope']['source_files'])}",
         f"- In-scope predictions: {summary['predictions']}",
+        f"- Audit gate: {gate.get('status', 'not_configured')}",
         "",
         "## Gold regression",
         "",
@@ -418,6 +1158,23 @@ def markdown(report: dict[str, Any]) -> str:
         count = summary["decisions"].get(decision, 0)
         share = count / summary["predictions"] if summary["predictions"] else 0
         lines.append(f"| {decision} | {count} | {share:.2%} |")
+    if summary.get("universe_total") is not None:
+        universe_recall = summary.get("universe_recall")
+        lines += [
+            "",
+            "## Candidate universe",
+            "",
+            f"- Total: {summary['universe_total']}",
+            f"- Covered: {summary['universe_covered']}",
+            f"- Missing: {summary['universe_missing']}",
+            "- Recall: "
+            + (
+                "N/A"
+                if universe_recall is None
+                else f"{universe_recall:.2%}"
+            ),
+            f"- Same-function candidates: {summary['universe_same_function']}",
+        ]
     lines += [
         "",
         f"- Rule-audit pass rate: {summary['rule_audit_pass_rate']:.2%}",
@@ -460,6 +1217,18 @@ def markdown(report: dict[str, Any]) -> str:
         lines.append(f"| {reason} | {count} |")
     lines += [
         "",
+        "## Gate checks",
+        "",
+        "| Check | Status | Actual | Requirement |",
+        "|---|---|---:|---:|",
+    ]
+    for check in gate.get("checks", []):
+        lines.append(
+            f"| {check['name']} | {check['status']} | "
+            f"{check['actual']} | {check['requirement']} |"
+        )
+    lines += [
+        "",
         "## Interpretation",
         "",
         "`accepted` means an independent local source rule supports the emitted "
@@ -473,12 +1242,127 @@ def markdown(report: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def build_gate(
+    summary: dict[str, Any],
+    *,
+    max_rejected: int | None,
+    max_needs_review: int | None,
+    min_accepted: int | None,
+    min_gold_precision: float | None,
+    min_gold_recall: float | None,
+    min_universe_recall: float | None,
+    require_zero_generic_notification: bool,
+) -> dict[str, Any]:
+    checks = []
+
+    def add_check(name: str, actual: Any, requirement: str, passed: bool) -> None:
+        checks.append(
+            {
+                "name": name,
+                "status": "passed" if passed else "failed",
+                "actual": actual,
+                "requirement": requirement,
+            }
+        )
+
+    rejected = int(summary["decisions"].get("rejected", 0))
+    if max_rejected is not None:
+        add_check(
+            "rejected",
+            rejected,
+            f"<= {max_rejected}",
+            rejected <= max_rejected,
+        )
+
+    needs_review = int(summary.get("needs_review", 0))
+    if max_needs_review is not None:
+        add_check(
+            "needs_review",
+            needs_review,
+            f"<= {max_needs_review}",
+            needs_review <= max_needs_review,
+        )
+
+    accepted = int(summary["decisions"].get("accepted", 0))
+    if min_accepted is not None:
+        add_check(
+            "accepted",
+            accepted,
+            f">= {min_accepted}",
+            accepted >= min_accepted,
+        )
+
+    gold_tp = int(summary["gold_tp"])
+    gold_fp = int(summary["gold_fp"])
+    gold_fn = int(summary["gold_fn"])
+    gold_precision = gold_tp / (gold_tp + gold_fp) if gold_tp + gold_fp else 1.0
+    gold_recall = gold_tp / (gold_tp + gold_fn) if gold_tp + gold_fn else 1.0
+    if min_gold_precision is not None:
+        add_check(
+            "gold_precision",
+            gold_precision,
+            f">= {min_gold_precision}",
+            gold_precision >= min_gold_precision,
+        )
+    if min_gold_recall is not None:
+        add_check(
+            "gold_recall",
+            gold_recall,
+            f">= {min_gold_recall}",
+            gold_recall >= min_gold_recall,
+        )
+
+    universe_recall = summary.get("universe_recall")
+    if min_universe_recall is not None:
+        actual = universe_recall if universe_recall is not None else 0.0
+        add_check(
+            "universe_recall",
+            actual,
+            f">= {min_universe_recall}",
+            actual >= min_universe_recall,
+        )
+
+    if require_zero_generic_notification:
+        generic = int(
+            summary["reasons"].get(
+                "generic notification/callback pair has no shared resource witness",
+                0,
+            )
+        )
+        add_check(
+            "generic_notification_pairs",
+            generic,
+            "== 0",
+            generic == 0,
+        )
+
+    return {
+        "status": (
+            "passed"
+            if all(item["status"] == "passed" for item in checks)
+            else "failed"
+        ),
+        "checks": checks,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--predictions", type=Path, required=True)
     parser.add_argument("--ground-truth", type=Path, required=True)
     parser.add_argument("--source-root", type=Path, required=True)
+    parser.add_argument("--graph", type=Path)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--max-rejected", type=int)
+    parser.add_argument("--max-needs-review", type=int)
+    parser.add_argument("--min-accepted", type=int)
+    parser.add_argument("--min-gold-precision", type=float)
+    parser.add_argument("--min-gold-recall", type=float)
+    parser.add_argument("--min-universe-recall", type=float)
+    parser.add_argument(
+        "--require-zero-generic-notification",
+        action="store_true",
+    )
     args = parser.parse_args()
 
     predictions = read_json(args.predictions)
@@ -600,6 +1484,19 @@ def main() -> int:
     rejected = decision_counts.get("rejected", 0)
     needs_review = decision_counts.get("needs_review", 0)
     decided = accepted + rejected
+    gold_precision = gold_tp / (gold_tp + gold_fp) if gold_tp + gold_fp else 1.0
+    gold_recall = gold_tp / (gold_tp + gold_fn) if gold_tp + gold_fn else 1.0
+    universe_candidates: list[dict[str, Any]] = []
+    universe_evaluation: dict[str, Any] = {}
+    universe_info: dict[str, Any] = {}
+    if args.graph is not None:
+        graph = read_json(args.graph)
+        universe_candidates, universe_info = build_generated_universe(
+            graph,
+            args.source_root,
+            gold_cases,
+        )
+        universe_evaluation = evaluate_universe(universe_candidates, records)
     summary = {
         "predictions": len(records),
         "gold_positive": len(positive_keys),
@@ -607,6 +1504,8 @@ def main() -> int:
         "gold_tp": gold_tp,
         "gold_fp": gold_fp,
         "gold_fn": gold_fn,
+        "gold_precision": gold_precision,
+        "gold_recall": gold_recall,
         "decisions": dict(decision_counts),
         "reasons": dict(reason_counts),
         "relation_types": dict(relation_type_counts),
@@ -614,7 +1513,25 @@ def main() -> int:
         "rule_audit_pass_rate": accepted / decided if decided else 0.0,
         "rejection_rate": rejected / len(records) if records else 0.0,
         "decided_share": decided / len(records) if records else 0.0,
+        "universe_total": (
+            universe_evaluation.get("total") if args.graph is not None else None
+        ),
+        "universe_covered": universe_evaluation.get("covered"),
+        "universe_missing": universe_evaluation.get("missing"),
+        "universe_recall": universe_evaluation.get("recall"),
+        "universe_same_function": universe_info.get("same_function"),
     }
+    gate = build_gate(
+        summary,
+        max_rejected=args.max_rejected,
+        max_needs_review=args.max_needs_review,
+        min_accepted=args.min_accepted,
+        min_gold_precision=args.min_gold_precision,
+        min_gold_recall=args.min_gold_recall,
+        min_universe_recall=args.min_universe_recall,
+        require_zero_generic_notification=args.require_zero_generic_notification,
+    )
+    summary["gate_status"] = gate["status"]
     report = {
         "schema_version": "libuv-sync-closed-world-audit-v1",
         "generated_at": predictions.get("generated_at")
@@ -631,15 +1548,38 @@ def main() -> int:
             "hashes": {
                 "predictions_sha256": sha256(args.predictions),
                 "ground_truth_sha256": sha256(args.ground_truth),
+                "graph_sha256": sha256(args.graph) if args.graph is not None else "",
             },
         },
         "summary": summary,
+        "gate": gate,
         "by_source_file": by_source_file,
         "by_relation_type": by_relation_type,
         "items": records,
     }
     args.output.mkdir(parents=True, exist_ok=True)
     write_json(args.output / "audit.json", report)
+    write_json(args.output / "gate.json", gate)
+    if args.graph is not None:
+        write_json(
+            args.output / "universe.json",
+            {
+                "schema_version": "libuv-sync-candidate-universe-v1",
+                "selection_id": "libuv-sync-closed-world-v1",
+                "graph_sha256": sha256(args.graph),
+                "summary": {
+                    **universe_info,
+                    "covered": universe_evaluation.get("covered"),
+                    "missing": universe_evaluation.get("missing"),
+                    "recall": universe_evaluation.get("recall"),
+                },
+                "candidates": universe_candidates,
+                "missing_candidates": universe_evaluation.get(
+                    "missing_candidates",
+                    [],
+                ),
+            },
+        )
     write_json(
         args.output / "selection.json",
         {
@@ -656,13 +1596,14 @@ def main() -> int:
             "predictions": str(args.predictions),
             "predictions_sha256": sha256(args.predictions),
             "ground_truth_sha256": sha256(args.ground_truth),
+            "graph_sha256": sha256(args.graph) if args.graph is not None else "",
             "review_status": "machine_source_rule_audit",
         },
     )
     write_csv(args.output / "review.csv", records)
     (args.output / "report.md").write_text(markdown(report), encoding="utf-8")
     print(json.dumps(summary, ensure_ascii=False, indent=2))
-    return 0
+    return 0 if gate["status"] == "passed" else 1
 
 
 if __name__ == "__main__":

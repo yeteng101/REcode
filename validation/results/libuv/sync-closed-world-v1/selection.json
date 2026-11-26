@@ -13,7 +13,8 @@
   "prediction_selection": "all predictions whose source.file is listed in source_files",
   "gold": "validation/benchmarks/libuv/ground-truth.json",
   "predictions": "validation/results/libuv/linux-profile/predictions/sync-relations.json",
-  "predictions_sha256": "f5f2d76f68011817369737214f7d9a7742dba37572038f82779469153eb119af",
+  "predictions_sha256": "ce67a425ccd8e446cb4d33449e0963db62bd9f99b42db19eef8d3cc2c4ff73dc",
   "ground_truth_sha256": "0378e4fd11220bd2a88f9ad86d88e3642def94664b17d851778f46ca2c726f90",
+  "graph_sha256": "70d0e2b6b47cf030e4eb93a2d08af3119ca4ed892aaebba4ed99991b072a5213",
   "review_status": "machine_source_rule_audit"
 }

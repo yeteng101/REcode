@@ -68,10 +68,11 @@ relaxed/unknown 边界、rwlock 读写边界、eventfd write/read 因果和锁�
 受保护写操作。
 
 这仍然是一个开放世界验证集：100% 表示冻结 Gold 中的正例 identity 和 6 个负例
-全部匹配，不表示仓库中全部 2,987 条同步输出都已经获得全仓真值。未标注输出不进入
+全部匹配，不表示仓库中全部 2,982 条同步输出都已经获得全仓真值。未标注输出不进入
 Precision，不能据此宣称“全仓同步关系准确率 100%”。
 
-四文件 closed-world 预测审计当前覆盖 `1,282` 条输出，全部通过源码规则检查。
+四文件 closed-world 预测审计当前覆盖 `1,277` 条输出，全部通过源码规则检查。
+候选 universe 共 `530` 条，当前路径覆盖 `530` 条，`universe_recall=100%`。
 通用 condition/event notification 到 callback 的无 witness 配对已经移除；
 保留的 notification callback 关系必须绑定已有队列发布关系或同一 async 流程。
 

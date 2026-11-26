@@ -1,0 +1,32 @@
+{
+  "schema_version": "external-expected-metrics-v2",
+  "protocol_id": "external-v2",
+  "datasets": {
+    "callgraphbench": {
+      "tp": 31,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "svcomp_memsafety": {
+      "tp": 10,
+      "fp": 7,
+      "fn": 0,
+      "tn": 3,
+      "precision": 0.5882352941176471,
+      "recall": 1.0,
+      "coverage": 1.0
+    },
+    "juliet_cwe401": {
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "tn": 23,
+      "precision": 1.0,
+      "recall": 1.0,
+      "coverage": 1.0
+    }
+  }
+}

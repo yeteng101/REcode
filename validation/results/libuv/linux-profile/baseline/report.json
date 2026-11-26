@@ -614,9 +614,9 @@
       "evidence_hit_rate": 1.0,
       "coverage": 1.0,
       "unconfirmed_ratio": 1.0,
-      "unlabelled_predictions": 2955,
-      "out_of_scope_predictions": 2955,
-      "prediction_count": 2987,
+      "unlabelled_predictions": 2950,
+      "out_of_scope_predictions": 2950,
+      "prediction_count": 2982,
       "duplicate_predictions": 32,
       "confirmed_only": {
         "precision": null,

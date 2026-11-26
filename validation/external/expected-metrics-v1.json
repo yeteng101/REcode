@@ -1,0 +1,60 @@
+{
+  "schema_version": "external-expected-metrics-v1",
+  "protocol_id": "external-v1",
+  "datasets": {
+    "callgraphbench": {
+      "tp": 18,
+      "fp": 0,
+      "fn": 13,
+      "precision": 1.0,
+      "recall": 0.5806451612903226
+    },
+    "cgbench": {
+      "tp": 411,
+      "fp": 197,
+      "fn": 117,
+      "precision": 0.6759868421052632,
+      "recall": 0.7784090909090909,
+      "unknown_callsites": 41,
+      "coverage": 0.8641571194762684
+    },
+    "juliet": {
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "tn": 23,
+      "precision": 1.0,
+      "recall": 1.0,
+      "coverage": 1.0
+    },
+    "svcomp_memsafety": {
+      "tp": 10,
+      "fp": 8,
+      "fn": 0,
+      "tn": 2,
+      "precision": 0.5555555555555556,
+      "recall": 1.0,
+      "coverage": 1.0
+    },
+    "dataracebench": {
+      "tp": 8,
+      "fp": 0,
+      "fn": 0,
+      "tn": 10,
+      "unknown": 6,
+      "race_precision": 1.0,
+      "race_recall": 1.0,
+      "coverage": 0.75
+    },
+    "svcomp_concurrency": {
+      "tp": 10,
+      "fp": 0,
+      "fn": 0,
+      "tn": 10,
+      "unknown": 0,
+      "race_precision": 1.0,
+      "race_recall": 1.0,
+      "coverage": 1.0
+    }
+  }
+}
